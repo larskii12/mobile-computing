@@ -2,9 +2,7 @@ package com.example.mainactivity;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class DatabaseHelper {
 
@@ -15,38 +13,35 @@ public class DatabaseHelper {
     private static final String PASS = "iHgm5npedxNHkpWwFb99SWW28Z5dGgKvYhncehaWGvmbzWVXr3";
     private static final String URL = "jdbc:postgresql://" + HOST + ":5432/" + DB;
 
-    Connection connection;
+    Connection connector;
 
+    /**
+     * Constructor, Create a new database connection instance.
+     */
     public DatabaseHelper() {
         try {
             Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(URL, USER, PASS);
+            connector = DriverManager.getConnection(URL, USER, PASS);
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Test the database connection
+     *
+     * @return boolean, True if database is available, False if database is unavailable.
+     */
     public boolean databaseConnectionTest() {
-        return this.connection != null;
+        return this.connector != null;
     }
 
-
-    public String getAllUsers() throws SQLException {
-
-        String sql = "SELECT * FROM mobilecomputing.\"user\";";
-        Statement stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery(sql);
-
-        StringBuilder allUsers = new StringBuilder();
-
-        // Process result set
-        while (rs.next()) {
-            allUsers.append(rs.getString("user_email") + "\n");
-        }
-
-        rs.close();
-        stmt.close();
-
-        return allUsers.toString();
+    /**
+     * Getter, get the database connector
+     *
+     * @return database connection connector
+     */
+    public Connection getConnector() {
+        return this.connector;
     }
 }
