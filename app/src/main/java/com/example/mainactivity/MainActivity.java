@@ -27,8 +27,17 @@ public class MainActivity extends AppCompatActivity {
                             if (db.databaseConnectionTest()) {
                                 System.out.println("Database online!");
                                 try {
+//
+//                                    // Login
+//                                    if(new User().logIn("Jessica_Taylor@example.com", "xxx")){
+//                                        System.out.println("Login Successfully.");
+//                                    }
+//
+//
+//
+//
 //                                    // Add an user
-//                                    new User().addUser("djhasoidajns", "daweqdq", "userPaed13d1ss", "Chemistry", 5);
+//                                    new User().addUser("test1", "test1@test1.com", "xxx", "IT", 8);
 //                                    System.out.println("Add successfully.");
 //
 //
@@ -58,19 +67,23 @@ public class MainActivity extends AppCompatActivity {
 //
 //
 //
-//                                    // Update an user's user name information
+//                                  // Update an user's user name information
 //                                    new User().updateUserName(15, "Frank Martinez");
 //                                    System.out.println("The user name has been updated successfully.");
 //
-//                                    // Update an user's user email information
+//                                  // Update an user's user email information
 //                                    new User().updateUserEmail(15,"useaaaaartest@tt.com");
 //                                    System.out.println("The user email has been updated successfully.");
 //
-                                    // Update an user's user password information
-//                                    new User().updateUserPassword(15, "xxxxxxxxxx");
+//                                  // Update an user's user password
+//                                    new User().updateUserPassword(47, "ddd", "xxx");
 //                                    System.out.println("The user password has been updated successfully.");
 //
-                                    // Update an user's user faculty information
+//                                  // Reset an user's user password
+//                                    new User().resetUserPassword("Jessica_Taylor@example.com", "xxx");
+//                                    System.out.println("Password reset successfully.");
+//
+//                                  // Update an user's user faculty information
 //                                    new User().updateUserFaculty(15, "IT");
 //                                    System.out.println("The user faculty has been updated successfully.");
 //

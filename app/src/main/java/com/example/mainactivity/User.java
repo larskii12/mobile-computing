@@ -1,5 +1,7 @@
 package com.example.mainactivity;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -39,6 +41,44 @@ public class User {
     Connection connector = new DatabaseHelper().getConnector();
 
     /**
+     * User log in with user name
+     *
+     * @param userNameOrEmail, as user name or user email address
+     * @param userPassword,    as user password
+     * @return true if login success
+     * @throws Exception, if user log in fails
+     */
+    public boolean logIn(String userNameOrEmail, String userPassword) throws Exception {
+
+        try {
+
+            String query = "SELECT user_password FROM mobilecomputing.\"user\" WHERE \"user_name\" = ? OR \"user_email\" = ?";
+
+            PreparedStatement preparedStatement = connector.prepareStatement(query);
+            preparedStatement.setString(1, userNameOrEmail);
+            preparedStatement.setString(2, userNameOrEmail);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            // If user name, email, and password matches, return true
+            if (resultSet.next() && BCrypt.checkpw(userPassword, resultSet.getString("user_password"))) {
+                return true;
+            }
+
+            // If user not exist, password not correct or other exceptions
+            else {
+                throw new Exception();
+            }
+        }
+
+        // If log in fails
+        catch (Exception e) {
+            throw new Exception("The information does not match our records, please try again.");
+        }
+    }
+
+
+    /**
      * method to add a new user into the database (To register a new user)
      *
      * @param userName     as the user name
@@ -48,7 +88,7 @@ public class User {
      * @param userAQFLevel as the user AQF level
      * @throws Exception if any exceptions happens
      */
-    public void addUser(String userName, String userEmail, String userPassword, String userFaculty, int userAQFLevel) throws Exception {
+    public boolean addUser(String userName, String userEmail, String userPassword, String userFaculty, int userAQFLevel) throws Exception {
 
         // Check all fields not empty, faculty can be 0, treat as a guest.
         if (userName.replaceAll("\\s", "").equals("") || userEmail.replaceAll("\\s", "").equals("") || userPassword.replaceAll("\\s", "").equals("")) {
@@ -68,12 +108,14 @@ public class User {
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             preparedStatement.setString(1, userName);
             preparedStatement.setString(2, userEmail);
-            preparedStatement.setString(3, userPassword);
+            preparedStatement.setString(3, BCrypt.hashpw(userPassword, BCrypt.gensalt()));
             preparedStatement.setString(4, userFaculty);
             preparedStatement.setInt(5, userAQFLevel);
 
             // Execute query
             preparedStatement.executeUpdate();
+
+            return true;
 
             //connection.createStatement().executeQuery(query);
         }
@@ -103,13 +145,15 @@ public class User {
      * @param userId, the user id who need to be deleted
      * @throws Exception, if delete fails, show the exception
      */
-    public void deleteUser(int userId) throws Exception {
+    public boolean deleteUser(int userId) throws Exception {
         try {
             String query = "DELETE FROM mobilecomputing.\"user\" WHERE \"user_id\" = ?";
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             preparedStatement.setInt(1, userId);
             preparedStatement.executeUpdate();
+
+            return true;
         }
 
         // If exception happens when deleting an user.
@@ -151,7 +195,10 @@ public class User {
                 return user;
             }
 
-        } catch (Exception e) {
+        }
+
+        // If exception happens when querying user
+        catch (Exception e) {
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
         // Return user information
@@ -165,7 +212,7 @@ public class User {
      * @param newUserName, as new user name
      * @throws Exception, if duplication or other exception happens
      */
-    public void updateUserName(int userId, String newUserName) throws Exception {
+    public boolean updateUserName(int userId, String newUserName) throws Exception {
         try {
 
             String query = "UPDATE mobilecomputing.\"user\" SET \"user_name\" = ? WHERE \"user_id\" = ?";
@@ -173,14 +220,19 @@ public class User {
             ps.setString(1, newUserName);
             ps.setInt(2, userId);
             ps.executeUpdate();
-        } catch (Exception e) {
+
+            return true;
+        }
+
+        //
+        catch (Exception e) {
 
             // If user name has been used.
             if (e.getMessage().contains("unique_user_username")) {
                 throw new Exception("This user name has been used, please try another one.");
             }
 
-            // unknown exception
+            // unknown exception happens when update user name
             else {
                 throw new Exception("Errors happened when update user information, please contact the IT administrator.");
             }
@@ -195,7 +247,7 @@ public class User {
      * @param newUserEmail, as new user email address
      * @throws Exception, if duplication or other exception happens
      */
-    public void updateUserEmail(int userId, String newUserEmail) throws Exception {
+    public boolean updateUserEmail(int userId, String newUserEmail) throws Exception {
         try {
 
             String query = "UPDATE mobilecomputing.\"user\" SET \"user_email\" = ? WHERE \"user_id\" = ?";
@@ -203,14 +255,19 @@ public class User {
             ps.setString(1, newUserEmail);
             ps.setInt(2, userId);
             ps.executeUpdate();
-        } catch (Exception e) {
+
+            return true;
+        }
+
+        // unknown exception happens when update user email
+        catch (Exception e) {
 
             // If user name has been used.
             if (e.getMessage().contains("unique_user_email")) {
                 throw new Exception("This user email has been used, please try another one.");
             }
 
-            // unknown exception
+            // unknown exception happens
             else {
                 throw new Exception("Errors happened when update user information, please contact the IT administrator.");
             }
@@ -225,20 +282,61 @@ public class User {
      * @param newUserPassword, as new user password
      * @throws Exception, if exception happens
      */
-    public void updateUserPassword(int userId, String newUserPassword) throws Exception {
+    public boolean updateUserPassword(int userId, String oldUserPassword, String newUserPassword) throws Exception {
         try {
+            // Get the user
+            String query = "SELECT user_password FROM mobilecomputing.\"user\" WHERE \"user_id\" = ?";
 
-            String query = "UPDATE mobilecomputing.\"user\" SET \"user_password\" = ? WHERE \"user_id\" = ?";
-            PreparedStatement ps = connector.prepareStatement(query);
-            ps.setString(1, newUserPassword);
-            ps.setInt(2, userId);
-            ps.executeUpdate();
+            PreparedStatement preparedStatement = connector.prepareStatement(query);
+            preparedStatement.setInt(1, userId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            // // Verify user old password and change password
+            if (resultSet.next() && BCrypt.checkpw(oldUserPassword, resultSet.getString("user_password"))) {
+
+                // Change password
+                String queryChangePassword = "UPDATE mobilecomputing.\"user\" SET \"user_password\" = ? WHERE \"user_id\" = ?";
+                PreparedStatement ps = connector.prepareStatement(queryChangePassword);
+                ps.setString(1, BCrypt.hashpw(newUserPassword, BCrypt.gensalt()));
+                ps.setInt(2, userId);
+                ps.executeUpdate();
+
+                return true;
+            }
+
+            // If old password is not correct
+            else {
+                throw new Exception("Your old password is not correct, please try again.");
+            }
 
         }
 
         // If exception happens
         catch (Exception e) {
-            throw new Exception("Errors happened when update user information, please contact the IT administrator.");
+            throw new Exception(e.getMessage());
+        }
+    }
+
+
+    public boolean resetUserPassword(String userNameOrEmail, String newUserPassword) throws Exception {
+        // Change password
+        try {
+
+            String queryChangePassword = "UPDATE mobilecomputing.\"user\" SET \"user_password\" = ? WHERE \"user_name\" = ? OR \"user_email\" = ?";
+            PreparedStatement ps = connector.prepareStatement(queryChangePassword);
+
+            ps.setString(1, BCrypt.hashpw(newUserPassword, BCrypt.gensalt()));
+            ps.setString(2, userNameOrEmail);
+            ps.setString(3, userNameOrEmail);
+            ps.executeUpdate();
+
+            return true;
+        }
+
+        // If exception happens
+        catch (Exception e) {
+            throw new Exception("Error happened when changing password, please contact the IT administrator.");
         }
     }
 
@@ -250,7 +348,7 @@ public class User {
      * @param newUserFaculty, as new user new faculty
      * @throws Exception, if exception happens
      */
-    public void updateUserFaculty(int userId, String newUserFaculty) throws Exception {
+    public boolean updateUserFaculty(int userId, String newUserFaculty) throws Exception {
         try {
 
             String query = "UPDATE mobilecomputing.\"user\" SET \"user_faculty\" = ? WHERE \"user_id\" = ?";
@@ -258,6 +356,8 @@ public class User {
             ps.setString(1, newUserFaculty);
             ps.setInt(2, userId);
             ps.executeUpdate();
+
+            return true;
 
         }
 
@@ -272,10 +372,10 @@ public class User {
     /**
      * Update user's AQF level
      *
-     * @param userId as user id
+     * @param userId, as user id
      * @throws Exception if exception happens
      */
-    public void updateUserAQFLevel(int userId, int newAQFLevel) throws Exception {
+    public boolean updateUserAQFLevel(int userId, int newAQFLevel) throws Exception {
         try {
 
             //  Update user AQF level
@@ -284,6 +384,8 @@ public class User {
             ps.setInt(1, newAQFLevel);
             ps.setInt(2, userId);
             ps.executeUpdate();
+
+            return true;
         }
 
         // If exception happens
