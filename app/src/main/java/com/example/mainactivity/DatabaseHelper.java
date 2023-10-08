@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Constructor, define the database information and connector
+ */
 public class DatabaseHelper {
 
     // JDBC URL components
