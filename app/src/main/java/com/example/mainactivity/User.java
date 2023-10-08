@@ -100,20 +100,21 @@ public class User {
     /**
      * Delete an user with given user email
      *
-     * @param userEmail, the user with this email will be deleted
+     * @param userId, the user id who need to be deleted
      * @throws Exception, if delete fails, show the exception
      */
-    public void deleteUser(String userEmail) throws Exception {
+    public void deleteUser(int userId) throws Exception {
         try {
-            String query = "DELETE FROM mobilecomputing.\"user\" WHERE \"user_email\" = ?";
+            String query = "DELETE FROM mobilecomputing.\"user\" WHERE \"user_id\" = ?";
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
-            preparedStatement.setString(1, userEmail);
+            preparedStatement.setInt(1, userId);
             preparedStatement.executeUpdate();
         }
 
         // If exception happens when deleting an user.
         catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("User delete failed, please contact the IT administrator.");
         }
     }
@@ -122,21 +123,19 @@ public class User {
     /**
      * Get a user with specified email address
      *
-     * @param userEmail, as the user email address
+     * @param userId, as the user id
      * @return User
      */
-    public User getUser(String userEmail) throws Exception {
+    public User getUser(int userId) throws Exception {
 
-        User user;
+        User user = new User();
 
         try {
 
-            user = new User();
-
-            String query = "SELECT * FROM mobilecomputing.\"user\" WHERE \"user_email\" = ?";
+            String query = "SELECT * FROM mobilecomputing.\"user\" WHERE \"user_id\" = ?";
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
-            preparedStatement.setString(1, userEmail);
+            preparedStatement.setInt(1, userId);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -157,6 +156,140 @@ public class User {
         }
         // Return user information
         return null;
+    }
+
+    /**
+     * Update user name
+     *
+     * @param userId,      as user id
+     * @param newUserName, as new user name
+     * @throws Exception, if duplication or other exception happens
+     */
+    public void updateUserName(int userId, String newUserName) throws Exception {
+        try {
+
+            String query = "UPDATE mobilecomputing.\"user\" SET \"user_name\" = ? WHERE \"user_id\" = ?";
+            PreparedStatement ps = connector.prepareStatement(query);
+            ps.setString(1, newUserName);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+
+            // If user name has been used.
+            if (e.getMessage().contains("unique_user_username")) {
+                throw new Exception("This user name has been used, please try another one.");
+            }
+
+            // unknown exception
+            else {
+                throw new Exception("Errors happened when update user information, please contact the IT administrator.");
+            }
+        }
+    }
+
+
+    /**
+     * Update user email address
+     *
+     * @param userId,       as user id
+     * @param newUserEmail, as new user email address
+     * @throws Exception, if duplication or other exception happens
+     */
+    public void updateUserEmail(int userId, String newUserEmail) throws Exception {
+        try {
+
+            String query = "UPDATE mobilecomputing.\"user\" SET \"user_email\" = ? WHERE \"user_id\" = ?";
+            PreparedStatement ps = connector.prepareStatement(query);
+            ps.setString(1, newUserEmail);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+
+            // If user name has been used.
+            if (e.getMessage().contains("unique_user_email")) {
+                throw new Exception("This user email has been used, please try another one.");
+            }
+
+            // unknown exception
+            else {
+                throw new Exception("Errors happened when update user information, please contact the IT administrator.");
+            }
+        }
+    }
+
+
+    /**
+     * Update user password
+     *
+     * @param userId,          as user id
+     * @param newUserPassword, as new user password
+     * @throws Exception, if exception happens
+     */
+    public void updateUserPassword(int userId, String newUserPassword) throws Exception {
+        try {
+
+            String query = "UPDATE mobilecomputing.\"user\" SET \"user_password\" = ? WHERE \"user_id\" = ?";
+            PreparedStatement ps = connector.prepareStatement(query);
+            ps.setString(1, newUserPassword);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+
+        }
+
+        // If exception happens
+        catch (Exception e) {
+            throw new Exception("Errors happened when update user information, please contact the IT administrator.");
+        }
+    }
+
+
+    /**
+     * Update user faculty
+     *
+     * @param userId,         as user id
+     * @param newUserFaculty, as new user new faculty
+     * @throws Exception, if exception happens
+     */
+    public void updateUserFaculty(int userId, String newUserFaculty) throws Exception {
+        try {
+
+            String query = "UPDATE mobilecomputing.\"user\" SET \"user_faculty\" = ? WHERE \"user_id\" = ?";
+            PreparedStatement ps = connector.prepareStatement(query);
+            ps.setString(1, newUserFaculty);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+
+        }
+
+        // If exception happens
+        catch (Exception e) {
+            throw new Exception("Errors happened when update user information, please contact the IT administrator.");
+        }
+
+    }
+
+
+    /**
+     * Update user's AQF level
+     *
+     * @param userId as user id
+     * @throws Exception if exception happens
+     */
+    public void updateUserAQFLevel(int userId, int newAQFLevel) throws Exception {
+        try {
+
+            //  Update user AQF level
+            String query = "UPDATE mobilecomputing.\"user\" SET \"user_AQF_level\" = ? WHERE \"user_id\" = ?";
+            PreparedStatement ps = connector.prepareStatement(query);
+            ps.setInt(1, newAQFLevel);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        }
+
+        // If exception happens
+        catch (Exception e) {
+            throw new Exception("Errors happened when update user information, please contact the IT administrator.");
+        }
     }
 
 
