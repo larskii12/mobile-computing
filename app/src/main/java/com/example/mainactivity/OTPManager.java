@@ -5,21 +5,26 @@ package com.example.mainactivity;
  */
 public class OTPManager {
 
-    public int newAccountOTP(String userEmail) {
+    public boolean newAccountOTP(String userEmail) {
 
         //send OTP to email address && front end
-        return 0;
+        return true;
     }
 
-    public int resetUserPasswordOTP(String userNameOrEmail) {
+    public boolean resetUserPasswordOTP(String userNameOrEmail) {
 
         //send OTP to email address && front end
-        return 0;
+        return true;
     }
 
-    public int changeUserEmailOTP(int userId) {
+    public boolean changeUserEmailOTP(int userId) {
 
         //send OTP to email address && front end
-        return 0;
+        return true;
+    }
+
+    private boolean sendOTP(int OTP){
+
+        return true;
     }
 }
