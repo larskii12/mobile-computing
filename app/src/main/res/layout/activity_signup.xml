@@ -6,10 +6,10 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/editTextUsername"
+        android:id="@+id/editName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username" />
+        android:hint="Name" />
 
     <EditText
         android:id="@+id/editTextEmail"
@@ -19,10 +19,23 @@
         android:inputType="textEmailAddress" />
 
     <EditText
+        android:id="@+id/editTextUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Username" />
+
+    <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Password"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/editTextConfirmPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Confirm Password"
         android:inputType="textPassword" />
 
     <Button
