@@ -1,4 +1,4 @@
-package com.example.mainactivity;
+package com.example.mainactivity.config;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

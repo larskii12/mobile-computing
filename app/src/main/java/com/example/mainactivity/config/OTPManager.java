@@ -1,4 +1,4 @@
-package com.example.mainactivity;
+package com.example.mainactivity.config;
 
 /**
  * OTP class, send OTP to uer email to verify before changing sensitive information
