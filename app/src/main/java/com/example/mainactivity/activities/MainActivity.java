@@ -1,4 +1,4 @@
-package com.example.mainactivity;
+package com.example.mainactivity.activities;
 
 import android.os.Bundle;
 import android.view.View;
@@ -6,7 +6,19 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mainactivity.config.DatabaseHelper;
+import com.example.mainactivity.R;
+import com.example.mainactivity.service.location.LocationService;
+import com.example.mainactivity.service.review.ReviewService;
+import com.example.mainactivity.service.user.UserService;
+
 public class MainActivity extends AppCompatActivity {
+
+    private ReviewService reviewService;
+
+    private LocationService locationService;
+
+    private UserService userService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
