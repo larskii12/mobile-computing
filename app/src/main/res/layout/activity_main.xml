@@ -6,24 +6,109 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
+    <!--    <TextView-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="Hello World!"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+    <!--    <Button-->
+    <!--        android:id="@+id/button"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="Connect to PostgreSQL"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--        app:layout_constraintRight_toRightOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:layout_constraintVertical_bias="0.604" />-->
+
+
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:id="@+id/textView"
+        android:layout_width="348dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="6dp"
+        android:background="#FDFDFD"
+        android:text="@string/good_morning_user1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="414dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="560dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textView">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Connect to PostgreSQL"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.604" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1" />
 
+        <ImageButton
+            android:id="@+id/imageButton5"
+            style="@android:style/Widget.Material.Light.ImageButton"
+            android:layout_width="80dp"
+            android:layout_height="73dp"
+            android:background="@drawable/study_space_button"
+            android:contentDescription="menu book icon"
+            android:drawableTop="@drawable/baseline_menu_book_32"
+            app:srcCompat="@drawable/baseline_menu_book_32"
+            tools:layout_editor_absoluteX="234dp"
+            tools:layout_editor_absoluteY="81dp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            style="@android:style/Widget.Material.Light.ImageButton"
+            android:layout_width="75dp"
+            android:layout_height="74dp"
+            android:background="@drawable/study_space_button"
+            android:drawableTop="@drawable/baseline_fastfood_32"
+            app:circularflow_defaultAngle="20"
+            app:srcCompat="@drawable/baseline_fastfood_32"
+            tools:layout_editor_absoluteX="32dp"
+            tools:layout_editor_absoluteY="80dp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/imageButton4"
+            style="@android:style/Widget.Material.Light.ImageButton"
+            android:layout_width="76dp"
+            android:layout_height="72dp"
+            android:background="@drawable/study_space_button"
+            android:drawableTop="@drawable/baseline_favorite_32"
+            app:circularflow_defaultAngle="20"
+            app:srcCompat="@drawable/baseline_favorite_32"
+            tools:layout_editor_absoluteX="134dp"
+            tools:layout_editor_absoluteY="80dp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
