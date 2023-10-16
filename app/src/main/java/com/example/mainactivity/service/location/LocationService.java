@@ -20,6 +20,6 @@ public interface LocationService {
 
     List<Location> findAllLocations(String locationType,
                                     String name,
-                                    boolean isAscending);
+                                    boolean isAscending) throws Exception;
 
 }
