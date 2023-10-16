@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 
@@ -30,22 +31,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private SearchView searchBar;
     private ImageButton filterButton;
     private BottomNavigationView bottomNav;
+    private ImageButton testButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
+
         setContentView(binding.getRoot());
 
         searchBar = findViewById(R.id.searchBar);
-        filterButton = findViewById(R.id.filterButton);
+        filterButton = (ImageButton) findViewById(R.id.filterButton);
         bottomNav = findViewById(R.id.bottom_navigation);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
 
 
         // for the map (mMap), get the nearby locations and display it as a pointer
@@ -57,7 +59,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
          *
          */
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
             @Override
             public boolean onQueryTextSubmit(String s) {
                 String searchQuery = searchBar.getQuery().toString();
@@ -78,28 +79,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View view) {
                 // launch the filter page
                 Intent intent = new Intent(MapsActivity.this, FilterAdjustmentActivity.class);
-//              startActivity(intent);
+              startActivity(intent);
             }
         });
 
-        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @SuppressLint("NonConstantResourceId")
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.homeNav:
-                        // go to home navigation page (Linda's page)
-                        break;
-                    case R.id.focusNav:
-                        // go to focus page
-                        break;
-                    case R.id.accountNav:
-                        // go to account page
-                        break;
-                }
-                return false;
-            }
-        });
+//        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+//            @SuppressLint("NonConstantResourceId")
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.homeNav:
+//                        // go to home navigation page (Linda's page)
+//                        break;
+//                    case R.id.focusNav:
+//                        // go to focus page
+//                        break;
+//                    case R.id.accountNav:
+//                        // go to account page
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
 
     }
 
@@ -121,20 +122,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
-
-//    private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
-//        int itemId = item.getItemId();
-//        if (itemId == R.id.homeNav) {
-//            // go to the home navigation page
-//        } else if (itemId == R.id.focusNav) {
-//             // go to the focus page
-//        } else if (itemId == R.id.accountNav) {
-//            // go to the account navigation page
-//        }
-//
-//        return true;
-//    };
-
-
-
 }
