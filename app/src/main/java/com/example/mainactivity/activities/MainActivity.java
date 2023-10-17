@@ -1,8 +1,10 @@
 package com.example.mainactivity.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,14 +22,29 @@ public class MainActivity extends AppCompatActivity {
 
     private UserService userService;
 
+    private SearchView searchBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Button button = (Button) findViewById(R.id.button);
-//
-//         Test button
-////        button.setOnClickListener(new View.OnClickListener() {
+        Button button = (Button) findViewById(R.id.button);
+
+//        searchBar = findViewById(R.id.searchBar);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                startActivity(intent);
+
+
+                // should collect what they wrote here??
+            }
+        });
+
+        // Test button
+//        button.setOnClickListener(new View.OnClickListener() {
 //
 //            @Override
 //            public void onClick(View view) {
@@ -126,5 +143,6 @@ public class MainActivity extends AppCompatActivity {
 //                }.start();
 //            }
 //        });
+
     }
 }
