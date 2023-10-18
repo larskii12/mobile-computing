@@ -1,6 +1,5 @@
 package com.example.mainactivity.service.location;
 
-import android.databinding.tool.util.StringUtils;
 
 import com.example.mainactivity.config.DatabaseHelper;
 import com.example.mainactivity.models.busy_rating.BusyRating;
@@ -179,7 +178,7 @@ public class LocationServiceImpl implements LocationService {
         List<Location> allLocations = new ArrayList<>();
 
         String searchName = "";
-        if (StringUtils.isNotBlank(name)) {
+        if (name != null){
             searchName = name.toLowerCase();
         }
 
@@ -188,7 +187,7 @@ public class LocationServiceImpl implements LocationService {
             PreparedStatement preparedStatement;
             if (locationType.equals("STUDY")) {
                 // Query for extracting all filtered libraries
-                if (StringUtils.isNotBlank(searchName)) {
+                if (searchName != null) {
                     query = "SELECT * FROM mobilecomputing.\"library\" WHERE " +
                             "library_name like '%" + searchName + "%'";
                 } else {
@@ -221,7 +220,7 @@ public class LocationServiceImpl implements LocationService {
 
 
                 // Query for extracting all filtered study spaces
-                if (StringUtils.isNotBlank(searchName)) {
+                if (searchName != null) {
                     query = "SELECT * FROM mobilecomputing.\"study_space\" WHERE " +
                             "study_space_name like '%" + searchName + "%'";
                 } else {
@@ -255,7 +254,7 @@ public class LocationServiceImpl implements LocationService {
                 return allLocations;
 
             } else if (locationType.equals("FOOD")) {
-                if (StringUtils.isNotBlank(searchName)) {
+                if (searchName != null) {
                     query = "SELECT * FROM mobilecomputing.\"restaurant\" WHERE " +
                             "restaurant_name like '%" + searchName + "%'";
                 } else {
@@ -289,7 +288,7 @@ public class LocationServiceImpl implements LocationService {
                 return allLocations;
 
             } else {
-                if (StringUtils.isNotBlank(searchName)) {
+                if (searchName != null) {
                     query = "SELECT * FROM mobilecomputing.\"library\" WHERE " +
                             "library_name like '%" + searchName + "%'";
                 } else {
@@ -321,7 +320,7 @@ public class LocationServiceImpl implements LocationService {
                 }
 
                 // Query for extracting all filtered study spaces
-                if (StringUtils.isNotBlank(searchName)) {
+                if (searchName!= null) {
                     query = "SELECT * FROM mobilecomputing.\"study_space\" WHERE " +
                             "study_space_name like '%" + searchName + "%'";
                 } else {
@@ -352,7 +351,7 @@ public class LocationServiceImpl implements LocationService {
                     allLocations.add(location);
                 }
 
-                if (StringUtils.isNotBlank(searchName)) {
+                if (searchName != null) {
                     query = "SELECT * FROM mobilecomputing.\"restaurant\" WHERE " +
                             "restaurant_name like '%" + searchName + "%'";
                 } else {

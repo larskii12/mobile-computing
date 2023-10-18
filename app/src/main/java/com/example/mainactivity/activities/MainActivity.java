@@ -4,9 +4,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mainactivity.LoginActivity;
+import com.example.mainactivity.config.DatabaseHelper;
 import com.example.mainactivity.R;
 import com.example.mainactivity.config.DatabaseHelper;
 import com.example.mainactivity.service.location.LocationService;
@@ -15,11 +18,8 @@ import com.example.mainactivity.service.review.ReviewService;
 import com.example.mainactivity.service.user.UserService;
 
 public class MainActivity extends AppCompatActivity {
-
     private ReviewService reviewService;
-
     private LocationService locationService;
-
     private UserService userService;
 
     private static Context context;
@@ -29,7 +29,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         setContentView(R.layout.activity_main);
+
         Button button = (Button) findViewById(R.id.button);
+        Button loginButton = findViewById(R.id.loginButton);
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // Test button
         button.setOnClickListener(new View.OnClickListener() {
