@@ -1,14 +1,16 @@
 package com.example.mainactivity.activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.mainactivity.config.DatabaseHelper;
 import com.example.mainactivity.R;
+import com.example.mainactivity.config.DatabaseHelper;
 import com.example.mainactivity.service.location.LocationService;
+import com.example.mainactivity.service.otp.OTPServiceImpl;
 import com.example.mainactivity.service.review.ReviewService;
 import com.example.mainactivity.service.user.UserService;
 
@@ -20,9 +22,12 @@ public class MainActivity extends AppCompatActivity {
 
     private UserService userService;
 
+    private static Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = getApplicationContext();
         setContentView(R.layout.activity_main);
         Button button = (Button) findViewById(R.id.button);
 
@@ -39,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
                             if (db.databaseConnectionTest()) {
                                 System.out.println("Database online!");
                                 try {
+//                                    // Send OTP
+//                                    OTPServiceImpl otpService = new OTPServiceImpl();
+//                                    otpService.sendRegistrationOTP("afsyuanshouyi@outlook.com");
 //
 //                                    // Login
 //                                    if(new User().logIn("Jessica_Taylor@example.com", "xxx")){
@@ -99,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
 //                                    new User().updateUserFaculty(15, "IT");
 //                                    System.out.println("The user faculty has been updated successfully.");
 //
-                                    // Update an user's user AQF level information
+//                                     Update an user's user AQF level information
 //                                    new User().updateUserAQFLevel(15, 8);
 //                                    System.out.println("The user AQF level has been updated successfully.");
 
@@ -126,5 +134,9 @@ public class MainActivity extends AppCompatActivity {
                 }.start();
             }
         });
+    }
+
+    public static Context getAppContext() {
+        return context;
     }
 }
