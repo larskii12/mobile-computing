@@ -18,25 +18,25 @@
     tools:context=".activities.MapsActivity">
 
 
-<!--<RelativeLayout-->
-<!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="match_parent">-->
+    <!--<RelativeLayout-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
     <!--search view to search our location-->
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton3"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="190dp"-->
-<!--        android:layout_marginTop="189dp"-->
-<!--        android:layout_marginEnd="171dp"-->
-<!--        android:layout_marginBottom="498dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/map"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/map"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/map"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/map"-->
-<!--        app:srcCompat="@drawable/account_fill" />-->
+    <!--    <ImageButton-->
+    <!--        android:id="@+id/imageButton3"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="190dp"-->
+    <!--        android:layout_marginTop="189dp"-->
+    <!--        android:layout_marginEnd="171dp"-->
+    <!--        android:layout_marginBottom="498dp"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/map"-->
+    <!--        app:layout_constraintEnd_toEndOf="@+id/map"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/map"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/map"-->
+    <!--        app:srcCompat="@drawable/account_fill" />-->
     <!--fragment to display our maps-->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -50,23 +50,23 @@
 
 
 
-<!--    <ImageButton-->
-<!--        android:id="@+id/filterButton"-->
-<!--        android:layout_width="57dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginStart="338dp"-->
-<!--        android:layout_marginTop="45dp"-->
-<!--        android:layout_marginEnd="16dp"-->
-<!--        android:layout_marginBottom="636dp"-->
-<!--        android:background="@color/white"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/map"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/map"-->
-<!--        app:layout_constraintHorizontal_bias="0.0"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/map"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/map"-->
-<!--        app:layout_constraintVertical_bias="0.0"-->
-<!--        app:srcCompat="@drawable/filter_list"-->
-<!--        app:tint="@color/deepBlue" />-->
+    <!--    <ImageButton-->
+    <!--        android:id="@+id/filterButton"-->
+    <!--        android:layout_width="57dp"-->
+    <!--        android:layout_height="50dp"-->
+    <!--        android:layout_marginStart="338dp"-->
+    <!--        android:layout_marginTop="45dp"-->
+    <!--        android:layout_marginEnd="16dp"-->
+    <!--        android:layout_marginBottom="636dp"-->
+    <!--        android:background="@color/white"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/map"-->
+    <!--        app:layout_constraintEnd_toEndOf="@+id/map"-->
+    <!--        app:layout_constraintHorizontal_bias="0.0"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/map"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/map"-->
+    <!--        app:layout_constraintVertical_bias="0.0"-->
+    <!--        app:srcCompat="@drawable/filter_list"-->
+    <!--        app:tint="@color/deepBlue" />-->
 
 
     <fragment
@@ -80,7 +80,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintVertical_bias="0.0"
         tools:context=".activities.MapsActivity"
         tools:visibility="visible" />
 
@@ -96,49 +95,49 @@
         app:layout_constraintTop_toTopOf="@+id/map"
         app:layout_constraintVertical_bias="1.0">
 
-        <android.widget.SearchView
-            android:id="@+id/searchBar"
-            android:layout_width="311dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="19dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="636dp"
-            android:background="@color/white"
-            android:backgroundTint="#FFFFFF"
-            android:contextClickable="true"
-            android:elevation="5dp"
-            android:foregroundTint="#FFFFFF"
-            app:iconifiedByDefault="false"
-            app:layout_constraintBottom_toBottomOf="@+id/map"
-            app:layout_constraintEnd_toEndOf="@+id/map"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/map"
-            app:layout_constraintTop_toTopOf="@+id/map"
-            app:layout_constraintVertical_bias="0.0"
-            app:queryHint="Search Here"
-            app:searchIcon="@drawable/search_icon" />
-
-        <ImageButton
-            android:id="@+id/filterButton"
-            android:layout_width="57dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="338dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="636dp"
-            android:drawableTop="@drawable/filter_list"
-            android:background="@color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/map"
-            app:layout_constraintEnd_toEndOf="@+id/map"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/map"
-            app:layout_constraintTop_toTopOf="@+id/map"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/filter_list"
-            app:tint="@color/deepBlue" />
-
 
     </FrameLayout>
+
+    <android.widget.SearchView
+        android:id="@+id/searchBar"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="636dp"
+        android:background="@color/white"
+        android:backgroundTint="#FFFFFF"
+        android:contextClickable="true"
+        android:elevation="5dp"
+        android:foregroundTint="#FFFFFF"
+        app:iconifiedByDefault="false"
+        app:layout_constraintBottom_toBottomOf="@+id/map"
+        app:layout_constraintEnd_toStartOf="@+id/filterButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/map"
+        app:layout_constraintTop_toTopOf="@+id/map"
+        app:layout_constraintVertical_bias="0.060000002"
+        app:queryHint="Search Here"
+        app:searchIcon="@drawable/search_icon" />
+
+    <ImageButton
+        android:id="@+id/filterButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="338dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="636dp"
+        android:background="@color/white"
+        android:drawableTop="@drawable/filter_list"
+        app:layout_constraintBottom_toBottomOf="@+id/map"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/map"
+        app:layout_constraintTop_toTopOf="@+id/map"
+        app:layout_constraintVertical_bias="0.060000002"
+        app:srcCompat="@drawable/filter_list"
+        app:tint="@color/deepBlue" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

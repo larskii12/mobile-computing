@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.databinding.ActivityMapsBinding;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -26,6 +27,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ImageButton filterButton;
     private BottomNavigationView bottomNav;
     private ImageButton testButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,8 +113,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mMap.setMaxZoomPreference(100);
-        mMap.setMinZoomPreference(17);
+        mMap.setMaxZoomPreference(30);
+        mMap.setMinZoomPreference(15);
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-37.800097099486244, 144.96440741828778);
