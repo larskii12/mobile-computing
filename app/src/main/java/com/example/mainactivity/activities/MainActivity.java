@@ -1,21 +1,20 @@
 package com.example.mainactivity.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mainactivity.LoginActivity;
-import com.example.mainactivity.config.DatabaseHelper;
 import com.example.mainactivity.R;
 import com.example.mainactivity.config.DatabaseHelper;
 import com.example.mainactivity.service.location.LocationService;
-import com.example.mainactivity.service.otp.OTPServiceImpl;
 import com.example.mainactivity.service.review.ReviewService;
 import com.example.mainactivity.service.user.UserService;
+import com.example.mainactivity.service.user.UserServiceImpl;
 
 public class MainActivity extends AppCompatActivity {
     private ReviewService reviewService;
@@ -36,8 +35,18 @@ public class MainActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
+                        catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        }
+                }.start();
             }
         });
 
@@ -58,10 +67,9 @@ public class MainActivity extends AppCompatActivity {
 //                                    OTPServiceImpl otpService = new OTPServiceImpl();
 //                                    otpService.sendRegistrationOTP("afsyuanshouyi@outlook.com");
 //
-//                                    // Login
-//                                    if(new User().logIn("Jessica_Taylor@example.com", "xxx")){
-//                                        System.out.println("Login Successfully.");
-//                                    }
+                                    //
+                                    System.out.println("dddddddddddddddddddddddddd");
+                                    new UserServiceImpl().logIn("shouyiy@student.unimelb.edu.au", "shouyi@123");
 //
 //
 //

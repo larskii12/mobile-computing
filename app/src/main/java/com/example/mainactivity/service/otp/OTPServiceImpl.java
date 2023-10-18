@@ -29,7 +29,7 @@ public class OTPServiceImpl extends javax.mail.Authenticator implements OTPServi
      * @param userEmail as the user need to receive the email
      * @return OTP for success or 1 for fails
      */
-    public int sendRegistrationOTP(String userEmail) {
+    public int sendOTP(String userEmail) {
         // Create a Random object
         Random random = new Random();
 
@@ -78,7 +78,7 @@ public class OTPServiceImpl extends javax.mail.Authenticator implements OTPServi
             return OTP;
         }
 
-        // If exception, return 1.
+        // If exception, return 1
         catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
