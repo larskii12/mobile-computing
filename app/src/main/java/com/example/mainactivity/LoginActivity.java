@@ -66,7 +66,13 @@ public class LoginActivity extends AppCompatActivity {
         String password = editTextLoginPassword.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), "Please fill all fields.", Toast.LENGTH_SHORT).show();
+                }
+            });
+
             return -1;
         }
 
@@ -74,7 +80,13 @@ public class LoginActivity extends AppCompatActivity {
         User logInUser = new UserServiceImpl().logIn(email, password);
 
         if (logInUser == null){
-            System.out.println("User does not exist");
+
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), "Your input does not match our records, please try again.", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         else{
