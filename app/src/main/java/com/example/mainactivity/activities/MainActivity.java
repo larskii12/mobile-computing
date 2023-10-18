@@ -67,9 +67,8 @@ public class MainActivity extends AppCompatActivity {
 //                                    OTPServiceImpl otpService = new OTPServiceImpl();
 //                                    otpService.sendRegistrationOTP("afsyuanshouyi@outlook.com");
 //
-                                    //
-                                    System.out.println("dddddddddddddddddddddddddd");
-                                    new UserServiceImpl().logIn("shouyiy@student.unimelb.edu.au", "shouyi@123");
+//                                    //
+//                                    new UserServiceImpl().logIn("email@example.com", "abcd@123");
 //
 //
 //
