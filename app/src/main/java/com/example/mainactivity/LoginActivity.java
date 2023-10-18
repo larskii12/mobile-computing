@@ -2,12 +2,18 @@ package com.example.mainactivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.mainactivity.models.user.User;
+import com.example.mainactivity.service.user.UserServiceImpl;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,29 +35,69 @@ public class LoginActivity extends AppCompatActivity {
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loginUser();
+                new Thread() {
+                    public void run() {
+                        try {
+                            loginUser();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }.start();
             }
         });
 
         buttonGoToSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
-                startActivity(intent);
+                new Thread() {
+
+                    public void run() {
+                        Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+                        startActivity(intent);
+                    }
+                }.start();
             }
         });
     }
 
-    private void loginUser() {
+    private int loginUser() throws Exception {
         String email = editTextLoginEmail.getText().toString().trim();
         String password = editTextLoginPassword.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
-            return;
+            return -1;
         }
 
         // @TODO: Here, you can integrate your backend logic to authenticate the user and validate inputs.
-        Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
+        User logInUser = new UserServiceImpl().logIn(email, password);
+
+        if (logInUser == null){
+            System.out.println("User does not exist");
+        }
+
+        else{
+            System.out.println("User login successful");
+            System.out.println("User ID: " + logInUser.getUserId());
+            System.out.println("User Name: " + logInUser.getUserName());
+            System.out.println("User Email: " + logInUser.getUserEmail());
+            System.out.println("User Faculty: " + logInUser.getUserFaculty());
+            System.out.println("User AQF level: " + logInUser.getUserAQFLevel());
+
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    String message = logInUser.getUserId() + " " + logInUser.getUserName()
+                            + " " + logInUser.getUserEmail()
+                            + " " + logInUser.getUserFaculty()
+                            + " " + logInUser.getUserAQFLevel();
+                    Toast.makeText(getApplicationContext(), "Login successfully!\n" + message, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+
+        return 0;
     }
 }
