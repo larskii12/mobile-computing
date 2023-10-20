@@ -43,6 +43,7 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
                 finish();
             }
         });
+
     }
 
     private OnCheckedChangeListener ascListener = new RadioGroup.OnCheckedChangeListener() {

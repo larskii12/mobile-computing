@@ -43,71 +43,71 @@
                 android:layout_height="2dp"
                 android:background="#E3E3E3" />
 
-            <FrameLayout
-                android:id="@+id/typeFilter"
-                android:layout_width="match_parent"
-                android:layout_height="180dp">
+<!--            <FrameLayout-->
+<!--                android:id="@+id/typeFilter"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="180dp">-->
 
 
-                <ImageButton
-                    android:id="@+id/studyButton"
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="58dp"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/circle"
-                    android:padding="20dp"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/baseline_menu_book_24"
-                    app:tint="@color/deepBlue" />
+<!--                <ImageButton-->
+<!--                    android:id="@+id/studyButton"-->
+<!--                    android:layout_width="75dp"-->
+<!--                    android:layout_height="75dp"-->
+<!--                    android:layout_marginStart="20dp"-->
+<!--                    android:layout_marginTop="58dp"-->
+<!--                    android:adjustViewBounds="true"-->
+<!--                    android:background="@drawable/circle"-->
+<!--                    android:padding="20dp"-->
+<!--                    android:scaleType="fitCenter"-->
+<!--                    app:srcCompat="@drawable/baseline_menu_book_24"-->
+<!--                    app:tint="@color/deepBlue" />-->
 
-                <ImageButton
-                    android:id="@+id/foodButton"
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
-                    android:layout_marginStart="135dp"
-                    android:layout_marginTop="58dp"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/circle"
-                    android:padding="20dp"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/baseline_fastfood_24"
-                    app:tint="@color/deepBlue" />
+<!--                <ImageButton-->
+<!--                    android:id="@+id/foodButton"-->
+<!--                    android:layout_width="75dp"-->
+<!--                    android:layout_height="75dp"-->
+<!--                    android:layout_marginStart="135dp"-->
+<!--                    android:layout_marginTop="58dp"-->
+<!--                    android:adjustViewBounds="true"-->
+<!--                    android:background="@drawable/circle"-->
+<!--                    android:padding="20dp"-->
+<!--                    android:scaleType="fitCenter"-->
+<!--                    app:srcCompat="@drawable/baseline_fastfood_24"-->
+<!--                    app:tint="@color/deepBlue" />-->
 
-                <TextView
-                    android:id="@+id/typeHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="15dp"
-                    android:fontFamily="@font/source_sans_pro"
-                    android:text="Type"
-                    android:textColor="@color/deepBlue"
-                    android:textSize="20sp" />
+<!--                <TextView-->
+<!--                    android:id="@+id/typeHeader"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="20dp"-->
+<!--                    android:layout_marginTop="15dp"-->
+<!--                    android:fontFamily="@font/source_sans_pro"-->
+<!--                    android:text="Type"-->
+<!--                    android:textColor="@color/deepBlue"-->
+<!--                    android:textSize="20sp" />-->
 
-                <TextView
-                    android:id="@+id/studyTypeTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="36dp"
-                    android:layout_marginTop="140dp"
-                    android:fontFamily="@font/source_sans_pro"
-                    android:text="Study"
-                    android:textColor="@color/deepBlue"
-                    android:textSize="18sp" />
+<!--                <TextView-->
+<!--                    android:id="@+id/studyTypeTitle"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="36dp"-->
+<!--                    android:layout_marginTop="140dp"-->
+<!--                    android:fontFamily="@font/source_sans_pro"-->
+<!--                    android:text="Study"-->
+<!--                    android:textColor="@color/deepBlue"-->
+<!--                    android:textSize="18sp" />-->
 
-                <TextView
-                    android:id="@+id/foodTypeTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="156dp"
-                    android:layout_marginTop="140dp"
-                    android:fontFamily="@font/source_sans_pro"
-                    android:text="Food"
-                    android:textColor="@color/deepBlue"
-                    android:textSize="18sp" />
-            </FrameLayout>
+<!--                <TextView-->
+<!--                    android:id="@+id/foodTypeTitle"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="156dp"-->
+<!--                    android:layout_marginTop="140dp"-->
+<!--                    android:fontFamily="@font/source_sans_pro"-->
+<!--                    android:text="Food"-->
+<!--                    android:textColor="@color/deepBlue"-->
+<!--                    android:textSize="18sp" />-->
+<!--            </FrameLayout>-->
 
             <View
                 android:id="@+id/typeSeparator"
