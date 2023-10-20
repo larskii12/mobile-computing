@@ -4,35 +4,83 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:gravity="center"
+    app:layout_constraintWidth="320dp"
+    android:padding="32dp">
 
-    <EditText
-        android:id="@+id/editTextLoginEmail"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email or username"
-        android:inputType="textEmailAddress" />
+        android:layout_marginVertical="32dp"
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/editTextLoginPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password"
-        android:inputType="textPassword" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/logo_uninook" />
 
-    <TextView
-        android:id="@+id/buttonGoToSignup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:text="First time here? sign up" />
+        <TextView
+            style="@style/TextHeading"
+            android:id="@+id/logoText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="UniNook" />
 
-    <Button
-        android:id="@+id/buttonLogin"
-        style="@style/Button.Primary"
-        android:layout_width="match_parent"
+        <TextView
+            style="@style/TextSubHeading"
+            android:id="@+id/pageTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Login" />
+
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Login" />
+        android:orientation="vertical"
+        android:layout_marginBottom="64dp"
+        >
+        <EditText
+            android:id="@+id/editTextLoginEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="emailAddress"
+            android:hint="Email or username"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/editTextLoginPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:autofillHints="password"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:id="@+id/buttonGoToSignup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_marginTop="16dp"
+            android:text="First time here? sign up" />
+
+        <LinearLayout
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+        >
+            <Button
+                android:id="@+id/buttonLogin"
+                style="@style/Button.Primary"
+                android:layout_width="122dp"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Login" />
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>
