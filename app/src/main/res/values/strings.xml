@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">MainActivity</string>
     <string name="title_activity_maps">MapsActivity</string>
+
+    <!-- Login strings-->
+    <string name="login">Login</string>
+    <string name="login_email_or_username">Email or username</string>
+
+    <!-- Sign up strings-->
+    <string name="Sign_Up">Sign Up</string>
+    <string name="UniNook">UniNook</string>
+    <string name="Name">Name</string>
+    <string name="Email">Email</string>
+    <string name="Username">Username</string>
+    <string name="Password">Password</string>
+    <string name="Confirm_Password">Confirm Password</string>
+
 </resources>

@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center"
-    app:layout_constraintWidth="320dp"
-    android:padding="32dp">
+    android:orientation="vertical"
+    android:padding="32dp"
+    app:layout_constraintWidth="320dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,60 +18,66 @@
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@string/UniNook"
             app:srcCompat="@drawable/logo_uninook" />
 
         <TextView
-            style="@style/TextHeading"
             android:id="@+id/logoText"
+            style="@style/TextHeading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="UniNook" />
+            android:text="@string/UniNook"
+            android:textAlignment="center" />
 
         <TextView
-            style="@style/TextSubHeading"
             android:id="@+id/pageTitle"
+            style="@style/TextSubHeading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="Login" />
+            android:text="@string/login"
+            android:textAlignment="center" />
 
     </LinearLayout>
 
-    <LinearLayout android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_marginBottom="64dp"
-        >
+        android:orientation="vertical">
+
         <EditText
             android:id="@+id/editTextLoginEmail"
+            style="@style/TextInputStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12sp"
             android:autofillHints="emailAddress"
-            android:hint="Email or username"
+            android:hint="@string/login_email_or_username"
             android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/editTextLoginPassword"
+            style="@style/TextInputStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
             android:autofillHints="password"
+            android:hint="@string/Password"
             android:inputType="textPassword" />
 
         <TextView
             android:id="@+id/buttonGoToSignup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
             android:layout_marginTop="16dp"
+            android:clickable="true"
             android:text="First time here? sign up" />
 
         <LinearLayout
-            android:gravity="center"
-            android:layout_height="match_parent"
             android:layout_width="match_parent"
-        >
+            android:layout_height="match_parent"
+            android:gravity="center">
+
             <Button
                 android:id="@+id/buttonLogin"
                 style="@style/Button.Primary"
@@ -79,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="16dp"
                 android:layout_marginTop="16dp"
-                android:text="Login" />
+                android:text="@string/login" />
         </LinearLayout>
     </LinearLayout>
 
