@@ -1,18 +1,13 @@
-package com.example.mainactivity.models.review;
+package com.example.mainactivity.models.busy_rating;
 
 import androidx.annotation.NonNull;
 
 import java.sql.Time;
 
-public class Review {
+public class BusyRating {
 
     @NonNull
-    int reviewId;
-
-    @NonNull
-    int userId;
-
-    Integer score;
+    int busyRatingId;
 
     Integer libraryId;
 
@@ -22,32 +17,22 @@ public class Review {
 
     Integer gymId;
 
+    Integer date;
+
     Time time;
 
-    String comment;
+    Integer totalScore;
 
-    public int getReviewId() {
-        return reviewId;
+    Integer averageScore;
+
+    Integer count;
+
+    public int getBusyRatingId() {
+        return busyRatingId;
     }
 
-    public void setReviewId(int reviewId) {
-        this.reviewId = reviewId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public Integer getScore() {
-        return score;
-    }
-
-    public void setScore(Integer score) {
-        this.score = score;
+    public void setBusyRatingId(int busyRatingId) {
+        this.busyRatingId = busyRatingId;
     }
 
     public Integer getLibraryId() {
@@ -82,6 +67,14 @@ public class Review {
         this.gymId = gymId;
     }
 
+    public Integer getDate() {
+        return date;
+    }
+
+    public void setDate(Integer date) {
+        this.date = date;
+    }
+
     public Time getTime() {
         return time;
     }
@@ -90,11 +83,27 @@ public class Review {
         this.time = time;
     }
 
-    public String getComment() {
-        return comment;
+    public Integer getTotalScore() {
+        return totalScore;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setTotalScore(Integer totalScore) {
+        this.totalScore = totalScore;
+    }
+
+    public Integer getAverageScore() {
+        return averageScore;
+    }
+
+    public void setAverageScore(Integer averageScore) {
+        this.averageScore = averageScore;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
     }
 }
