@@ -1,28 +1,23 @@
 package com.example.mainactivity.activities;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 
+import androidx.fragment.app.FragmentActivity;
+
 import com.example.mainactivity.R;
+import com.example.mainactivity.databinding.ActivityMapsBinding;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.example.mainactivity.databinding.ActivityMapsBinding;
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -32,6 +27,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ImageButton filterButton;
     private BottomNavigationView bottomNav;
     private ImageButton testButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +113,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mMap.setMaxZoomPreference(30);
+        mMap.setMinZoomPreference(15);
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
+
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
+        LatLng sydney = new LatLng(-37.800097099486244, 144.96440741828778);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
