@@ -17,6 +17,9 @@
         android:theme="@style/Theme.MainActivity"
         tools:targetApi="31">
         <activity
+            android:name=".activities.SearchResults"
+            android:exported="false" />
+        <activity
             android:name=".activities.FilterAdjustmentActivity"
             android:exported="false"
             android:parentActivityName=".activities.MapsActivity"/>
