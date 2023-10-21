@@ -10,27 +10,75 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="108dp"
+        android:layout_height="88dp"
         android:background="@color/white"
         android:minHeight="90dp"
-        app:layout_constraintBottom_toTopOf="@+id/scrollView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <ImageButton
+            android:id="@+id/returnButton"
+            android:contentDescription="@android:string/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginEnd="18dp"
+            android:adjustViewBounds="true"
+            android:backgroundTint="#00FFFFFF"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+            app:layout_constraintEnd_toEndOf="@+id/toolbar"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/toolbar"
+            app:layout_constraintTop_toTopOf="@id/toolbar"
+            app:layout_constraintVertical_bias="1.0"
+            app:srcCompat="?attr/actionModeCloseDrawable"
+            app:tint="@color/deepBlue" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/source_sans_pro"
+            android:text="Filter"
+            android:textColor="@color/deepBlue"
+            android:textSize="28sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+
+
+
+
+
+        </LinearLayout>
+
+
+
+
+    </androidx.appcompat.widget.Toolbar>
+
 
 
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="412dp"
-        android:layout_height="610dp"
-        android:layout_marginBottom="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="88dp"
+        android:layout_marginBottom="70dp"
         android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        app:layout_constraintStart_toStartOf="parent">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,71 +91,6 @@
                 android:layout_height="2dp"
                 android:background="#E3E3E3" />
 
-<!--            <FrameLayout-->
-<!--                android:id="@+id/typeFilter"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="180dp">-->
-
-
-<!--                <ImageButton-->
-<!--                    android:id="@+id/studyButton"-->
-<!--                    android:layout_width="75dp"-->
-<!--                    android:layout_height="75dp"-->
-<!--                    android:layout_marginStart="20dp"-->
-<!--                    android:layout_marginTop="58dp"-->
-<!--                    android:adjustViewBounds="true"-->
-<!--                    android:background="@drawable/circle"-->
-<!--                    android:padding="20dp"-->
-<!--                    android:scaleType="fitCenter"-->
-<!--                    app:srcCompat="@drawable/baseline_menu_book_24"-->
-<!--                    app:tint="@color/deepBlue" />-->
-
-<!--                <ImageButton-->
-<!--                    android:id="@+id/foodButton"-->
-<!--                    android:layout_width="75dp"-->
-<!--                    android:layout_height="75dp"-->
-<!--                    android:layout_marginStart="135dp"-->
-<!--                    android:layout_marginTop="58dp"-->
-<!--                    android:adjustViewBounds="true"-->
-<!--                    android:background="@drawable/circle"-->
-<!--                    android:padding="20dp"-->
-<!--                    android:scaleType="fitCenter"-->
-<!--                    app:srcCompat="@drawable/baseline_fastfood_24"-->
-<!--                    app:tint="@color/deepBlue" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/typeHeader"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="20dp"-->
-<!--                    android:layout_marginTop="15dp"-->
-<!--                    android:fontFamily="@font/source_sans_pro"-->
-<!--                    android:text="Type"-->
-<!--                    android:textColor="@color/deepBlue"-->
-<!--                    android:textSize="20sp" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/studyTypeTitle"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="36dp"-->
-<!--                    android:layout_marginTop="140dp"-->
-<!--                    android:fontFamily="@font/source_sans_pro"-->
-<!--                    android:text="Study"-->
-<!--                    android:textColor="@color/deepBlue"-->
-<!--                    android:textSize="18sp" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/foodTypeTitle"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="156dp"-->
-<!--                    android:layout_marginTop="140dp"-->
-<!--                    android:fontFamily="@font/source_sans_pro"-->
-<!--                    android:text="Food"-->
-<!--                    android:textColor="@color/deepBlue"-->
-<!--                    android:textSize="18sp" />-->
-<!--            </FrameLayout>-->
 
             <View
                 android:id="@+id/typeSeparator"
@@ -118,9 +101,11 @@
             <FrameLayout
                 android:id="@+id/distanceFilter"
                 android:layout_width="match_parent"
-                android:layout_height="120dp">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp">
 
                 <TextView
+
                     android:id="@+id/distanceHeader"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -131,12 +116,30 @@
                     android:textColor="@color/deepBlue"
                     android:textSize="20sp" />
 
+                <TextView
+                    android:id="@+id/distanceIndicator"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="90dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="22dp"
+                    android:layout_marginEnd="-120dp"
+                    android:autoSizeTextType="uniform"
+                    android:background="@drawable/rounded_square"
+                    android:fontFamily="@font/source_sans_pro"
+                    android:text="10m"
+                    android:textAlignment="center"
+                    android:textColor="@color/deepBlue"
+                    android:textSize="18sp" />
+
                 <SeekBar
                     android:id="@+id/seekBar"
-                    android:layout_width="360dp"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
                     android:layout_marginTop="52dp"
+                    android:min="10"
+                    android:max="1000"
                     android:progressTint="@color/deepBlue"
                     android:splitTrack="false"
                     android:thumb="@drawable/thumb_seekbar"
@@ -172,11 +175,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="58dp"
+                    android:buttonTint="@color/deepBlue"
                     android:text="Graduate Space"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    android:buttonTint="@color/deepBlue"
-                    app:buttonTint="@color/deepBlue"/>
+                    app:buttonTint="@color/deepBlue" />
 
                 <CheckBox
                     android:id="@+id/quietStudyCheck"
@@ -184,11 +187,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="230dp"
                     android:layout_marginTop="58dp"
+                    android:buttonTint="@color/deepBlue"
                     android:text="Quiet Study"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    android:buttonTint="@color/deepBlue"
-                    app:buttonTint="@color/deepBlue"/>
+                    app:buttonTint="@color/deepBlue" />
 
                 <CheckBox
                     android:id="@+id/afterHoursCheck"
@@ -196,11 +199,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="118dp"
+                    android:buttonTint="@color/deepBlue"
                     android:text="After Hours Access"
                     android:textColor="@color/deepBlue"
                     android:textSize="17sp"
-                    android:buttonTint="@color/deepBlue"
-                    app:buttonTint="@color/deepBlue"/>
+                    app:buttonTint="@color/deepBlue" />
 
                 <CheckBox
                     android:id="@+id/microwaveCheck"
@@ -208,11 +211,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="230dp"
                     android:layout_marginTop="118dp"
+                    android:buttonTint="@color/deepBlue"
                     android:text="Microwaves"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    android:buttonTint="@color/deepBlue"
-                    app:buttonTint="@color/deepBlue"/>
+                    app:buttonTint="@color/deepBlue" />
 
                 <CheckBox
                     android:id="@+id/ATMCheck"
@@ -220,11 +223,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="178dp"
+                    android:buttonTint="@color/deepBlue"
                     android:text="ATM"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    android:buttonTint="@color/deepBlue"
-                    app:buttonTint="@color/deepBlue"/>
+                    app:buttonTint="@color/deepBlue" />
 
                 <CheckBox
                     android:id="@+id/accessibleCheck"
@@ -232,11 +235,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="230dp"
                     android:layout_marginTop="178dp"
+                    android:buttonTint="@color/deepBlue"
                     android:text="Accessible"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    android:buttonTint="@color/deepBlue"
-                    app:buttonTint="@color/deepBlue"/>
+                    app:buttonTint="@color/deepBlue" />
 
                 <CheckBox
                     android:id="@+id/vendingMachineCheck"
@@ -244,11 +247,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="238dp"
+                    android:buttonTint="@color/deepBlue"
                     android:text="Vending Machine"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    android:buttonTint="@color/deepBlue"
-                    app:buttonTint="@color/deepBlue"/>
+                    app:buttonTint="@color/deepBlue" />
 
                 <CheckBox
                     android:id="@+id/parkingCheck"
@@ -256,11 +259,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="230dp"
                     android:layout_marginTop="238dp"
+                    android:buttonTint="@color/deepBlue"
                     android:text="Parking Space"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    android:buttonTint="@color/deepBlue"
-                    app:buttonTint="@color/deepBlue"/>
+                    app:buttonTint="@color/deepBlue" />
 
                 <CheckBox
                     android:id="@+id/bathroomCheck"
@@ -268,11 +271,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="298dp"
+                    android:buttonTint="@color/deepBlue"
                     android:text="Bathroom"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    android:buttonTint="@color/deepBlue"
-                    app:buttonTint="@color/deepBlue"/>
+                    app:buttonTint="@color/deepBlue" />
 
             </FrameLayout>
 
@@ -285,7 +288,7 @@
             <FrameLayout
                 android:id="@+id/sortFilter"
                 android:layout_width="match_parent"
-                android:layout_height="350dp">
+                android:layout_height="250dp">
 
                 <TextView
                     android:id="@+id/sortTitle"
@@ -296,134 +299,133 @@
                     android:fontFamily="@font/source_sans_pro"
                     android:text="Sort by"
                     android:textColor="@color/deepBlue"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp" />
 
-                    <RadioGroup
-                        android:id="@+id/radioGroupAsc"
-                        android:layout_width="204dp"
-                        android:layout_height="250dp"
-                        android:layout_marginTop="50dp">
+                <RadioGroup
+                    android:id="@+id/radioGroupAsc"
+                    android:layout_width="204dp"
+                    android:layout_height="190dp"
+                    android:layout_marginTop="50dp">
 
-                        <RadioButton
-                            android:id="@+id/nameAsc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginTop="8dp"
-                            android:text="Name (asc)"
-                            android:textColor="@color/deepBlue"
-                            android:textSize="18sp"
-                            android:buttonTint="@color/deepBlue"
-                            app:buttonTint="@color/deepBlue"/>
+                    <RadioButton
+                        android:id="@+id/nameAsc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="8dp"
+                        android:buttonTint="@color/deepBlue"
+                        android:text="Name (asc)"
+                        android:textColor="@color/deepBlue"
+                        android:textSize="18sp"
+                        app:buttonTint="@color/deepBlue" />
 
-                        <RadioButton
-                            android:id="@+id/distAsc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginTop="10dp"
-                            android:text="Distance (asc)"
-                            android:textColor="@color/deepBlue"
-                            android:textSize="18sp"
-                            android:buttonTint="@color/deepBlue"
-                            app:buttonTint="@color/deepBlue"/>
+                    <RadioButton
+                        android:id="@+id/distAsc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:buttonTint="@color/deepBlue"
+                        android:text="Distance (asc)"
+                        android:textColor="@color/deepBlue"
+                        android:textSize="18sp"
+                        app:buttonTint="@color/deepBlue" />
 
-                        <RadioButton
-                            android:id="@+id/ratingAsc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginTop="10dp"
-                            android:text="Rating (asc)"
-                            android:textColor="@color/deepBlue"
-                            android:textSize="18sp"
-                            android:buttonTint="@color/deepBlue"
-                            app:buttonTint="@color/deepBlue"/>
-                    </RadioGroup>
-                    <RadioGroup
-                        android:id="@+id/radioGroupDesc"
-                        android:layout_width="204dp"
-                        android:layout_height="250dp"
-                        android:layout_marginTop="50dp"
-                        android:layout_marginStart="204dp">
+                    <RadioButton
+                        android:id="@+id/ratingAsc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:buttonTint="@color/deepBlue"
+                        android:text="Rating (asc)"
+                        android:textColor="@color/deepBlue"
+                        android:textSize="18sp"
+                        app:buttonTint="@color/deepBlue" />
+                </RadioGroup>
 
-                        <RadioButton
-                            android:id="@+id/nameDesc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginTop="8dp"
-                            android:buttonTint="@color/deepBlue"
-                            android:text="Name (desc)"
-                            android:textColor="@color/deepBlue"
-                            android:textSize="18sp"
-                            app:buttonTint="@color/deepBlue"/>
+                <RadioGroup
+                    android:id="@+id/radioGroupDesc"
+                    android:layout_width="204dp"
+                    android:layout_height="190dp"
+                    android:layout_marginStart="204dp"
+                    android:layout_marginTop="50dp">
 
-                        <RadioButton
-                            android:id="@+id/distDesc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginTop="10dp"
-                            android:text="Distance (desc)"
-                            android:textColor="@color/deepBlue"
-                            android:textSize="18sp"
-                            android:buttonTint="@color/deepBlue"
-                            app:buttonTint="@color/deepBlue"/>
+                    <RadioButton
+                        android:id="@+id/nameDesc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="8dp"
+                        android:buttonTint="@color/deepBlue"
+                        android:text="Name (desc)"
+                        android:textColor="@color/deepBlue"
+                        android:textSize="18sp"
+                        app:buttonTint="@color/deepBlue" />
 
-                        <RadioButton
-                            android:id="@+id/ratingDesc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginTop="10dp"
-                            android:text="Rating (desc)"
-                            android:textColor="@color/deepBlue"
-                            android:textSize="18sp"
-                            android:buttonTint="@color/deepBlue"
-                            app:buttonTint="@color/deepBlue"/>
-                    </RadioGroup>
+                    <RadioButton
+                        android:id="@+id/distDesc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:buttonTint="@color/deepBlue"
+                        android:text="Distance (desc)"
+                        android:textColor="@color/deepBlue"
+                        android:textSize="18sp"
+                        app:buttonTint="@color/deepBlue" />
+
+                    <RadioButton
+                        android:id="@+id/ratingDesc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:buttonTint="@color/deepBlue"
+                        android:text="Rating (desc)"
+                        android:textColor="@color/deepBlue"
+                        android:textSize="18sp"
+                        app:buttonTint="@color/deepBlue" />
+                </RadioGroup>
             </FrameLayout>
         </LinearLayout>
     </ScrollView>
 
-    <ImageButton
-        android:id="@+id/returnButton"
-        android:contentDescription="@android:string/cancel"
-        android:layout_width="60dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="339dp"
-        android:layout_marginBottom="10dp"
-        android:adjustViewBounds="true"
-        android:backgroundTint="#00FFFFFF"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="@id/toolbar"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="?attr/actionModeCloseDrawable"
-        app:tint="@color/deepBlue" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@drawable/rectangle_border"
+        android:foregroundGravity="bottom"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="265dp"
-        android:layout_marginBottom="18dp"
-        android:fontFamily="@font/source_sans_pro"
-        android:text="Filter"
-        android:textColor="@color/deepBlue"
-        android:textSize="28sp"
-        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/returnButton"
-        app:layout_constraintTop_toTopOf="@+id/toolbar"
-        app:layout_constraintVertical_bias="1.0" />
+        <Button
+            android:id="@+id/resetButton"
+            android:layout_width="160dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/white"
+            app:strokeColor="@color/black"
+            app:strokeWidth="2dp"
+            android:layout_marginStart="30dp"
+            android:text="Reset"
+            android:textColor="@color/deepBlue"
+            android:fontFamily="@font/source_sans_pro"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/applyButton"
+            android:layout_width="160dp"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/deepBlue"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="224dp"
+            android:text="Apply"
+            android:fontFamily="@font/source_sans_pro"
+            android:textSize="20sp"/>
+
+    </FrameLayout>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
