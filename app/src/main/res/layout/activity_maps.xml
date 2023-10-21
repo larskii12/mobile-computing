@@ -80,13 +80,12 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="60dp"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="60dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/map"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toTopOf="@+id/map">
 
         <android.widget.SearchView
             android:id="@+id/searchBar"
@@ -102,30 +101,30 @@
             android:elevation="5dp"
             android:foregroundTint="#FFFFFF"
             android:iconifiedByDefault="false"
+            android:queryHint="Search Here"
+            android:searchIcon="@drawable/search_icon"
             app:layout_constraintBottom_toBottomOf="@+id/map"
             app:layout_constraintEnd_toEndOf="@+id/map"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/map"
             app:layout_constraintTop_toTopOf="@+id/map"
-            app:layout_constraintVertical_bias="0.0"
-            android:queryHint="Search Here"
-            android:searchIcon="@drawable/search_icon" />
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageButton
             android:id="@+id/filterButton"
             android:layout_width="57dp"
             android:layout_height="60dp"
-            android:layout_marginTop="1dp"
             android:layout_marginStart="338dp"
+            android:layout_marginTop="1dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="636dp"
             android:backgroundTint="@color/white"
-            app:srcCompat="@drawable/filter_list"
-            android:src="@drawable/filter_list"
             android:drawableTop="@drawable/filter_list"
-            app:tint="@color/deepBlue"
+            android:elevation="5dp"
             android:padding="12dp"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter"
+            android:src="@drawable/filter_list"
+            app:tint="@color/deepBlue" />
 
     </FrameLayout>
 

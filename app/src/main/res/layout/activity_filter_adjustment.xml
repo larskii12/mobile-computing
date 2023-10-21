@@ -13,6 +13,7 @@
         android:layout_height="88dp"
         android:background="@color/white"
         android:minHeight="90dp"
+        android:elevation="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -124,7 +125,7 @@
                     android:layout_marginTop="22dp"
                     android:layout_marginEnd="-120dp"
                     android:autoSizeTextType="uniform"
-                    android:background="@drawable/rounded_square"
+                    android:background="@drawable/rounded_button_long"
                     android:fontFamily="@font/source_sans_pro"
                     android:text="10m"
                     android:textAlignment="center"
@@ -156,7 +157,7 @@
             <FrameLayout
                 android:id="@+id/facilitiesFilter"
                 android:layout_width="match_parent"
-                android:layout_height="365dp">
+                android:layout_height="300dp">
 
                 <TextView
                     android:id="@+id/facilitiesTitle"
@@ -265,17 +266,17 @@
                     android:textSize="18sp"
                     app:buttonTint="@color/deepBlue" />
 
-                <CheckBox
-                    android:id="@+id/bathroomCheck"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="298dp"
-                    android:buttonTint="@color/deepBlue"
-                    android:text="Bathroom"
-                    android:textColor="@color/deepBlue"
-                    android:textSize="18sp"
-                    app:buttonTint="@color/deepBlue" />
+<!--                <CheckBox-->
+<!--                    android:id="@+id/bathroomCheck"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="20dp"-->
+<!--                    android:layout_marginTop="298dp"-->
+<!--                    android:buttonTint="@color/deepBlue"-->
+<!--                    android:text="Bathroom"-->
+<!--                    android:textColor="@color/deepBlue"-->
+<!--                    android:textSize="18sp"-->
+<!--                    app:buttonTint="@color/deepBlue" />-->
 
             </FrameLayout>
 
