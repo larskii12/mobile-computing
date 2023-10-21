@@ -8,6 +8,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class UserServiceImpl implements UserService {
 
     Connection connector = new DatabaseHelper().getConnector();
@@ -377,6 +379,30 @@ public class UserServiceImpl implements UserService {
         catch (Exception e) {
             throw new Exception("Errors happened when update user information, please contact the IT administrator.");
         }
+    }
+
+    /**
+     * Check a user exist or not with user name or email
+     *
+     * @param userNameOrEmail as username or email
+     * @return true if user exist, else false
+     * @throws SQLException
+     */
+    public boolean hasUser(String userNameOrEmail) throws SQLException {
+
+        String query = "SELECT * FROM mobilecomputing.\"user\" WHERE \"user_name\" = ? OR \"user_email\" = ?";
+
+        Connection connector = new DatabaseHelper().getConnector();
+
+        PreparedStatement preparedStatement = connector.prepareStatement(query);
+        preparedStatement.setString(1, userNameOrEmail);
+        preparedStatement.setString(2, userNameOrEmail);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        // Return this user exist or nor
+        return resultSet.next();
+
     }
 
 }

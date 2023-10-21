@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 import com.example.mainactivity.R;
 import com.example.mainactivity.service.mail.mailServiceImpl;
 
-public class IssueReport  extends AppCompatActivity {
+public class ReportIssue extends AppCompatActivity {
 
     private EditText editTextRaiseIssue;
 
@@ -33,21 +33,21 @@ public class IssueReport  extends AppCompatActivity {
 
                 case 1:
                     buttonRaiseIssue.setEnabled(false);
-                    buttonRaiseIssue.setBackgroundColor(ContextCompat.getColor(IssueReport.this, R.color.grey));
+                    buttonRaiseIssue.setBackgroundColor(ContextCompat.getColor(ReportIssue.this, R.color.grey));
                     buttonRaiseIssue.setText("Sending");
                     break;
 
                 case 2:
                     buttonRaiseIssue.setEnabled(true);
                     buttonRaiseIssue.setText("Report issue");
-                    buttonRaiseIssue.setBackgroundColor(ContextCompat.getColor(IssueReport.this, R.color.primary));
+                    buttonRaiseIssue.setBackgroundColor(ContextCompat.getColor(ReportIssue.this, R.color.primary));
             }
         }
     };
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_issue_report);
+        setContentView(R.layout.activity_report_issue);
 
         editTextRaiseIssue = findViewById(R.id.EditTextRaiseIssue);
 
@@ -73,6 +73,7 @@ public class IssueReport  extends AppCompatActivity {
                             }
 
                             showTextMessage("Issue report success.");
+                            finish();
                         }
                     }.start();
                 }

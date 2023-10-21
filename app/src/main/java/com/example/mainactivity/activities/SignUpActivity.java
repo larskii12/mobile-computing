@@ -207,7 +207,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
                 new Thread() {
                     public void run() {
-                            Intent intent = new Intent(SignUpActivity.this, IssueReport.class);
+                            Intent intent = new Intent(SignUpActivity.this, ReportIssue.class);
                             startActivity(intent);
                     }
                 }.start();

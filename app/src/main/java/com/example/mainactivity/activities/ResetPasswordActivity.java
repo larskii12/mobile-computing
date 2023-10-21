@@ -14,13 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.mainactivity.R;
-import com.example.mainactivity.config.DatabaseHelper;
 import com.example.mainactivity.service.mail.mailServiceImpl;
 import com.example.mainactivity.service.user.UserServiceImpl;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 
@@ -228,6 +223,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     /**
      * get OTP for registration
+     *
      * @return OTP
      * @throws Exception if happens
      */
@@ -236,18 +232,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
 //             Disable get OTP button
             handler.sendEmptyMessage(3);
 
-            String query = "SELECT * FROM mobilecomputing.\"user\" WHERE \"user_name\" = ? OR \"user_email\" = ?";
-
-            Connection connector = new DatabaseHelper().getConnector();
-
-            PreparedStatement preparedStatement = connector.prepareStatement(query);
-            preparedStatement.setString(1, editTextResetPasswordEmail.getText().toString());
-            preparedStatement.setString(2, editTextResetPasswordEmail.getText().toString());
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-
             // // Verify user old password and change password
-            if (resultSet.next()) {
+            if (new UserServiceImpl().hasUser(editTextResetPasswordEmail.getText().toString())) {
+
                 return String.valueOf(new mailServiceImpl().sendOTP(editTextResetPasswordEmail.getText().toString().trim()));
             }
 
