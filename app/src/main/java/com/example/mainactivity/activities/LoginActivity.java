@@ -1,9 +1,10 @@
-package com.example.mainactivity;
+package com.example.mainactivity.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mainactivity.R;
 import com.example.mainactivity.models.user.User;
 import com.example.mainactivity.service.user.UserServiceImpl;
 
@@ -22,6 +24,22 @@ public class LoginActivity extends AppCompatActivity {
     private Button buttonLogin;
     private TextView buttonGoToSignup;
 
+    private TextView buttonResetPassword;
+
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @SuppressLint("SetTextI18n")
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    String info = (String) msg.obj;
+                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
+                    break;
+
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         editTextLoginPassword = findViewById(R.id.editTextLoginPassword);
         buttonLogin = findViewById(R.id.buttonLogin);
         buttonGoToSignup = findViewById(R.id.buttonGoToSignup);
+        buttonResetPassword = findViewById(R.id.buttonForgetPassword);
 
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,20 +78,29 @@ public class LoginActivity extends AppCompatActivity {
                 }.start();
             }
         });
+
+        buttonResetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new Thread() {
+                    public void run() {
+                        Intent intent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
+                        startActivity(intent);
+                    }
+                }.start();
+            }
+        });
     }
+
+
 
     private int loginUser() throws Exception {
         String email = editTextLoginEmail.getText().toString().trim();
         String password = editTextLoginPassword.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), "Please fill all fields.", Toast.LENGTH_SHORT).show();
-                }
-            });
 
+            showTextMessage("Please fill all fields.");
             return -1;
         }
 
@@ -81,12 +109,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (logInUser == null){
 
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), "Your input does not match our records, please try again.", Toast.LENGTH_SHORT).show();
-                }
-            });
+            showTextMessage("Your input does not match our records, please try again.");
         }
 
         else{
@@ -97,19 +120,26 @@ public class LoginActivity extends AppCompatActivity {
             System.out.println("User Faculty: " + logInUser.getUserFaculty());
             System.out.println("User AQF level: " + logInUser.getUserAQFLevel());
 
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    String message = logInUser.getUserId() + " " + logInUser.getUserName()
-                            + " " + logInUser.getUserEmail()
-                            + " " + logInUser.getUserFaculty()
-                            + " " + logInUser.getUserAQFLevel();
-                    Toast.makeText(getApplicationContext(), "Login successfully!\n" + message, Toast.LENGTH_SHORT).show();
-                }
-            });
+            // Show login successful message
+            String message = logInUser.getUserId() + " " + logInUser.getUserName()
+                    + " " + logInUser.getUserEmail()
+                    + " " + logInUser.getUserFaculty()
+                    + " " + logInUser.getUserAQFLevel();
+            showTextMessage("Login successfully!\n" + message);
 
         }
 
         return 0;
+    }
+
+    /**
+     * Show message text
+     * @param text as the showing message
+     */
+    private void showTextMessage(String text){
+        Message msg = new Message();
+        msg.what = 0;
+        msg.obj = text;
+        handler.sendMessage(msg);
     }
 }

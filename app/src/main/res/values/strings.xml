@@ -1,4 +1,30 @@
 <resources>
     <string name="app_name">MainActivity</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="forget_password">Forget Password</string>
+    <string-array name="faculty_list">
+        <item>Please select your faculty (optional)</item>
+        <item>Architecture, Building and Planning</item>
+        <item>Arts</item>
+        <item>Education</item>
+        <item>Engineering and Information Technology</item>
+        <item>Fine Arts and Music</item>
+        <item>Law</item>
+        <item>Medicine, Dentistry and Health Sciences</item>
+        <item>Science</item>
+    </string-array>
+
+    <string-array name="degree_list">
+        <item>Please select your degree (optional)</item>
+        <item>Certificate I</item>
+        <item>Certificate II</item>
+        <item>Certificate III</item>
+        <item>Certificate IV</item>
+        <item>Diploma</item>
+        <item>Advanced Diploma, Associate Degree</item>
+        <item>Bachelor Degree</item>
+        <item>Bachelor Honours Degree</item>
+        <item>Masters Degree</item>
+        <item>Doctoral Degree</item>
+    </string-array>
 </resources>
