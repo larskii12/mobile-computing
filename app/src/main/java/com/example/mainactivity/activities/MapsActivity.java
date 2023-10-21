@@ -62,9 +62,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onQueryTextSubmit(String s) {
                 String searchQuery = searchBar.getQuery().toString();
-
-                // get location(s) from the database, and display it in a list form (go to next page??)
-
+                Intent intent = new Intent(MapsActivity.this, SearchResults.class);
+                intent.putExtra("searchQuery", searchQuery);
+                startActivity(intent);
                 return false;
             }
 
