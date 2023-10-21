@@ -2,6 +2,7 @@ package com.example.mainactivity.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SearchView;
@@ -26,7 +27,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private SearchView searchBar;
     private ImageButton filterButton;
     private BottomNavigationView bottomNav;
-    private ImageButton testButton;
+
 
 
     @Override
@@ -39,6 +40,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         searchBar = findViewById(R.id.searchBar);
         filterButton = (ImageButton) findViewById(R.id.filterButton);
         bottomNav = findViewById(R.id.bottom_navigation);
+
+        bottomNav.setSelectedItemId(R.id.searchNav);
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
