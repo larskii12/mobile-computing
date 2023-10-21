@@ -103,6 +103,7 @@
         android:layout_below="@id/closingIcon"
         android:layout_marginVertical="6dp"
         android:background="@drawable/rounded_button_long"
+        android:minWidth="0dp"
         android:backgroundTint="#faf7f7">
 
         <ImageView
@@ -111,7 +112,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/gradspace_outline"
             android:layout_marginEnd="6dp"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/noise"
@@ -119,7 +121,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/volume_outline"
             android:layout_marginEnd="6dp"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/afterHours"
@@ -127,7 +130,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/lateaccess_outline"
             android:layout_marginEnd="6dp"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/microwave"
@@ -135,23 +139,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/microwave_outline"
             android:layout_marginEnd="6dp"
-            android:layout_gravity="center"/>
-
-        <ImageView
-            android:id="@+id/atm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/atm_outline"
-            android:layout_marginEnd="6dp"
-            android:layout_gravity="center"/>
-
-        <ImageView
-            android:id="@+id/accessible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/accessible_outline"
-            android:layout_marginEnd="6dp"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/vendingMachine"
@@ -159,13 +148,34 @@
             android:layout_height="wrap_content"
             android:background="@drawable/vending_machine_outline"
             android:layout_marginEnd="6dp"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/atm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/atm_outline"
+            android:layout_marginEnd="6dp"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/accessible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/accessible_outline"
+            android:layout_marginEnd="6dp"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
         <ImageView
             android:id="@+id/parking"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/parking_outline"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:visibility="gone"/>
 
     </LinearLayout>
     <androidx.cardview.widget.CardView
