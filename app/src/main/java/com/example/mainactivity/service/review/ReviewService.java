@@ -13,6 +13,6 @@ public interface ReviewService {
 
     List<Review> getReviewsByUser(int userId, Integer entityId, ReviewType type) throws Exception;
 
-    List<Review> getReviewsByUserAndEntity(int userId, Integer entityId, ReviewType type) throws Exception;
+    List<Review> getReviewsByEntity(Integer entityId, ReviewType type) throws Exception;
 
 }

@@ -13,9 +13,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mainactivity.models.location.Location;
 import com.example.mainactivity.R;
 import com.example.mainactivity.models.user.User;
+import com.example.mainactivity.service.location.LocationServiceImpl;
 import com.example.mainactivity.service.user.UserServiceImpl;
+
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -106,6 +110,8 @@ public class LoginActivity extends AppCompatActivity {
 
         // @TODO: Here, you can integrate your backend logic to authenticate the user and validate inputs.
         User logInUser = new UserServiceImpl().logIn(email, password);
+        List<Location> results = new LocationServiceImpl().findAllLocations("STUDY", "ERC", false);
+        System.out.println(results.get(0).getName());
 
         if (logInUser == null){
 
