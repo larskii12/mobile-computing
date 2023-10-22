@@ -123,6 +123,7 @@
             android:background="@drawable/volume_outline"
             android:layout_marginEnd="6dp"
             android:layout_gravity="center"
+            android:visibility="gone"
             />
 
         <ImageView
@@ -131,8 +132,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/lateaccess_outline"
             android:layout_marginEnd="6dp"
-            android:layout_gravity="center"
-           />
+            android:layout_gravity="center"/>
 
         <ImageView
             android:id="@+id/microwave"
@@ -140,8 +140,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/microwave_outline"
             android:layout_marginEnd="6dp"
-            android:layout_gravity="center"
-            android:visibility="gone"/>
+            android:layout_gravity="center"/>
 
         <ImageView
             android:id="@+id/vendingMachine"

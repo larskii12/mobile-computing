@@ -36,8 +36,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class SearchResults extends AppCompatActivity {
-    private final LocationServiceImpl searchAPI = new LocationServiceImpl();
-    private ResourceServiceImpl resourceAPI = new ResourceServiceImpl();
+//    private final LocationServiceImpl searchAPI = new LocationServiceImpl();
+//    private final ResourceServiceImpl resourceAPI = new ResourceServiceImpl();
     LinearLayout resultCardArea;
     List<Location> results = new ArrayList<>();
 
@@ -55,18 +55,17 @@ public class SearchResults extends AppCompatActivity {
         Intent intent = getIntent();
         String searchString = intent.getStringExtra("searchQuery");
 
-        //results = new ArrayList<>();
         Toast.makeText(getApplicationContext(), searchString, Toast.LENGTH_SHORT).show();
         resultCardArea = findViewById(R.id.resultCardArea);
 
         // use API to get the search result
         // study includes both libraries and study spaces
-
+//
         new Thread() {
             @Override
             public void run() {
                 try {
-                    results = searchAPI.findAllLocations("STUDY", searchString, true);
+                    results = new LocationServiceImpl().findAllLocations("STUDY", searchString, true);
 
 //                    if (results.size() != 0) {
 //                        // display something that says "no available results" --> go back to previous page
@@ -152,7 +151,7 @@ public class SearchResults extends AppCompatActivity {
 
 
         try {
-            List<Resource> studySpaceResources = resourceAPI.getResourceFromBuilding(buildingID);
+            List<Resource> studySpaceResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -200,7 +199,7 @@ public class SearchResults extends AppCompatActivity {
         // set icons for facilities available
 //
         try {
-            List<Resource> libraryResources = resourceAPI.getResourceFromBuilding(buildingID);
+            List<Resource> libraryResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -255,7 +254,7 @@ public class SearchResults extends AppCompatActivity {
         // set icons for facilities available
 //
         try {
-            List<Resource> restaurantResources = resourceAPI.getResourceFromBuilding(buildingID);
+            List<Resource> restaurantResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
