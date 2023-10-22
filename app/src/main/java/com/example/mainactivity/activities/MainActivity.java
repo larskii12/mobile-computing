@@ -1,5 +1,8 @@
 package com.example.mainactivity.activities;
 
+import static com.example.mainactivity.models.review.ReviewType.LIBRARY;
+import static com.example.mainactivity.models.review.ReviewType.STUDY_SPACE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;

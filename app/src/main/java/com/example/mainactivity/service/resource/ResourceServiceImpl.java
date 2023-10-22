@@ -1,17 +1,12 @@
 package com.example.mainactivity.service.resource;
 
 import com.example.mainactivity.config.DatabaseHelper;
-import com.example.mainactivity.models.location.Location;
-import com.example.mainactivity.models.location.building.Building;
 import com.example.mainactivity.models.location.resource.Resource;
 import com.example.mainactivity.models.location.resource.ResourceType;
-import com.example.mainactivity.models.review.ReviewType;
 
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
