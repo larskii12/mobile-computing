@@ -129,6 +129,41 @@ public class ResetPasswordActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private boolean resetPassWord() throws Exception {
+
+        new UserServiceImpl().resetUserPassword(editTextResetPasswordEmail.getText().toString(), EditTextResetPasswordNewPassword.getText().toString());
+        showTextMessage("Your password has been reset successfully.");
+        // Jump to login page
+        new Thread() {
+            public void run() {
+                Intent intent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        }.start();
+
+        return true;
+    }
+
+    /**
+     * get OTP for registration
+     *
+     * @return OTP
+     * @throws Exception if happens
+     */
+    private String getOTP() throws Exception {
+
+//             Disable get OTP button
+        handler.sendEmptyMessage(3);
+
+        // // Verify user old password and change password
+        if (new UserServiceImpl().hasUser(editTextResetPasswordEmail.getText().toString())) {
+
+            return String.valueOf(new mailServiceImpl().sendOTP(editTextResetPasswordEmail.getText().toString().trim()));
+        }
+
+        return "";
     }    @SuppressLint("HandlerLeak")
 
     private final Handler handler = new Handler() {
@@ -187,41 +222,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
         }
     };
 
-    private boolean resetPassWord() throws Exception {
-
-        new UserServiceImpl().resetUserPassword(editTextResetPasswordEmail.getText().toString(), EditTextResetPasswordNewPassword.getText().toString());
-        showTextMessage("Your password has been reset successfully.");
-        // Jump to login page
-        new Thread() {
-            public void run() {
-                Intent intent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-        }.start();
-
-        return true;
-    }
-
-    /**
-     * get OTP for registration
-     *
-     * @return OTP
-     * @throws Exception if happens
-     */
-    private String getOTP() throws Exception {
-
-//             Disable get OTP button
-        handler.sendEmptyMessage(3);
-
-        // // Verify user old password and change password
-        if (new UserServiceImpl().hasUser(editTextResetPasswordEmail.getText().toString())) {
-
-            return String.valueOf(new mailServiceImpl().sendOTP(editTextResetPasswordEmail.getText().toString().trim()));
-        }
-
-        return "";
-    }
-
     /**
      * Show message text
      *
@@ -233,6 +233,8 @@ public class ResetPasswordActivity extends AppCompatActivity {
         msg.obj = text;
         handler.sendMessage(msg);
     }
+
+
 
 
 }
