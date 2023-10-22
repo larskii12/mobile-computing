@@ -24,24 +24,24 @@ import com.example.mainactivity.service.user.UserServiceImpl;
 public class SignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private final int OTP_TIMER = 20;
-    private EditText editTextSignUpName;
+    private EditText ediTextSignUpName;
     private EditText editTextSignUpUserName;
     private EditText editTextSignUpEmail;
     private EditText editTextSignUpPassword;
     private EditText editTextSignUpConfirmPassword;
-    private EditText editTextSignUpOTP;
-    private Spinner facultyList;
+    private EditText editTextSingUpOTP;
+    private Spinner spinnerSignUpFacultyList;
 
-    private Spinner degreeList;
+    private Spinner spinnerSignUpDegreeList;
 
     private ArrayAdapter<CharSequence> facultyAdapter;
 
     private ArrayAdapter<CharSequence> degreeAdapter;
 
-    private Button buttonOTP;
-    private Button buttonSignUp;
+    private Button buttonSignUpGetOTP;
+    private Button buttonSignUpJoinNow;
 
-    private TextView buttonRaiseIssue;
+    private TextView buttonSignUpReportIssue;
 
     private String otp;
 
@@ -55,40 +55,113 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
     private int aqfLevel;
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("HandlerLeak")
+    private final Handler handler = new Handler() {
+        @SuppressLint("SetTextI18n")
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    String info = (String) msg.obj;
+                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
+                    break;
+
+                case 1:
+
+                    int time = (int) msg.obj;
+
+                    if (time > 0) {
+                        buttonSignUpGetOTP.setEnabled(false);
+                        buttonSignUpGetOTP.setText(time + "s");
+                        buttonSignUpGetOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.black));
+                        buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.grey));
+
+                        Message message = new Message();
+                        message.what = 1;
+                        message.obj = time - 1;
+                        handler.sendMessageDelayed(message, 1000);
+                    }
+
+                    else {
+                        ediTextSignUpName.setEnabled(true);
+                        editTextSignUpEmail.setEnabled(true);
+                        editTextSignUpUserName.setEnabled(true);
+                        editTextSignUpPassword.setEnabled(true);
+                        editTextSignUpConfirmPassword.setEnabled(true);
+                        spinnerSignUpFacultyList.setEnabled(true);
+                        spinnerSignUpDegreeList.setEnabled(true);
+                        buttonSignUpGetOTP.setEnabled(true);
+                        buttonSignUpGetOTP.setText("Get OTP");
+                        buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.primary));
+                    }
+
+                    break;
+
+                case 2:
+                    ediTextSignUpName.setEnabled(true);
+                    editTextSignUpEmail.setEnabled(true);
+                    editTextSignUpUserName.setEnabled(true);
+                    editTextSignUpPassword.setEnabled(true);
+                    editTextSignUpConfirmPassword.setEnabled(true);
+                    spinnerSignUpFacultyList.setEnabled(true);
+                    spinnerSignUpDegreeList.setEnabled(true);
+                    buttonSignUpGetOTP.setEnabled(true);
+                    buttonSignUpGetOTP.setText("Get OTP");
+                    buttonSignUpGetOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
+                    buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.primary));
+
+                    break;
+
+                case 3:
+                    ediTextSignUpName.setEnabled(false);
+                    editTextSignUpEmail.setEnabled(false);
+                    editTextSignUpUserName.setEnabled(false);
+                    editTextSignUpPassword.setEnabled(false);
+                    editTextSignUpConfirmPassword.setEnabled(false);
+                    spinnerSignUpFacultyList.setEnabled(false);
+                    spinnerSignUpDegreeList.setEnabled(false);
+                    buttonSignUpGetOTP.setEnabled(false);
+                    buttonSignUpGetOTP.setText("Sending");
+                    buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.grey));
+                    buttonSignUpGetOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.black));
+
+                    break;
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        editTextSignUpName = findViewById(R.id.EdiTextSignUpName);
+        ediTextSignUpName = findViewById(R.id.EdiTextSignUpName);
         editTextSignUpUserName = findViewById(R.id.EditTextSignUpUserName);
         editTextSignUpEmail = findViewById(R.id.EditTextSignUpEmail);
         editTextSignUpPassword = findViewById(R.id.EditTextSignUpPassword);
-        editTextSignUpConfirmPassword = findViewById(R.id.editTextSignUpConfirmPassword);
-        editTextSignUpOTP = findViewById(R.id.EditTextSignUpResetPasswordOTP);
-        facultyList = findViewById(R.id.spinnerFacultyList);
-        degreeList = findViewById(R.id.spinnerDegreeList);
+        editTextSignUpConfirmPassword = findViewById(R.id.EditTextSignUpConfirmPassword);
+        editTextSingUpOTP = findViewById(R.id.EditTextSingUpOTP);
+        spinnerSignUpFacultyList = findViewById(R.id.SpinnerSignUpFacultyList);
+        spinnerSignUpDegreeList = findViewById(R.id.SpinnerSignUpDegreeList);
 
         // Set the faculty drop down list
         facultyAdapter = ArrayAdapter.createFromResource(this, R.array.faculty_list, android.R.layout.simple_spinner_item);
         facultyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        facultyList.setAdapter(facultyAdapter);
-        facultyList.setOnItemSelectedListener(this);
+        spinnerSignUpFacultyList.setAdapter(facultyAdapter);
+        spinnerSignUpFacultyList.setOnItemSelectedListener(this);
 
         // Set the degree drop down list
         degreeAdapter = ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
         degreeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        degreeList.setAdapter(degreeAdapter);
-        degreeList.setOnItemSelectedListener(this);
+        spinnerSignUpDegreeList.setAdapter(degreeAdapter);
+        spinnerSignUpDegreeList.setOnItemSelectedListener(this);
 
-        buttonOTP = findViewById(R.id.buttonSignUpGetOTP);
-        buttonSignUp = findViewById(R.id.buttonSignUp);
-        buttonRaiseIssue = findViewById(R.id.buttonSignUpReportIssue);
+        buttonSignUpGetOTP = findViewById(R.id.ButtonSignUpGetOTP);
+        buttonSignUpJoinNow = findViewById(R.id.ButtonSignUpJoinNow);
+        buttonSignUpReportIssue = findViewById(R.id.ButtonSignUpReportIssue);
 
         this.otp = "";
 
-        buttonSignUp.setOnClickListener(new View.OnClickListener() {
+        buttonSignUpJoinNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -104,7 +177,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
             }
         });
 
-        buttonOTP.setOnClickListener(new View.OnClickListener() {
+        buttonSignUpGetOTP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -121,7 +194,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         });
 
 
-        buttonRaiseIssue.setOnClickListener(new View.OnClickListener() {
+        buttonSignUpReportIssue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -148,11 +221,12 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
         if (!inputCheck()) {
 
-            showTextMessage("Please fill all fields.");
             handler.sendEmptyMessage(2);
 
             return "";
-        } else {
+        }
+
+        else {
             String newOTP = String.valueOf(new mailServiceImpl().sendOTP(editTextSignUpEmail.getText().toString().trim()));
 
             showTextMessage("The OTP has been sent, please check your mail box.");
@@ -164,77 +238,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
             return newOTP;
         }
-    }    @SuppressLint("HandlerLeak")
-    private final Handler handler = new Handler() {
-        @SuppressLint("SetTextI18n")
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    String info = (String) msg.obj;
-                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
-                    break;
-
-                case 1:
-
-                    int time = (int) msg.obj;
-
-                    if (time > 0) {
-                        buttonOTP.setEnabled(false);
-                        buttonOTP.setText(time + "s");
-                        buttonOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
-                        buttonOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.grey));
-
-                        Message message = new Message();
-                        message.what = 1;
-                        message.obj = time - 1;
-                        handler.sendMessageDelayed(message, 1000);
-                    } else {
-                        editTextSignUpName.setEnabled(true);
-                        editTextSignUpEmail.setEnabled(true);
-                        editTextSignUpUserName.setEnabled(true);
-                        editTextSignUpPassword.setEnabled(true);
-                        editTextSignUpConfirmPassword.setEnabled(true);
-                        facultyList.setEnabled(true);
-                        degreeList.setEnabled(true);
-                        buttonOTP.setEnabled(true);
-                        buttonOTP.setText("Get OTP");
-                        buttonOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.primary));
-                    }
-
-                    break;
-
-                case 2:
-                    editTextSignUpName.setEnabled(true);
-                    editTextSignUpEmail.setEnabled(true);
-                    editTextSignUpUserName.setEnabled(true);
-                    editTextSignUpPassword.setEnabled(true);
-                    editTextSignUpConfirmPassword.setEnabled(true);
-                    facultyList.setEnabled(true);
-                    degreeList.setEnabled(true);
-                    buttonOTP.setEnabled(true);
-                    buttonOTP.setText("Get OTP");
-                    buttonOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
-                    buttonOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.primary));
-
-                    break;
-
-                case 3:
-                    editTextSignUpName.setEnabled(false);
-                    editTextSignUpEmail.setEnabled(false);
-                    editTextSignUpUserName.setEnabled(false);
-                    editTextSignUpPassword.setEnabled(false);
-                    editTextSignUpConfirmPassword.setEnabled(false);
-                    facultyList.setEnabled(false);
-                    degreeList.setEnabled(false);
-                    buttonOTP.setEnabled(false);
-                    buttonOTP.setText("Sending");
-                    buttonOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.grey));
-                    buttonOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
-
-                    break;
-            }
-        }
-    };
+    }
 
     /**
      * Sing up user
@@ -245,7 +249,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
     private boolean signUp() throws Exception {
 
         // Can not use input check, to ensure user cannot change the text field context after sending OTP.
-        if (otp.isEmpty() || !otp.equals(editTextSignUpOTP.getText().toString())) {
+        if (otp.isEmpty() || !otp.equals(editTextSingUpOTP.getText().toString())) {
 
             if (otp.isEmpty()) {
                 showTextMessage("Signed up Failed! Please fill all fields.");
@@ -284,7 +288,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
      * @return true if all fields input, otherwise false
      */
     private boolean inputCheck() {
-        name = editTextSignUpName.getText().toString().trim();
+        name = ediTextSignUpName.getText().toString().trim();
         username = editTextSignUpUserName.getText().toString().trim();
         email = editTextSignUpEmail.getText().toString().trim();
         password = editTextSignUpPassword.getText().toString().trim();
@@ -312,14 +316,14 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         }
 
         // Get the user degree
-        Spinner facultySpinner = findViewById(R.id.spinnerFacultyList);
+        Spinner facultySpinner = findViewById(R.id.SpinnerSignUpFacultyList);
         faculty = facultySpinner.getSelectedItem().toString();
 
         if (faculty.equals("Please select your faculty (optional)")) {
             faculty = "Not Provided";
         }
 
-        Spinner degreeSpinner = findViewById(R.id.spinnerDegreeList);
+        Spinner degreeSpinner = findViewById(R.id.SpinnerSignUpDegreeList);
         String degree = degreeSpinner.getSelectedItem().toString();
 
         // Convert degree to AQF level

@@ -25,27 +25,86 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private Button buttonResetPasswordOTPVerify;
     private EditText editTextResetPasswordEmail;
     private EditText editTextResetPasswordOTP;
-    private EditText EditTextResetPasswordNewPassword;
-    private EditText EditTextResetPasswordNewPasswordConfirm;
+    private EditText editTextResetPasswordNewPassword;
+    private EditText editTextResetPasswordNewPasswordConfirm;
     private Button buttonResetPasswordConfirm;
 
-    @SuppressLint("WrongViewCast")
+    @SuppressLint("HandlerLeak")
+
+    private final Handler handler = new Handler() {
+
+        @SuppressLint("SetTextI18n")
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    String info = (String) msg.obj;
+                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
+                    break;
+
+                case 1:
+
+                    int time = (int) msg.obj;
+
+                    if (time > 0) {
+                        buttonGetResetPasswordOTP.setEnabled(false);
+                        buttonGetResetPasswordOTP.setText(time + "s");
+                        buttonGetResetPasswordOTP.setTextColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.black));
+                        buttonGetResetPasswordOTP.setBackgroundColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.grey));
+
+                        Message message = new Message();
+                        message.what = 1;
+                        message.obj = time - 1;
+                        handler.sendMessageDelayed(message, 1000);
+                    }
+
+                    else {
+                        editTextResetPasswordOTP.setEnabled(true);
+                        buttonGetResetPasswordOTP.setEnabled(true);
+                        buttonGetResetPasswordOTP.setText("Get OTP");
+                        buttonGetResetPasswordOTP.setTextColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.white));
+                        buttonGetResetPasswordOTP.setBackgroundColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.primary));
+
+                    }
+                    break;
+
+                case 2:
+                    editTextResetPasswordEmail.setVisibility(View.GONE);
+                    editTextResetPasswordOTP.setVisibility(View.GONE);
+                    buttonGetResetPasswordOTP.setVisibility(View.GONE);
+                    buttonResetPasswordOTPVerify.setVisibility(View.GONE);
+
+                    editTextResetPasswordNewPassword.setVisibility(View.VISIBLE);
+                    editTextResetPasswordNewPasswordConfirm.setVisibility(View.VISIBLE);
+                    buttonResetPasswordConfirm.setVisibility(View.VISIBLE);
+
+                    break;
+
+                case 3:
+                    buttonGetResetPasswordOTP.setEnabled(false);
+                    buttonGetResetPasswordOTP.setText("Sending");
+                    buttonGetResetPasswordOTP.setBackgroundColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.grey));
+
+                    break;
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
 
         editTextResetPasswordEmail = findViewById(R.id.EditTextResetPasswordEmail);
-        editTextResetPasswordOTP = findViewById(R.id.EditTextSignUpResetPasswordOTP);
-        buttonGetResetPasswordOTP = findViewById(R.id.buttonGetResetPasswordOTP);
-        buttonResetPasswordOTPVerify = findViewById(R.id.buttonResetPasswordOTPVerify);
+        editTextResetPasswordOTP = findViewById(R.id.EditTextResetPasswordOTP);
+        buttonGetResetPasswordOTP = findViewById(R.id.ButtonGetResetPasswordOTP);
+        buttonResetPasswordOTPVerify = findViewById(R.id.ButtonResetPasswordOTPVerify);
 
-        EditTextResetPasswordNewPassword = findViewById(R.id.EditTextResetPasswordNewPassword);
-        EditTextResetPasswordNewPasswordConfirm = findViewById(R.id.EditTextResetPasswordNewPasswordConfirm);
-        buttonResetPasswordConfirm = findViewById(R.id.buttonResetPasswordConfirm);
+        editTextResetPasswordNewPassword = findViewById(R.id.EditTextResetPasswordNewPassword);
+        editTextResetPasswordNewPasswordConfirm = findViewById(R.id.EditTextResetPasswordNewPasswordConfirm);
+        buttonResetPasswordConfirm = findViewById(R.id.ButtonResetPasswordConfirm);
 
-        EditTextResetPasswordNewPassword.setVisibility(View.GONE);
-        EditTextResetPasswordNewPasswordConfirm.setVisibility(View.GONE);
+        editTextResetPasswordNewPassword.setVisibility(View.GONE);
+        editTextResetPasswordNewPasswordConfirm.setVisibility(View.GONE);
         buttonResetPasswordConfirm.setVisibility(View.GONE);
 
         this.otp = "";
@@ -56,8 +115,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 new Thread() {
                     public void run() {
                         try {
-
-                            System.out.println(editTextResetPasswordOTP);
 
                             // If email is empty
                             if (editTextResetPasswordEmail.getText().toString().trim().isEmpty()) {
@@ -110,13 +167,13 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 new Thread() {
                     public void run() {
                         try {
-                            if (EditTextResetPasswordNewPassword.getText().toString().equals("") || EditTextResetPasswordNewPasswordConfirm.getText().toString().equals("")) {
+                            if (editTextResetPasswordNewPassword.getText().toString().equals("") || editTextResetPasswordNewPasswordConfirm.getText().toString().equals("")) {
                                 showTextMessage("New password cannot be empty.");
-                            } else if (!EditTextResetPasswordNewPassword.getText().toString().equals(EditTextResetPasswordNewPasswordConfirm.getText().toString())) {
+                            } else if (!editTextResetPasswordNewPassword.getText().toString().equals(editTextResetPasswordNewPasswordConfirm.getText().toString())) {
                                 showTextMessage("Your new password are not identical.");
-                            } else if (EditTextResetPasswordNewPassword.getText().toString().length() < 8 || EditTextResetPasswordNewPasswordConfirm.getText().toString().length() < 8) {
+                            } else if (editTextResetPasswordNewPassword.getText().toString().length() < 8 || editTextResetPasswordNewPasswordConfirm.getText().toString().length() < 8) {
                                 showTextMessage("Password length at least 8 characters.");
-                            } else if (EditTextResetPasswordNewPassword.getText().toString().equals(EditTextResetPasswordNewPasswordConfirm.getText().toString())) {
+                            } else if (editTextResetPasswordNewPassword.getText().toString().equals(editTextResetPasswordNewPasswordConfirm.getText().toString())) {
                                 resetPassWord();
                             } else {
                                 throw new Exception("An error occurring when reset your password, please contact the IT administrator.");
@@ -133,7 +190,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     private boolean resetPassWord() throws Exception {
 
-        new UserServiceImpl().resetUserPassword(editTextResetPasswordEmail.getText().toString(), EditTextResetPasswordNewPassword.getText().toString());
+        new UserServiceImpl().resetUserPassword(editTextResetPasswordEmail.getText().toString(), editTextResetPasswordNewPassword.getText().toString());
         showTextMessage("Your password has been reset successfully.");
         // Jump to login page
         new Thread() {
@@ -164,63 +221,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         }
 
         return "";
-    }    @SuppressLint("HandlerLeak")
-
-    private final Handler handler = new Handler() {
-        @SuppressLint("SetTextI18n")
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    String info = (String) msg.obj;
-                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
-                    break;
-
-                case 1:
-
-                    int time = (int) msg.obj;
-
-                    if (time > 0) {
-//                        editTextResetPasswordEmail.setEnabled(false);
-                        buttonGetResetPasswordOTP.setEnabled(false);
-                        buttonGetResetPasswordOTP.setText(time + "s");
-                        buttonGetResetPasswordOTP.setTextColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.white));
-                        buttonGetResetPasswordOTP.setBackgroundColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.grey));
-
-                        Message message = new Message();
-                        message.what = 1;
-                        message.obj = time - 1;
-                        handler.sendMessageDelayed(message, 1000);
-                        break;
-                    } else {
-                        editTextResetPasswordOTP.setEnabled(true);
-                        buttonGetResetPasswordOTP.setEnabled(true);
-                        buttonGetResetPasswordOTP.setText("Get OTP");
-                        buttonGetResetPasswordOTP.setBackgroundColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.primary));
-
-                        break;
-                    }
-
-                case 2:
-                    editTextResetPasswordEmail.setVisibility(View.GONE);
-                    editTextResetPasswordOTP.setVisibility(View.GONE);
-                    buttonGetResetPasswordOTP.setVisibility(View.GONE);
-                    buttonResetPasswordOTPVerify.setVisibility(View.GONE);
-
-                    EditTextResetPasswordNewPassword.setVisibility(View.VISIBLE);
-                    EditTextResetPasswordNewPasswordConfirm.setVisibility(View.VISIBLE);
-                    buttonResetPasswordConfirm.setVisibility(View.VISIBLE);
-
-                    break;
-
-                case 3:
-                    buttonGetResetPasswordOTP.setEnabled(false);
-                    buttonGetResetPasswordOTP.setText("Sending");
-                    buttonGetResetPasswordOTP.setBackgroundColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.grey));
-
-            }
-
-        }
-    };
+    }
 
     /**
      * Show message text

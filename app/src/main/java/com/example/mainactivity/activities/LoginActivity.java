@@ -21,10 +21,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText editTextLoginEmail;
     private EditText editTextLoginPassword;
-    private Button buttonLogin;
-    private TextView buttonGoToSignup;
+    private Button buttonLoginLogIn;
+    private TextView buttonLogInGoToSignup;
 
-    private TextView buttonResetPassword;
+    private TextView buttonLogInForgetPassword;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -45,13 +45,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        editTextLoginEmail = findViewById(R.id.editTextLoginEmail);
-        editTextLoginPassword = findViewById(R.id.editTextLoginPassword);
-        buttonLogin = findViewById(R.id.buttonLogin);
-        buttonGoToSignup = findViewById(R.id.buttonGoToSignup);
-        buttonResetPassword = findViewById(R.id.buttonForgetPassword);
+        editTextLoginEmail = findViewById(R.id.EditTextLoginEmail);
+        editTextLoginPassword = findViewById(R.id.EditTextLoginPassword);
+        buttonLoginLogIn = findViewById(R.id.ButtonLoginLogIn);
+        buttonLogInGoToSignup = findViewById(R.id.ButtonLogInGoToSignup);
+        buttonLogInForgetPassword = findViewById(R.id.ButtonLogInForgetPassword);
 
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
+        buttonLoginLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Thread() {
@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        buttonGoToSignup.setOnClickListener(new View.OnClickListener() {
+        buttonLogInGoToSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new Thread() {
@@ -79,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        buttonResetPassword.setOnClickListener(new View.OnClickListener() {
+        buttonLogInForgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new Thread() {

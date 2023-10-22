@@ -51,7 +51,7 @@ public class ReportIssue extends AppCompatActivity {
 
         editTextRaiseIssue = findViewById(R.id.EditTextRaiseIssue);
 
-        buttonRaiseIssue = findViewById(R.id.buttonRaiseIssue);
+        buttonRaiseIssue = findViewById(R.id.ButtonRaiseIssue);
 
         buttonRaiseIssue.setOnClickListener(new View.OnClickListener() {
             @Override
