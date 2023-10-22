@@ -234,8 +234,4 @@ public class ResetPasswordActivity extends AppCompatActivity {
         msg.obj = text;
         handler.sendMessage(msg);
     }
-
-
-
-
 }
