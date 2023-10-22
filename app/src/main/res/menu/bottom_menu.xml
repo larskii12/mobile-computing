@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/homeNav"
+        android:enabled="true"
+        android:icon="@drawable/home_outline"
+        android:iconTint="@color/deepBlue"
+        android:title=""
+        android:visible="true" />
+
+    <item
+        android:id="@+id/searchNav"
+        android:enabled="true"
+        android:icon="@drawable/search_icon"
+        android:iconTint="@color/deepBlue"
+        android:title=""
+        android:visible="true" />
+
+    <item
+        android:id="@+id/focusNav"
+        android:enabled="true"
+        android:icon="@drawable/focus_outline"
+        android:iconTint="@color/deepBlue"
+        android:title=""
+        android:visible="true" />
+
+    <item
+        android:id="@+id/accountNav"
+        android:enabled="true"
+        android:icon="@drawable/account_outline"
+        android:iconTint="@color/deepBlue"
+        android:title=""
+        android:visible="true" />
+</menu>
