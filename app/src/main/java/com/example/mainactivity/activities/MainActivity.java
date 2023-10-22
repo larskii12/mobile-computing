@@ -1,5 +1,8 @@
 package com.example.mainactivity.activities;
 
+import static com.example.mainactivity.models.review.ReviewType.LIBRARY;
+import static com.example.mainactivity.models.review.ReviewType.STUDY_SPACE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,10 +13,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.mainactivity.R;
+
+import com.example.mainactivity.config.DatabaseHelper;
+import com.example.mainactivity.models.favorite.Favorite;
+import com.example.mainactivity.models.location.Location;
+import com.example.mainactivity.service.busy_rating.BusyRatingService;
+import com.example.mainactivity.service.busy_rating.BusyRatingServiceImpl;
+import com.example.mainactivity.service.favorite.FavoriteService;
+import com.example.mainactivity.service.favorite.FavoriteServiceImpl;
+
 import com.example.mainactivity.service.location.LocationService;
+import com.example.mainactivity.service.location.LocationServiceImpl;
 import com.example.mainactivity.service.review.ReviewService;
 import com.example.mainactivity.service.user.UserService;
 
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -66,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(MainActivity.this, MapsActivity.class);
                             startActivity(intent);
                         }
+                      
                         // If exception when operating
                         catch (Exception e) {
                             e.printStackTrace();
