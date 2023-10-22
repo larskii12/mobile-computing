@@ -1,5 +1,6 @@
 package com.example.mainactivity.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
     private SearchView searchBar;
 
+    private static Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, MapsActivity.class);
                 startActivity(intent);
 
-
-                // should collect what they wrote here??
             }
         });
 
@@ -144,5 +145,9 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
+    }
+
+    public static Context getAppContext() {
+        return context;
     }
 }
