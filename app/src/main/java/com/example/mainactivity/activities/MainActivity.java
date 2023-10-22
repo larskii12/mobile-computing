@@ -1,5 +1,6 @@
 package com.example.mainactivity.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,27 +9,49 @@ import android.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.mainactivity.config.DatabaseHelper;
+import com.example.mainactivity.LoginActivity;
 import com.example.mainactivity.R;
+import com.example.mainactivity.config.DatabaseHelper;
 import com.example.mainactivity.service.location.LocationService;
 import com.example.mainactivity.service.review.ReviewService;
 import com.example.mainactivity.service.user.UserService;
+import com.example.mainactivity.service.user.UserServiceImpl;
 
 public class MainActivity extends AppCompatActivity {
-
     private ReviewService reviewService;
-
     private LocationService locationService;
-
     private UserService userService;
 
     private SearchView searchBar;
 
+    private static Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = getApplicationContext();
         setContentView(R.layout.activity_main);
+
         Button button = (Button) findViewById(R.id.button);
+        Button loginButton = findViewById(R.id.loginButton);
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
+                        catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        }
+                }.start();
+            }
+        });
 
 //        searchBar = findViewById(R.id.searchBar);
 
@@ -38,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                 startActivity(intent);
 
-
-                // should collect what they wrote here??
             }
         });
 
@@ -144,5 +165,9 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
+    }
+
+    public static Context getAppContext() {
+        return context;
     }
 }

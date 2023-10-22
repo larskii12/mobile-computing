@@ -4,7 +4,7 @@ import com.example.mainactivity.models.user.User;
 
 public interface UserService {
 
-    boolean logIn(String userNameOrEmail, String userPassword) throws Exception;
+    User logIn(String userNameOrEmail, String userPassword) throws Exception;
 
     boolean addUser(String userName,
                     String userEmail,

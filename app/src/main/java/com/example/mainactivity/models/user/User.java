@@ -1,12 +1,5 @@
 package com.example.mainactivity.models.user;
 
-import com.example.mainactivity.config.DatabaseHelper;
-
-import org.mindrot.jbcrypt.BCrypt;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 public class User {
 

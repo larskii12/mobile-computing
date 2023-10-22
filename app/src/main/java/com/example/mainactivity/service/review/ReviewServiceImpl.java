@@ -98,7 +98,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         try {
 
-            String query = "SELECT * FROM mobilecomputing.\"user\" WHERE \"review_id\" = ?";
+            String query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_id\" = ?";
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             preparedStatement.setInt(1, reviewId);
@@ -143,7 +143,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     /**
-     * Get a user with specified email address
+     * Get the list of reviews based by the person
      *
      * @param userId, as the user id
      * @return list of reviews
@@ -180,7 +180,7 @@ public class ReviewServiceImpl implements ReviewService {
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (resultSet.next()) { // Itereview all the resulting rows from the query
+            while (resultSet.next()) { // Iterate all the resulting rows from the query
                 Review review = new Review();
                 // Set review information
                 review.setReviewId(resultSet.getInt("review_id"));

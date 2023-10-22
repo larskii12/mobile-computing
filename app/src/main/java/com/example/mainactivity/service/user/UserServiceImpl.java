@@ -8,7 +8,6 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-
 public class UserServiceImpl implements UserService {
 
     Connection connector = new DatabaseHelper().getConnector();
@@ -18,14 +17,14 @@ public class UserServiceImpl implements UserService {
      *
      * @param userNameOrEmail, as user name or user email address
      * @param userPassword,    as user password
-     * @return true if login success
-     * @throws Exception, if user log in fails
+     * @return user if login success, otherwise null
+     * @throws Exception, if any exception happens
      */
-    public boolean logIn(String userNameOrEmail, String userPassword) throws Exception {
+    public User logIn(String userNameOrEmail, String userPassword) throws Exception {
 
         try {
 
-            String query = "SELECT user_password FROM mobilecomputing.\"user\" WHERE \"user_name\" = ? OR \"user_email\" = ?";
+            String query = "SELECT * FROM mobilecomputing.\"user\" WHERE \"user_name\" = ? OR \"user_email\" = ?";
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             preparedStatement.setString(1, userNameOrEmail);
@@ -33,20 +32,29 @@ public class UserServiceImpl implements UserService {
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            // If user name, email, and password matches, return true
+            // If user name, email, and password matches, return user information
             if (resultSet.next() && BCrypt.checkpw(userPassword, resultSet.getString("user_password"))) {
-                return true;
+
+                User logInUser = new User();
+
+                logInUser.setUserId(Integer.parseInt(resultSet.getString("user_id")));
+                logInUser.setUserName(resultSet.getString("user_name"));
+                logInUser.setUserEmail(resultSet.getString("user_email"));
+                logInUser.setUserFaculty(resultSet.getString("user_faculty"));
+                logInUser.setUserAQFLevel(Integer.parseInt(resultSet.getString("user_AQF_level")));
+
+                return logInUser;
             }
 
             // If user not exist, password not correct or other exceptions
             else {
-                throw new Exception();
+                return null;
             }
         }
 
         // If log in fails
         catch (Exception e) {
-            throw new Exception("The information does not match our records, please try again.");
+            return null;
         }
     }
 
