@@ -10,8 +10,8 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
-import com.example.mainactivity.LoginActivity;
 import com.example.mainactivity.R;
 import com.example.mainactivity.config.DatabaseHelper;
 import com.example.mainactivity.models.favorite.Favorite;
@@ -24,7 +24,6 @@ import com.example.mainactivity.service.location.LocationService;
 import com.example.mainactivity.service.location.LocationServiceImpl;
 import com.example.mainactivity.service.review.ReviewService;
 import com.example.mainactivity.service.user.UserService;
-import com.example.mainactivity.service.user.UserServiceImpl;
 
 import java.util.List;
 
@@ -42,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         setContentView(R.layout.activity_main);
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         Button button = (Button) findViewById(R.id.button);
         Button loginButton = findViewById(R.id.loginButton);

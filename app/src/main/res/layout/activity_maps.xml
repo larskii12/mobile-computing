@@ -1,9 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
+    android:id="@+id/searchPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MapsActivity" />
+    tools:context=".activities.MapsActivity">
+
+
+    <!--<RelativeLayout-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+    <!--search view to search our location-->
+    <!--    <ImageButton-->
+    <!--        android:id="@+id/imageButton3"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="190dp"-->
+    <!--        android:layout_marginTop="189dp"-->
+    <!--        android:layout_marginEnd="171dp"-->
+    <!--        android:layout_marginBottom="498dp"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/map"-->
+    <!--        app:layout_constraintEnd_toEndOf="@+id/map"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/map"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/map"-->
+    <!--        app:srcCompat="@drawable/account_fill" />-->
+
+    <!--fragment to display our maps-->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        app:itemBackground="@color/white"
+        app:itemIconSize="32dp"
+        app:itemIconTint="@color/deepBlue"
+        app:itemTextColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_menu" />
+
+
+    <!--    <ImageButton-->
+    <!--        android:id="@+id/filterButton"-->
+    <!--        android:layout_width="57dp"-->
+    <!--        android:layout_height="50dp"-->
+    <!--        android:layout_marginStart="338dp"-->
+    <!--        android:layout_marginTop="45dp"-->
+    <!--        android:layout_marginEnd="16dp"-->
+    <!--        android:layout_marginBottom="636dp"-->
+    <!--        android:background="@color/white"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/map"-->
+    <!--        app:layout_constraintEnd_toEndOf="@+id/map"-->
+    <!--        app:layout_constraintHorizontal_bias="0.0"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/map"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/map"-->
+    <!--        app:layout_constraintVertical_bias="0.0"-->
+    <!--        app:srcCompat="@drawable/filter_list"-->
+    <!--        app:tint="@color/deepBlue" />-->
+
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+
+        tools:context=".activities.MapsActivity"
+        tools:visibility="visible" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/map">
+
+        <android.widget.SearchView
+            android:id="@+id/searchBar"
+            android:layout_width="311dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="19dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="636dp"
+            android:background="@color/white"
+            android:backgroundTint="#FFFFFF"
+            android:contextClickable="true"
+            android:elevation="5dp"
+            android:foregroundTint="#FFFFFF"
+            android:iconifiedByDefault="false"
+            android:queryHint="Search Here"
+            android:searchIcon="@drawable/search_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/map"
+            app:layout_constraintEnd_toEndOf="@+id/map"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/map"
+            app:layout_constraintTop_toTopOf="@+id/map"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageButton
+            android:id="@+id/filterButton"
+            android:layout_width="57dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="338dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="636dp"
+            android:backgroundTint="@color/white"
+            android:drawableTop="@drawable/filter_list"
+            android:elevation="5dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/filter_list"
+            app:tint="@color/deepBlue" />
+
+    </FrameLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
