@@ -1,23 +1,25 @@
 package com.example.mainactivity.activities;
 
-import android.content.Intent;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.databinding.ActivityMapsBinding;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -28,6 +30,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ImageButton filterButton;
     private BottomNavigationView bottomNav;
 
+    private ImageButton locateMyLocation;
+
+    private FusedLocationProviderClient fusedLocationClient;
+
+    private final int standardCameraZoom = 18;
 
 
     @Override
@@ -42,6 +49,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         bottomNav = findViewById(R.id.bottom_navigation);
 
         bottomNav.setSelectedItemId(R.id.searchNav);
+
+        locateMyLocation = (ImageButton) findViewById(R.id.locate_my_location);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -61,10 +72,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                String searchQuery = searchBar.getQuery().toString();
-                Intent intent = new Intent(MapsActivity.this, SearchResults.class);
-                intent.putExtra("searchQuery", searchQuery);
-                startActivity(intent);
+//                String searchQuery = searchBar.getQuery().toString();
+//                Intent intent = new Intent(MapsActivity.this, SearchResults.class);
+//                intent.putExtra("searchQuery", searchQuery);
+//                startActivity(intent);
                 return false;
             }
 
@@ -78,12 +89,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 // launch the filter page
-                Intent intent = new Intent(MapsActivity.this, FilterAdjustmentActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(MapsActivity.this, FilterAdjustmentActivity.class);
+//                startActivity(intent);
             }
         });
 
-//        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+//            bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
 //            @SuppressLint("NonConstantResourceId")
 //            @Override
 //            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -102,6 +113,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //            }
 //        });
 
+        /**
+         * Move camera to the current location
+         */
+        locateMyLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMap != null && mMap.isMyLocationEnabled()) {
+                    Location myLocation = mMap.getMyLocation();
+                    if (myLocation != null) {
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                new LatLng(myLocation.getLatitude(),
+                                        myLocation.getLongitude()), standardCameraZoom)); // Adjust zoom level as needed
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -119,11 +146,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setMaxZoomPreference(30);
         mMap.setMinZoomPreference(15);
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(standardCameraZoom));
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-37.800097099486244, 144.96440741828778);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
+
+        // Show the user location
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+        // Get the latest current position
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, location -> {
+                    if (location != null) {
+                        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, standardCameraZoom));
+                    }
+                });
     }
 }

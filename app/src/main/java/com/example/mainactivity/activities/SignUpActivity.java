@@ -388,8 +388,4 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         msg.obj = text;
         handler.sendMessage(msg);
     }
-
-
-
-
 }
