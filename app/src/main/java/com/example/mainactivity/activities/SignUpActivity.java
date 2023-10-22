@@ -23,17 +23,13 @@ import com.example.mainactivity.service.user.UserServiceImpl;
 
 public class SignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private EditText editTextName;
-
-    private EditText editTextUserName;
-    private EditText editTextEmail;
-    private EditText editTextPassword;
-    private EditText editTextConfirmPassword;
-
-    private EditText editTextOTP;
-
     private final int OTP_TIMER = 20;
-
+    private EditText editTextSignUpName;
+    private EditText editTextSignUpUserName;
+    private EditText editTextSignUpEmail;
+    private EditText editTextSignUpPassword;
+    private EditText editTextSignUpConfirmPassword;
+    private EditText editTextSignUpOTP;
     private Spinner facultyList;
 
     private Spinner degreeList;
@@ -59,92 +55,18 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
     private int aqfLevel;
 
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler(){
-        @SuppressLint("SetTextI18n")
-        public void handleMessage(Message msg){
-            switch (msg.what){
-                case 0:
-                    String info = (String)msg.obj;
-                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
-                    break;
-
-                case 1:
-
-                    int time = (int)msg.obj;
-
-                    if (time > 0) {
-                        buttonOTP.setEnabled(false);
-                        buttonOTP.setText(time + "s");
-                        buttonOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
-                        buttonOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.grey));
-
-                        Message message = new Message();
-                        message.what = 1;
-                        message.obj = time - 1;
-                        handler.sendMessageDelayed(message, 1 * 1000);
-                    }
-
-                    else{
-                        editTextName.setEnabled(true);
-                        editTextEmail.setEnabled(true);
-                        editTextUserName.setEnabled(true);
-                        editTextPassword.setEnabled(true);
-                        editTextConfirmPassword.setEnabled(true);
-                        facultyList.setEnabled(true);
-                        degreeList.setEnabled(true);
-                        buttonOTP.setEnabled(true);
-                        buttonOTP.setText("Get OTP");
-                        buttonOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.primary));
-                    }
-
-                    break;
-
-                case 2:
-                    editTextName.setEnabled(true);
-                    editTextEmail.setEnabled(true);
-                    editTextUserName.setEnabled(true);
-                    editTextPassword.setEnabled(true);
-                    editTextConfirmPassword.setEnabled(true);
-                    facultyList.setEnabled(true);
-                    degreeList.setEnabled(true);
-                    buttonOTP.setEnabled(true);
-                    buttonOTP.setText("Get OTP");
-                    buttonOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
-                    buttonOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.primary));
-
-                    break;
-
-                case 3:
-                    editTextName.setEnabled(false);
-                    editTextEmail.setEnabled(false);
-                    editTextUserName.setEnabled(false);
-                    editTextPassword.setEnabled(false);
-                    editTextConfirmPassword.setEnabled(false);
-                    facultyList.setEnabled(false);
-                    degreeList.setEnabled(false);
-                    buttonOTP.setEnabled(false);
-                    buttonOTP.setText("Sending");
-                    buttonOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.grey));
-                    buttonOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
-
-                    break;
-            }
-        }
-    };
-
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        editTextName = findViewById(R.id.ediTextName);
-        editTextUserName = findViewById(R.id.editTextUsername);
-        editTextEmail = findViewById(R.id.editTextEmail);
-        editTextPassword = findViewById(R.id.editTextPassword);
-        editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
-        editTextOTP = findViewById(R.id.EditTextResetPasswordOTP);
+        editTextSignUpName = findViewById(R.id.EdiTextSignUpName);
+        editTextSignUpUserName = findViewById(R.id.EditTextSignUpUserName);
+        editTextSignUpEmail = findViewById(R.id.EditTextSignUpEmail);
+        editTextSignUpPassword = findViewById(R.id.EditTextSignUpPassword);
+        editTextSignUpConfirmPassword = findViewById(R.id.editTextSignUpConfirmPassword);
+        editTextSignUpOTP = findViewById(R.id.EditTextSignUpResetPasswordOTP);
         facultyList = findViewById(R.id.spinnerFacultyList);
         degreeList = findViewById(R.id.spinnerDegreeList);
 
@@ -162,7 +84,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
         buttonOTP = findViewById(R.id.buttonSignUpGetOTP);
         buttonSignUp = findViewById(R.id.buttonSignUp);
-        buttonRaiseIssue = findViewById(R.id.buttonReportIssue);
+        buttonRaiseIssue = findViewById(R.id.buttonSignUpReportIssue);
 
         this.otp = "";
 
@@ -199,16 +121,14 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         });
 
 
-
-
         buttonRaiseIssue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 new Thread() {
                     public void run() {
-                            Intent intent = new Intent(SignUpActivity.this, ReportIssue.class);
-                            startActivity(intent);
+                        Intent intent = new Intent(SignUpActivity.this, ReportIssue.class);
+                        startActivity(intent);
                     }
                 }.start();
             }
@@ -218,6 +138,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
     /**
      * get OTP for registration
+     *
      * @return OTP
      * @throws Exception if happens
      */
@@ -225,16 +146,14 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
         handler.sendEmptyMessage(3);
 
-        if (!inputCheck()){
+        if (!inputCheck()) {
 
             showTextMessage("Please fill all fields.");
             handler.sendEmptyMessage(2);
 
             return "";
-        }
-
-        else {
-            String newOTP = String.valueOf(new mailServiceImpl().sendOTP(editTextEmail.getText().toString().trim()));
+        } else {
+            String newOTP = String.valueOf(new mailServiceImpl().sendOTP(editTextSignUpEmail.getText().toString().trim()));
 
             showTextMessage("The OTP has been sent, please check your mail box.");
 
@@ -245,23 +164,92 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
             return newOTP;
         }
-    }
+    }    @SuppressLint("HandlerLeak")
+    private final Handler handler = new Handler() {
+        @SuppressLint("SetTextI18n")
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    String info = (String) msg.obj;
+                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
+                    break;
 
+                case 1:
+
+                    int time = (int) msg.obj;
+
+                    if (time > 0) {
+                        buttonOTP.setEnabled(false);
+                        buttonOTP.setText(time + "s");
+                        buttonOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
+                        buttonOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.grey));
+
+                        Message message = new Message();
+                        message.what = 1;
+                        message.obj = time - 1;
+                        handler.sendMessageDelayed(message, 1000);
+                    } else {
+                        editTextSignUpName.setEnabled(true);
+                        editTextSignUpEmail.setEnabled(true);
+                        editTextSignUpUserName.setEnabled(true);
+                        editTextSignUpPassword.setEnabled(true);
+                        editTextSignUpConfirmPassword.setEnabled(true);
+                        facultyList.setEnabled(true);
+                        degreeList.setEnabled(true);
+                        buttonOTP.setEnabled(true);
+                        buttonOTP.setText("Get OTP");
+                        buttonOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.primary));
+                    }
+
+                    break;
+
+                case 2:
+                    editTextSignUpName.setEnabled(true);
+                    editTextSignUpEmail.setEnabled(true);
+                    editTextSignUpUserName.setEnabled(true);
+                    editTextSignUpPassword.setEnabled(true);
+                    editTextSignUpConfirmPassword.setEnabled(true);
+                    facultyList.setEnabled(true);
+                    degreeList.setEnabled(true);
+                    buttonOTP.setEnabled(true);
+                    buttonOTP.setText("Get OTP");
+                    buttonOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
+                    buttonOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.primary));
+
+                    break;
+
+                case 3:
+                    editTextSignUpName.setEnabled(false);
+                    editTextSignUpEmail.setEnabled(false);
+                    editTextSignUpUserName.setEnabled(false);
+                    editTextSignUpPassword.setEnabled(false);
+                    editTextSignUpConfirmPassword.setEnabled(false);
+                    facultyList.setEnabled(false);
+                    degreeList.setEnabled(false);
+                    buttonOTP.setEnabled(false);
+                    buttonOTP.setText("Sending");
+                    buttonOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.grey));
+                    buttonOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
+
+                    break;
+            }
+        }
+    };
 
     /**
      * Sing up user
+     *
      * @return true is sign up successfully, else false
      * @throws Exception if any exception happened
      */
     private boolean signUp() throws Exception {
 
         // Can not use input check, to ensure user cannot change the text field context after sending OTP.
-        if (otp.isEmpty() || !otp.equals(editTextOTP.getText().toString())){
+        if (otp.isEmpty() || !otp.equals(editTextSignUpOTP.getText().toString())) {
 
-            if(otp.isEmpty()){
+            if (otp.isEmpty()) {
                 showTextMessage("Signed up Failed! Please fill all fields.");
-            }
-            else{
+            } else {
                 showTextMessage("Signed up Failed! OTP is incorrect.");
             }
 
@@ -282,9 +270,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 //            return true;
             Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
             startActivity(intent);
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
 
             showTextMessage(e.getMessage());
@@ -294,14 +280,15 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
     /**
      * Input check, make sure user input is not empty
+     *
      * @return true if all fields input, otherwise false
      */
     private boolean inputCheck() {
-        name = editTextName.getText().toString().trim();
-        username = editTextUserName.getText().toString().trim();
-        email = editTextEmail.getText().toString().trim();
-        password = editTextPassword.getText().toString().trim();
-        passwordConfirmation = editTextConfirmPassword.getText().toString().trim();
+        name = editTextSignUpName.getText().toString().trim();
+        username = editTextSignUpUserName.getText().toString().trim();
+        email = editTextSignUpEmail.getText().toString().trim();
+        password = editTextSignUpPassword.getText().toString().trim();
+        passwordConfirmation = editTextSignUpConfirmPassword.getText().toString().trim();
 
         if (name.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty() || passwordConfirmation.isEmpty()) {
             System.out.println("Please fill all fields");
@@ -328,7 +315,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         Spinner facultySpinner = findViewById(R.id.spinnerFacultyList);
         faculty = facultySpinner.getSelectedItem().toString();
 
-        if (faculty.equals("Please select your faculty (optional)")){
+        if (faculty.equals("Please select your faculty (optional)")) {
             faculty = "Not Provided";
         }
 
@@ -337,7 +324,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
         // Convert degree to AQF level
         System.out.println(degree);
-        switch (degree){
+        switch (degree) {
             case "Certificate I":
                 aqfLevel = 1;
                 break;
@@ -388,12 +375,17 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
     /**
      * Show message text
+     *
      * @param text as the showing message
      */
-    private void showTextMessage(String text){
+    private void showTextMessage(String text) {
         Message msg = new Message();
         msg.what = 0;
         msg.obj = text;
         handler.sendMessage(msg);
     }
+
+
+
+
 }

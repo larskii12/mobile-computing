@@ -1,123 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:fillViewport="true">
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp"
+    app:layout_constraintWidth="320dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="40dp">
+        android:layout_marginVertical="32dp"
+        android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/uninooks_logo"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginBottom="560dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@mipmap/ic_launcher_round"
-            tools:ignore="MissingConstraints" />
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@string/UniNook"
+            app:srcCompat="@drawable/logo_uninook" />
 
         <TextView
-            android:id="@+id/welcome_text"
-            android:layout_width="wrap_content"
+            android:id="@+id/logoText"
+            style="@style/TextHeading"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:fontFamily="casual"
-            android:text="Welcome to\nUninooks\nLog in (^´•ܫ•`^)"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textSize="33sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.35"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/uninooks_logo" />
+            android:text="@string/UniNook"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/pageTitle"
+            style="@style/TextSubHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/login"
+            android:textAlignment="center" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:orientation="vertical">
 
         <EditText
-                android:id="@+id/editTextLoginEmail"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="30dp"
-                android:background="@drawable/input_box_style"
-                android:hint=" Email or username*"
-                android:paddingStart="16dp"
-                android:imeOptions="actionDone"
-                android:inputType="text"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/welcome_text"
-                tools:ignore="MissingConstraints" />
+            android:id="@+id/editTextLoginEmail"
+            style="@style/TextInputStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12sp"
+            android:autofillHints="emailAddress"
+            android:hint="@string/login_email_or_username"
+            android:inputType="textEmailAddress" />
 
-            <EditText
-                android:id="@+id/editTextLoginPassword"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/input_box_style"
-                android:hint=" Password*"
-                android:inputType="text|textPassword"
-                android:paddingStart="16dp"
-                android:imeOptions="actionDone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextLoginEmail"
-                tools:ignore="MissingConstraints" />
+        <EditText
+            android:id="@+id/editTextLoginPassword"
+            style="@style/TextInputStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="password"
+            android:hint="@string/Password"
+            android:inputType="textPassword" />
 
-            <TextView
-                android:id="@+id/buttonGoToSignup"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginTop="20dp"
-                android:clickable="true"
-                android:text="First time here? sign up"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextLoginPassword"
-                android:textSize="18sp" />
+        <TextView
+            android:id="@+id/buttonForgetPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:text="@string/forget_password" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
 
             <Button
                 android:id="@+id/buttonLogin"
-                android:layout_width="match_parent"
+                style="@style/Button.Primary"
+                android:layout_width="122dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Login"
-                android:textSize="18sp"
-                app:backgroundTint="@color/primary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttonGoToSignup" />
+                android:layout_marginVertical="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/login" />
+        </LinearLayout>
+        
+        <TextView
+            android:id="@+id/buttonGoToSignup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:text="First time here? sign up" />
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/buttonGuest"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Continue as a guest"
-                android:textSize="18sp"
-                app:backgroundTint="@color/primary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttonLogin" />
-
-            <TextView
-                android:id="@+id/buttonForgetPassword"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginTop="20dp"
-                android:clickable="true"
-                android:text="@string/forget_password"
-                android:textAlignment="center"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttonGuest" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+</LinearLayout>
