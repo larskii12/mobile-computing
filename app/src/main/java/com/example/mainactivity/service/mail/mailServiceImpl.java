@@ -1,4 +1,4 @@
-package com.example.mainactivity.service.otp;
+package com.example.mainactivity.service.mail;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.activities.MainActivity;
@@ -22,7 +22,7 @@ import javax.mail.internet.MimeMessage;
 /**
  * Class for sending OTP email
  */
-public class OTPServiceImpl extends javax.mail.Authenticator implements OTPService {
+public class mailServiceImpl extends javax.mail.Authenticator implements mailService {
 
     /**
      * Method to send email
@@ -73,7 +73,7 @@ public class OTPServiceImpl extends javax.mail.Authenticator implements OTPServi
 
             Transport.send(message);
 
-            System.out.println("Mail send success");
+            System.out.println("OTP send success");
 
             return OTP;
         }
@@ -83,5 +83,58 @@ public class OTPServiceImpl extends javax.mail.Authenticator implements OTPServi
             e.printStackTrace();
         }
         return 1;
+    }
+
+    /**
+     * Send mail to raise issue
+     * @param issueDescription
+     * @return
+     */
+    public boolean raiseIssue(String issueDescription){
+        // Set Gmail information
+        Properties prop = new Properties();
+        prop.put("mail.smtp.host", "smtp.gmail.com");
+        prop.put("mail.smtp.port", "587");
+        prop.put("mail.smtp.auth", "true");
+        prop.put("mail.smtp.starttls.enable", "true");
+
+        // Create a session
+        Session session = Session.getInstance(prop, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+
+
+                try {
+                    InputStream inputStream = MainActivity.getAppContext().getResources().openRawResource(R.raw.config);
+                    Properties properties = new Properties();
+                    properties.load(inputStream);
+
+                    return new PasswordAuthentication(properties.getProperty("SENDER_EMAIL"), properties.getProperty("SENDER_PASSWORD"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        });
+
+        // Send email
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("uninook.contact@gmail.com", "UNINOOKS Customer Support"));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("uninook.contact@gmail.com"));
+            message.setSubject("Issue Report");
+            message.setText(issueDescription);
+
+            Transport.send(message);
+
+            System.out.println("Mail send success");
+
+            return true;
+        }
+
+        // If exception, return 1
+        catch (MessagingException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
