@@ -2,12 +2,16 @@ package com.example.mainactivity.service.busy_rating;
 
 import com.example.mainactivity.config.DatabaseHelper;
 import com.example.mainactivity.models.busy_rating.BusyRating;
-import com.example.mainactivity.models.review.Review;
 import com.example.mainactivity.models.review.ReviewType;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class BusyRatingServiceImpl implements BusyRatingService {
 
@@ -102,6 +106,11 @@ public class BusyRatingServiceImpl implements BusyRatingService {
 
     public Integer getAverageScoreFromEntity(int entityId, ReviewType type) throws Exception {
 
+        // converting to IST
+        ZonedDateTime zonedIST = ZonedDateTime.now(ZoneId.of("Australia/Sydney"));
+        //System.out.println(zonedIST.getHour());
+        Integer currentDayOfWeek = zonedIST.getDayOfWeek().getValue();
+
         try {
 
             String query;
@@ -109,20 +118,24 @@ public class BusyRatingServiceImpl implements BusyRatingService {
             switch (type) {
 
                 case GYM: // Add new gym review to the database
-                    query = "SELECT average_score FROM mobilecomputing.\"busy_rating\" WHERE " +
-                            "\"busy_rating_gym_id\" = ?";
+                    query = "SELECT average_score FROM mobilecomputing.busy_rating WHERE " +
+                            "busy_rating_gym_id = ? and busy_rating_date = ? and "+
+                            "EXTRACT(HOUR FROM busy_rating_time) = ?";
                     break;
                 case LIBRARY: // Add new library review to the database
-                    query = "SELECT average_score FROM mobilecomputing.\"busy_rating\" WHERE " +
-                            "\"busy_rating_library_id\" = ?";
+                    query = "SELECT average_score FROM mobilecomputing.busy_rating WHERE " +
+                            "busy_rating_library_id = ? and busy_rating_date = ? and "+
+                            "EXTRACT(HOUR FROM busy_rating_time) = ?";
                     break;
                 case RESTAURANT: // Add new restaurant review to the database
-                    query = "SELECT average_score FROM mobilecomputing.\"busy_rating\" WHERE " +
-                            "\"busy_rating_restaurant_id\" = ?";
+                    query = "SELECT average_score FROM mobilecomputing.busy_rating WHERE " +
+                            "busy_rating_restaurant_id = ? and busy_rating_date = ? and "+
+                            "EXTRACT(HOUR FROM busy_rating_time) = ?";
                     break;
                 case STUDY_SPACE: // Add new study space review to the database
-                    query = "SELECT average_score FROM mobilecomputing.\"busy_rating\" WHERE " +
-                            "\"busy_rating_study_space_id\" = ?";
+                    query = "SELECT average_score FROM mobilecomputing.busy_rating WHERE " +
+                            "busy_rating_study_space_id = ? and busy_rating_date = ? and "+
+                            "EXTRACT(HOUR FROM busy_rating_time) = ?";
                     break;
                 default:
                     throw new Exception("Invalid review type. Cannot retrieve busy rating list.");
@@ -130,6 +143,8 @@ public class BusyRatingServiceImpl implements BusyRatingService {
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             preparedStatement.setInt(1, entityId);
+            preparedStatement.setInt(2, currentDayOfWeek);
+            preparedStatement.setInt(3, zonedIST.getHour());
 
             ResultSet resultSet = preparedStatement.executeQuery();
 

@@ -71,16 +71,6 @@ public class ReviewServiceImpl implements ReviewService {
         // If exception happens
         catch (Exception e) {
 
-            // If user name has already been registered
-            if (e.getMessage().contains("unique_user_username")) {
-                throw new Exception("This username has been registered, please try another one.");
-            }
-
-            // If email has already been registered
-            else if (e.getMessage().contains("unique_user_email")) {
-                throw new Exception("This email has been registered, please try another one.");
-            }
-
             // Unknown exceptions happens.
             throw new Exception("User added failed, please contact the IT administrator to report the issue.");
         }
@@ -162,18 +152,17 @@ public class ReviewServiceImpl implements ReviewService {
                     query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_user_id\" = ? and \"review_gym_id\" IS NOT NULL";
                     break;
                 case LIBRARY: // Add new library review to the database
-                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_user_id\" = ? and \"review_library_id\" = ?";
+                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_user_id\" = ? and \"review_library_id\" IS NOT NULL";
                     break;
                 case RESTAURANT: // Add new restaurant review to the database
-                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_user_id\" = ? and \"review_restaurant_id\" = ?";
+                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_user_id\" = ? and \"review_restaurant_id\" IS NOT NULL";
                     break;
                 case STUDY_SPACE: // Add new study space review to the database
-                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_user_id\" = ? and \"review_study_space_id\" = ?";
+                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_user_id\" = ? and \"review_study_space_id\" IS NOT NULL";
                     break;
                 default:
                     throw new Exception("Invalid review type. Cannot retrieve review list.");
             }
-
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             preparedStatement.setInt(1, userId);
@@ -219,12 +208,11 @@ public class ReviewServiceImpl implements ReviewService {
     /**
      * Get a user with specified email address
      *
-     * @param userId, as the user id
      * @param entityId   as the entity id
      * @param type       as the review type
      * @return list of reviews
      */
-    public List<Review> getReviewsByUserAndEntity(int userId, Integer entityId, ReviewType type) throws Exception {
+    public List<Review> getReviewsByEntity(Integer entityId, ReviewType type) throws Exception {
 
         List<Review> reviewList = new ArrayList<>();
 
@@ -235,16 +223,16 @@ public class ReviewServiceImpl implements ReviewService {
             switch (type) {
 
                 case GYM: // Add new gym review to the database
-                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_user_id\" = ? and \"review_gym_id\" = ?";
+                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_gym_id\" = ?";
                     break;
                 case LIBRARY: // Add new library review to the database
-                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_user_id\" = ? and \"review_library_id\" = ?";
+                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_library_id\" = ?";
                     break;
                 case RESTAURANT: // Add new restaurant review to the database
-                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_user_id\" = ? and \"review_restaurant_id\" = ?";
+                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_restaurant_id\" = ?";
                     break;
                 case STUDY_SPACE: // Add new study space review to the database
-                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_user_id\" = ? and \"review_study_space_id\" = ?";
+                    query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_study_space_id\" = ?";
                     break;
                 default:
                     throw new Exception("Invalid review type. Cannot retrieve review list.");
@@ -252,12 +240,11 @@ public class ReviewServiceImpl implements ReviewService {
 
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
-            preparedStatement.setInt(1, userId);
-            preparedStatement.setInt(2, entityId);
+            preparedStatement.setInt(1, entityId);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (resultSet.next()) { // Itereview all the resulting rows from the query
+            while (resultSet.next()) { // Iterate all the resulting rows from the query
                 Review review = new Review();
 
                 // Set review information

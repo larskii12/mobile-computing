@@ -1,5 +1,8 @@
 package com.example.mainactivity.activities;
 
+import static com.example.mainactivity.models.review.ReviewType.LIBRARY;
+import static com.example.mainactivity.models.review.ReviewType.STUDY_SPACE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,16 +14,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.mainactivity.LoginActivity;
 import com.example.mainactivity.R;
 import com.example.mainactivity.config.DatabaseHelper;
+import com.example.mainactivity.models.favorite.Favorite;
+import com.example.mainactivity.models.location.Location;
+import com.example.mainactivity.service.busy_rating.BusyRatingService;
+import com.example.mainactivity.service.busy_rating.BusyRatingServiceImpl;
+import com.example.mainactivity.service.favorite.FavoriteService;
+import com.example.mainactivity.service.favorite.FavoriteServiceImpl;
 import com.example.mainactivity.service.location.LocationService;
+import com.example.mainactivity.service.location.LocationServiceImpl;
 import com.example.mainactivity.service.review.ReviewService;
 import com.example.mainactivity.service.user.UserService;
 import com.example.mainactivity.service.user.UserServiceImpl;
 
-public class MainActivity extends AppCompatActivity {
-    private ReviewService reviewService;
-    private LocationService locationService;
-    private UserService userService;
+import java.util.List;
 
+public class MainActivity extends AppCompatActivity {
+
+    private ReviewService reviewService;
+
+    private LocationService locationService;
+
+    private UserService userService;
     private static Context context;
 
     @Override
@@ -63,6 +77,31 @@ public class MainActivity extends AppCompatActivity {
                             if (db.databaseConnectionTest()) {
                                 System.out.println("Database online!");
                                 try {
+//
+//                                    BusyRatingService busyRatingService = new BusyRatingServiceImpl();
+//
+//                                    System.out.println(busyRatingService.getAverageScoreFromEntity(4, STUDY_SPACE));
+
+//                                    List<Location> allLocations = new LocationServiceImpl().findAllLocations("ALL", "", false);
+//
+//                                    for (Location l: allLocations) {
+//                                        System.out.println(l.getName());
+//                                    }
+
+//                                    FavoriteService favoriteService = new FavoriteServiceImpl();
+//
+//                                    // Add an user
+//                                    Favorite favorite = favoriteService.addFavorite(1, 2, LIBRARY);
+//                                    System.out.println(favorite.getLibraryId());
+//
+//                                    System.out.println(favoriteService.isFavoriteByUser(1, 3, LIBRARY));
+//                                    System.out.println(favoriteService.isFavoriteByUser(2, 3, LIBRARY));
+//
+//                                    List<Favorite> favorites = favoriteService.getFavoritesByUser(1, LIBRARY);
+//                                    for (Favorite f : favorites) {
+//                                        System.out.println(f.getId());
+//                                    }
+
 //                                    // Send OTP
 //                                    OTPServiceImpl otpService = new OTPServiceImpl();
 //                                    otpService.sendRegistrationOTP("afsyuanshouyi@outlook.com");
