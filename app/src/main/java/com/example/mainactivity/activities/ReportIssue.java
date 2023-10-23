@@ -74,11 +74,40 @@ public class ReportIssue extends AppCompatActivity {
 
                             showTextMessage("Issue report success.");
                             finish();
+
                         }
                     }.start();
                 }
             }
         });
+    }
+
+    public void onStart(){
+        super.onStart();
+    }
+
+    public void onRestart(){
+        super.onRestart();;
+    }
+
+    // When back button pressed
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    public void onPause() {
+        super.onPause();
+    }
+    public void onResume() {
+        super.onResume();
+    }
+
+    public void onStop(){
+        super.onStop();;
+    }
+
+    public void onDestroy(){
+        super.onDestroy();;
     }
 
     /**

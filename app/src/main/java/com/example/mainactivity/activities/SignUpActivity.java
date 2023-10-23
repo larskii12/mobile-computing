@@ -91,6 +91,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
                         spinnerSignUpDegreeList.setEnabled(true);
                         buttonSignUpGetOTP.setEnabled(true);
                         buttonSignUpGetOTP.setText("Get OTP");
+                        buttonSignUpGetOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
                         buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.primary));
                     }
 
@@ -209,6 +210,34 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
     }
 
+    public void onStart(){
+        super.onStart();
+    }
+
+    public void onRestart(){
+        super.onRestart();;
+    }
+
+    // When back button pressed
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    public void onPause() {
+        super.onPause();
+    }
+    public void onResume() {
+        super.onResume();
+    }
+
+    public void onStop(){
+        super.onStop();;
+    }
+
+    public void onDestroy(){
+        super.onDestroy();;
+    }
+
     /**
      * get OTP for registration
      *
@@ -271,9 +300,13 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
             otp = "";
 
             showTextMessage("Signed up successfully!");
-//            return true;
-            Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+
+            // Destroy the sign up page and jump to log in
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+            finish();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
 
@@ -300,6 +333,13 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
             return false;
         }
+
+        // Advanced check needed
+//        if (!email.contains("@")){
+//            showTextMessage("Your email format is not correct.");
+//
+//            return false;
+//        }
 
         if (!password.equals(passwordConfirmation)) {
             System.out.println("Passwords do not match");

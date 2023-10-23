@@ -13,8 +13,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.mainactivity.models.location.Location;
 import com.example.mainactivity.R;
+import com.example.mainactivity.models.location.Location;
 import com.example.mainactivity.models.user.User;
 import com.example.mainactivity.service.location.LocationServiceImpl;
 import com.example.mainactivity.service.user.UserServiceImpl;
@@ -94,6 +94,34 @@ public class LoginActivity extends AppCompatActivity {
                 }.start();
             }
         });
+    }
+
+    public void onStart(){
+        super.onStart();
+    }
+
+    public void onRestart(){
+        super.onRestart();;
+    }
+
+    // When back button pressed
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    public void onPause() {
+        super.onPause();
+    }
+    public void onResume() {
+        super.onResume();
+    }
+
+    public void onStop(){
+        super.onStop();;
+    }
+
+    public void onDestroy(){
+        super.onDestroy();;
     }
 
 

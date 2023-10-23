@@ -42,10 +42,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private final int standardCameraZoom = 18;
 
-    private final int maxCameraZoom = 30;
-
-    private final int minCameraZoom = 15;
-
     GPSServiceImpl gpsService;
 
     @SuppressLint("HandlerLeak")
@@ -67,11 +63,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
 
-        // Start GPS continuously updating
-        gpsService = new GPSServiceImpl(this, this);
-        gpsService.startGPSUpdates();
-
         setContentView(binding.getRoot());
+
+        gpsService = new GPSServiceImpl(this, this);
 
         searchBar = findViewById(R.id.searchBar);
         filterButton = (ImageButton) findViewById(R.id.filterButton);
@@ -163,6 +157,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    public void onStart(){
+        super.onStart();
+        // Check GPS permission
+        if (!GPSServiceImpl.getGPSPermission()){
+            showTextMessage("Location error, please enable location permission to use this function.");
+        }
+
+        // Start GPS continuously updating
+        else {
+            gpsService.startGPSUpdates();
+        }
+    }
+
+    public void onRestart(){
+        super.onRestart();
+    }
+
+    // When back button pressed
+    public void onBackPressed() {
+        super.onBackPressed();
+        gpsService.stopGPSUpdates();
+    }
+
+    public void onPause() {
+        super.onPause();
+        gpsService.stopGPSUpdates();
+    }
+    public void onResume() {
+        super.onResume();
+        gpsService.startGPSUpdates();
+    }
+
+    public void onStop(){
+        super.onStop();;
+        gpsService.stopGPSUpdates();
+    }
+
+    public void onDestroy(){
+        super.onDestroy();;
+        gpsService.stopGPSUpdates();
+    }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -176,7 +212,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        int maxCameraZoom = 30;
         mMap.setMaxZoomPreference(maxCameraZoom);
+        int minCameraZoom = 15;
         mMap.setMinZoomPreference(minCameraZoom);
         mMap.moveCamera(CameraUpdateFactory.zoomTo(standardCameraZoom));
 
@@ -211,6 +249,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onGPSUpdate(Location location) {
-
+        showTextMessage("GPS Updated " + GPSServiceImpl.getLatestLocation().getLatitude() + " " + GPSServiceImpl.getLatestLocation().getLongitude());
     }
 }

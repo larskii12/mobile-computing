@@ -107,8 +107,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
         editTextResetPasswordNewPasswordConfirm.setVisibility(View.GONE);
         buttonResetPasswordConfirm.setVisibility(View.GONE);
 
-        this.otp = "";
-
         buttonGetResetPasswordOTP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,6 +184,35 @@ public class ResetPasswordActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void onStart(){
+        super.onStart();
+        this.otp = "";
+    }
+
+    public void onRestart(){
+        super.onRestart();;
+    }
+
+    // When back button pressed
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    public void onPause() {
+        super.onPause();
+    }
+    public void onResume() {
+        super.onResume();
+    }
+
+    public void onStop(){
+        super.onStop();;
+    }
+
+    public void onDestroy(){
+        super.onDestroy();;
     }
 
     private boolean resetPassWord() throws Exception {

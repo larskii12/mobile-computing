@@ -35,12 +35,12 @@
             android:name=".activities.MapsActivity"
             android:exported="true"
             android:label="@string/title_activity_maps" />
+
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -48,12 +48,9 @@
         <activity
             android:name=".activities.SignUpActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
+        <activity android:name=".activities.MainActivity" />
         <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.ResetPasswordActivity"></activity>
         <activity android:name=".activities.ReportIssue"></activity>
