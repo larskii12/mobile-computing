@@ -1,18 +1,24 @@
 package com.example.mainactivity.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SearchView;
+import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.databinding.ActivityMapsBinding;
+import com.example.mainactivity.service.gps.GPSService;
+import com.example.mainactivity.service.gps.GPSServiceImpl;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,7 +28,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GPSService {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
@@ -36,11 +42,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private final int standardCameraZoom = 18;
 
+    private final int maxCameraZoom = 30;
+
+    private final int minCameraZoom = 15;
+
+    GPSServiceImpl gpsService;
+
+    @SuppressLint("HandlerLeak")
+    private final Handler handler = new Handler() {
+        @SuppressLint({"SetTextI18n", "HandlerLeak"})
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    String info = (String) msg.obj;
+                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
+
+        // Start GPS continuously updating
+        gpsService = new GPSServiceImpl(this, this);
+        gpsService.startGPSUpdates();
 
         setContentView(binding.getRoot());
 
@@ -58,6 +87,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
         mapFragment.getMapAsync(this);
 
 
@@ -126,6 +156,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 new LatLng(myLocation.getLatitude(),
                                         myLocation.getLongitude()), standardCameraZoom)); // Adjust zoom level as needed
                     }
+
+                    showTextMessage("Latest Location " + GPSServiceImpl.getLatestLocation().getLatitude() + " " + GPSServiceImpl.getLatestLocation().getLongitude());
                 }
             }
         });
@@ -144,17 +176,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mMap.setMaxZoomPreference(30);
-        mMap.setMinZoomPreference(15);
+        mMap.setMaxZoomPreference(maxCameraZoom);
+        mMap.setMinZoomPreference(minCameraZoom);
         mMap.moveCamera(CameraUpdateFactory.zoomTo(standardCameraZoom));
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            return;
+        // Show the user location
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
         }
 
-        // Show the user location
-        mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         // Get the latest current position
@@ -165,5 +195,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, standardCameraZoom));
                     }
                 });
+    }
+
+    /**
+     * Show message text
+     *
+     * @param text as the showing message
+     */
+    private void showTextMessage(String text) {
+        Message msg = new Message();
+        msg.what = 0;
+        msg.obj = text;
+        handler.sendMessage(msg);
+    }
+
+    @Override
+    public void onGPSUpdate(Location location) {
+
     }
 }
