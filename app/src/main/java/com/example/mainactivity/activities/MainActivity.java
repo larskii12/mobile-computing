@@ -27,6 +27,23 @@ import com.example.mainactivity.service.location.LocationService;
 import com.example.mainactivity.service.review.ReviewService;
 import com.example.mainactivity.service.user.UserService;
 
+import static com.example.mainactivity.models.review.ReviewType.LIBRARY;
+import static com.example.mainactivity.models.review.ReviewType.STUDY_SPACE;
+
+import com.example.mainactivity.config.DatabaseHelper;
+import com.example.mainactivity.models.favorite.Favorite;
+import com.example.mainactivity.service.busy_rating.BusyRatingService;
+import com.example.mainactivity.service.busy_rating.BusyRatingServiceImpl;
+import com.example.mainactivity.service.favorite.FavoriteService;
+import com.example.mainactivity.service.favorite.FavoriteServiceImpl;
+
+import com.example.mainactivity.service.location.LocationService;
+import com.example.mainactivity.service.location.LocationServiceImpl;
+import com.example.mainactivity.service.review.ReviewService;
+import com.example.mainactivity.service.user.UserService;
+
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements GPSService {
 
     private ReviewService reviewService;
