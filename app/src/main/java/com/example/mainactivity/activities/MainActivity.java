@@ -44,7 +44,7 @@ import com.example.mainactivity.service.user.UserService;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements GPSService {
+public class MainActivity extends AppCompatActivity{
 
     private ReviewService reviewService;
 
@@ -52,14 +52,7 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 
     private UserService userService;
 
-
-    private static final int REQUEST_LOCATION_PERMISSION = 1234;
-
-    GPSServiceImpl gpsService;
-
     private static Context context;
-
-    private static boolean gpsPermission;
 
     @SuppressLint("HandlerLeak")
     private final Handler handler = new Handler() {
@@ -82,12 +75,9 @@ public class MainActivity extends AppCompatActivity implements GPSService {
         setContentView(R.layout.activity_main);
 
         // Ask user to grant permission
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-        }
-
-        gpsService = new GPSServiceImpl(this, this);
-        gpsService.startGPSUpdates();
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+//        }
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
@@ -101,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements GPSService {
                     @Override
                     public void run() {
                         try {
-                            gpsService.stopGPSUpdates();
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                             startActivity(intent);
                         }
@@ -122,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements GPSService {
                     @Override
                     public void run() {
                         try {
-                            gpsService.stopGPSUpdates();
                             Intent intent = new Intent(MainActivity.this, MapsActivity.class);
                             startActivity(intent);
                         }
@@ -137,58 +125,59 @@ public class MainActivity extends AppCompatActivity implements GPSService {
         });
     }
 
-    /**
-     * GPS permission grant ot deny operation
-     * @param requestCode The request code passed in {@link #requestPermissions(
-     * android.app.Activity, String[], int)}
-     * @param permissions The requested permissions. Never null.
-     * @param grantResults The grant results for the corresponding permissions
-     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
-     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
-     *
-     */
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//    /**
+//     * GPS permission grant ot deny operation
+//     * @param requestCode The request code passed in {@link #requestPermissions(
+//     * android.app.Activity, String[], int)}
+//     * @param permissions The requested permissions. Never null.
+//     * @param grantResults The grant results for the corresponding permissions
+//     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+//     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+//     *
+//     */
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//
+//        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                gpsPermission = true;
+//            } else {
+//                gpsPermission = false;
+//            }
+//        }
+//    }
 
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                gpsPermission = true;
-            } else {
-                gpsPermission = false;
-            }
-        }
+    public void onStart(){
+        super.onStart();
     }
 
-    // Restart GPS continually monitor
-    @Override
-    protected void onRestart () {
-        super.onRestart();
-        gpsService.startGPSUpdates();
+    public void onRestart(){
+        super.onRestart();;
+    }
+
+    // When back button pressed
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    public void onPause() {
+        super.onPause();
+    }
+    public void onResume() {
+        super.onResume();
+    }
+
+    public void onStop(){
+        super.onStop();;
+    }
+
+    public void onDestroy(){
+        super.onDestroy();;
     }
 
 
     public static Context getAppContext () {
         return context;
-    }
-
-    @Override
-    public void onGPSUpdate (Location location){
-        Log.d("Main TAG Latitude: ", String.valueOf(gpsService.getLatestLocation().getLatitude()));
-        Log.d("Main TAG Longitude: ", String.valueOf(gpsService.getLatestLocation().getLongitude()));
-        Log.d("Main TAG History: ", gpsService.getGPSHistory().toString());
-        Log.d("Main TAG Latest Location: ", gpsService.getLatestLocation().toString());
-
-
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, String.valueOf(gpsService.getLatestLocation().getLatitude()) + "  " + String.valueOf(gpsService.getLatestLocation().getLongitude()), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public static boolean getGPSPermission(){
-        return gpsPermission;
     }
 
     /**

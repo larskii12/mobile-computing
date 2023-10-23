@@ -1,18 +1,14 @@
 package com.example.mainactivity.activities;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mainactivity.R;
-import com.google.android.gms.common.api.internal.BackgroundDetector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +36,19 @@ public class StudyZoneActivity extends AppCompatActivity {
         unwantedApps = new ArrayList<>(Arrays.asList(unwantedAppsList.split(",")));
     }
 
+    public void onStart(){
+        super.onStart();
+    }
+
+    public void onRestart(){
+        super.onRestart();;
+    }
+
+    // When back button pressed
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -50,6 +59,14 @@ public class StudyZoneActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         isInBackground = false;
+    }
+
+    public void onStop(){
+        super.onStop();
+    }
+
+    public void onDestroy(){
+        super.onDestroy();
     }
 
     public void startPomodoroTimer(long duration) {

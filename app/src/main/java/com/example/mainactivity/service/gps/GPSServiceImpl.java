@@ -24,6 +24,8 @@ public class GPSServiceImpl {
     private static ArrayList<Location> locationsHistory;
     private GPSService gpsService;
 
+    private static boolean GPSPermissionStatus;
+
     public GPSServiceImpl(Context context, GPSService gpsService){
 
         locationsHistory = new ArrayList<>();
@@ -118,5 +120,13 @@ public class GPSServiceImpl {
                 }
             }
         };
+    }
+
+    public static void setGPSPermissionStatus(boolean status){
+        GPSPermissionStatus = status;
+    }
+
+    public static boolean getGPSPermission(){
+        return GPSPermissionStatus;
     }
 }
