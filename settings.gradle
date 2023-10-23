@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "MainActivity"
-include ':app'
+include ':uninooks'
