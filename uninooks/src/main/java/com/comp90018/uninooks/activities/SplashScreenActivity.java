@@ -43,6 +43,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
         } else {
+            GPSServiceImpl.setGPSPermissionStatus(true);
             proceedToMainActivity();
         }
     }
