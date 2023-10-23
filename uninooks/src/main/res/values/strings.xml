@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MainActivity</string>
+    <string name="app_name">Uninooks</string>
     <string name="title_main_activity">MainActivity</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="forget_password">Forget Password</string>
