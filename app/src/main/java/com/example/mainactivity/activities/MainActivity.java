@@ -155,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements GPSService {
                 gpsPermission = true;
             } else {
                 gpsPermission = false;
-                showTextMessage("GPS permission is not granted, some functions is limited.");
             }
         }
     }
