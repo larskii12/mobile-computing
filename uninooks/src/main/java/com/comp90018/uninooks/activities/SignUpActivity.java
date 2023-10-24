@@ -112,20 +112,20 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
                     break;
 
-                case 3:
-                    ediTextSignUpName.setEnabled(false);
-                    editTextSignUpEmail.setEnabled(false);
-                    editTextSignUpUserName.setEnabled(false);
-                    editTextSignUpPassword.setEnabled(false);
-                    editTextSignUpConfirmPassword.setEnabled(false);
-                    spinnerSignUpFacultyList.setEnabled(false);
-                    spinnerSignUpDegreeList.setEnabled(false);
-                    buttonSignUpGetOTP.setEnabled(false);
-                    buttonSignUpGetOTP.setText("Sending");
-                    buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.grey));
-                    buttonSignUpGetOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.black));
-
-                    break;
+//                case 3:
+//                    ediTextSignUpName.setEnabled(false);
+//                    editTextSignUpEmail.setEnabled(false);
+//                    editTextSignUpUserName.setEnabled(false);
+//                    editTextSignUpPassword.setEnabled(false);
+//                    editTextSignUpConfirmPassword.setEnabled(false);
+//                    spinnerSignUpFacultyList.setEnabled(false);
+//                    spinnerSignUpDegreeList.setEnabled(false);
+//                    buttonSignUpGetOTP.setEnabled(false);
+//                    buttonSignUpGetOTP.setText("Sending");
+//                    buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.grey));
+//                    buttonSignUpGetOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.black));
+//
+//                    break;
             }
         }
     };
@@ -231,11 +231,11 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     public void onStop(){
-        super.onStop();;
+        super.onStop();
     }
 
     public void onDestroy(){
-        super.onDestroy();;
+        super.onDestroy();
     }
 
     /**
@@ -246,7 +246,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
      */
     private String getOTP() throws Exception {
 
-        handler.sendEmptyMessage(3);
+//        handler.sendEmptyMessage(3);
 
         if (!inputCheck()) {
 
@@ -256,14 +256,14 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         }
 
         else {
-            String newOTP = String.valueOf(new mailServiceImpl().sendOTP(editTextSignUpEmail.getText().toString().trim()));
-
             showTextMessage("The OTP has been sent, please check your mail box.");
 
             Message counter = new Message();
             counter.what = 1;
             counter.obj = OTP_TIMER;
             handler.sendMessage(counter);
+
+            String newOTP = String.valueOf(new mailServiceImpl().sendOTP(editTextSignUpEmail.getText().toString().trim()));
 
             return newOTP;
         }

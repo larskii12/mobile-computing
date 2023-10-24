@@ -1,5 +1,7 @@
 package com.comp90018.uninooks.models.location;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.sql.Time;
 
 public class Location {
@@ -38,6 +40,18 @@ public class Location {
      * List of Busy Times
      */
     private Time[] busyHours;
+
+    private LatLng location;
+
+    private double distanceFromCurrentPosition;
+
+    public LatLng getLocation() {
+        return location;
+    }
+
+    public void setLocation(LatLng location) {
+        this.location = location;
+    }
 
     public int getId() {
         return id;
@@ -93,5 +107,13 @@ public class Location {
 
     public void setBusyHours(Time[] busyHours) {
         this.busyHours = busyHours;
+    }
+
+    public double getDistanceFromCurrentPosition() {
+        return distanceFromCurrentPosition;
+    }
+
+    public void setDistanceFromCurrentPosition(double distanceFromCurrentPosition) {
+        this.distanceFromCurrentPosition = distanceFromCurrentPosition;
     }
 }

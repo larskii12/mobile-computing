@@ -3,6 +3,7 @@ package com.comp90018.uninooks.activities;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,11 +15,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.comp90018.uninooks.R;
+import com.comp90018.uninooks.service.gps.GPSService;
+import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.review.ReviewService;
+import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
 import com.comp90018.uninooks.service.user.UserService;
+import com.google.android.gms.maps.model.LatLng;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements GPSService {
 
     private ReviewService reviewService;
 
@@ -27,6 +32,8 @@ public class MainActivity extends AppCompatActivity{
     private UserService userService;
 
     private static Context context;
+
+    GPSServiceImpl gpsService;
 
     @SuppressLint("HandlerLeak")
     private final Handler handler = new Handler() {
@@ -55,6 +62,8 @@ public class MainActivity extends AppCompatActivity{
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
+        gpsService = new GPSServiceImpl(this, this);
+
         Button button = (Button) findViewById(R.id.button);
         Button loginButton = findViewById(R.id.loginButton);
 
@@ -65,6 +74,7 @@ public class MainActivity extends AppCompatActivity{
                     @Override
                     public void run() {
                         try {
+                            gpsService.stopGPSUpdates();
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                             startActivity(intent);
                         }
@@ -85,6 +95,9 @@ public class MainActivity extends AppCompatActivity{
                     @Override
                     public void run() {
                         try {
+                            new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
+
+                            gpsService.stopGPSUpdates();
                             Intent intent = new Intent(MainActivity.this, MapsActivity.class);
                             startActivity(intent);
                         }
@@ -123,30 +136,37 @@ public class MainActivity extends AppCompatActivity{
 
     public void onStart(){
         super.onStart();
+        gpsService.startGPSUpdates();
     }
 
     public void onRestart(){
-        super.onRestart();;
+        super.onRestart();
+        gpsService.startGPSUpdates();
     }
 
     // When back button pressed
     public void onBackPressed() {
         super.onBackPressed();
+        gpsService.stopGPSUpdates();
     }
 
     public void onPause() {
         super.onPause();
+        gpsService.stopGPSUpdates();
     }
     public void onResume() {
         super.onResume();
+        gpsService.startGPSUpdates();
     }
 
     public void onStop(){
-        super.onStop();;
+        super.onStop();
+
     }
 
     public void onDestroy(){
-        super.onDestroy();;
+        super.onDestroy();
+        gpsService.stopGPSUpdates();
     }
 
 
@@ -164,5 +184,10 @@ public class MainActivity extends AppCompatActivity{
         msg.what = 0;
         msg.obj = text;
         handler.sendMessage(msg);
+    }
+
+    @Override
+    public void onGPSUpdate(Location location) {
+        gpsService.stopGPSUpdates();
     }
 }

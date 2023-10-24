@@ -10,6 +10,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
@@ -36,7 +37,7 @@ public class GPSServiceImpl {
 
         // location request configuration default
         locationRequestConfig = new LocationRequest();
-        locationRequestConfig.setInterval(5 * 1000);
+        locationRequestConfig.setInterval(3 * 1000);
         locationRequestConfig.setFastestInterval(3 * 1000);
         locationRequestConfig.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
@@ -65,17 +66,15 @@ public class GPSServiceImpl {
      * Get the GPS last location, static call without creating object crossing the app
      * @return latest GPS location
      */
-    public static Location getLatestLocation(){
+    public static LatLng getLatestLocation(){
         if (locationsHistory.size() == 0){
 
             // Return a default location - Melbourne Connect
-            Location melbourneConnect = new Location("");
-            melbourneConnect.setLatitude(-37.8000);
-            melbourneConnect.setLongitude(144.9643);
+            LatLng melbourneConnect = new LatLng(-37.8000, 144.9643);
             return melbourneConnect;
         }
 
-        return locationsHistory.get(locationsHistory.size() - 1);
+        return new LatLng(locationsHistory.get(locationsHistory.size() - 1).getLatitude(), locationsHistory.get(locationsHistory.size() - 1).getLongitude());
     }
 
     /**

@@ -79,12 +79,12 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
                     break;
 
-                case 3:
-                    buttonGetResetPasswordOTP.setEnabled(false);
-                    buttonGetResetPasswordOTP.setText("Sending");
-                    buttonGetResetPasswordOTP.setBackgroundColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.grey));
-
-                    break;
+//                case 3:
+//                    buttonGetResetPasswordOTP.setEnabled(false);
+//                    buttonGetResetPasswordOTP.setText("Sending");
+//                    buttonGetResetPasswordOTP.setBackgroundColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.grey));
+//
+//                    break;
             }
         }
     };
@@ -118,14 +118,14 @@ public class ResetPasswordActivity extends AppCompatActivity {
                             if (editTextResetPasswordEmail.getText().toString().trim().isEmpty()) {
                                 showTextMessage("Email cannot be empty");
                             } else {
-                                otp = getOTP();
-
                                 Message msg = new Message();
                                 msg.what = 1;
                                 msg.obj = OTP_TIMER;
                                 handler.sendMessage(msg);
 
                                 showTextMessage("If your user name or email matches our record, an email has sent to you email address.");
+
+                                otp = getOTP();
                             }
 
                         } catch (Exception e) {
@@ -192,7 +192,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     }
 
     public void onRestart(){
-        super.onRestart();;
+        super.onRestart();
     }
 
     // When back button pressed
@@ -208,11 +208,11 @@ public class ResetPasswordActivity extends AppCompatActivity {
     }
 
     public void onStop(){
-        super.onStop();;
+        super.onStop();
     }
 
     public void onDestroy(){
-        super.onDestroy();;
+        super.onDestroy();
     }
 
     private boolean resetPassWord() throws Exception {
@@ -239,7 +239,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private String getOTP() throws Exception {
 
 //             Disable get OTP button
-        handler.sendEmptyMessage(3);
+//        handler.sendEmptyMessage(3);
 
         // // Verify user old password and change password
         if (new UserServiceImpl().hasUser(editTextResetPasswordEmail.getText().toString())) {

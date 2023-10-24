@@ -38,19 +38,19 @@ public class StudySpace extends Location {
         isTalkAllowed = talkAllowed;
     }
 
-    public Integer getFloorLevel() {
-        return floorLevel;
-    }
+//    public Integer getFloorLevel() {
+//        return floorLevel;
+//    }
 
-    public void setFloorLevel(Integer floorLevel) {
-        this.floorLevel = floorLevel;
-    }
+//    public void setFloorLevel(Integer floorLevel) {
+//        this.floorLevel = floorLevel;
+//    }
 
-    public Integer getCapacity() {
-        return capacity;
-    }
+//    public Integer getCapacity() {
+//        return capacity;
+//    }
 
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
+//    public void setCapacity(Integer capacity) {
+//        this.capacity = capacity;
+//    }
 }

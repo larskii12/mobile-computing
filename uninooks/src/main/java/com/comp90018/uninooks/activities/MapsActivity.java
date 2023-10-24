@@ -151,7 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         myLocation.getLongitude()), standardCameraZoom)); // Adjust zoom level as needed
                     }
 
-                    showTextMessage("Latest Location " + GPSServiceImpl.getLatestLocation().getLatitude() + " " + GPSServiceImpl.getLatestLocation().getLongitude());
+                    showTextMessage("Latest Location " + GPSServiceImpl.getLatestLocation().latitude + " " + GPSServiceImpl.getLatestLocation().longitude);
                 }
             }
         });
@@ -249,6 +249,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onGPSUpdate(Location location) {
-        showTextMessage("GPS Updated " + GPSServiceImpl.getLatestLocation().getLatitude() + " " + GPSServiceImpl.getLatestLocation().getLongitude());
+        showTextMessage("GPS Updated " + GPSServiceImpl.getLatestLocation().latitude + " " + GPSServiceImpl.getLatestLocation().longitude);
     }
 }
