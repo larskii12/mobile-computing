@@ -52,7 +52,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8sp"
-            android:hint="@string/Name" />
+            android:hint="@string/Name"
+            android:inputType="text" />
 
         <EditText
             android:id="@+id/EditTextSignUpEmail"
@@ -69,7 +70,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8sp"
-            android:hint="@string/Username" />
+            android:hint="@string/Username"
+            android:inputType="text" />
 
         <EditText
             android:id="@+id/EditTextSignUpPassword"
@@ -121,6 +123,7 @@
             android:id="@+id/EditTextSingUpOTP"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:ems="10"
             android:hint="OTP"
