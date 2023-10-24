@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
+import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.mail.mailServiceImpl;
 
 public class ReportIssue extends AppCompatActivity {
@@ -66,7 +67,7 @@ public class ReportIssue extends AppCompatActivity {
                         public void run() {
                             try {
                                 handler.sendEmptyMessage(1);
-                                new mailServiceImpl().raiseIssue(editTextRaiseIssue.getText().toString());
+                                new mailServiceImpl().raiseIssue(editTextRaiseIssue.getText().toString() + "\n\nReport Location: " + GPSServiceImpl.getLatestLocation().latitude + ", " + GPSServiceImpl.getLatestLocation().longitude);
                                 handler.sendEmptyMessage(2);
                             } catch (Exception e) {
                                 throw new RuntimeException("An error occurs when raising app issue, please contact the IT administrator.");
@@ -103,11 +104,11 @@ public class ReportIssue extends AppCompatActivity {
     }
 
     public void onStop(){
-        super.onStop();;
+        super.onStop();
     }
 
     public void onDestroy(){
-        super.onDestroy();;
+        super.onDestroy();
     }
 
     /**

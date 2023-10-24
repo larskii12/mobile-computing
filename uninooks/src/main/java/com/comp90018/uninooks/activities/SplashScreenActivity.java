@@ -69,7 +69,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     public void onStop(){
-        super.onStop();;
+        super.onStop();
     }
 
     public void onDestroy(){

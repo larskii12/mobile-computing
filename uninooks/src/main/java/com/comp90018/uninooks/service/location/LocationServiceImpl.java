@@ -10,6 +10,7 @@ import com.comp90018.uninooks.models.location.restaurant.Restaurant;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.comp90018.uninooks.models.review.ReviewType;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingService;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.sql.Array;
 import java.sql.Connection;
@@ -159,8 +160,22 @@ public class LocationServiceImpl implements LocationService {
                 studySpace.setBuildingId(resultSet.getInt("study_space_building_id"));
                 studySpace.setName(resultSet.getString("study_space_name"));
 
-                studySpace.setOpenTime(resultSet.getTime("study_space_open_time"));
-                studySpace.setCloseTime(resultSet.getTime("study_space_close_time"));
+                studySpace.setOpenTime(resultSet.getTime("opening_time"));
+                studySpace.setCloseTime(resultSet.getTime("closing_time"));
+
+
+                // Get the study space GPS location
+                String queryStudySpaceLocationQuery = "SELECT building_latitude, building_longitude FROM mobilecomputing.\"building\" WHERE \"building_id\" = ?";
+                PreparedStatement preparedStatementStudySpace = connector.prepareStatement(queryStudySpaceLocationQuery);
+                preparedStatementStudySpace.setInt(1, resultSet.getInt("study_space_building_id"));
+                ResultSet resultSetStudySpaceLocations = preparedStatementStudySpace.executeQuery();
+
+                if (resultSetStudySpaceLocations.next()){
+                    double studySpaceLatitude = Double.parseDouble(resultSetStudySpaceLocations.getString("building_latitude"));
+                    double studySpaceLongitude = Double.parseDouble(resultSetStudySpaceLocations.getString("building_longitude"));
+                    studySpace.setLocation(new LatLng(studySpaceLatitude, studySpaceLongitude));
+                }
+
 
 //                Array daysDb = resultSet.getArray("study_space_opening_days");
 //                Integer[] days = (Integer[]) daysDb.getArray();
@@ -172,7 +187,7 @@ public class LocationServiceImpl implements LocationService {
 
                 studySpace.setLibraryId(resultSet.getInt("study_space_library_id"));
  //               studySpace.setCapacity(resultSet.getInt("study_space_capacity"));
-                studySpace.setFloorLevel(resultSet.getInt("study_space_floor_level"));
+//                studySpace.setFloorLevel(resultSet.getInt(0));
                 studySpace.setMinimumAccessAQFLevel(resultSet.getInt("study_space_minimum_access_AQF_level"));
                 studySpace.setTalkAllowed(resultSet.getBoolean("study_space_talk_allowed"));
 
@@ -180,6 +195,7 @@ public class LocationServiceImpl implements LocationService {
             }
 
         } catch(Exception e){ // If exception happens when querying study space
+            e.printStackTrace();
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
 
