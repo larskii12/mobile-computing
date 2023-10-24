@@ -39,6 +39,11 @@ public class Location {
      */
     private Time[] busyHours;
 
+    /**
+     * Type of location
+     */
+    private String type;
+
     public int getId() {
         return id;
     }
@@ -94,4 +99,6 @@ public class Location {
     public void setBusyHours(Time[] busyHours) {
         this.busyHours = busyHours;
     }
+    public String getType() {return type;}
+    public void setType(String type) {this.type = type;}
 }
