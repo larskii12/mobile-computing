@@ -59,10 +59,10 @@ public class StudySpaceServiceImpl implements StudySpaceService {
         }
 
         // GIS check ordering, use on deployment
-        LatLng currentLocation = new LatLng(GPSServiceImpl.getLatestLocation().latitude, GPSServiceImpl.getLatestLocation().longitude);
+//        LatLng currentLocation = new LatLng(GPSServiceImpl.getLatestLocation().latitude, GPSServiceImpl.getLatestLocation().longitude);
 
         // Fake current position, use in development
-//        LatLng currentLocation = new LatLng(-37.8000898318753, 144.96443598212284);
+        LatLng currentLocation = new LatLng(-37.8000898318753, 144.96443598212284);
 
         allStudySpace.sort((studySpaceOne, studySpaceTwo) -> {
             double dist1 = calculateDistance(studySpaceOne.getLocation(), currentLocation);
