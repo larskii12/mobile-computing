@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ReviewService {
 
-    Review addReview(Integer userId, Integer entityId, ReviewType type, Integer score) throws Exception;
+    Review addReview(Integer userId, Integer entityId, ReviewType type, Integer score, String comment) throws Exception;
 
     Review getReview(int ratingId, ReviewType type) throws Exception;
 

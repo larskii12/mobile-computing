@@ -1,8 +1,5 @@
 package com.comp90018.uninooks.activities;
 
-import static com.comp90018.uninooks.models.review.ReviewType.LIBRARY;
-import static com.comp90018.uninooks.models.review.ReviewType.STUDY_SPACE;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -19,19 +16,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.comp90018.uninooks.R;
-import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.comp90018.uninooks.models.review.Review;
-import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
+import com.comp90018.uninooks.models.review.ReviewType;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.review.ReviewService;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
-import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
 import com.comp90018.uninooks.service.user.UserService;
-import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements GPSService {
@@ -111,31 +104,61 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                             // How to get closest study spaces
-                            ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
-                            for (StudySpace studySpace : closestStudySpaces){
-                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Name   " + studySpace.getName());
-                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Building ID   " + studySpace.getBuildingId());
-                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Distance From Current Location   " + studySpace.getDistanceFromCurrentPosition() + " meters");
-                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Library ID   " + studySpace.getLibraryId());
-                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Talk Allowed   " + studySpace.isTalkAllowed());
-                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Minimum AQF Level   " + studySpace.getMinimumAccessAQFLevel());
-                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Opening Time   " + studySpace.getOpenTime());
-                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Closing Time   " + studySpace.getCloseTime());
-                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "\n\n");
-                            }
-
-
+//                            ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
+//                            for (StudySpace studySpace : closestStudySpaces){
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Name   " + studySpace.getName());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Building ID   " + studySpace.getBuildingId());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Distance From Current Location   " + studySpace.getDistanceFromCurrentPosition() + " meters");
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Library ID   " + studySpace.getLibraryId());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Talk Allowed   " + studySpace.isTalkAllowed());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Minimum AQF Level   " + studySpace.getMinimumAccessAQFLevel());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Opening Time   " + studySpace.getOpenTime());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Closing Time   " + studySpace.getCloseTime());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "\n\n");
+//                            }
+//
+//
                             // How to access review with a given entity and entity Type, to get id, you can obtain from the previous location service
-                            List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(14, STUDY_SPACE);
-                            for (Review review : reviews) {
-                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Score: " + review.getScore() + "   Comments: " + review.getComment() + "    Review Time:  " + review.getTime());
-                            }
-
-
-                            // How to get entity busy rating for right now. To get id, you can obtain from the previous location service
-                            // HIGHER --- LESS BUSY.   LOWER - MORE BUSY    5 not busy,    4 fair,    3 a bit busy,     2 very busy,     1 very very busy,       0 - do not go!
-                            Double busyRatings = new BusyRatingServiceImpl().getAverageScoreFromEntity(3, LIBRARY);
-                            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library busy: " + busyRatings);
+//                            List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(3, ReviewType.LIBRARY);
+//                            for (Review review : reviews) {
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Score: " + review.getScore() + "   Comments: " + review.getComment() + "    Review Time:  " + review.getTime());
+//                            }
+//
+//
+//                            // How to get entity busy rating for right now. To get id, you can obtain from the previous location service
+//                            // HIGHER --- LESS BUSY.   LOWER - MORE BUSY    5 not busy,    4 fair,    3 a bit busy,     2 very busy,     1 very very busy,       0 - do not go!
+//                            Double busyRatings = new BusyRatingServiceImpl().getAverageScoreFromEntity(3, LIBRARY);
+//                            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library busy: " + busyRatings);
+//
+//
+//
+                              // How to add a review
+//                            try {
+//                                Review newReview = new ReviewServiceImpl().addReview(263, 3, LIBRARY, 5, "I love this excellent study space");
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Review successes, Your new review id is " + newReview.getReviewId());
+//                            }
+//                            catch (Exception e){
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Review failed, please contact the IT administrator");
+//                            }
+//
+//
+//
+                            // How to add a busy rating
+//                            try {
+//                                Boolean busyRating = new BusyRatingServiceImpl().addBusyRating(3, STUDY_SPACE, 4);
+//
+//                                // Check success or not
+//                                if (busyRating){
+//                                    Log.d("AAAAAAAAAAAAAAAAAAAAA", "Busy rating Success");
+//                                }
+//                                else{
+//                                    throw new Exception();
+//                                }
+//                            }
+//
+//                            catch (Exception e){
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Busy rating failed, please contact the IT administrator.");
+//                            }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

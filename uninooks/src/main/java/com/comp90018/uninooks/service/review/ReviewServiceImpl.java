@@ -26,9 +26,10 @@ public class ReviewServiceImpl implements ReviewService {
      * @param score      as the score
      * @throws Exception if any exceptions happens
      */
-    public Review addReview(Integer userId, Integer entityId, ReviewType type, Integer score) throws Exception {
+    public Review addReview(Integer userId, Integer entityId, ReviewType type, Integer score, String comment) throws Exception {
 
-        java.sql.Timestamp sqlTimeStamp = new java.sql.Timestamp(System.currentTimeMillis());
+        // Get current time
+        java.sql.Timestamp currentDateTime = new java.sql.Timestamp((System.currentTimeMillis() / 1000) * 1000);
 
         try {
             String query;
@@ -36,16 +37,16 @@ public class ReviewServiceImpl implements ReviewService {
             switch (type) {
 
                 case GYM: // Add new gym review to the database
-                    query = "INSERT INTO mobilecomputing.review (review_user_id, review_score, review_time, review_gym_id) VALUES (?, ?, ?, ?);";
+                    query = "INSERT INTO mobilecomputing.review (review_user_id, review_score, review_time, review_gym_id, comment) VALUES (?, ?, ?, ?, ?);";
                     break;
                 case LIBRARY: // Add new library review to the database
-                    query = "INSERT INTO mobilecomputing.review (review_user_id, review_score, review_time, review_library_id) VALUES (?, ?, ?, ?);";
+                    query = "INSERT INTO mobilecomputing.review (review_user_id, review_score, review_time, review_library_id, comment) VALUES (?, ?, ?, ?, ?);";
                     break;
                 case RESTAURANT: // Add new restaurant review to the database
-                    query = "INSERT INTO mobilecomputing.review (review_user_id, review_score, review_time, review_restaurant_id) VALUES (?, ?, ?, ?);";
+                    query = "INSERT INTO mobilecomputing.review (review_user_id, review_score, review_time, review_restaurant_id, comment) VALUES (?, ?, ?, ?, ?);";
                     break;
                 case STUDY_SPACE: // Add new study space review to the database
-                    query = "INSERT INTO mobilecomputing.review (review_user_id, review_score, review_time, review_study_space_id) VALUES (?, ?, ?, ?);";
+                    query = "INSERT INTO mobilecomputing.review (review_user_id, review_score, review_time, review_study_space_id, comment) VALUES (?, ?, ?, ?, ?);";
                     break;
                 default:
                     throw new Exception("Invalid review type. Review not created.");
@@ -53,8 +54,9 @@ public class ReviewServiceImpl implements ReviewService {
             PreparedStatement preparedStatement = connector.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, score);
-            preparedStatement.setTimestamp(3,  sqlTimeStamp);
+            preparedStatement.setTimestamp(3,  currentDateTime);
             preparedStatement.setInt(4, entityId);
+            preparedStatement.setString(5, comment);
 
             // Execute query
             preparedStatement.executeUpdate();
@@ -74,6 +76,7 @@ public class ReviewServiceImpl implements ReviewService {
             // Unknown exceptions happens.
             throw new Exception("User added failed, please contact the IT administrator to report the issue.");
         }
+
     }
 
     /**
@@ -117,6 +120,7 @@ public class ReviewServiceImpl implements ReviewService {
                     default:
                         throw new Exception("Invalid review type. Cannot retrieve review list.");
                 }
+
                 review.setScore(resultSet.getInt("review_score"));
                 review.setTime(resultSet.getTimestamp("review_time"));
                 return review;
