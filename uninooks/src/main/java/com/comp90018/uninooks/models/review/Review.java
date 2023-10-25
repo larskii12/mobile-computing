@@ -2,7 +2,7 @@ package com.comp90018.uninooks.models.review;
 
 import androidx.annotation.NonNull;
 
-import java.sql.Time;
+import java.sql.Timestamp;
 
 public class Review {
 
@@ -22,7 +22,7 @@ public class Review {
 
     Integer gymId;
 
-    Time time;
+    Timestamp time;
 
     String comment;
 
@@ -82,11 +82,11 @@ public class Review {
         this.gymId = gymId;
     }
 
-    public Time getTime() {
+    public Timestamp getTime() {
         return time;
     }
 
-    public void setTime(Time time) {
+    public void setTime(Timestamp time) {
         this.time = time;
     }
 

@@ -35,7 +35,7 @@ public class ReportIssue extends AppCompatActivity {
                 case 1:
                     buttonRaiseIssue.setEnabled(false);
                     buttonRaiseIssue.setBackgroundColor(ContextCompat.getColor(ReportIssue.this, R.color.grey));
-                    buttonRaiseIssue.setText("Sending");
+                    buttonRaiseIssue.setText("Sending...");
                     break;
 
                 case 2:
