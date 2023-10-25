@@ -6,6 +6,7 @@ import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.activities.MainActivity;
 import com.comp90018.uninooks.config.DatabaseHelper;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
+import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.maps.model.LatLng;
@@ -58,10 +59,10 @@ public class StudySpaceServiceImpl implements StudySpaceService {
         }
 
         // GIS check ordering, use on deployment
-//        LatLng currentLocation = new LatLng(GPSServiceImpl.getLatestLocation().getLatitude(), GPSServiceImpl.getLatestLocation().getLongitude());
+        LatLng currentLocation = new LatLng(GPSServiceImpl.getLatestLocation().latitude, GPSServiceImpl.getLatestLocation().longitude);
 
         // Fake current position, use in development
-        LatLng currentLocation = new LatLng(-37.8000898318753, 144.96443598212284);
+//        LatLng currentLocation = new LatLng(-37.8000898318753, 144.96443598212284);
 
         allStudySpace.sort((studySpaceOne, studySpaceTwo) -> {
             double dist1 = calculateDistance(studySpaceOne.getLocation(), currentLocation);
@@ -69,25 +70,13 @@ public class StudySpaceServiceImpl implements StudySpaceService {
             return Double.compare(dist1, dist2);
         });
 
-        // if more than 10 spaces found, get the first 10.
+        // if more than requested number of spaces found, get the requested number of study spaces.
         if (allStudySpace.size() >= size) {
             allStudySpace = new ArrayList<>(allStudySpace.subList(0, size));
         }
 
         // Sort ten study spaces by waling distance from Google Map API
         closestStudySpaces = sortStudySpaceByWalkingDistance(currentLocation, allStudySpace);
-
-        for (StudySpace studySpace : closestStudySpaces){
-            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Name   " + studySpace.getName());
-            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Building ID   " + studySpace.getBuildingId());
-            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Distance From Current Location   " + studySpace.getDistanceFromCurrentPosition() + " meters");
-            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Library ID   " + studySpace.getLibraryId());
-            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Talk Allowed   " + studySpace.isTalkAllowed());
-            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Minimum AQF Level   " + studySpace.getMinimumAccessAQFLevel());
-            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Opening Time   " + studySpace.getOpenTime());
-            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Closing Time   " + studySpace.getCloseTime());
-            Log.d("AAAAAAAAAAAAAAAAAAAAA", "\n\n");
-        }
 
         return closestStudySpaces;
     }

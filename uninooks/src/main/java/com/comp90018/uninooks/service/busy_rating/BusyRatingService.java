@@ -7,5 +7,5 @@ public interface BusyRatingService {
 
     BusyRating getBusyRating(int entityId, ReviewType type) throws Exception;
 
-    Integer getAverageScoreFromEntity(int entityId, ReviewType type) throws Exception;
+    Double getAverageScoreFromEntity(int entityId, ReviewType type) throws Exception;
 }

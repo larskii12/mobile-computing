@@ -2,13 +2,11 @@ package com.comp90018.uninooks.service.location;
 
 
 import com.comp90018.uninooks.config.DatabaseHelper;
-import com.comp90018.uninooks.models.busy_rating.BusyRating;
 import com.comp90018.uninooks.models.location.Location;
 import com.comp90018.uninooks.models.location.LocationType;
 import com.comp90018.uninooks.models.location.library.Library;
 import com.comp90018.uninooks.models.location.restaurant.Restaurant;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
-import com.comp90018.uninooks.models.review.ReviewType;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingService;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -74,9 +72,9 @@ public class LocationServiceImpl implements LocationService {
                 Time[] busyHours = (Time[]) busyDb.getArray();
                 library.setBusyHours(busyHours);
 
-                BusyRating busyRating = busyRatingService.getBusyRating(locationId, ReviewType.LIBRARY);
+//                BusyRating busyRating = busyRatingService.getBusyRating(locationId, ReviewType.LIBRARY);
 
-                library.setCapacity(busyRating.getAverageScore());
+//                library.setCapacity(busyRating.getAverageScore());
                 library.setHasQuietZones(resultSet.getBoolean("library_has_quiet_zones"));
 
                 return library;

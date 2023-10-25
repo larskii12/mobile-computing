@@ -28,7 +28,7 @@ public class ReviewServiceImpl implements ReviewService {
      */
     public Review addReview(Integer userId, Integer entityId, ReviewType type, Integer score) throws Exception {
 
-        java.sql.Time sqlTime = new java.sql.Time(System.currentTimeMillis());
+        java.sql.Timestamp sqlTimeStamp = new java.sql.Timestamp(System.currentTimeMillis());
 
         try {
             String query;
@@ -53,7 +53,7 @@ public class ReviewServiceImpl implements ReviewService {
             PreparedStatement preparedStatement = connector.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, score);
-            preparedStatement.setTime(3,  sqlTime);
+            preparedStatement.setTimestamp(3,  sqlTimeStamp);
             preparedStatement.setInt(4, entityId);
 
             // Execute query
@@ -118,7 +118,7 @@ public class ReviewServiceImpl implements ReviewService {
                         throw new Exception("Invalid review type. Cannot retrieve review list.");
                 }
                 review.setScore(resultSet.getInt("review_score"));
-                review.setTime(resultSet.getTime("review_time"));
+                review.setTime(resultSet.getTimestamp("review_time"));
                 return review;
             }
 
@@ -192,7 +192,7 @@ public class ReviewServiceImpl implements ReviewService {
                         throw new Exception("Invalid review type. Cannot retrieve review list.");
                 }
                 review.setScore(resultSet.getInt("review_score"));
-                review.setTime(resultSet.getTime("review_time"));
+                review.setTime(resultSet.getTimestamp("review_time"));
 
                 reviewList.add(review);
             }
@@ -250,6 +250,7 @@ public class ReviewServiceImpl implements ReviewService {
                 // Set review information
                 review.setReviewId(resultSet.getInt("review_id"));
                 review.setUserId(resultSet.getInt("review_user_id"));
+                review.setComment(resultSet.getString("comment"));
                 switch (type) {
 
                     case GYM: // Set gym id to the review
@@ -268,7 +269,7 @@ public class ReviewServiceImpl implements ReviewService {
                         throw new Exception("Invalid review type. Cannot retrieve review list.");
                 }
                 review.setScore(resultSet.getInt("review_score"));
-                review.setTime(resultSet.getTime("review_time"));
+                review.setTime(resultSet.getTimestamp("review_time"));
 
                 reviewList.add(review); // add review to the list
             }

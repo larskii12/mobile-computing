@@ -78,9 +78,9 @@ public class BusyRatingServiceImpl implements BusyRatingService {
                         throw new Exception("Invalid review type. Cannot retrieve review list.");
                 }
                 busyRating.setTotalScore(resultSet.getInt("total_score"));
-                busyRating.setAverageScore(resultSet.getInt("average_score"));
+                busyRating.setAverageScore(resultSet.getDouble("average_score"));
                 busyRating.setCount(resultSet.getInt("busy_rating_count"));
-                busyRating.setTime(resultSet.getTime("review_time"));
+                busyRating.setTime(resultSet.getTime("busy_rating_time"));
                 return busyRating;
             }
 
@@ -101,7 +101,7 @@ public class BusyRatingServiceImpl implements BusyRatingService {
      * @return Review
      */
 
-    public Integer getAverageScoreFromEntity(int entityId, ReviewType type) throws Exception {
+    public Double getAverageScoreFromEntity(int entityId, ReviewType type) throws Exception {
 
         // converting to IST
         ZonedDateTime zonedIST = ZonedDateTime.now(ZoneId.of("Australia/Sydney"));
@@ -147,7 +147,7 @@ public class BusyRatingServiceImpl implements BusyRatingService {
 
             // Set user information
             if (resultSet.next()) { // Ensure there's a row in the result set
-                return resultSet.getInt(1);
+                return resultSet.getDouble(1);
             }
         }
 

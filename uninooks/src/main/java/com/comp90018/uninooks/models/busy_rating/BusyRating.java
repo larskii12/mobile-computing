@@ -23,7 +23,7 @@ public class BusyRating {
 
     Integer totalScore;
 
-    Integer averageScore;
+    Double averageScore;
 
     Integer count;
 
@@ -91,11 +91,11 @@ public class BusyRating {
         this.totalScore = totalScore;
     }
 
-    public Integer getAverageScore() {
+    public Double getAverageScore() {
         return averageScore;
     }
 
-    public void setAverageScore(Integer averageScore) {
+    public void setAverageScore(Double averageScore) {
         this.averageScore = averageScore;
     }
 
