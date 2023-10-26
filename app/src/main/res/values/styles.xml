@@ -14,12 +14,20 @@
         <item name="android:fontFamily">sans-serif-black</item>
     </style>
 
+    <style name="WhiteTextHeading" parent="BaseText">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontWeight">600</item>
+        <item name="android:fontFamily">sans-serif-black</item>
+    </style>
+
     <!-- Sub-heading text style -->
     <style name="TextSubHeading" parent="BaseText">
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/primary</item>
         <item name="android:fontFamily">sans-serif</item>
     </style>
+    
     <!-- Sub-heading text style in Red -->
     <style name="TextRed" parent="BaseText">
         <item name="android:textSize">18sp</item>

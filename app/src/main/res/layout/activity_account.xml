@@ -1,49 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:padding="16dp">
+        android:layout_height="208dp"
+        android:background="@drawable/account_hero_banner">
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/User_Photo"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="84dp"
+            android:layout_marginEnd="12dp"
+            android:padding="5dp"
+            android:src="@drawable/user_photodefault_user"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:shapeAppearanceOverlay="@style/Circular" />
 
         <TextView
             android:id="@+id/Account_Greeting"
-            style="@style/TextHeading"
+            style="@style/WhiteTextHeading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Good Morning,"
+            android:layout_marginTop="32dp"
+            android:paddingLeft="8dp"
+            android:text=" Good Morning,"
             android:textAlignment="textStart" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="64dp"
-        android:gravity="center_vertical"
-        android:padding="16dp">
 
         <TextView
             android:id="@+id/Account_Greeting_Username"
-            style="@style/TextHeading"
-            android:layout_width="match_parent"
+            style="@style/WhiteTextHeading"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="144dp"
+            android:paddingLeft="16dp"
             android:text="@string/Username"
-            android:textAlignment="viewEnd" />
-    </LinearLayout>
+            android:textAlignment="center" />
+
+
+    </RelativeLayout>
 
     <!-- Personal Information Option -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="64dp"
         android:background="@drawable/border"
         android:clickable="true"
         android:focusable="true"
@@ -171,6 +181,5 @@
             android:src="@drawable/ic_arrow_right" />
 
     </LinearLayout>
-
 
 </LinearLayout>

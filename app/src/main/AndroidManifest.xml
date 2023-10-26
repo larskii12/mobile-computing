@@ -54,8 +54,9 @@
         </activity>
 
         <activity android:name=".activities.LoginActivity" />
-        <activity android:name=".activities.ResetPasswordActivity"></activity>
-        <activity android:name=".activities.ReportIssue"></activity>
+        <activity android:name=".activities.AccountActivity" />
+        <activity android:name=".activities.ResetPasswordActivity" />
+        <activity android:name=".activities.ReportIssue" />
 
 
     </application>

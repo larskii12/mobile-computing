@@ -16,11 +16,14 @@ import com.example.mainactivity.service.review.ReviewService;
 import com.example.mainactivity.service.user.UserService;
 
 public class MainActivity extends AppCompatActivity {
+    private static Context context;
     private ReviewService reviewService;
     private LocationService locationService;
     private UserService userService;
 
-    private static Context context;
+    public static Context getAppContext() {
+        return context;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +33,9 @@ public class MainActivity extends AppCompatActivity {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        Button button = (Button) findViewById(R.id.button);
+        Button button = findViewById(R.id.button);
         Button loginButton = findViewById(R.id.loginButton);
+        Button accountButton = findViewById(R.id.accountButton);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,12 +46,24 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                             startActivity(intent);
-                        }
-                        catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        }
+                    }
                 }.start();
+            }
+        });
+
+        accountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    Intent intent = new Intent(MainActivity.this, AccountActivity.class);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -152,9 +168,5 @@ public class MainActivity extends AppCompatActivity {
                 }.start();
             }
         });
-    }
-
-    public static Context getAppContext() {
-        return context;
     }
 }
