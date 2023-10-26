@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -15,11 +16,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.comp90018.uninooks.R;
+import com.comp90018.uninooks.models.background_app.BackgroundApp;
+import com.comp90018.uninooks.service.background_app.BackgroundAppServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.review.ReviewService;
 import com.comp90018.uninooks.service.user.UserService;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements GPSService {
 
@@ -157,31 +162,10 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 
 
 
-
-
                             // Detect the recent 20 seconds used apps
-//                            UsageStatsManager usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
-//                            long currentTime = System.currentTimeMillis();
-//
-//                            List<UsageStats> HistoryUsedAppList = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, currentTime - 1000 * 20, currentTime);
-//
-//                            // Check android version, if less than 10 use the last time used, if higher than 10, use last time visible
-//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//                                for (UsageStats historyApp : HistoryUsedAppList) {
-//                                    if (historyApp.getLastTimeVisible() > currentTime - 1000 * 20) {
-//
-//                                        Log.d("AAAAAAAAAAAAAAAAAAAAA Android 10+ ", historyApp.getPackageName());
-//                                    }
-//                                }
-//                            }
-//
-//                            else {
-//                                for (UsageStats usageStat : HistoryUsedAppList) {
-//                                    if (usageStat.getLastTimeUsed() > currentTime - 1000 * 20) {
-//
-//                                        Log.d("AAAAAAAAAAAAAAAAAAAAA", usageStat.getPackageName());
-//                                    }
-//                                }
+//                            ArrayList<BackgroundApp> recentApps = new BackgroundAppServiceImpl(MainActivity.getAppContext()).getBackgroundApps(1000 * 20);
+//                            for (BackgroundApp recentApp : recentApps){
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", recentApp.getPackageName() + "   Time:  " + recentApp.getLastTimeUsed());
 //                            }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
