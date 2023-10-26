@@ -1,5 +1,7 @@
 package com.comp90018.uninooks.activities;
 
+import static com.comp90018.uninooks.models.review.ReviewType.LIBRARY;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +20,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.review.Review;
 import com.comp90018.uninooks.models.review.ReviewType;
+import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
@@ -125,8 +128,8 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 //                            }
 //
 //
-//                            // How to get entity busy rating for right now. To get id, you can obtain from the previous location service
-//                            // HIGHER --- LESS BUSY.   LOWER - MORE BUSY    5 not busy,    4 fair,    3 a bit busy,     2 very busy,     1 very very busy,       0 - do not go!
+                            // How to get entity busy rating for right now. To get id, you can obtain from the previous location service
+                            // HIGHER --- LESS BUSY.   LOWER - MORE BUSY        4 - 5 very very busy,  3 - 4 busy,  2 - 3 fair,   1 - 2, not busy    0 - 1 no body
 //                            Double busyRatings = new BusyRatingServiceImpl().getAverageScoreFromEntity(3, LIBRARY);
 //                            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library busy: " + busyRatings);
 //
