@@ -1,7 +1,5 @@
 package com.comp90018.uninooks.activities;
 
-import static com.comp90018.uninooks.models.review.ReviewType.LIBRARY;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +7,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -18,17 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.comp90018.uninooks.R;
-import com.comp90018.uninooks.models.review.Review;
-import com.comp90018.uninooks.models.review.ReviewType;
-import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.review.ReviewService;
-import com.comp90018.uninooks.service.review.ReviewServiceImpl;
 import com.comp90018.uninooks.service.user.UserService;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements GPSService {
 
@@ -135,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 //
 //
 //
-                              // How to add a review
+                            // How to add a review
 //                            try {
 //                                Review newReview = new ReviewServiceImpl().addReview(263, 3, LIBRARY, 5, "I love this excellent study space");
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Review successes, Your new review id is " + newReview.getReviewId());
@@ -163,6 +154,36 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Busy rating failed, please contact the IT administrator.");
 //                            }
 
+
+
+
+
+
+                            // Detect the recent 20 seconds used apps
+//                            UsageStatsManager usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
+//                            long currentTime = System.currentTimeMillis();
+//
+//                            List<UsageStats> HistoryUsedAppList = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, currentTime - 1000 * 20, currentTime);
+//
+//                            // Check android version, if less than 10 use the last time used, if higher than 10, use last time visible
+//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                                for (UsageStats historyApp : HistoryUsedAppList) {
+//                                    if (historyApp.getLastTimeVisible() > currentTime - 1000 * 20) {
+//
+//                                        Log.d("AAAAAAAAAAAAAAAAAAAAA Android 10+ ", historyApp.getPackageName());
+//                                    }
+//                                }
+//                            }
+//
+//                            else {
+//                                for (UsageStats usageStat : HistoryUsedAppList) {
+//                                    if (usageStat.getLastTimeUsed() > currentTime - 1000 * 20) {
+//
+//                                        Log.d("AAAAAAAAAAAAAAAAAAAAA", usageStat.getPackageName());
+//                                    }
+//                                }
+//                            }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -170,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements GPSService {
                             Intent intent = new Intent(MainActivity.this, MapsActivity.class);
                             startActivity(intent);
                         }
-                      
+
                         // If exception when operating
                         catch (Exception e) {
                             e.printStackTrace();

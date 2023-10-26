@@ -69,7 +69,7 @@ public class mailServiceImpl extends javax.mail.Authenticator implements mailSer
             message.setFrom(new InternetAddress("uninooks.support@gmail.com", "UNINOOKS Customer Support"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(userEmail));
             message.setSubject("Your UNINOOKS OTP");
-            message.setText("Your UNINOOKS OTP is " + OTP + ". Please do not tell others.");
+            message.setText("Your UNINOOKS OTP is " + OTP + ". Please do share with others.");
 
             Transport.send(message);
 
