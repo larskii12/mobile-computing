@@ -202,28 +202,6 @@ public class MainActivity extends AppCompatActivity implements GPSService {
         });
     }
 
-//    /**
-//     * GPS permission grant ot deny operation
-//     * @param requestCode The request code passed in {@link #requestPermissions(
-//     * android.app.Activity, String[], int)}
-//     * @param permissions The requested permissions. Never null.
-//     * @param grantResults The grant results for the corresponding permissions
-//     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
-//     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
-//     *
-//     */
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//
-//        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                gpsPermission = true;
-//            } else {
-//                gpsPermission = false;
-//            }
-//        }
-//    }
-
     public void onStart(){
         super.onStart();
         gpsService.startGPSUpdates();
