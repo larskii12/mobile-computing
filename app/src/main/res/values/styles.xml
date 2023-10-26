@@ -20,6 +20,12 @@
         <item name="android:textColor">@color/primary</item>
         <item name="android:fontFamily">sans-serif</item>
     </style>
+    <!-- Sub-heading text style in Red -->
+    <style name="TextRed" parent="BaseText">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/red</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
 
     <!-- Regular text style -->
     <style name="TextRegular" parent="BaseText">
@@ -27,6 +33,7 @@
         <item name="android:textColor">@color/primary</item>
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
+
 
     <style name="BaseButtonStyle">
         <item name="android:background">@drawable/rounded_button_background</item>
@@ -63,6 +70,11 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:tint">@color/primary</item>
+    </style>
 
+    <style name="IconRed">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:tint">@color/red</item>
     </style>
 </resources>

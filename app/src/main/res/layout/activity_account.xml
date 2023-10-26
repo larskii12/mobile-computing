@@ -5,10 +5,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="8dp"
         android:background="?android:attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:padding="16dp">
@@ -18,16 +19,31 @@
             style="@style/TextHeading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Good Morning, John Doe!"
+            android:text="Good Morning,"
             android:textAlignment="textStart" />
-
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:gravity="center_vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/Account_Greeting_Username"
+            style="@style/TextHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Username"
+            android:textAlignment="viewEnd" />
+    </LinearLayout>
 
     <!-- Personal Information Option -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:background="@drawable/border"
         android:clickable="true"
         android:focusable="true"
@@ -137,12 +153,12 @@
 
         <ImageView
             android:id="@+id/Account_Delete_Icon"
-            style="@style/IconStyle"
+            style="@style/IconRed"
             android:src="@drawable/ic_delete" />
 
         <TextView
             android:id="@+id/Account_Delete_Text"
-            style="@style/TextSubHeading"
+            style="@style/TextRed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -151,7 +167,7 @@
 
         <ImageView
             android:id="@+id/Account_Delete_Arrow_Right"
-            style="@style/IconStyle"
+            style="@style/IconRed"
             android:src="@drawable/ic_arrow_right" />
 
     </LinearLayout>
