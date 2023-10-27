@@ -31,11 +31,11 @@ public class BackgroundAppServiceImpl implements BackgroundAppService{
             for (UsageStats historyApp : HistoryUsedAppList) {
                 if (historyApp.getLastTimeVisible() > currentTime - duration) {
 
-                    BackgroundApp NewBackgroundApp = new BackgroundApp();
-                    NewBackgroundApp.setLastTimeUsed(historyApp.getLastTimeVisible());
-                    NewBackgroundApp.setPackageName(historyApp.getPackageName());
+                    BackgroundApp newBackgroundApp = new BackgroundApp();
+                    newBackgroundApp.setLastTimeUsed(historyApp.getLastTimeVisible());
+                    newBackgroundApp.setPackageName(historyApp.getPackageName());
 
-                    backgroundApps.add(NewBackgroundApp);
+                    backgroundApps.add(newBackgroundApp);
                 }
             }
         }
@@ -44,11 +44,11 @@ public class BackgroundAppServiceImpl implements BackgroundAppService{
             for (UsageStats historyApp : HistoryUsedAppList) {
                 if (historyApp.getLastTimeUsed() > currentTime - duration) {
 
-                    BackgroundApp NewBackgroundApp = new BackgroundApp();
-                    NewBackgroundApp.setLastTimeUsed(historyApp.getLastTimeUsed());
-                    NewBackgroundApp.setPackageName(historyApp.getPackageName());
+                    BackgroundApp newBackgroundApp = new BackgroundApp();
+                    newBackgroundApp.setLastTimeUsed(historyApp.getLastTimeUsed());
+                    newBackgroundApp.setPackageName(historyApp.getPackageName());
 
-                    backgroundApps.add(NewBackgroundApp);
+                    backgroundApps.add(newBackgroundApp);
 
                 }
             }
