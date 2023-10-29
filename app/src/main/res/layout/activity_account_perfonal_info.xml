@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="208dp"
+        android:background="@drawable/account_hero_banner">
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/User_Photo"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="84dp"
+            android:layout_marginEnd="12dp"
+            android:padding="5dp"
+            android:src="@drawable/user_photodefault_user"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:shapeAppearanceOverlay="@style/Circular" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/Account_Back_to_Home_Arrow_Left"
+                style="@style/IconWhite"
+                android:layout_width="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_arrow_left" />
+
+            <TextView
+                android:id="@+id/Account_Greeting"
+                style="@style/WhiteTextHeading"
+                android:layout_width="wrap_content"
+                android:paddingStart="16dp"
+                android:text="@string/Account_Pi_Personal_Info"
+                android:textAlignment="textStart" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <!-- Name Section -->
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+        <!-- Label "Name" -->
+        <TextView
+            android:id="@+id/tv_name_label"
+            style="@style/TextSubHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/Name" />
+
+        <ImageView
+            android:id="@+id/Account_Pi_Ic_Edit_Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="72dp"
+            android:clickable="true"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:src="@drawable/ic_edit" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="4dp">
+
+        <!-- Current Username TextView -->
+        <TextView
+            android:id="@+id/Account_Pi_Edit_Name"
+            style="@style/TextSubHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Username"
+            android:textColor="@color/primary_60_percent_opacity" />
+
+        <!-- EditText to change the username -->
+        <EditText
+            android:id="@+id/EditTextNewUsername"
+            style="@style/TextInputStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="password"
+            android:hint="@string/Account_Pi_Edit_Name"
+            android:inputType="text"
+            android:paddingHorizontal="96dp"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+        <!-- Label "Email" -->
+        <TextView
+            android:id="@+id/Account_Pi_Email_label"
+            style="@style/TextSubHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/Email" />
+
+        <ImageView
+            android:id="@+id/Account_Pi_Ic_Edit_Email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="76dp"
+            android:clickable="true"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:src="@drawable/ic_edit" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="4dp">
+
+
+        <TextView
+            android:id="@+id/Account_Pi_Edit_Email"
+            style="@style/TextSubHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Email"
+            android:textColor="@color/primary_60_percent_opacity" />
+
+
+        <EditText
+            android:id="@+id/EditTextNewEmail"
+            style="@style/TextInputStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="password"
+            android:hint="@string/Account_Pi_Edit_Email"
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="96dp"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <!-- Mobile Number Section -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+        <!-- Label "Mobile" -->
+        <TextView
+            android:id="@+id/Account_Pi_MobileNumber_label"
+            style="@style/TextSubHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/Account_Pi_mobile_number" />
+
+        <ImageView
+            android:id="@+id/Account_Pi_Ic_Edit_MobileNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:src="@drawable/ic_edit" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="4dp">
+
+
+        <TextView
+            android:id="@+id/Account_Pi_Edit_MobileNumber"
+            style="@style/TextSubHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Account_Pi_mobile_number"
+            android:textColor="@color/primary_60_percent_opacity" />
+
+
+        <EditText
+            android:id="@+id/EditTextNewMobileNumber"
+            style="@style/TextInputStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="password"
+            android:hint="@string/Account_Pi_Edit_Mobile_Number"
+            android:inputType="number"
+            android:paddingHorizontal="96dp"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+
+    <!-- Faculty Section -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+        <!-- Label "Faculty" -->
+        <TextView
+            android:id="@+id/Account_Pi_Faculty_label"
+            style="@style/TextSubHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/Account_Pi_Faculty" />
+
+        <ImageView
+            android:id="@+id/Account_Pi_Ic_Edit_Faculty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:clickable="true"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:src="@drawable/ic_edit" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="4dp">
+
+
+        <TextView
+            android:id="@+id/Account_Pi_Edit_Faculty"
+            style="@style/TextSubHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Account_Pi_Faculty"
+            android:textColor="@color/primary_60_percent_opacity" />
+
+
+        <Spinner
+            android:id="@+id/SpinnerPiFacultyList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

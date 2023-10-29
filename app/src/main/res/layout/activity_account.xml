@@ -24,15 +24,31 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:shapeAppearanceOverlay="@style/Circular" />
 
-        <TextView
-            android:id="@+id/Account_Greeting"
-            style="@style/WhiteTextHeading"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:paddingLeft="8dp"
-            android:text=" Good Morning,"
-            android:textAlignment="textStart" />
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/Account_Back_to_Account_Main_Arrow_Left"
+                style="@style/IconWhite"
+                android:layout_width="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_arrow_left" />
+
+            <TextView
+                android:id="@+id/Account_Greeting"
+                style="@style/WhiteTextHeading"
+                android:layout_width="wrap_content"
+                android:paddingLeft="16dp"
+                android:text="Good Morning,"
+                android:textAlignment="textStart" />
+
+        </LinearLayout>
 
 
         <TextView
@@ -51,6 +67,7 @@
 
     <!-- Personal Information Option -->
     <LinearLayout
+        android:id="@+id/Account_Personal_Info_Layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"

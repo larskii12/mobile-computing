@@ -27,7 +27,7 @@
         <item name="android:textColor">@color/primary</item>
         <item name="android:fontFamily">sans-serif</item>
     </style>
-    
+
     <!-- Sub-heading text style in Red -->
     <style name="TextRed" parent="BaseText">
         <item name="android:textSize">18sp</item>
@@ -78,6 +78,12 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:tint">@color/primary</item>
+    </style>
+
+    <style name="IconWhite">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:tint">@color/white</item>
     </style>
 
     <style name="IconRed">
