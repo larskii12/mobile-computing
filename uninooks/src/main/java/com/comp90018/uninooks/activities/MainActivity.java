@@ -7,7 +7,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -16,15 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.comp90018.uninooks.R;
-import com.comp90018.uninooks.models.background_app.BackgroundApp;
-import com.comp90018.uninooks.service.background_app.BackgroundAppServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.review.ReviewService;
 import com.comp90018.uninooks.service.user.UserService;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements GPSService {
 
@@ -69,6 +64,20 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 
         Button button = (Button) findViewById(R.id.button);
         Button loginButton = findViewById(R.id.loginButton);
+        Button accountButton = findViewById(R.id.accountButton);
+
+        accountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    Intent intent = new Intent(MainActivity.this, AccountActivity.class);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
