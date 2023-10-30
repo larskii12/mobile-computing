@@ -41,4 +41,14 @@
     <string name="Username">Username</string>
     <string name="Password">Password</string>
     <string name="Confirm_Password">Confirm Password</string>
+
+    <!-- Account Personal Info strings-->
+    <string name="Account_Pi">Account Personal Info</string>
+    <string name="Account_Pi_Personal_Info">Personal Information</string>
+    <string name="Account_Pi_mobile_number">Mobile Number</string>
+    <string name="Account_Pi_Faculty">Faculty</string>
+    <string name="Account_Pi_Edit_Mobile_Number">Enter new mobile number</string>
+    <string name="Account_Pi_Edit_Name">Enter new user name</string>
+    <string name="Account_Pi_Edit_Email">Enter new Email address</string>
+    <string name="Account_Pi_Edit_Faculty">Edit Faculty</string>
 </resources>
