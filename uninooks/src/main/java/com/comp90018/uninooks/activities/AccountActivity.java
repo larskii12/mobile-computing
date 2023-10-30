@@ -1,4 +1,4 @@
-package com.example.mainactivity.activities;
+package com.comp90018.uninooks.activities;
 
 
 import android.content.Intent;
@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.mainactivity.R;
+import com.comp90018.uninooks.R;
 
 public class AccountActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.example.mainactivity.activities;
+package com.comp90018.uninooks.activities;
 
 
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.mainactivity.R;
+import com.comp90018.uninooks.R;
 
 public class PersonalInformationActivity extends AppCompatActivity {
 
