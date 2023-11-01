@@ -45,7 +45,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
     private String otp;
 
-    private String name;
+//    private String name;
     private String username;
     private String email;
     private String password;
@@ -82,7 +82,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
                     }
 
                     else {
-                        ediTextSignUpName.setEnabled(true);
+//                        ediTextSignUpName.setEnabled(true);
                         editTextSignUpEmail.setEnabled(true);
                         editTextSignUpUserName.setEnabled(true);
                         editTextSignUpPassword.setEnabled(true);
@@ -98,7 +98,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
                     break;
 
                 case 2:
-                    ediTextSignUpName.setEnabled(true);
+//                    ediTextSignUpName.setEnabled(true);
                     editTextSignUpEmail.setEnabled(true);
                     editTextSignUpUserName.setEnabled(true);
                     editTextSignUpPassword.setEnabled(true);
@@ -135,7 +135,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        ediTextSignUpName = findViewById(R.id.EdiTextSignUpName);
+//        ediTextSignUpName = findViewById(R.id.EdiTextSignUpName);
         editTextSignUpUserName = findViewById(R.id.EditTextSignUpUserName);
         editTextSignUpEmail = findViewById(R.id.EditTextSignUpEmail);
         editTextSignUpPassword = findViewById(R.id.EditTextSignUpPassword);
@@ -312,6 +312,9 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
             showTextMessage(e.getMessage());
         }
+
+        otp = "-1";
+
         return false;
     }
 
@@ -321,13 +324,20 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
      * @return true if all fields input, otherwise false
      */
     private boolean inputCheck() {
-        name = ediTextSignUpName.getText().toString().trim();
+//        name = ediTextSignUpName.getText().toString().trim();
         username = editTextSignUpUserName.getText().toString().trim();
         email = editTextSignUpEmail.getText().toString().trim();
         password = editTextSignUpPassword.getText().toString().trim();
         passwordConfirmation = editTextSignUpConfirmPassword.getText().toString().trim();
 
-        if (name.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty() || passwordConfirmation.isEmpty()) {
+//        if (name.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty() || passwordConfirmation.isEmpty()) {
+//            System.out.println("Please fill all fields");
+//            showTextMessage("Please fill all fields");
+//
+//            return false;
+//        }
+
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || passwordConfirmation.isEmpty()) {
             System.out.println("Please fill all fields");
             showTextMessage("Please fill all fields");
 

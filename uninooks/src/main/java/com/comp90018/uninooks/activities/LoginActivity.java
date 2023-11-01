@@ -160,6 +160,7 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
         }
 
         else{
+
             System.out.println("User login successful");
             System.out.println("User ID: " + logInUser.getUserId());
             System.out.println("User Name: " + logInUser.getUserName());
@@ -173,6 +174,14 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
                     + " " + logInUser.getUserFaculty()
                     + " " + logInUser.getUserAQFLevel();
             showTextMessage("Login successfully!\n" + message);
+
+            Intent intent = new Intent(LoginActivity.this, AccountActivity.class);
+
+            // Pass the user to next page
+            intent.putExtra("userId", logInUser.getUserId());
+
+            startActivity(intent);
+            finish();
 
         }
 
