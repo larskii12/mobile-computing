@@ -24,7 +24,6 @@ import com.comp90018.uninooks.service.user.UserServiceImpl;
 public class SignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private final int OTP_TIMER = 20;
-    private EditText ediTextSignUpName;
     private EditText editTextSignUpUserName;
     private EditText editTextSignUpEmail;
     private EditText editTextSignUpPassword;
@@ -182,10 +181,32 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
             @Override
             public void onClick(View v) {
 
+
                 new Thread() {
                     public void run() {
                         try {
-                            otp = getOTP();
+
+                            if (!inputCheck()) {
+                                handler.sendEmptyMessage(2);
+                            }
+
+                            else if (new UserServiceImpl().hasUser(editTextSignUpEmail.getText().toString())){
+                                showTextMessage("This email has been registered with us, please try another one.");
+                            }
+
+                            else if (!editTextSignUpEmail.getText().toString().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")){
+                                showTextMessage("This is not a valid email address format.");
+
+                            }
+
+                            else if (new UserServiceImpl().hasUser(editTextSignUpUserName.getText().toString())){
+                                showTextMessage("This user name has been registered with us, please try another one.");
+                            }
+
+                            else{
+                                otp = getOTP();
+                            }
+
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -246,27 +267,16 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
      */
     private String getOTP() throws Exception {
 
-//        handler.sendEmptyMessage(3);
+        showTextMessage("The OTP has been sent, please check your mail box.");
 
-        if (!inputCheck()) {
+        Message counter = new Message();
+        counter.what = 1;
+        counter.obj = OTP_TIMER;
+        handler.sendMessage(counter);
 
-            handler.sendEmptyMessage(2);
+        String newOTP = String.valueOf(new mailServiceImpl().sendOTP(editTextSignUpEmail.getText().toString()));
 
-            return "";
-        }
-
-        else {
-            showTextMessage("The OTP has been sent, please check your mail box.");
-
-            Message counter = new Message();
-            counter.what = 1;
-            counter.obj = OTP_TIMER;
-            handler.sendMessage(counter);
-
-            String newOTP = String.valueOf(new mailServiceImpl().sendOTP(editTextSignUpEmail.getText().toString().trim()));
-
-            return newOTP;
-        }
+        return newOTP;
     }
 
     /**

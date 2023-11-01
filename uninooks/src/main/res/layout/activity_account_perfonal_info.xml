@@ -55,8 +55,6 @@
     </RelativeLayout>
 
     <!-- Name Section -->
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -117,6 +115,8 @@
 
     </RelativeLayout>
 
+    <!-- Email Section -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -164,18 +164,72 @@
             android:textColor="@color/primary_60_percent_opacity" />
 
 
+<!--        <EditText-->
+<!--            android:id="@+id/EditTextNewEmail"-->
+<!--            style="@style/TextInputStyle"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:autofillHints="password"-->
+<!--            android:hint="@string/Account_Pi_Edit_Email"-->
+<!--            android:inputType="textEmailAddress"-->
+<!--            android:paddingHorizontal="96dp"-->
+<!--            android:visibility="gone" />-->
+
+    </RelativeLayout>
+
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp">
+
         <EditText
-            android:id="@+id/EditTextNewEmail"
+            android:id="@+id/EditTextConfirmNewEmail"
             style="@style/TextInputStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autofillHints="password"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="48dp"
             android:hint="@string/Account_Pi_Edit_Email"
             android:inputType="textEmailAddress"
             android:paddingHorizontal="96dp"
-            android:visibility="gone" />
+            android:autofillHints="emailAddress"
+            android:visibility="gone"/>
 
+        <Button
+            android:id="@+id/Pi_ButtonConfirmNewEmail"
+            style="@style/Button.Primary.Small"
+            android:text="Verify Email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:layout_marginStart="48dp"
+            android:visibility="gone"/>
+
+        <EditText
+            android:id="@+id/Pi_EditTextEmailOTP"
+            style="@style/TextInputStyle"
+            android:layout_marginTop="108dp"
+            android:layout_marginStart="48dp"
+            android:hint="Enter OTP"
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="96dp"
+            android:autofillHints="number"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/Pi_ButtonOTPVerify"
+            style="@style/Button.Primary.Small"
+            android:text="Change Email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="160dp"
+            android:layout_marginStart="48dp"
+            android:visibility="gone"/>
     </RelativeLayout>
+
+
+
 
     <!-- Password Section -->
 
