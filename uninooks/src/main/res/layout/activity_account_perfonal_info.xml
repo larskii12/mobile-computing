@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="48dp"
             android:layout_marginEnd="16dp"
-            android:text="@string/Name" />
+            android:text="@string/Username" />
 
         <ImageView
             android:id="@+id/Account_Pi_Ic_Edit_Name"
@@ -177,7 +177,7 @@
 
     </RelativeLayout>
 
-    <!-- Mobile Number Section -->
+    <!-- Password Section -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -188,20 +188,21 @@
         android:orientation="horizontal"
         tools:ignore="UseCompoundDrawables">
 
-        <!-- Label "Mobile" -->
+        <!-- Label "Change Password" -->
         <TextView
-            android:id="@+id/Account_Pi_MobileNumber_label"
+            android:id="@+id/Account_Pi_Password_label"
             style="@style/TextSubHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="48dp"
             android:layout_marginEnd="16dp"
-            android:text="@string/Account_Pi_mobile_number" />
+            android:text="@string/Account_Settings_Change_Password" />
 
         <ImageView
-            android:id="@+id/Account_Pi_Ic_Edit_MobileNumber"
+            android:id="@+id/Account_Pi_Ic_Edit_Password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
             android:clickable="true"
             android:scaleX="0.8"
             android:scaleY="0.8"
@@ -217,27 +218,13 @@
 
 
         <TextView
-            android:id="@+id/Account_Pi_Edit_MobileNumber"
+            android:id="@+id/Account_Pi_Edit_Password"
             style="@style/TextSubHeading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/Account_Pi_mobile_number"
+            android:text="@string/Account_Settings_Current_Password"
             android:textColor="@color/primary_60_percent_opacity" />
-
-
-        <EditText
-            android:id="@+id/EditTextNewMobileNumber"
-            style="@style/TextInputStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autofillHints="password"
-            android:hint="@string/Account_Pi_Edit_Mobile_Number"
-            android:inputType="number"
-            android:paddingHorizontal="96dp"
-            android:visibility="gone" />
-
     </RelativeLayout>
-
 
     <!-- Faculty Section -->
 
@@ -294,6 +281,65 @@
             android:layout_height="wrap_content"
             android:spinnerMode="dropdown"
             android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <!-- Degree Section -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+        <!-- Label "Degree" -->
+        <TextView
+            android:id="@+id/Account_Pi_Degree_label"
+            style="@style/TextSubHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginEnd="16dp"
+            android:text="Degree" />
+
+        <ImageView
+            android:id="@+id/Account_Pi_Ic_Edit_Degree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:clickable="true"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:src="@drawable/ic_edit" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="4dp">
+
+
+        <TextView
+            android:id="@+id/Account_Pi_Edit_Degree"
+            style="@style/TextSubHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Degree"
+            android:textColor="@color/primary_60_percent_opacity" />
+
+
+        <Spinner
+            android:id="@+id/SpinnerPiDegreeList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"
+            android:visibility="gone" />
+
 
     </RelativeLayout>
 

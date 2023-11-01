@@ -46,14 +46,14 @@
         android:layout_marginBottom="4dp"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/EdiTextSignUpName"
-            style="@style/TextInputStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8sp"
-            android:hint="@string/Name"
-            android:inputType="text" />
+<!--        <EditText-->
+<!--            android:id="@+id/EdiTextSignUpName"-->
+<!--            style="@style/TextInputStyle"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginBottom="8sp"-->
+<!--            android:hint="@string/Name"-->
+<!--            android:inputType="text" />-->
 
         <EditText
             android:id="@+id/EditTextSignUpEmail"
