@@ -8,15 +8,19 @@ import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.user.User;
+import com.comp90018.uninooks.service.mail.mailServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
 
 public class PersonalInformationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -49,7 +53,21 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
 
     private EditText editUsernameEditText;
 
-    private EditText editEmailEditText;
+    private EditText editTextNewEmail;
+
+    private Button buttonNewEmailGetOTP;
+
+    private EditText editTextEmailOTP;
+
+    private Button buttonNewEmailVerifyOTP;
+
+    private final int OTP_TIMER = 20;
+
+    private String otp;
+
+    private String newUserEmail;
+
+
 
     @SuppressLint("HandlerLeak")
     private final Handler handler = new Handler() {
@@ -58,6 +76,8 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
             switch (msg.what) {
 
                 case 0:
+                    String info = (String) msg.obj;
+                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
                     break;
 
                 case 1:
@@ -65,6 +85,31 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                     emailTextView.setText(userEmail);
                     degreeTextView.setText(userDegree);
                     facultyTextView.setText(userFaculty);
+                    break;
+
+                case 2:
+                    int time = (int) msg.obj;
+
+                    if (time > 0) {
+                        buttonNewEmailGetOTP.setEnabled(false);
+                        buttonNewEmailGetOTP.setText(time + "s");
+                        buttonNewEmailGetOTP.setTextColor(ContextCompat.getColor(PersonalInformationActivity.this, R.color.black));
+                        buttonNewEmailGetOTP.setBackgroundColor(ContextCompat.getColor(PersonalInformationActivity.this, R.color.grey));
+
+                        Message message = new Message();
+                        message.what = 2;
+                        message.obj = time - 1;
+                        handler.sendMessageDelayed(message, 1000);
+                    }
+
+                    else {
+                        buttonNewEmailGetOTP.setEnabled(true);
+                        buttonNewEmailGetOTP.setText("Verify Email");
+                        buttonNewEmailGetOTP.setTextColor(ContextCompat.getColor(PersonalInformationActivity.this, R.color.white));
+                        buttonNewEmailGetOTP.setBackgroundColor(ContextCompat.getColor(PersonalInformationActivity.this, R.color.primary));
+                    }
+
+                    break;
             }
         }
     };
@@ -87,8 +132,15 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
 
         userNameTextView = findViewById(R.id.Account_Pi_Edit_Name);
         editUsernameEditText = findViewById(R.id.EditTextNewUsername);
-        ImageView editNameIcon = findViewById(R.id.Account_Pi_Ic_Edit_Name);
+        editTextNewEmail = findViewById(R.id.EditTextConfirmNewEmail);
+        buttonNewEmailGetOTP = findViewById(R.id.Pi_ButtonConfirmNewEmail);
+        editTextEmailOTP = findViewById(R.id.Pi_EditTextEmailOTP);
+        buttonNewEmailVerifyOTP = findViewById(R.id.Pi_ButtonOTPVerify);
 
+        otp = "";
+
+
+        ImageView editNameIcon = findViewById(R.id.Account_Pi_Ic_Edit_Name);
         editNameIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,19 +155,110 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         });
 
         emailTextView = findViewById(R.id.Account_Pi_Edit_Email);
-        editEmailEditText = findViewById(R.id.EditTextNewEmail);
+//        editEmailEditText = findViewById(R.id.EditTextNewEmail);
         ImageView editEmailIcon = findViewById(R.id.Account_Pi_Ic_Edit_Email);
 
         editEmailIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (editEmailEditText.getVisibility() == View.GONE) {
-                    editEmailEditText.setVisibility(View.VISIBLE);
+                if (editTextNewEmail.getVisibility() == View.GONE) {
+//                    editEmailEditText.setVisibility(View.VISIBLE);
+
+                    editTextNewEmail.setVisibility(View.VISIBLE);
+                    buttonNewEmailGetOTP.setVisibility(View.VISIBLE);
+                    editTextEmailOTP.setVisibility(View.VISIBLE);
+                    buttonNewEmailVerifyOTP.setVisibility(View.VISIBLE);
                     emailTextView.setVisibility(View.GONE);
+
                 } else {
-                    editEmailEditText.setVisibility(View.GONE);
+                    editTextNewEmail.setVisibility(View.GONE);
+                    buttonNewEmailGetOTP.setVisibility(View.GONE);
+                    editTextEmailOTP.setVisibility(View.GONE);
+                    buttonNewEmailVerifyOTP.setVisibility(View.GONE);
                     emailTextView.setVisibility(View.VISIBLE);
                 }
+            }
+        });
+
+
+
+        // Change Password
+        buttonNewEmailGetOTP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread() {
+                    public void run() {
+                        try {
+
+                            // If email is empty
+                            if (editTextNewEmail.getText().toString().trim().isEmpty()) {
+                                showTextMessage("New Email cannot be empty");
+                            }
+
+                            else if (editTextNewEmail.getText().toString().equals(userEmail)){
+                                showTextMessage("New email cannot same as the current email.");
+                            }
+
+                            else if (new UserServiceImpl().hasUser(editTextNewEmail.getText().toString())){
+                                showTextMessage("This email has been registered with us, please try another one.");
+                            }
+
+                            else if (!editTextNewEmail.getText().toString().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")){
+                                showTextMessage("This is not a valid email address format.");
+                            }
+
+                            else {
+                                Message msg = new Message();
+                                msg.what = 2;
+                                msg.obj = OTP_TIMER;
+                                handler.sendMessage(msg);
+
+                                // Lock the new email
+                                newUserEmail = editTextNewEmail.getText().toString();
+
+                                otp = getOTP();
+                            }
+
+                        } catch (Exception e) {
+                            throw new RuntimeException("Some error happens, please contact the IT administrator");
+                        }
+                    }
+                }.start();
+            }
+        });
+
+
+        buttonNewEmailVerifyOTP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new Thread(){
+                    public void run(){
+                        if (!otp.isEmpty() && otp.equals(editTextEmailOTP.getText().toString())){
+                            try {
+                                new UserServiceImpl().updateUserEmail(userId, newUserEmail);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+
+                            showTextMessage("Your email has been changed successfully.");
+
+                            reloadActivity();
+                        }
+                        else{
+                            showTextMessage("OTP is not correct.");
+                        }
+                    }
+                }.start();
+            }
+        });
+
+        // Change Password
+        ImageView editPasswordIcon = findViewById(R.id.Account_Pi_Ic_Edit_Password);
+        editPasswordIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
@@ -172,18 +315,11 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                 initUserInfo();
             }
         }.start();
-
-
-        // Reset Password
-        ImageView editPasswordIcon = findViewById(R.id.Account_Pi_Ic_Edit_Password);
-        editPasswordIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
 
+    /**
+     * Init the user info and show on the UI
+     */
     private void initUserInfo() {
 
             try {
@@ -234,6 +370,48 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+    }
+
+    /**
+     * get OTP for registration
+     *
+     * @return OTP
+     * @throws Exception if happens
+     */
+    private String getOTP() throws Exception {
+
+        showTextMessage("The OTP has been sent, please check your mail box.");
+
+        Message counter = new Message();
+        counter.what = 2;
+        counter.obj = OTP_TIMER;
+        handler.sendMessage(counter);
+
+        String newOTP = String.valueOf(new mailServiceImpl().sendOTP(editTextNewEmail.getText().toString()));
+
+        return newOTP;
+    }
+
+    /**
+     * Show message text
+     *
+     * @param text as the showing message
+     */
+    private void showTextMessage(String text) {
+        Message msg = new Message();
+        msg.what = 0;
+        msg.obj = text;
+        handler.sendMessage(msg);
+    }
+
+    /**
+     * Reload current activity
+     */
+    private void reloadActivity(){
+        Intent intent = getIntent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+        startActivity(intent);
     }
 
     @Override
