@@ -2,11 +2,14 @@ package com.comp90018.uninooks.activities;
 
 
 import android.annotation.SuppressLint;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +60,8 @@ public class AccountActivity extends AppCompatActivity {
 
         // Get reference to the Personal Information LinearLayout
         LinearLayout personalInfoLayout = findViewById(R.id.Account_Personal_Info_Layout); // Set an ID for your LinearLayout in XML and use it here
+        LinearLayout logoutLayout = findViewById(R.id.Account_Logout_Layout);
+        LinearLayout deleteAccountLayout = findViewById(R.id.Account_Delete_Account_Layout);
 
         // Get username
         textViewAccountGreetingUserName = findViewById(R.id.Account_Greeting_Username);
@@ -72,6 +77,20 @@ public class AccountActivity extends AppCompatActivity {
                 intent.putExtra("userId", userId);
 
                 startActivity(intent);
+            }
+        });
+
+        logoutLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLogoutDialog();
+            }
+        });
+
+        deleteAccountLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDeleteAccountDialog();
             }
         });
 
@@ -94,4 +113,61 @@ public class AccountActivity extends AppCompatActivity {
         userName = user.getUserName();
         handler.sendEmptyMessage(1);
     }
+
+    private void showLogoutDialog() {
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.logout_confirmation_dialog, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        Button positiveButton = dialogView.findViewById(R.id.dialog_positive_btn);
+        positiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle logout logic here
+                dialog.dismiss();
+            }
+        });
+
+        Button negativeButton = dialogView.findViewById(R.id.dialog_negative_btn);
+        negativeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private void showDeleteAccountDialog() {
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.delete_account_confirmation_dialog, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        Button positiveButton = dialogView.findViewById(R.id.account_Delete_Confirm_Button);
+        positiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle logout logic here
+                dialog.dismiss();
+            }
+        });
+
+        Button negativeButton = dialogView.findViewById(R.id.account_delete_Cancel_Button);
+        negativeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
 }
+
