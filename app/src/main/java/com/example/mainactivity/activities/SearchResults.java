@@ -3,6 +3,7 @@ package com.example.mainactivity.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,10 +23,14 @@ import com.example.mainactivity.models.location.resource.ResourceType;
 import com.example.mainactivity.models.location.restaurant.Restaurant;
 import com.example.mainactivity.models.location.study_space.StudySpace;
 
+import com.example.mainactivity.models.review.Review;
+import com.example.mainactivity.models.review.ReviewType;
 import com.example.mainactivity.service.location.LocationService;
 import com.example.mainactivity.service.location.LocationServiceImpl;
 import com.example.mainactivity.service.resource.ResourceService;
 import com.example.mainactivity.service.resource.ResourceServiceImpl;
+import com.example.mainactivity.service.review.ReviewService;
+import com.example.mainactivity.service.review.ReviewServiceImpl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,13 +41,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class SearchResults extends AppCompatActivity {
-//    private final LocationServiceImpl searchAPI = new LocationServiceImpl();
-//    private final ResourceServiceImpl resourceAPI = new ResourceServiceImpl();
     LinearLayout resultCardArea;
-    List<Location> results = new ArrayList<>();
+    List<Location> results;
 
     CardView cardView;
     HashMap<Integer, List<Object>> locationToUI;
+    HashMap<String, String> ratingsByLocation;
+    HashMap<String, List<Resource>> resourcesByLocation;
 
 
     @Override
@@ -50,62 +55,79 @@ public class SearchResults extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_search_results);
-
-        // retrieve what was searched for/filtered for
         Intent intent = getIntent();
-        String searchString = intent.getStringExtra("searchQuery");
 
-        Toast.makeText(getApplicationContext(), searchString, Toast.LENGTH_SHORT).show();
+
+//        String searchString = intent.getStringExtra("searchQuery");
+//
+//        Toast.makeText(getApplicationContext(), searchString, Toast.LENGTH_SHORT).show();
         resultCardArea = findViewById(R.id.resultCardArea);
 
-        // use API to get the search result
-        // study includes both libraries and study spaces
-//
+        results = new ArrayList<>();
+        locationToUI = new HashMap<>();
+        ratingsByLocation = new HashMap<>();
+        resourcesByLocation = new HashMap<>();
+
+
         new Thread() {
             @Override
             public void run() {
                 try {
-                    results = new LocationServiceImpl().findAllLocations("STUDY", searchString, true);
+                    // retrieve what was searched for/filtered for
+                    if (intent.hasExtra("searchQuery")) {
+                        String searchString = intent.getStringExtra("searchQuery");
+                        System.out.println(searchString);
+                        results = new LocationServiceImpl().findAllLocations("STUDY", searchString, true);
+                    } else if (intent.hasExtra("filters")) {
+                        String[] filters = intent.getStringArrayExtra("filters");
+                    }
 
-//                    if (results.size() != 0) {
-//                        // display something that says "no available results" --> go back to previous page
-//                    }
 
-                    Location onePlace = results.get(0);
-                    String locName = onePlace.getName();
-                    Toast.makeText(getApplicationContext(), locName, Toast.LENGTH_SHORT).show();
-                    addResultsToPage(results);
+                    if (results.size() != 0) {
+                        TextView noResults = findViewById(R.id.noResults);
+                        noResults.setVisibility(View.VISIBLE);
+                   }
+                    // have to get all the ratings here (any other API I call, have to be done here and not in the UI thread)
+                    getAllRatings(results);
+                    getAllResources(results);
+
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            addResultsToPage(results);
+                        }
+                    });
+
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
         }.start();
+    }
 
-        // have to move this to another thread....
-//        try {
-//            results = searchAPI.findAllLocations("STUDY", searchString, true);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        for (Location location : results) {
-//            if (location instanceof StudySpace) {
-//                cardView = createStudyLocationCard((StudySpace) location);
-//            } else if (location instanceof Library) {
-//                cardView = createLibraryLocationCard((Library) location);
-//            } else {
-//                cardView = createRestaurantLocationCard((Restaurant) location);
-//            }
-//            resultCardArea.addView(cardView);
-//        }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        for (Location location : results) {
+            updateClockColour(location);
+        }
     }
     private void addResultsToPage(List<Location> results) {
+
         for (Location location : results) {
-            if (location instanceof StudySpace) {
-                cardView = createStudyLocationCard((StudySpace) location);
-            } else if (location instanceof Library) {
+            System.out.println(location.getType());
+            String type = location.getType();
+
+            System.out.println(location.getName());
+            System.out.println("type: " + type);
+
+
+            if (type.equals("LIBRARY")) {
                 cardView = createLibraryLocationCard((Library) location);
-            } else {
+            } else if (type.equals("STUDY_SPACE")) {
+                cardView = createStudyLocationCard((StudySpace) location);
+            } else if (type.equals("RESTAURANT")) {
                 cardView = createRestaurantLocationCard((Restaurant) location);
             }
             resultCardArea.addView(cardView);
@@ -116,17 +138,18 @@ public class SearchResults extends AppCompatActivity {
         List<Object> interactables = new ArrayList<>();
         int buildingID = location.getBuildingId();
         int locationID = location.getId();
+        String locationName = location.getName();
 
-        CardView locationCard = (CardView) LayoutInflater.from(this).inflate(R.layout.large_location_card, resultCardArea, true);
-        LinearLayout facilities = findViewById(R.id.facilitiesIcons);
-        TextView cardTitle = findViewById(R.id.title);
-        TextView distanceAway = findViewById(R.id.distanceText);
-        TextView openingHours = findViewById(R.id.openingHours);
-        ProgressBar capacity = findViewById(R.id.progressBar);
-        ImageView closingIcon = findViewById(R.id.closingIcon);
-        ImageView locImage = findViewById(R.id.locImage);
-        ImageButton addToFavButton = findViewById(R.id.addToFavButton);
-        TextView ratingText = findViewById(R.id.ratingText);
+        CardView locationCard = (CardView) LayoutInflater.from(this).inflate(R.layout.large_location_card, null);
+        LinearLayout facilities = locationCard.findViewById(R.id.facilitiesIcons);
+        TextView cardTitle = locationCard.findViewById(R.id.title);
+        TextView distanceAway = locationCard.findViewById(R.id.distanceText);
+        TextView openingHours = locationCard.findViewById(R.id.openingHours);
+        ProgressBar capacity = locationCard.findViewById(R.id.progressBar);
+        ImageView closingIcon = locationCard.findViewById(R.id.closingIcon);
+        ImageView locImage = locationCard.findViewById(R.id.locImage);
+        ImageButton favButton = locationCard.findViewById(R.id.favButton);
+        TextView ratingText = locationCard.findViewById(R.id.ratingText);
 
         interactables.add(capacity);
         interactables.add(closingIcon);
@@ -143,20 +166,14 @@ public class SearchResults extends AppCompatActivity {
         // set opening hours text
         setOpeningHoursText(location, openingHours);
 
-        // set rating text!!!!!
+        // set rating text
+        setRatingsText(location, ratingText);
 
+        // set busy progress bar
 
         // set icons for facilities available
-
-
-
-        try {
-            List<Resource> studySpaceResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        // I would need the location of the Location Type - maybe can just use google maps API
+        List<Resource> resources = resourcesByLocation.get(locationName);
+        addIconsToFacilities(resources, facilities);
 
         return locationCard;
     }
@@ -166,17 +183,18 @@ public class SearchResults extends AppCompatActivity {
         List<Object> interactables = new ArrayList<>();
         int buildingID = location.getBuildingId();
         int locationID = location.getId();
+        String locationName = location.getName();
 
-        CardView locationCard = (CardView) LayoutInflater.from(this).inflate(R.layout.large_location_card, resultCardArea, true);
-        LinearLayout facilities = findViewById(R.id.facilitiesIcons);
-        TextView cardTitle = findViewById(R.id.title);
-        TextView distanceAway = findViewById(R.id.distanceText);
-        TextView openingHours = findViewById(R.id.openingHours);
-        ProgressBar capacity = findViewById(R.id.progressBar);
-        ImageView closingIcon = findViewById(R.id.closingIcon);
-        ImageView locImage = findViewById(R.id.locImage);
-        ImageButton addToFavButton = findViewById(R.id.addToFavButton);
-        TextView ratingText = findViewById(R.id.ratingText);
+        CardView locationCard = (CardView) LayoutInflater.from(this).inflate(R.layout.large_location_card, null);
+        LinearLayout facilities = locationCard.findViewById(R.id.facilitiesIcons);
+        TextView cardTitle = locationCard.findViewById(R.id.title);
+        TextView distanceAway = locationCard.findViewById(R.id.distanceText);
+        TextView openingHours = locationCard.findViewById(R.id.openingHours);
+        ProgressBar capacity = locationCard.findViewById(R.id.progressBar);
+        ImageView closingIcon = locationCard.findViewById(R.id.closingIcon);
+        ImageView locImage = locationCard.findViewById(R.id.locImage);
+        ImageButton favButton = locationCard.findViewById(R.id.favButton);
+        TextView ratingText = locationCard.findViewById(R.id.ratingText);
 
         interactables.add(capacity);
         interactables.add(closingIcon);
@@ -194,15 +212,13 @@ public class SearchResults extends AppCompatActivity {
         setOpeningHoursText(location, openingHours);
 
         // set rating text!!!!!!
+        setRatingsText(location, ratingText);
 
+        // set busy progress bar
 
         // set icons for facilities available
-//
-        try {
-            List<Resource> libraryResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        List<Resource> resources = resourcesByLocation.get(locationName);
+        addIconsToFacilities(resources, facilities);
 
         return locationCard;
     }
@@ -217,6 +233,7 @@ public class SearchResults extends AppCompatActivity {
         List<Object> interactables = new ArrayList<>();
         int buildingID = location.getBuildingId();
         int locationID = location.getId();
+        String locationName = location.getName();
 
         LinearLayout facilities = findViewById(R.id.facilitiesIcons);
         TextView cardTitle = findViewById(R.id.title);
@@ -225,7 +242,7 @@ public class SearchResults extends AppCompatActivity {
         ProgressBar capacity = findViewById(R.id.progressBar);
         ImageView closingIcon = findViewById(R.id.closingIcon);
         ImageView locImage = findViewById(R.id.locImage);
-        ImageButton addToFavButton = findViewById(R.id.addToFavButton);
+        ImageButton favButton = findViewById(R.id.favButton);
         TextView ratingText = findViewById(R.id.ratingText);
 
         CardView locationCard = (CardView) LayoutInflater.from(this).
@@ -248,16 +265,16 @@ public class SearchResults extends AppCompatActivity {
         // set opening hours text
         setOpeningHoursText(location, openingHours);
 
-        // set rating text!!!!!! 5: VERY BUSY; 1 NOT BUSY AT ALL (accefss from
+        // set rating text
+        setRatingsText(location, ratingText);
 
+        // set busy progress bar  5: VERY BUSY; 1 NOT BUSY AT ALL
 
         // set icons for facilities available
-//
-        try {
-            List<Resource> restaurantResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        List<Resource> resources = resourcesByLocation.get(locationName);
+        addIconsToFacilities(resources, facilities);
+
+
         return locationCard;
     }
 
@@ -279,13 +296,95 @@ public class SearchResults extends AppCompatActivity {
     }
 
     /**
-     * Wait for Lara's API
-     * @param location
+     * Gets the corresponding rating for the library, and set that as the text in the location card
+     * @param library
      * @param ratings
      */
-    private void setRatingsText(Location location, TextView ratings) {
-
+    private void setRatingsText(Library library, TextView ratings) {
+        String rating = ratingsByLocation.get(library.getName());
+        ratings.setText(rating);
     }
+
+    /**
+     * Gets the corresponding rating for the study space, and set that as the text in the location card
+     * @param studySpace
+     * @param ratings
+     */
+    private void setRatingsText(StudySpace studySpace, TextView ratings) {
+        String rating = ratingsByLocation.get(studySpace.getName());
+        ratings.setText(rating);
+    }
+
+
+    /**
+     * Gets the corresponding rating for the restaurant, and set that as the text in the location card
+     * @param restaurant
+     * @param ratings
+     */
+    private void setRatingsText(Restaurant restaurant, TextView ratings) {
+        String rating = ratingsByLocation.get(restaurant.getName());
+        ratings.setText(rating);
+    }
+
+
+
+    /**
+     * Gets the average rating for each result location, and link it to the name of that location
+     * Using getReviewByEntity (giving entityID and reviewType), it will return a list of reviews
+     * With this list of reviews, for each review, get the score of the review (.getScore)
+     * Then, calculate the average reviews for this, and set that as the text
+     * @param results
+     * @return
+     */
+    private void getAllRatings(List<Location> results) {
+        for (Location location : results) {
+            String locationName = location.getName();
+
+            try {
+                int locationID = location.getId();
+                String type = location.getType();
+                ReviewType typeEnum = ReviewType.valueOf(type);
+                List<Review> reviewList = new ReviewServiceImpl().getReviewsByEntity(locationID, typeEnum);
+                String averageRating = getAverageRating(reviewList);
+                ratingsByLocation.put(locationName, averageRating);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private String getAverageRating(List<Review> reviewList) {
+        int totalScore = 0;
+
+        for (Review review : reviewList) {
+            totalScore += review.getScore();
+        }
+
+        int averageScore = totalScore / reviewList.size();
+        String averageScoreText = String.valueOf(averageScore);
+        return averageScoreText;
+    }
+
+    /**
+     * Gets all resources of the building the location is in
+     * @param results
+     */
+    private void getAllResources(List<Location> results) {
+        for (Location location : results) {
+            int buildingID = location.getBuildingId();
+            String locationName = location.getName();
+
+            try {
+                List<Resource> availResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
+                resourcesByLocation.put(locationName, availResources);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
+
+
 
     private void addIconsToFacilities(List<Resource> resources, LinearLayout facilities) {
         for (Resource resource : resources) {
@@ -324,12 +423,14 @@ public class SearchResults extends AppCompatActivity {
         ImageView closingIcon = getClosingIcon(locationID);
 
         if (timeDiff <= 1) {
-            closingIcon.setColorFilter(ContextCompat.getColor(MainActivity.getAppContext(),
-                    R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+            closingIcon.setColorFilter(ContextCompat.getColor(getApplication(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+//            closingIcon.setColorFilter(ContextCompat.getColor(MainActivity.getAppContext(),
+//                    R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
             // setColorFilter(getApplicationContext().getResources().getColor.red));
         } else {
-            closingIcon.setColorFilter(ContextCompat.getColor(MainActivity.getAppContext(),
-                    R.color.green), android.graphics.PorterDuff.Mode.SRC_IN);
+            closingIcon.setColorFilter(ContextCompat.getColor(getApplication(), R.color.green), android.graphics.PorterDuff.Mode.SRC_IN);
+//            closingIcon.setColorFilter(ContextCompat.getColor(MainActivity.getAppContext(),
+//                    R.color.green), android.graphics.PorterDuff.Mode.SRC_IN);
         }
     }
 
@@ -344,8 +445,4 @@ public class SearchResults extends AppCompatActivity {
         ProgressBar capacity = (ProgressBar) interactables.get(0);
         return capacity;
     }
-
-
-
-
 }
