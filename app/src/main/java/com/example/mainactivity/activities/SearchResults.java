@@ -25,6 +25,7 @@ import com.example.mainactivity.models.location.study_space.StudySpace;
 
 import com.example.mainactivity.models.review.Review;
 import com.example.mainactivity.models.review.ReviewType;
+import com.example.mainactivity.models.user.User;
 import com.example.mainactivity.service.location.LocationService;
 import com.example.mainactivity.service.location.LocationServiceImpl;
 import com.example.mainactivity.service.resource.ResourceService;
@@ -61,12 +62,20 @@ public class SearchResults extends AppCompatActivity {
 //        String searchString = intent.getStringExtra("searchQuery");
 //
 //        Toast.makeText(getApplicationContext(), searchString, Toast.LENGTH_SHORT).show();
-        resultCardArea = findViewById(R.id.resultCardArea);
 
+        resultCardArea = findViewById(R.id.resultCardArea);
         results = new ArrayList<>();
         locationToUI = new HashMap<>();
         ratingsByLocation = new HashMap<>();
         resourcesByLocation = new HashMap<>();
+
+        try {
+//            results = new LocationServiceImpl().findAllLocations("STUDY", searchString, true);
+            // get user and user id, and their favourited places
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
 
         new Thread() {

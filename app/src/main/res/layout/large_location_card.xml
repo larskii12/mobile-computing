@@ -197,7 +197,7 @@
     </androidx.cardview.widget.CardView>
 
     <ImageButton
-        android:id="@+id/addToFavButton"
+        android:id="@+id/favButton"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:background="@drawable/heart_clickable"

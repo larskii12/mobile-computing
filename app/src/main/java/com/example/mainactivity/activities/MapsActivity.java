@@ -11,6 +11,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.databinding.ActivityMapsBinding;
+import com.example.mainactivity.models.location.Location;
+import com.example.mainactivity.service.location.LocationServiceImpl;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,6 +21,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -61,7 +65,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                String searchQuery = searchBar.getQuery().toString();
+                String searchQuery = searchBar.getQuery().toString().trim();
+
                 Intent intent = new Intent(MapsActivity.this, SearchResults.class);
                 intent.putExtra("searchQuery", searchQuery);
                 startActivity(intent);
