@@ -219,7 +219,7 @@ public class LocationServiceImpl implements LocationService {
                 ResultSet resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
-                    Location location = new Location();
+                    Location location = new Library();
                     // Set location information
                     location.setId(resultSet.getInt("library_id"));
                     location.setName(resultSet.getString("library_name"));
@@ -258,7 +258,7 @@ public class LocationServiceImpl implements LocationService {
                 resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
-                    Location location = new Location();
+                    Location location = new StudySpace();
                     // Set location information
                     location.setId(resultSet.getInt("study_space_id"));
                     location.setName(resultSet.getString("study_space_name"));
@@ -297,7 +297,7 @@ public class LocationServiceImpl implements LocationService {
                 ResultSet resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
-                    Location location = new Location();
+                    Location location = new Restaurant();
                     // Set review information
                     location.setId(resultSet.getInt("restaurant_id"));
                     location.setName(resultSet.getString("restaurant_name"));
@@ -334,7 +334,7 @@ public class LocationServiceImpl implements LocationService {
                 ResultSet resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
-                    Location location = new Location();
+                    Location location = new Library();
                     // Set review information
                     location.setId(resultSet.getInt("library_id"));
                     location.setName(resultSet.getString("library_name"));
@@ -371,7 +371,7 @@ public class LocationServiceImpl implements LocationService {
                 resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
-                    Location location = new Location();
+                    Location location = new StudySpace();
                     // Set location information
                     location.setId(resultSet.getInt("study_space_id"));
                     location.setName(resultSet.getString("study_space_name"));
@@ -404,7 +404,7 @@ public class LocationServiceImpl implements LocationService {
                 resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
-                    Location location = new Location();
+                    Location location = new Restaurant();
                     // Set review information
                     location.setId(resultSet.getInt("restaurant_id"));
                     location.setName(resultSet.getString("restaurant_name"));
