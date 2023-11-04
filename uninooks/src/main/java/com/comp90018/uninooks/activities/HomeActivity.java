@@ -31,9 +31,12 @@ import com.comp90018.uninooks.activities.LoginActivity;
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.config.DatabaseHelper;
 import com.comp90018.uninooks.models.location.Location;
+import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingService;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
+import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
+import com.google.android.gms.maps.model.LatLng;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -88,13 +91,34 @@ public class HomeActivity extends AppCompatActivity {
                 public void run() {
                     try {
                         locationAPI = new LocationServiceImpl();
+                        ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
                         List<Location> studySpacesNearby = locationAPI.findAllLocations("STUDY", "", true);
                         System.out.println(studySpacesNearby.get(2).getName());
-                        LinearLayout nearbyLayout = (LinearLayout) findViewById(R.id.nearbyLayout);
+                        LinearLayout nearbyLayout = findViewById(R.id.nearbyLayout);
+                        LinearLayout topRatedLayout = findViewById(R.id.topRatedLayout);
 //                    int i=0; i<5; i++)
-                        for (Location space : studySpacesNearby){
+                        for (StudySpace space : closestStudySpaces){
 //                        Location space = studySpacesNearby.get(i);
                             CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, nearbyLayout, false);
+                            CardView newCard = createNewSmallCard(card,space);
+                            nearbyLayout.addView(newCard);
+                            card.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    new Thread() {
+                                        public void run() {
+                                        Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
+                                        intent.putExtra("SPACE_ID_EXTRA", space.getId());
+                                        intent.putExtra("USERNAME_EXTRA", userID);
+                                        startActivity(intent);
+                                        }
+                                    }.start();
+                                }
+                            });
+                        }
+                        for (StudySpace space : closestStudySpaces){
+//                        Location space = studySpacesNearby.get(i);
+                            CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, topRatedLayout, false);
                             CardView newCard = createNewSmallCard(card,space);
                             nearbyLayout.addView(newCard);
                             card.setOnClickListener(new View.OnClickListener() {
@@ -139,17 +163,19 @@ public class HomeActivity extends AppCompatActivity {
 
         }
 
-        private CardView createNewSmallCard(CardView card, Location space){
+        private CardView createNewSmallCard(CardView card, StudySpace space){
             ImageView banner = (ImageView) card.findViewById(R.id.banner);
             banner.setBackgroundResource(R.drawable.old_engineering);
             ProgressBar progress = (ProgressBar) card.findViewById(R.id.progressBar);
             TextView locationName = (TextView) card.findViewById(R.id.location);
             locationName.setText(space.getName());
             TextView locationHours = (TextView) card.findViewById(R.id.hours);
+            TextView distanceLabel = (TextView) card.findViewById(R.id.timeLabel);
 
 //        long hoursToClose = getTimeToClose(space.getCloseTime());
 //        locationHours.setText(space.getOpenTime().getTime() + " - " + space.getCloseTime().getTime());
-            locationHours.setText("9am - 8pm");
+            distanceLabel.setText(space.getDistanceFromCurrentPosition() + " meters");
+            locationHours.setText(space.getOpenTime() +"am - " + space.getCloseTime() + "pm");
             ImageView hoursIcon = (ImageView) card.findViewById(R.id.clockIcon);
             hoursIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.deepBlue));
             hoursIcon.setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
