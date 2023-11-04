@@ -18,9 +18,12 @@ import android.widget.TextView;
 
 import com.comp90018.uninooks.R;
 
+import java.util.HashMap;
+
 
 
 public class FilterAdjustmentActivity extends AppCompatActivity {
+
     ScrollView scrollView;
     ImageButton returnButton;
     Button resetButton;
@@ -31,11 +34,13 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
     RadioButton selectedRadioButton;
     TextView distDisplay;
     SeekBar seekBar;
+    HashMap<String, String> filtersChosen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter_adjustment);
+        filtersChosen = new HashMap<>();
 
         returnButton = findViewById(R.id.returnButton);
         applyButton = findViewById(R.id.applyButton);
@@ -64,6 +69,9 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
     private View.OnClickListener returnListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            if (getIntent().hasExtra("filters")) {
+                getIntent().removeExtra("filters");
+            }
             finish();
         }
     };
@@ -78,6 +86,12 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(FilterAdjustmentActivity.this, SearchResults.class);
+            retrieveAllCheckedBox();
+            for (String key : filtersChosen.keySet()) {
+                String value = filtersChosen.get(key);
+                System.out.println("Key: " + key + " Value: " + value);
+            }
+            intent.putExtra("filters", filtersChosen);
             startActivity(intent);
         }
     };
@@ -93,6 +107,7 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
             unselectAllCheckBox();
             ascGroup.clearCheck();
             descGroup.clearCheck();
+            filtersChosen.clear();
         }
     };
 
@@ -100,11 +115,30 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
      * Unselects all checkboxes that is contained in the layout (facilities)
      */
     private void unselectAllCheckBox() {
-        for(int i=0;i<facilitiesLayout.getChildCount();i++) {
-            View item =  (View)facilitiesLayout.getChildAt(i);
+        for(int i = 0 ; i < facilitiesLayout.getChildCount() ; i++) {
+            View item =  (View) facilitiesLayout.getChildAt(i);
             if (item instanceof CheckBox) {
                 CheckBox box = (CheckBox) item;
                 box.setChecked(false);
+            }
+        }
+    }
+
+    /**
+     * Adds all checked box into the filters list
+     */
+    private void retrieveAllCheckedBox() {
+        int count = 0;
+        for (int i = 0 ; i < facilitiesLayout.getChildCount() ; i++) {
+            View item = (View) facilitiesLayout.getChildAt(i);
+            if (item instanceof CheckBox) {
+                CheckBox box = (CheckBox) item;
+                if (box.isChecked()) {
+                    count += 1;
+                    String checkBoxName = box.getTag().toString();
+                    String key = "CHECKBOX" + count;
+                    filtersChosen.put(key, checkBoxName);
+                }
             }
         }
     }
@@ -135,6 +169,7 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
                 // text is 0m - __m
                 distDisplay.setText("10m - " + distanceVal + "m");
             }
+            filtersChosen.put("DISTANCE", String.valueOf(distanceVal));
         }
     };
 
@@ -153,6 +188,7 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
                 selectedRadioButton = findViewById(id);
                 String radioSelected = selectedRadioButton.getText().toString();
                 descGroup.setOnCheckedChangeListener(descListener);
+                filtersChosen.put("RADIO", radioSelected);
             }
             ascGroup.getCheckedRadioButtonId();
         }
@@ -167,6 +203,7 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
                 selectedRadioButton = findViewById(id);
                 String radioSelected = selectedRadioButton.getText().toString();
                 ascGroup.setOnCheckedChangeListener(ascListener);
+                filtersChosen.put("RADIO", radioSelected);
             }
         }
     };
