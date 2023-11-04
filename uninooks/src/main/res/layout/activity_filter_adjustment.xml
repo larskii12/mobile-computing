@@ -180,7 +180,8 @@
                     android:text="Graduate Space"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    app:buttonTint="@color/deepBlue" />
+                    app:buttonTint="@color/deepBlue"
+                    android:tag="gradSpace"/>
 
                 <CheckBox
                     android:id="@+id/quietStudyCheck"
@@ -192,7 +193,8 @@
                     android:text="Quiet Study"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    app:buttonTint="@color/deepBlue" />
+                    app:buttonTint="@color/deepBlue"
+                    android:tag="quietStudy"/>
 
                 <CheckBox
                     android:id="@+id/afterHoursCheck"
@@ -204,7 +206,8 @@
                     android:text="After Hours Access"
                     android:textColor="@color/deepBlue"
                     android:textSize="17sp"
-                    app:buttonTint="@color/deepBlue" />
+                    app:buttonTint="@color/deepBlue"
+                    android:tag="afterHours"/>
 
                 <CheckBox
                     android:id="@+id/microwaveCheck"
@@ -216,7 +219,8 @@
                     android:text="Microwaves"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    app:buttonTint="@color/deepBlue" />
+                    app:buttonTint="@color/deepBlue"
+                    android:tag="microwave"/>
 
                 <CheckBox
                     android:id="@+id/ATMCheck"
@@ -228,7 +232,8 @@
                     android:text="ATM"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    app:buttonTint="@color/deepBlue" />
+                    app:buttonTint="@color/deepBlue"
+                    android:tag="atm"/>
 
                 <CheckBox
                     android:id="@+id/accessibleCheck"
@@ -240,7 +245,8 @@
                     android:text="Accessible"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    app:buttonTint="@color/deepBlue" />
+                    app:buttonTint="@color/deepBlue"
+                    android:tag="accessible"/>
 
                 <CheckBox
                     android:id="@+id/vendingMachineCheck"
@@ -252,7 +258,8 @@
                     android:text="Vending Machine"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    app:buttonTint="@color/deepBlue" />
+                    app:buttonTint="@color/deepBlue"
+                    android:tag="vendingMachine"/>
 
                 <CheckBox
                     android:id="@+id/parkingCheck"
@@ -264,7 +271,8 @@
                     android:text="Parking Space"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
-                    app:buttonTint="@color/deepBlue" />
+                    app:buttonTint="@color/deepBlue"
+                    android:tag="parking"/>
 
 <!--                <CheckBox-->
 <!--                    android:id="@+id/bathroomCheck"-->
