@@ -5,4 +5,6 @@ public enum LocationType {
     LIBRARY,
     RESTAURANT,
     STUDY_SPACE;
+
+
 }
