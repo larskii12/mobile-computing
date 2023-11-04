@@ -19,7 +19,9 @@ import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.busy_rating.BusyRating;
+import com.comp90018.uninooks.models.favorite.Favorite;
 import com.comp90018.uninooks.models.location.Location;
+import com.comp90018.uninooks.models.location.building.Building;
 import com.comp90018.uninooks.models.location.library.Library;
 import com.comp90018.uninooks.models.location.resource.Resource;
 import com.comp90018.uninooks.models.location.resource.ResourceType;
@@ -27,7 +29,9 @@ import com.comp90018.uninooks.models.location.restaurant.Restaurant;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.comp90018.uninooks.models.review.Review;
 import com.comp90018.uninooks.models.review.ReviewType;
+import com.comp90018.uninooks.service.building.BuildingServiceImpl;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
+import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
@@ -42,15 +46,18 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class SearchResults extends AppCompatActivity {
+    int userID;
     LinearLayout resultCardArea;
     List<Location> results;
 
     CardView cardView;
     ImageButton returnButton;
     HashMap<Integer, List<Object>> locationToUI;
+    HashMap<Integer, Building> buildingsByLocation;
     HashMap<String, String> ratingsByLocation;
     HashMap<String, List<Resource>> resourcesByLocation;
     HashMap<String, Double> busyRatingByLocation;
+    ArrayList<Favorite> userFavs;
 
 
     @Override
@@ -59,14 +66,18 @@ public class SearchResults extends AppCompatActivity {
 
         setContentView(R.layout.activity_search_results);
         Intent intent = getIntent();
+//        userID = intent.getIntExtra("userID", 0);
 
         resultCardArea = findViewById(R.id.resultCardArea);
         returnButton = findViewById(R.id.returnButton);
         results = new ArrayList<>();
+        userFavs = new ArrayList<>();
         locationToUI = new HashMap<>();
+        buildingsByLocation = new HashMap<>();
         ratingsByLocation = new HashMap<>();
         resourcesByLocation = new HashMap<>();
         busyRatingByLocation = new HashMap<>();
+
 
         new Thread() {
             @Override
@@ -77,20 +88,20 @@ public class SearchResults extends AppCompatActivity {
                         String searchString = intent.getStringExtra("searchQuery");
                         System.out.println(searchString);
                         results = new LocationServiceImpl().findAllLocations("STUDY", searchString, true);
-
+                        System.out.println("gotten results");
 
                     } else if (intent.hasExtra("filters")) {
                         results = new LocationServiceImpl().findAllLocations("STUDY", null, true);
                         String[] filters = intent.getStringArrayExtra("filters");
-
                         // use filters on results
                     }
 
-
                     // have to get all the ratings here (any other API I call, have to be done here and not in the UI thread)
+                    getAllBuildingsOfLocs(results);
                     getAllRatings(results);
                     getAllResources(results);
                     getAllBusyRatings(results);
+                    getAllUserFavs();
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -101,7 +112,6 @@ public class SearchResults extends AppCompatActivity {
                             } else {
                                 addResultsToPage(results);
                             }
-
                         }
                     });
 
@@ -136,12 +146,7 @@ public class SearchResults extends AppCompatActivity {
     private void addResultsToPage(List<Location> results) {
 
         for (Location location : results) {
-            System.out.println(location.getType());
             String type = location.getType();
-
-            System.out.println(location.getName());
-            System.out.println("type: " + type);
-
 
             if (type.equals("LIBRARY")) {
                 cardView = createLibraryLocationCard((Library) location);
@@ -151,8 +156,17 @@ public class SearchResults extends AppCompatActivity {
                 cardView = createRestaurantLocationCard((Restaurant) location);
             }
             resultCardArea.addView(cardView);
+            resultCardArea.setClickable(true);
+            resultCardArea.setOnClickListener(cardListener);
         }
     }
+
+    private View.OnClickListener cardListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            // pass userID and study space ID to intent as extras
+        }
+    };
 
     private CardView createStudyLocationCard(StudySpace location) {
         List<Object> interactables = new ArrayList<>();
@@ -161,7 +175,6 @@ public class SearchResults extends AppCompatActivity {
         String locationName = location.getName();
 
         CardView locationCard = (CardView) LayoutInflater.from(this).inflate(R.layout.large_location_card, null);
-        LinearLayout facilities = locationCard.findViewById(R.id.facilitiesIcons);
         TextView cardTitle = locationCard.findViewById(R.id.title);
         TextView distanceAway = locationCard.findViewById(R.id.distanceText);
         TextView openingHours = locationCard.findViewById(R.id.openingHours);
@@ -197,14 +210,16 @@ public class SearchResults extends AppCompatActivity {
         // set busy progress bar!!!!!
         updateProgressBar(location);
 
-        // set whether something has been favourited or not!!!!
-        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.heart_fill);
-        favButton.setBackground(drawable);
+        // set whether something has been favourited or not!!!! <-- have to fist check whether it is in the favourite list!
+        for (Favorite fav : userFavs) {
+            if (fav.getStudySpaceId() == locationID) {
+                Drawable drawable = ContextCompat.getDrawable(this, R.drawable.heart_fill);
+                favButton.setBackground(drawable);
+            }
+        }
 
-        // set icons for facilities available!!!!!
-        List<Resource> resources = resourcesByLocation.get(locationName);
-        addIconsToFacilities(resources, facilities);
-
+        // set icons for facilities available
+        addIconsToFacilities(location, locationCard);
         return locationCard;
     }
 
@@ -216,7 +231,6 @@ public class SearchResults extends AppCompatActivity {
         String locationName = location.getName();
 
         CardView locationCard = (CardView) LayoutInflater.from(this).inflate(R.layout.large_location_card, null);
-        LinearLayout facilities = locationCard.findViewById(R.id.facilitiesIcons);
         TextView cardTitle = locationCard.findViewById(R.id.title);
         TextView distanceAway = locationCard.findViewById(R.id.distanceText);
         TextView openingHours = locationCard.findViewById(R.id.openingHours);
@@ -250,10 +264,16 @@ public class SearchResults extends AppCompatActivity {
         // set busy progress bar
         updateProgressBar(location);
 
-        // set icons for facilities available
-        List<Resource> resources = resourcesByLocation.get(locationName);
-        addIconsToFacilities(resources, facilities);
+        // set whether this location is in favourites or not
+        for (Favorite fav : userFavs) {
+            if (fav.getLibraryId() == locationID) {
+                Drawable drawable = ContextCompat.getDrawable(this, R.drawable.heart_fill);
+                favButton.setBackground(drawable);
+            }
+        }
 
+        // set icons for facilities available
+        addIconsToFacilities(location, locationCard);
         return locationCard;
     }
 
@@ -306,10 +326,17 @@ public class SearchResults extends AppCompatActivity {
         // set busy progress bar  5: VERY BUSY; 1 NOT BUSY AT ALL
         updateProgressBar(location);
 
+        // set whether this location is in user fav list
+        for (Favorite fav : userFavs) {
+            if (fav.getRestaurantId() == locationID) {
+                Drawable drawable = ContextCompat.getDrawable(this, R.drawable.heart_fill);
+                favButton.setBackground(drawable);
+            }
+        }
+
         // set icons for facilities available
         List<Resource> resources = resourcesByLocation.get(locationName);
-        addIconsToFacilities(resources, facilities);
-
+        addResourcesToFacilities(resources, locationCard);
 
         return locationCard;
     }
@@ -320,6 +347,7 @@ public class SearchResults extends AppCompatActivity {
     }
 
     private void setOpeningHoursText(Location location, TextView openingHours) {
+        String text;
         Time openingTime = location.getOpenTime();
         Time closingTime = location.getCloseTime();
 
@@ -327,7 +355,13 @@ public class SearchResults extends AppCompatActivity {
         String openingTimeText = sdf.format(openingTime);
         String closingTimeText = sdf.format(closingTime);
 
-        String text = "Opening Hours: " + openingTimeText + " - " + closingTimeText;
+        double hoursToClose = calcTimeToClose(closingTime);
+
+        if (hoursToClose <= 0) {
+            text = "Closed";
+        } else {
+            text = "Opening Hours: " + openingTimeText + " - " + closingTimeText;
+        }
         openingHours.setText(text);
     }
 
@@ -362,6 +396,24 @@ public class SearchResults extends AppCompatActivity {
         ratings.setText(rating);
     }
 
+    /**
+     * Links the building to the location for all results received
+     * @param results
+     */
+    private void getAllBuildingsOfLocs(List<Location> results) {
+        for (Location location : results) {
+            try {
+                int locationID = location.getId();
+                int buildingID = location.getBuildingId();
+                String type = location.getType();
+                ReviewType typeEnum = ReviewType.valueOf(type);
+                Building building = new BuildingServiceImpl().getBuilding(buildingID, typeEnum);
+                buildingsByLocation.put(locationID, building);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
 
     /**
@@ -427,6 +479,10 @@ public class SearchResults extends AppCompatActivity {
         }
     }
 
+    /**
+     * Gets all the busy ratings of the locations
+     * @param results
+     */
     private void getAllBusyRatings(List<Location> results) {
         for (Location location : results) {
             String locationName = location.getName();
@@ -443,54 +499,133 @@ public class SearchResults extends AppCompatActivity {
         }
     }
 
+    /**
+     * Ready to be implemented, just need to wait for the intent to get userID
+     */
+    private void getAllUserFavs() {
+        List<Favorite> favLibraries = new ArrayList<>();
+        List<Favorite> favStudySpaces = new ArrayList<>();
+
+//        try {
+//            favLibraries = new FavoriteServiceImpl().getFavoritesByUser(2, ReviewType.LIBRARY);
+//            favStudySpaces = new FavoriteServiceImpl().getFavoritesByUser(2, ReviewType.STUDY_SPACE);
+//            userFavs.addAll(favLibraries);
+//            userFavs.addAll(favStudySpaces);
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+    }
+
+    private void addIconsToFacilities(StudySpace location, CardView locationCard) {
+        Building building = buildingsByLocation.get(location.getId());
+        ImageView gradIcon = locationCard.findViewById(R.id.gradSpace);
+        ImageView noiseIcon = locationCard.findViewById(R.id.noise);
+        ImageView afterHoursIcon = locationCard.findViewById(R.id.afterHours);
+        ImageView accessibleIcon = locationCard.findViewById(R.id.accessible);
+
+        Integer minimumAccess = location.getMinimumAccessAQFLevel();
+        Boolean talkAllowed = location.isTalkAllowed();
+
+        if (minimumAccess > 7) {
+            gradIcon.setVisibility(View.VISIBLE);
+        }
+
+        if (talkAllowed) {
+            noiseIcon.setVisibility(View.VISIBLE);
+        } else {
+            Drawable quietDrawable = ContextCompat.getDrawable(this, R.drawable.quiet_outline);
+            noiseIcon.setBackground(quietDrawable);
+            noiseIcon.setVisibility(View.VISIBLE);
+        }
+
+        afterHoursIcon.setVisibility(View.VISIBLE);
+
+        if (building.isHasAccessibility()) {
+            accessibleIcon.setVisibility(View.VISIBLE);
+        }
+
+        List<Resource> resources = resourcesByLocation.get(location.getName());
+        addResourcesToFacilities(resources, locationCard);
+    }
 
 
-    private void addIconsToFacilities(List<Resource> resources, LinearLayout facilities) {
+    private void addIconsToFacilities(Library location, CardView locationCard) {
+        Building building = buildingsByLocation.get(location.getId());
+        ImageView noiseIcon = locationCard.findViewById(R.id.noise);
+        ImageView accessibleIcon = locationCard.findViewById(R.id.accessible);
+
+        boolean quietZone = location.isHasQuietZones();
+        if (!quietZone) {
+            noiseIcon.setVisibility(View.VISIBLE);
+        } else {
+            Drawable quietDrawable = ContextCompat.getDrawable(this, R.drawable.quiet_outline);
+            noiseIcon.setBackground(quietDrawable);
+            noiseIcon.setVisibility(View.VISIBLE);
+        }
+
+        if (building.isHasAccessibility()) {
+            accessibleIcon.setVisibility(View.VISIBLE);
+        }
+
+        List<Resource> resources = resourcesByLocation.get(location.getName());
+        addResourcesToFacilities(resources, locationCard);
+    }
+
+    private void addResourcesToFacilities(List<Resource> resources, CardView locationCard) {
+        ImageView atmIcon = locationCard.findViewById(R.id.atm);
+        ImageView parkingIcon = locationCard.findViewById(R.id.parking);
+        ImageView microwaveIcon = locationCard.findViewById(R.id.microwave);
+        ImageView vendingIcon = locationCard.findViewById(R.id.vendingMachine);
+
         for (Resource resource : resources) {
             ResourceType resourceType = resource.getType();
 
             switch(resourceType) {
                 case ATM:
-                    System.out.println("add ATM icon");
+                    atmIcon.setVisibility(View.VISIBLE);
                     break;
-                case PARKING:
-                    System.out.println("add Parking icon");
+                case CAR_PARK:
+                    parkingIcon.setVisibility(View.VISIBLE);
                     break;
                 case KITCHEN:
                 case MICROWAVE_OVEN:
-                    System.out.println("add MICROWAVE icon");
+                    microwaveIcon.setVisibility(View.VISIBLE);
                     break;
                 case VENDING_MACHINE:
-                    System.out.println("add vending machine icon");
-
+                    vendingIcon.setVisibility(View.VISIBLE);
+                    break;
             }
         }
     }
 
-    private long calcTimeToClose(Time closingTime) {
+    private double calcTimeToClose(Time closingTime) {
         Date date = new Date();
         Time currTime = new Time(date.getTime());
 
-        Long timeDiff = TimeUnit.MILLISECONDS.toHours(closingTime.getTime() - currTime.getTime());
-        return timeDiff;
+        long timeDiffInSeconds = (closingTime.getHours() - currTime.getHours()) * 3600
+                + (closingTime.getMinutes() - currTime.getMinutes()) * 60
+                + (closingTime.getSeconds() - currTime.getSeconds());
+
+        double timeDiffInHours = (double) timeDiffInSeconds / 3600;
+
+        return timeDiffInHours;
     }
 
     private void updateClockColour(Location location) {
         Time closingTime = location.getCloseTime();
-        Long timeDiff = calcTimeToClose(closingTime);
+        Double timeDiff = calcTimeToClose(closingTime);
 
         int locationID = location.getId();
         ImageView closingIcon = getClosingIcon(locationID);
 
+        System.out.println("TIME DIFF: " + timeDiff);
+
         if (timeDiff <= 1) {
-            closingIcon.setColorFilter(ContextCompat.getColor(getApplication(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
-//            closingIcon.setColorFilter(ContextCompat.getColor(MainActivity.getAppContext(),
-//                    R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
-            // setColorFilter(getApplicationContext().getResources().getColor.red));
+            System.out.println("Set time to red");
+            closingIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplication(), R.color.red), PorterDuff.Mode.SRC_IN);
         } else {
-            closingIcon.setColorFilter(ContextCompat.getColor(getApplication(), R.color.green), android.graphics.PorterDuff.Mode.SRC_IN);
-//            closingIcon.setColorFilter(ContextCompat.getColor(MainActivity.getAppContext(),
-//                    R.color.green), android.graphics.PorterDuff.Mode.SRC_IN);
+            closingIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplication(), R.color.deepBlue), PorterDuff.Mode.SRC_IN);
         }
     }
 
@@ -511,7 +646,13 @@ public class SearchResults extends AppCompatActivity {
         int busyRatingPercent = (int) (busyRating * 20);
         System.out.println("BUSY RATING PERCENTAGE: " + busyRatingPercent);
 
-        if (busyRatingPercent >= 0 && busyRatingPercent <= 40) {
+        Time closingTime = location.getCloseTime();
+        double hoursToClose = calcTimeToClose(closingTime);
+
+        if (hoursToClose <= 1) {
+            busyBar.setProgress(5);
+
+        } else if (busyRatingPercent >= 0 && busyRatingPercent <= 40) {
             busyBar.setProgress(busyRatingPercent);
             busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.green)));
 
@@ -523,7 +664,6 @@ public class SearchResults extends AppCompatActivity {
             busyBar.setProgress(busyRatingPercent);
             busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.red)));
         }
-//        busyBar.setProgressDrawable(customDrawable);
     }
 
     /**
