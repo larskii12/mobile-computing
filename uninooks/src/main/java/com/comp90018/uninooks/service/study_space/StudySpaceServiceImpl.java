@@ -55,7 +55,10 @@ public class StudySpaceServiceImpl implements StudySpaceService {
         while (resultSet.next()) { // Ensure there's a row in the result set
 
             int studySpaceId = Integer.parseInt(resultSet.getString("study_space_id"));
-            allStudySpace.add(studySpaceFinder.findStudySpaceById(studySpaceId));
+            StudySpace studySpace = studySpaceFinder.findStudySpaceById(studySpaceId);
+            if (studySpace != null){
+                allStudySpace.add(studySpaceFinder.findStudySpaceById(studySpaceId));
+            }
         }
 
         // GIS check ordering, use on deployment

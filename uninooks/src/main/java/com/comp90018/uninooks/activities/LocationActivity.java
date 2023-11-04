@@ -31,13 +31,12 @@ public class LocationActivity extends AppCompatActivity{
         Intent intent = getIntent();
         String userID = intent.getStringExtra("USERID_EXTRA");
         Integer spaceID = Integer.valueOf(intent.getStringExtra("SPACE_ID_EXTRA"));
-        Integer buildingID = Integer.valueOf(intent.getStringExtra("SPACE_ID_EXTRA"));
-        Integer distance = Integer.valueOf(intent.getStringExtra("SPACE_ID_EXTRA"));
-        Integer libraryID = Integer.valueOf(intent.getStringExtra("SPACE_ID_EXTRA"));
-        String noiseAllowed = intent.getStringExtra("SPACE_NOISE_EXTRA");
-        String openTime = intent.getStringExtra("SPACE_ID_EXTRA");
-        String closeTime = intent.getStringExtra("SPACE_ID_EXTRA");
-//        StudySpace space = new StudySpaceServiceImpl().
+//        Integer buildingID = Integer.valueOf(intent.getStringExtra("BUILDING_ID_EXTRA"));
+//        Integer distance = Integer.valueOf(intent.getStringExtra("DISTANCE_EXTRA"));
+//        Integer libraryID = Integer.valueOf(intent.getStringExtra("LIBRARY_ID_EXTRA"));
+//        String openTime = intent.getStringExtra("OPEN_EXTRA");
+//        String closeTime = intent.getStringExtra("CLOSE_EXTRA");
+//        String spaceName = intent.getStringExtra("SPACE_NAME_EXTRA");
 
 
 //        List<Location> studySpacesNearby = new ArrayList<>();

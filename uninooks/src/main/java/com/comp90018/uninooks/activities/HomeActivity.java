@@ -30,9 +30,12 @@ import android.widget.Toast;
 import com.comp90018.uninooks.activities.LoginActivity;
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.config.DatabaseHelper;
+import com.comp90018.uninooks.models.favorite.Favorite;
 import com.comp90018.uninooks.models.location.Location;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
+import com.comp90018.uninooks.models.review.ReviewType;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingService;
+import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
@@ -84,82 +87,74 @@ public class HomeActivity extends AppCompatActivity {
             TextView greetingMessage = (TextView) findViewById(R.id.textView);
             greetingMessage.setText("Good morning " + username);
 
-//        LinearLayout nearbyLayout = (LinearLayout) findViewById(R.id.nearbyLayout);
 
             new Thread() {
                 @Override
                 public void run() {
                     try {
                         locationAPI = new LocationServiceImpl();
-                        ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
+                        ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(-1, -1), 10);
                         List<Location> studySpacesNearby = locationAPI.findAllLocations("STUDY", "", true);
+//                        List<Favorite> userFavorites = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACES"));
                         System.out.println(studySpacesNearby.get(2).getName());
                         LinearLayout nearbyLayout = findViewById(R.id.nearbyLayout);
                         LinearLayout topRatedLayout = findViewById(R.id.topRatedLayout);
 //                    int i=0; i<5; i++)
-                        for (StudySpace space : closestStudySpaces){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (StudySpace space : closestStudySpaces){
 //                        Location space = studySpacesNearby.get(i);
-                            CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, nearbyLayout, false);
-                            CardView newCard = createNewSmallCard(card,space);
-                            nearbyLayout.addView(newCard);
-                            card.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    new Thread() {
-                                        public void run() {
-                                        Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                                        intent.putExtra("SPACE_ID_EXTRA", space.getId());
-                                        intent.putExtra("USERNAME_EXTRA", userID);
-                                        startActivity(intent);
+                                    CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, nearbyLayout, false);
+                                    CardView newCard = createNewSmallCard(card,space);
+                                    nearbyLayout.addView(newCard);
+                                    card.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                        new Thread() {
+                                            public void run() {
+                                            Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
+                                            intent.putExtra("SPACE_ID_EXTRA", space.getId());
+//                                            intent.putExtra("SPACE_NAME_EXTRA", space.getName());
+//                                            intent.putExtra("BUILDING_ID_EXTRA", space.getBuildingId());
+//                                            intent.putExtra("LIBRARY_ID_EXTRA", space.getLibraryId());
+//                                            intent.putExtra("DISTANCE_EXTRA", space.getDistanceFromCurrentPosition());
+//                                            intent.putExtra("OPEN_EXTRA", space.getOpenTime());
+//                                            intent.putExtra("CLOSE_EXTRA", space.getCloseTime());
+                                            intent.putExtra("USERNAME_EXTRA", userID);
+                                            startActivity(intent);
+                                            }
+                                        }.start();
                                         }
-                                    }.start();
+                                    });
                                 }
-                            });
-                        }
-                        for (StudySpace space : closestStudySpaces){
+                                for (StudySpace space : closestStudySpaces){
 //                        Location space = studySpacesNearby.get(i);
-                            CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, topRatedLayout, false);
-                            CardView newCard = createNewSmallCard(card,space);
-                            nearbyLayout.addView(newCard);
-                            card.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    new Thread() {
-                                        public void run() {
+                                    CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, topRatedLayout, false);
+                                    CardView newCard = createNewSmallCard(card,space);
+                                    topRatedLayout.addView(newCard);
+                                    card.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            new Thread() {
+                                                public void run() {
 //                                        Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
 //                                        intent.putExtra("LOCATION_EXTRA", space.getBuildingId());
 ////                            intent.putExtra("USERNAME_EXTRA", logInUser.getUserName());
 //                                        startActivity(intent);
+                                                }
+                                            }.start();
                                         }
-                                    }.start();
+                                    });
                                 }
-                            });
-                        }
+                            }
+                        });
+
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
             }.start();
-
-//        Location space : studySpacesNearby){
-//        for (int i=0; i<5; i++) {
-//            Location space = studySpacesNearby.get(i);
-//            CardView card = (CardView) LayoutInflater.from(this).inflate(R.layout.small_card_layout, nearbyLayout, true);
-//            createNewSmallCard(card,space);
-//            card.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    new Thread() {
-//                        public void run() {
-//                            Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-//                            intent.putExtra("LOCATION_EXTRA", space.getBuildingId());
-////                            intent.putExtra("USERNAME_EXTRA", logInUser.getUserName());
-//                            startActivity(intent);
-//                        }
-//                    }.start();
-//                }
-//            });
-//        }
 
         }
 
@@ -172,21 +167,21 @@ public class HomeActivity extends AppCompatActivity {
             TextView locationHours = (TextView) card.findViewById(R.id.hours);
             TextView distanceLabel = (TextView) card.findViewById(R.id.timeLabel);
 
-//        long hoursToClose = getTimeToClose(space.getCloseTime());
-//        locationHours.setText(space.getOpenTime().getTime() + " - " + space.getCloseTime().getTime());
+            long hoursToClose = getTimeToClose(space.getCloseTime());
+            locationHours.setText(space.getOpenTime().getTime() + " - " + space.getCloseTime().getTime());
             distanceLabel.setText(space.getDistanceFromCurrentPosition() + " meters");
-            locationHours.setText(space.getOpenTime() +"am - " + space.getCloseTime() + "pm");
+//            locationHours.setText(space.getOpenTime() +"am - " + space.getCloseTime() + "pm");
             ImageView hoursIcon = (ImageView) card.findViewById(R.id.clockIcon);
-            hoursIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.deepBlue));
             hoursIcon.setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
             hoursIcon.setBackgroundResource(R.drawable.baseline_access_time_24);
-//        if(hoursToClose <= 1){
-//            hoursIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));
-////            hoursIcon.setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
-//        } else {
-//            hoursIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.deepBlue));
-//        }
+            if(hoursToClose <= 1){
+//                hoursIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));
+                hoursIcon.setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+            } else {
+                hoursIcon.setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
+            }
             ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);
+//            if ()
             favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_border_24);
             favouriteIcon.setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
 //        favouriteIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));

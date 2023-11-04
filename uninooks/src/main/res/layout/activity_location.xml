@@ -156,32 +156,27 @@
 
 
     <ExpandableListView
-        android2:id="@+id/expandableListView"
-        android2:layout_width="match_parent"
-        android:layout_width="412dp"
-        android3:layout_width="match_parent"
-        android:layout_height="65dp"
-        android3:layout_height="200dp"
-        android:layout_marginTop="9dp"
-        android2:divider="@android:color/darker_gray"
-        android2:dividerHeight="0.5dp"
-        android2:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
+        android:id="@+id/expandableListView1"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="0.5dp"
+        android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"/>
 
     <LinearLayout
-        android2:layout_width="409dp"
-        android:layout_width="0dp"
-        android2:layout_height="355dp"
-        android:layout_height="351dp"
+        android:layout_width="409dp"
+        android:layout_height="355dp"
         android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="5dp"
-        android2:orientation="vertical"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/expandableListView">
+        app:layout_constraintTop_toBottomOf="@+id/expandableListView1">
 
         <LinearLayout
             android:id="@+id/review_header"
@@ -191,11 +186,10 @@
             android:orientation="horizontal">
 
             <TextView
-                android2:id="@+id/textView8"
+                android:id="@+id/textView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android2:text="TextView"
                 android:text="Reviews:"
                 android:textColor="@color/deepBlue"
                 android:textSize="24sp" />
