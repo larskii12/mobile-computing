@@ -37,7 +37,7 @@ public class BuildingServiceImpl implements BuildingService {
                 building.setId(resultSet.getInt("building_id"));
                 building.setName(resultSet.getString("building_name"));
                 building.setFaculty(resultSet.getString("building_faculty"));
-                building.setHasAccessibility(resultSet.getBoolean("building_has_accessibility"));
+                building.setHasAccessibility(resultSet.getBoolean("building_accessibility"));
                 building.setLatitude(resultSet.getDouble("building_latitude"));
                 building.setLatitude(resultSet.getDouble("building_longitude"));
                 return building;
