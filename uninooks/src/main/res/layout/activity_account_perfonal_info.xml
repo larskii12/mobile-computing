@@ -113,6 +113,17 @@
             android:paddingHorizontal="96dp"
             android:visibility="gone" />
 
+        <Button
+            android:id="@+id/Pi_ButtonConfirmNewUserName"
+            style="@style/Button.Primary.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="164dp"
+            android:scaleY="0.6"
+            android:scaleX="0.6"
+            android:text="@string/confirm"
+            android:visibility="gone"/>
+
     </RelativeLayout>
 
     <!-- Email Section -->
@@ -336,6 +347,17 @@
             android:spinnerMode="dropdown"
             android:visibility="gone" />
 
+        <Button
+            android:id="@+id/Pi_ButtonConfirmNewFaculty"
+            style="@style/Button.Primary.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="164dp"
+            android:scaleY="0.6"
+            android:scaleX="0.6"
+            android:text="@string/confirm"
+            android:visibility="gone"/>
+
     </RelativeLayout>
 
     <!-- Degree Section -->
@@ -393,6 +415,18 @@
             android:layout_height="wrap_content"
             android:spinnerMode="dropdown"
             android:visibility="gone" />
+
+        <Button
+            android:id="@+id/Pi_ButtonConfirmNewDegree"
+            style="@style/Button.Primary.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="164dp"
+            android:scaleY="0.6"
+            android:scaleX="0.6"
+            android:text="@string/confirm"
+            android:visibility="gone"/>
+
 
 
     </RelativeLayout>
