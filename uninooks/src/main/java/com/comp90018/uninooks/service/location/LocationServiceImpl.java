@@ -282,6 +282,7 @@ public class LocationServiceImpl implements LocationService {
                     location.setCloseTime(resultSet.getTime("closing_time"));
 
                     location.setType("STUDY_SPACE");
+                    ((StudySpace) location).setMinimumAccessAQFLevel(resultSet.getInt("study_space_minimum_access_AQF_level"));
 
 //                    Array daysDb = resultSet.getArray("study_space_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
