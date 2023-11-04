@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:fontFamily="@font/source_sans_pro"
-            android:text="Search Results"
+            android:text="Results"
             android:textColor="@color/deepBlue"
             android:textSize="28sp" />
     </androidx.appcompat.widget.Toolbar>
