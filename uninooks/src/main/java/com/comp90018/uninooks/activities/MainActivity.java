@@ -108,8 +108,16 @@ public class MainActivity extends AppCompatActivity implements GPSService {
                     public void run() {
                         try {
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                            // Find resources based on keyword search
+//                            List<Resource> a = new ResourceServiceImpl().getResourceFromKeyWord("atm");
+//                            for (Resource r : a){
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", r.getName());
+//                            }
+
 
                             // How to get closest study spaces
 //                            ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
