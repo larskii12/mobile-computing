@@ -1,6 +1,9 @@
 package com.comp90018.uninooks.activities;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,13 +12,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
+import com.comp90018.uninooks.models.busy_rating.BusyRating;
 import com.comp90018.uninooks.models.location.Location;
 import com.comp90018.uninooks.models.location.library.Library;
 import com.comp90018.uninooks.models.location.resource.Resource;
@@ -24,10 +27,12 @@ import com.comp90018.uninooks.models.location.restaurant.Restaurant;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.comp90018.uninooks.models.review.Review;
 import com.comp90018.uninooks.models.review.ReviewType;
+import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,6 +50,7 @@ public class SearchResults extends AppCompatActivity {
     HashMap<Integer, List<Object>> locationToUI;
     HashMap<String, String> ratingsByLocation;
     HashMap<String, List<Resource>> resourcesByLocation;
+    HashMap<String, Double> busyRatingByLocation;
 
 
     @Override
@@ -54,26 +60,13 @@ public class SearchResults extends AppCompatActivity {
         setContentView(R.layout.activity_search_results);
         Intent intent = getIntent();
 
-
-//        String searchString = intent.getStringExtra("searchQuery");
-//
-//        Toast.makeText(getApplicationContext(), searchString, Toast.LENGTH_SHORT).show();
-
         resultCardArea = findViewById(R.id.resultCardArea);
         returnButton = findViewById(R.id.returnButton);
         results = new ArrayList<>();
         locationToUI = new HashMap<>();
         ratingsByLocation = new HashMap<>();
         resourcesByLocation = new HashMap<>();
-
-//        try {
-////            results = new LocationServiceImpl().findAllLocations("STUDY", searchString, true);
-//            // get user and user id, and their favourited places
-//
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-
+        busyRatingByLocation = new HashMap<>();
 
         new Thread() {
             @Override
@@ -87,13 +80,17 @@ public class SearchResults extends AppCompatActivity {
 
 
                     } else if (intent.hasExtra("filters")) {
+                        results = new LocationServiceImpl().findAllLocations("STUDY", null, true);
                         String[] filters = intent.getStringArrayExtra("filters");
+
+                        // use filters on results
                     }
 
 
                     // have to get all the ratings here (any other API I call, have to be done here and not in the UI thread)
                     getAllRatings(results);
                     getAllResources(results);
+                    getAllBusyRatings(results);
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -122,6 +119,7 @@ public class SearchResults extends AppCompatActivity {
         super.onResume();
         for (Location location : results) {
             updateClockColour(location);
+            updateProgressBar(location);
         }
     }
 
@@ -180,7 +178,12 @@ public class SearchResults extends AppCompatActivity {
         // first set the title
         setTitle(location, cardTitle);
 
+        // set the image!!!
+
         // set the distance away!!!!!
+        Double dist = location.getDistanceFromCurrentPosition();
+        int distInt = (int) Math.round(dist);
+        distanceAway.setText(distInt + "m");
 
         // set the clock colour
         updateClockColour(location);
@@ -191,9 +194,14 @@ public class SearchResults extends AppCompatActivity {
         // set rating text
         setRatingsText(location, ratingText);
 
-        // set busy progress bar
+        // set busy progress bar!!!!!
+        updateProgressBar(location);
 
-        // set icons for facilities available
+        // set whether something has been favourited or not!!!!
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.heart_fill);
+        favButton.setBackground(drawable);
+
+        // set icons for facilities available!!!!!
         List<Resource> resources = resourcesByLocation.get(locationName);
         addIconsToFacilities(resources, facilities);
 
@@ -226,6 +234,9 @@ public class SearchResults extends AppCompatActivity {
         setTitle(location, cardTitle);
 
         // set the distance away!!!!!!
+        Double dist = location.getDistanceFromCurrentPosition();
+        int distInt = (int) Math.round(dist);
+        distanceAway.setText(distInt + "m");
 
         // set the clock colour
         updateClockColour(location);
@@ -237,6 +248,7 @@ public class SearchResults extends AppCompatActivity {
         setRatingsText(location, ratingText);
 
         // set busy progress bar
+        updateProgressBar(location);
 
         // set icons for facilities available
         List<Resource> resources = resourcesByLocation.get(locationName);
@@ -277,9 +289,10 @@ public class SearchResults extends AppCompatActivity {
         // first set the title
         setTitle(location, cardTitle);
 
-        // set the progress bar capacity -- have the max capacity of each building?
-
         // set the distance away!!!!
+        Double dist = location.getDistanceFromCurrentPosition();
+        int distInt = (int) Math.round(dist);
+        distanceAway.setText(distInt + "m");
 
         // set the clock colour
         updateClockColour(location);
@@ -291,6 +304,7 @@ public class SearchResults extends AppCompatActivity {
         setRatingsText(location, ratingText);
 
         // set busy progress bar  5: VERY BUSY; 1 NOT BUSY AT ALL
+        updateProgressBar(location);
 
         // set icons for facilities available
         List<Resource> resources = resourcesByLocation.get(locationName);
@@ -377,13 +391,15 @@ public class SearchResults extends AppCompatActivity {
 
     private String getAverageRating(List<Review> reviewList) {
         double totalScore = 0;
+        DecimalFormat df = new DecimalFormat("#.0");
 
         for (Review review : reviewList) {
             totalScore += review.getScore();
         }
 
         double averageScore = totalScore / reviewList.size();
-        String averageScoreText = String.valueOf(averageScore);
+        String averageScoreText = df.format(averageScore);
+
         return averageScoreText;
     }
 
@@ -399,12 +415,31 @@ public class SearchResults extends AppCompatActivity {
             try {
                 System.out.println("in search results, before getting avail resources");
                 List<Resource> availResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
-                System.out.println("in search results, gotten avail resources");
+                System.out.println("number of resources: " + availResources.size());
+                for (Resource resource : availResources) {
+                    System.out.println("RESOURCEEEE: " + resource.getName());
+                }
                 resourcesByLocation.put(locationName, availResources);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
+        }
+    }
+
+    private void getAllBusyRatings(List<Location> results) {
+        for (Location location : results) {
+            String locationName = location.getName();
+
+            try {
+                int locationID = location.getId();
+                String type = location.getType();
+                ReviewType typeEnum = ReviewType.valueOf(type);
+                Double avgBusyRating = new BusyRatingServiceImpl().getAverageScoreFromEntity(locationID, typeEnum);
+                busyRatingByLocation.put(locationName, avgBusyRating);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -422,6 +457,7 @@ public class SearchResults extends AppCompatActivity {
                     System.out.println("add Parking icon");
                     break;
                 case KITCHEN:
+                case MICROWAVE_OVEN:
                     System.out.println("add MICROWAVE icon");
                     break;
                 case VENDING_MACHINE:
@@ -464,9 +500,41 @@ public class SearchResults extends AppCompatActivity {
         return icon;
     }
 
+    private void updateProgressBar(Location location) {
+        String locationName = location.getName();
+        int locationID = location.getId();
+        ProgressBar busyBar = getProgressBar(locationID);
+        Drawable customDrawable = ContextCompat.getDrawable(this, R.drawable.custom_progress);
+
+        Double busyRating = busyRatingByLocation.get(locationName);
+        System.out.println("BUSY RATING: " + busyRating);
+        int busyRatingPercent = (int) (busyRating * 20);
+        System.out.println("BUSY RATING PERCENTAGE: " + busyRatingPercent);
+
+        if (busyRatingPercent >= 0 && busyRatingPercent <= 40) {
+            busyBar.setProgress(busyRatingPercent);
+            busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.green)));
+
+        } else if (busyRatingPercent > 40 && busyRatingPercent <= 80) {
+            busyBar.setProgress(busyRatingPercent);
+            busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.yellow)));
+
+        } else {
+            busyBar.setProgress(busyRatingPercent);
+            busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.red)));
+        }
+//        busyBar.setProgressDrawable(customDrawable);
+    }
+
+    /**
+     * Progress bar is for how busy a location is currently (from busy rating)
+     * @param locationID
+     * @return
+     */
     private ProgressBar getProgressBar(int locationID) {
         List<Object> interactables = locationToUI.get(locationID);
         ProgressBar capacity = (ProgressBar) interactables.get(0);
         return capacity;
     }
+
 }
