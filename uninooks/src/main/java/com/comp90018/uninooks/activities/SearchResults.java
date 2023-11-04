@@ -18,7 +18,6 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
-import com.comp90018.uninooks.models.busy_rating.BusyRating;
 import com.comp90018.uninooks.models.favorite.Favorite;
 import com.comp90018.uninooks.models.location.Location;
 import com.comp90018.uninooks.models.location.building.Building;
@@ -31,7 +30,6 @@ import com.comp90018.uninooks.models.review.Review;
 import com.comp90018.uninooks.models.review.ReviewType;
 import com.comp90018.uninooks.service.building.BuildingServiceImpl;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
-import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
@@ -42,8 +40,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.sql.Time;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class SearchResults extends AppCompatActivity {
     int userID;
@@ -92,8 +90,9 @@ public class SearchResults extends AppCompatActivity {
 
                     } else if (intent.hasExtra("filters")) {
                         results = new LocationServiceImpl().findAllLocations("STUDY", null, true);
-                        String[] filters = intent.getStringArrayExtra("filters");
-                        // use filters on results
+                        HashMap<String, String> filters = (HashMap<String, String>) getIntent().getSerializableExtra("filters");
+                        getAllBuildingsOfLocs(results);
+                        filterResults(filters);
                     }
 
                     // have to get all the ratings here (any other API I call, have to be done here and not in the UI thread)
@@ -351,18 +350,49 @@ public class SearchResults extends AppCompatActivity {
         Time openingTime = location.getOpenTime();
         Time closingTime = location.getCloseTime();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        String openingTimeText = sdf.format(openingTime);
-        String closingTimeText = sdf.format(closingTime);
-
-        double hoursToClose = calcTimeToClose(closingTime);
-
-        if (hoursToClose <= 0) {
+        if (closingTime == null) {
             text = "Closed";
         } else {
-            text = "Opening Hours: " + openingTimeText + " - " + closingTimeText;
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            String openingTimeText = sdf.format(openingTime);
+            String closingTimeText = sdf.format(closingTime);
+
+            double hoursToClose = calcTimeToClose(closingTime);
+            System.out.println("HOURS TO CLOSEEEE: " + hoursToClose);
+
+            Date date = new Date();
+            Time currTime = new Time(date.getTime());
+
+            if (hoursToClose <= 0 || !withinRange(openingTime, closingTime, currTime)) {
+                text = "Closed";
+            } else {
+                text = "Opening Hours: " + openingTimeText + " - " + closingTimeText;
+            }
         }
         openingHours.setText(text);
+    }
+
+    /**
+     * Checks whether the current time is within the range of opening time and closing time
+     *
+     * @param openingTime
+     * @param closingTime
+     * @param currTime
+     * @return
+     */
+    private boolean withinRange(Time openingTime, Time closingTime, Time currTime) {
+        long openingTimeMillis = openingTime.getHours() * 3600 * 1000 + openingTime.getMinutes() * 60 * 1000;
+        long closingTimeMillis = closingTime.getHours() * 3600 * 1000 + closingTime.getMinutes() * 60 * 1000;
+
+        long currTimeMillis = currTime.getHours() * 3600 * 1000 + currTime.getMinutes() * 60 * 1000;
+
+        if (currTimeMillis >= openingTimeMillis && currTimeMillis <= closingTimeMillis) {
+            System.out.println("within range");
+            return true;
+        } else {
+            System.out.println("out of range");
+            return false;
+        }
     }
 
     /**
@@ -613,19 +643,23 @@ public class SearchResults extends AppCompatActivity {
     }
 
     private void updateClockColour(Location location) {
-        Time closingTime = location.getCloseTime();
-        Double timeDiff = calcTimeToClose(closingTime);
-
         int locationID = location.getId();
         ImageView closingIcon = getClosingIcon(locationID);
+        Time openingTime = location.getOpenTime();
+        Time closingTime = location.getCloseTime();
+        Date date = new Date();
+        Time currTime = new Time(date.getTime());
 
-        System.out.println("TIME DIFF: " + timeDiff);
-
-        if (timeDiff <= 1) {
-            System.out.println("Set time to red");
+        if (closingTime == null) {
             closingIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplication(), R.color.red), PorterDuff.Mode.SRC_IN);
         } else {
-            closingIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplication(), R.color.deepBlue), PorterDuff.Mode.SRC_IN);
+            Double timeDiff = calcTimeToClose(closingTime);
+
+            if (timeDiff <= 1 || !withinRange(openingTime, closingTime, currTime)) {
+                closingIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplication(), R.color.red), PorterDuff.Mode.SRC_IN);
+            } else {
+                closingIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplication(), R.color.deepBlue), PorterDuff.Mode.SRC_IN);
+            }
         }
     }
 
@@ -643,26 +677,30 @@ public class SearchResults extends AppCompatActivity {
 
         Double busyRating = busyRatingByLocation.get(locationName);
         System.out.println("BUSY RATING: " + busyRating);
-        int busyRatingPercent = (int) (busyRating * 20);
-        System.out.println("BUSY RATING PERCENTAGE: " + busyRatingPercent);
-
-        Time closingTime = location.getCloseTime();
-        double hoursToClose = calcTimeToClose(closingTime);
-
-        if (hoursToClose <= 1) {
+        if (busyRating == null) {
             busyBar.setProgress(5);
-
-        } else if (busyRatingPercent >= 0 && busyRatingPercent <= 40) {
-            busyBar.setProgress(busyRatingPercent);
-            busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.green)));
-
-        } else if (busyRatingPercent > 40 && busyRatingPercent <= 80) {
-            busyBar.setProgress(busyRatingPercent);
-            busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.yellow)));
-
         } else {
-            busyBar.setProgress(busyRatingPercent);
-            busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.red)));
+            int busyRatingPercent = (int) (busyRating * 20);
+            System.out.println("BUSY RATING PERCENTAGE: " + busyRatingPercent);
+
+            Time closingTime = location.getCloseTime();
+            double hoursToClose = calcTimeToClose(closingTime);
+
+            if (hoursToClose <= 1) {
+                busyBar.setProgress(5);
+
+            } else if (busyRatingPercent >= 0 && busyRatingPercent <= 40) {
+                busyBar.setProgress(busyRatingPercent);
+                busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.green)));
+
+            } else if (busyRatingPercent > 40 && busyRatingPercent <= 80) {
+                busyBar.setProgress(busyRatingPercent);
+                busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.yellow)));
+
+            } else {
+                busyBar.setProgress(busyRatingPercent);
+                busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.red)));
+            }
         }
     }
 
@@ -675,6 +713,93 @@ public class SearchResults extends AppCompatActivity {
         List<Object> interactables = locationToUI.get(locationID);
         ProgressBar capacity = (ProgressBar) interactables.get(0);
         return capacity;
+    }
+
+
+    /**
+     * Filters the results to be displayed
+     */
+    private void filterResults(HashMap<String, String> filters) {
+        // DISTANCE
+        if (filters.containsKey("DISTANCE")) {
+            // remove results that are beyond this distance
+            int distance = Integer.parseInt(filters.get("DISTANCE"));
+            distanceRemove(distance);
+        }
+
+        // RADIO
+        if (filters.containsKey("RADIO")) {
+            // sort results according to this key
+        }
+
+        // CHECKBOX
+        for (String key : filters.keySet()) {
+            if (key.startsWith("CHECKBOX")) {
+                String facility = filters.get(key);
+                // remove results that do not have this facility
+                results = facilityRemove(facility);
+            }
+        }
+    }
+
+    private void distanceRemove(int distance) {
+        for (Location location : results) {
+            if (location.getDistanceFromCurrentPosition() > distance) {
+                results.remove(location);
+            }
+        }
+    }
+
+    private List<Location> facilityRemove(String facility) {
+        // depending on the string on what facility is
+        // facility names: gradSpace, quietStudy, afterHours, microwave, atm, accessible, vendingMachine, parking
+        List<Location> filteredResults = new ArrayList<>();
+
+        for (Location location : results) {
+            boolean keepLoc = true;
+            if (facility.equals("gradSpace") && location.getType().equals("STUDY_SPACE")) {
+                StudySpace loc = (StudySpace) location;
+                if (loc.getMinimumAccessAQFLevel() == 7) {
+                    keepLoc = false;
+                }
+            } else if (facility.equals("quietStudy")) {
+                if (location.getType().equals("STUDY_SPACE")) {
+                    StudySpace loc = (StudySpace) location;
+                    if (loc.isTalkAllowed()) {
+                        keepLoc = false;
+                    }
+                } else if (location.getType().equals("LIBRARY")) {
+                    Library loc = (Library) location;
+                    if (!loc.isHasQuietZones()) {
+                        keepLoc = false;
+                    }
+                }
+            } else if (facility.equals("afterHours") && !location.getType().equals("STUDY_SPACE")) {
+                keepLoc = false;
+            } else if (facility.equals("microwave")) {
+                // get resources
+            } else if (facility.equals("atm")) {
+                // get resources
+
+            } else if (facility.equals("accessible")) {
+                // accessibility from building
+                Building building = buildingsByLocation.get(location.getId());
+                if (!building.isHasAccessibility()) {
+                    keepLoc = false;
+                }
+
+            } else if (facility.equals("vendingMachine")) {
+                // get resources
+
+            } else if (facility.equals("parking")) {
+                // get resources
+
+            }
+            if (keepLoc) {
+                filteredResults.add(location);
+            }
+        }
+        return filteredResults;
     }
 
 }
