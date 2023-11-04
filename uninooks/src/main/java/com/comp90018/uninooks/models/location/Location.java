@@ -32,6 +32,21 @@ public class Location {
     private Time closeTime;
 
     /**
+     * Is Open Today
+     */
+    private boolean isOpenToday;
+
+    /**
+     * is opening now
+     */
+    private boolean isOpeningNow;
+
+    /**
+     * IS open 24/7
+     */
+    private boolean isOpen24By7;
+
+    /**
      * List of opening days in the location
      */
     private Integer[] openingDays;
@@ -116,4 +131,29 @@ public class Location {
     public void setDistanceFromCurrentPosition(double distanceFromCurrentPosition) {
         this.distanceFromCurrentPosition = distanceFromCurrentPosition;
     }
+
+    public boolean issOpenToday() {
+        return isOpenToday;
+    }
+
+    public void setIsOpenToday(boolean openToday) {
+        isOpenToday = openToday;
+    }
+
+    public boolean isOpen24By7() {
+        return isOpen24By7;
+    }
+
+    public void setOpen24By7(boolean open24By7) {
+        isOpen24By7 = open24By7;
+    }
+
+    public boolean isOpeningNow() {
+        return isOpeningNow;
+    }
+
+    public void setIsOpeningNow(boolean openingNow) {
+        isOpeningNow = openingNow;
+    }
+
 }

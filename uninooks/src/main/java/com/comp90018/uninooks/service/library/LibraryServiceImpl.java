@@ -1,11 +1,12 @@
-package com.comp90018.uninooks.service.study_space;
+package com.comp90018.uninooks.service.library;
 
 import android.util.Log;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.activities.MainActivity;
 import com.comp90018.uninooks.config.DatabaseHelper;
-import com.comp90018.uninooks.models.location.study_space.StudySpace;
+import com.comp90018.uninooks.models.location.library.Library;
+import com.comp90018.uninooks.models.review.ReviewType;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,44 +28,44 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Properties;
 
-public class StudySpaceServiceImpl implements StudySpaceService {
+public class LibraryServiceImpl implements LibraryService{
 
     Connection connector = new DatabaseHelper().getConnector();
 
-    LocationServiceImpl studySpaceFinder = new LocationServiceImpl();
+    LocationServiceImpl libraryFinder = new LocationServiceImpl();
 
-    ArrayList<StudySpace> closestStudySpaces = new ArrayList<>();
+    ArrayList<Library> closestLibraries = new ArrayList<>();
 
-    ArrayList<StudySpace> topRatedStudySpaces = new ArrayList<>();
+    ArrayList<Library> topRatedLibraries = new ArrayList<>();
 
     /**
-     * Get ten closest study spaces and return to the Main UI to show
+     * Get ten closest libraries and return to the Main UI to show
      * @param location as the current location
-     * @return ten sorted closest study spaces by walking distance
+     * @return ten sorted closest libraries by walking distance
      * @throws Exception if any exception happens
      */
     @Override
-    public ArrayList<StudySpace> getClosestStudySpaces(LatLng location, int size) throws Exception {
+    public ArrayList<Library> getClosestLibraries(LatLng location, int size) throws Exception {
 
-        String query = "SELECT study_space_id, study_space_building_id FROM mobilecomputing.\"study_space\"";
+        String query = "SELECT library_id, library_building_id FROM mobilecomputing.\"library\"";
 
         PreparedStatement preparedStatement = connector.prepareStatement(query);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        ArrayList<StudySpace> allStudySpaces = new ArrayList<>();
-        ArrayList<StudySpace> openingStudySpaces = new ArrayList<>();
-        ArrayList<StudySpace> closingStudySpaces = new ArrayList<>();
+        ArrayList<Library> allLibraries = new ArrayList<>();
+        ArrayList<Library> openingLibraries = new ArrayList<>();
+        ArrayList<Library> closingLibraries = new ArrayList<>();
 
         // Set user information
         while (resultSet.next()) { // Ensure there's a row in the result set
 
-            int studySpaceId = Integer.parseInt(resultSet.getString("study_space_id"));
+            int libraryId = Integer.parseInt(resultSet.getString("library_id"));
 
-            // Exclude the closed study spaces
-            StudySpace studySpace = studySpaceFinder.findStudySpaceById(studySpaceId);
+            Library library = libraryFinder.findLibraryById(libraryId);
 
-            if (studySpace != null) {
-                allStudySpaces.add(studySpaceFinder.findStudySpaceById(studySpaceId));
+            // Exclude the closed libraries
+            if (library != null){
+                allLibraries.add(libraryFinder.findLibraryById(libraryId));
             }
         }
 
@@ -74,51 +75,51 @@ public class StudySpaceServiceImpl implements StudySpaceService {
         // Fake current position, use in development
         LatLng currentLocation = new LatLng(-37.8000898318753, 144.96443598212284);
 
-        allStudySpaces.sort((studySpaceOne, studySpaceTwo) -> {
-            double dist1 = calculateDistance(studySpaceOne.getLocation(), currentLocation);
-            double dist2 = calculateDistance(studySpaceTwo.getLocation(), currentLocation);
+        allLibraries.sort((libraryOne, libraryTwo) -> {
+            double dist1 = calculateDistance(libraryOne.getLocation(), currentLocation);
+            double dist2 = calculateDistance(libraryTwo.getLocation(), currentLocation);
             return Double.compare(dist1, dist2);
         });
 
-        // Sort ten study spaces by waling distance from Google Map API
-        closestStudySpaces = CalculateSpaceByWalkingDistance(currentLocation, allStudySpaces);
-        sortByDistance(closestStudySpaces);
+        // Sort ten libraries by waling distance from Google Map API
+        closestLibraries = CalculateSpaceByWalkingDistance(currentLocation, allLibraries);
+        sortByDistance(closestLibraries);
 
-        // Return opening study space first
-        for (StudySpace studySpace : closestStudySpaces) {
-            if (studySpace.isOpeningNow()) {
-                openingStudySpaces.add(studySpace);
-            } else {
-                closingStudySpaces.add(studySpace);
+        for (Library library : closestLibraries){
+            if (library.isOpeningNow()){
+                openingLibraries.add(library);
+            }
+            else{
+                closingLibraries.add(library);
             }
         }
 
-        openingStudySpaces.addAll(closingStudySpaces);
+        openingLibraries.addAll(closingLibraries);
 
-        if (openingStudySpaces.size() <= size) {
-            return openingStudySpaces;
+        if (openingLibraries.size() <= size){
+            return openingLibraries;
         }
 
-        return new ArrayList<>(openingStudySpaces.subList(0, size));
+        return new ArrayList<>(openingLibraries.subList(0, size));
     }
 
     /**
-     * Get the sorted closest ten study spaces by walking distance from current location
+     * Get the sorted closest ten libraries by walking distance from current location
      * @param currentLocation as current location
-     * @param studySpaces as ten closest study spaces
-     * @return sorted closest ten study spaces by walking distance from current location
+     * @param libraries as ten closest libraries
+     * @return sorted closest ten libraries by walking distance from current location
      * @throws IOException if exception happens
      */
-    private ArrayList<StudySpace> CalculateSpaceByWalkingDistance(LatLng currentLocation, ArrayList<StudySpace> studySpaces) throws IOException {
+    private ArrayList<Library> CalculateSpaceByWalkingDistance(LatLng currentLocation, ArrayList<Library> libraries) throws IOException {
 
         String origin = currentLocation.latitude + "," + currentLocation.longitude;
 
         StringBuilder destination = new StringBuilder();
 
-        for (StudySpace studySpace : studySpaces) {
+        for (Library library : libraries) {
 
-            destination.append(studySpace.getLocation().latitude).append(",").append(studySpace.getLocation().longitude).append("|");
-            System.out.println(studySpace.getName());
+            destination.append(library.getLocation().latitude).append(",").append(library.getLocation().longitude).append("|");
+            System.out.println(library.getName());
         }
 
         try {
@@ -158,20 +159,20 @@ public class StudySpaceServiceImpl implements StudySpaceService {
                 Log.d("API RESPONSE", jsonStr);     //
 
 
-                // Extract response, add the distance to study space object.
+                // Extract response, add the distance to library object.
 
                 ArrayList<Double> distances = getDistanceFromJson(response);
 
                 int position = 0;
 
-                // Iterate each study space and set the distance to current location
-                for (StudySpace studySpace : studySpaces){
+                // Iterate each library and set the distance to current location
+                for (Library library : libraries){
 
-                    studySpace.setDistanceFromCurrentPosition(distances.get(position));
+                    library.setDistanceFromCurrentPosition(distances.get(position));
                     position++;
                 }
 
-                return studySpaces;
+                return libraries;
 
             } else {
                 System.out.println("Get data failed, code is: " + responseCode + ". Please try again.");
@@ -182,17 +183,17 @@ public class StudySpaceServiceImpl implements StudySpaceService {
             e.printStackTrace();
         }
 
-        return new ArrayList<StudySpace>();
+        return new ArrayList<Library>();
     }
 
     /**
      * Sort study spaces by distances
-     * @param studySpaces as study spaces
+     * @param libraries as study spaces
      * @return distance sorted study spaces
      */
-    private ArrayList<StudySpace> sortByDistance(ArrayList<StudySpace> studySpaces){
+    private ArrayList<Library> sortByDistance(ArrayList<Library> libraries){
         // Sort by walking distance, if distance same, sort by name
-        studySpaces.sort((studySpaceOne, studySpaceTwo) -> {
+        libraries.sort((studySpaceOne, studySpaceTwo) -> {
             int distanceComparison = Double.compare(studySpaceOne.getDistanceFromCurrentPosition(), studySpaceTwo.getDistanceFromCurrentPosition());
             if (distanceComparison != 0) {
                 return distanceComparison;
@@ -201,7 +202,7 @@ public class StudySpaceServiceImpl implements StudySpaceService {
             }
         });
 
-        return studySpaces;
+        return libraries;
     }
 
 
@@ -265,40 +266,38 @@ public class StudySpaceServiceImpl implements StudySpaceService {
         return distance;
     }
 
-//    Location getStudySpaceLocation(int favouriteId, ReviewType type) throws Exception;
-
 
     /**
-     * Get top rated study spaces
+     * Get top rated libraries
      * @param location as current location
-     * @param size as wanted size
-     * @return top rated study spaces
-     * @throws Exception if any exception happens
+     * @param size as size
+     * @return top rated sorted libraries
+     * @throws Exception if any exceptions
      */
     @Override
-    public ArrayList<StudySpace> getTopRatedStudySpaces(LatLng location, int size) throws Exception {
-        String query = "SELECT review_study_space_id, ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
+    public ArrayList<Library> getTopRatedLibraries(LatLng location, int size) throws Exception {
+        String query = "SELECT review_library_id, ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
                 "FROM mobilecomputing.\"review\" " +
-                "WHERE review_study_space_id IS NOT NULL " +
-                "GROUP BY review_study_space_id " +
+                "WHERE review_library_id IS NOT NULL " +
+                "GROUP BY review_library_id " +
                 "ORDER BY average_rating DESC;";
 
         PreparedStatement preparedStatement = connector.prepareStatement(query);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        ArrayList<StudySpace> allStudySpaces = new ArrayList<>();
-        ArrayList<StudySpace> openingStudySpaces = new ArrayList<>();
-        ArrayList<StudySpace> closingStudySpaces = new ArrayList<>();
+        ArrayList<Library> allLibraries = new ArrayList<>();
+        ArrayList<Library> openingLibraries = new ArrayList<>();
+        ArrayList<Library> closingLibraries = new ArrayList<>();
 
         // Set user information
         while (resultSet.next()) { // Ensure there's a row in the result set
 
-            int studySpaceId = Integer.parseInt(resultSet.getString("review_study_space_id"));
+            int libraryId = Integer.parseInt(resultSet.getString("review_library_id"));
 
-            StudySpace studySpace = studySpaceFinder.findStudySpaceById(studySpaceId);
-            studySpace.setAverage_rating(Double.parseDouble(resultSet.getString("average_rating")));
+            Library library = libraryFinder.findLibraryById(libraryId);
+            library.setAverage_rating(Double.parseDouble(resultSet.getString("average_rating")));
 
-            allStudySpaces.add(studySpace);
+            allLibraries.add(library);
         }
 
         // GIS check ordering, use on deployment
@@ -308,23 +307,23 @@ public class StudySpaceServiceImpl implements StudySpaceService {
         LatLng currentLocation = new LatLng(-37.8000898318753, 144.96443598212284);
 
         // Calculate the distance for each top rated study spaces
-        topRatedStudySpaces = CalculateSpaceByWalkingDistance(currentLocation, allStudySpaces);
+        topRatedLibraries = CalculateSpaceByWalkingDistance(currentLocation, allLibraries);
 
         // Return opening study space first
-        for (StudySpace studySpace : topRatedStudySpaces) {
-            if (studySpace.isOpeningNow()) {
-                openingStudySpaces.add(studySpace);
+        for (Library library : topRatedLibraries) {
+            if (library.isOpeningNow()) {
+                openingLibraries.add(library);
             } else {
-                closingStudySpaces.add(studySpace);
+                closingLibraries.add(library);
             }
         }
 
-        openingStudySpaces.addAll(closingStudySpaces);
+        openingLibraries.addAll(closingLibraries);
 
-        if (openingStudySpaces.size() <= size) {
-            return openingStudySpaces;
+        if (openingLibraries.size() <= size) {
+            return openingLibraries;
         }
 
-        return new ArrayList<>(openingStudySpaces.subList(0, size));
+        return new ArrayList<>(openingLibraries.subList(0, size));
     }
 }

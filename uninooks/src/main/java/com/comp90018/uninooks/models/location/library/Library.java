@@ -6,6 +6,8 @@ public class Library extends Location {
 
     private boolean hasQuietZones;
 
+    private double average_rating;
+
     private Integer capacity;
 
     public boolean isHasQuietZones() {
@@ -22,5 +24,13 @@ public class Library extends Location {
 
     public void setCapacity(Integer capacity) {
         this.capacity = capacity;
+    }
+
+    public double getAverage_rating() {
+        return average_rating;
+    }
+
+    public void setAverage_rating(double average_rating) {
+        this.average_rating = average_rating;
     }
 }
