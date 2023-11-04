@@ -33,10 +33,15 @@ import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
+import com.comp90018.uninooks.service.sortingComparators.DistanceComparator;
+import com.comp90018.uninooks.service.sortingComparators.NameComparator;
+import com.comp90018.uninooks.service.sortingComparators.RatingComparator;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.sql.Time;
 import java.util.HashMap;
@@ -57,6 +62,10 @@ public class SearchResults extends AppCompatActivity {
     HashMap<String, Double> busyRatingByLocation;
     ArrayList<Favorite> userFavs;
 
+    Comparator<Location> nameComparator;
+    Comparator<Location> distanceComparator;
+    Comparator<Location> ratingComparator;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,14 +77,18 @@ public class SearchResults extends AppCompatActivity {
 
         resultCardArea = findViewById(R.id.resultCardArea);
         returnButton = findViewById(R.id.returnButton);
+
         results = new ArrayList<>();
         userFavs = new ArrayList<>();
+
         locationToUI = new HashMap<>();
         buildingsByLocation = new HashMap<>();
         ratingsByLocation = new HashMap<>();
         resourcesByLocation = new HashMap<>();
         busyRatingByLocation = new HashMap<>();
 
+        nameComparator = new NameComparator();
+        distanceComparator = new DistanceComparator();
 
         new Thread() {
             @Override
@@ -92,6 +105,8 @@ public class SearchResults extends AppCompatActivity {
                         results = new LocationServiceImpl().findAllLocations("STUDY", null, true);
                         HashMap<String, String> filters = (HashMap<String, String>) getIntent().getSerializableExtra("filters");
                         getAllBuildingsOfLocs(results);
+                        getAllRatings(results);
+                        ratingComparator = new RatingComparator(ratingsByLocation);
                         filterResults(filters);
                     }
 
@@ -500,6 +515,7 @@ public class SearchResults extends AppCompatActivity {
                 System.out.println("number of resources: " + availResources.size());
                 for (Resource resource : availResources) {
                     System.out.println("RESOURCEEEE: " + resource.getName());
+                    System.out.println("RESOURCE TYPEEE: " + resource.getType());
                 }
                 resourcesByLocation.put(locationName, availResources);
             } catch (Exception e) {
@@ -729,7 +745,8 @@ public class SearchResults extends AppCompatActivity {
 
         // RADIO
         if (filters.containsKey("RADIO")) {
-            // sort results according to this key
+            String sortBy = filters.get("RADIO");
+            sortResults(sortBy);
         }
 
         // CHECKBOX
@@ -750,6 +767,28 @@ public class SearchResults extends AppCompatActivity {
         }
     }
 
+    private void sortResults(String sortBy) {
+        if (sortBy.contains("Name")) {
+            if (sortBy.contains("asc")) {
+                results.sort(nameComparator);
+            } else {
+                results.sort(Collections.reverseOrder(nameComparator));
+            }
+        } else if (sortBy.contains("Distance")) {
+            if (sortBy.contains("asc")) {
+                results.sort(distanceComparator);
+            } else {
+                results.sort(Collections.reverseOrder(distanceComparator));
+            }
+        } else if (sortBy.contains("Rating")) {
+            if (sortBy.contains("asc")) {
+                results.sort(ratingComparator);
+            } else {
+                results.sort(Collections.reverseOrder(ratingComparator));
+            }
+        }
+    }
+
     private List<Location> facilityRemove(String facility) {
         // depending on the string on what facility is
         // facility names: gradSpace, quietStudy, afterHours, microwave, atm, accessible, vendingMachine, parking
@@ -757,9 +796,14 @@ public class SearchResults extends AppCompatActivity {
 
         for (Location location : results) {
             boolean keepLoc = true;
-            if (facility.equals("gradSpace") && location.getType().equals("STUDY_SPACE")) {
-                StudySpace loc = (StudySpace) location;
-                if (loc.getMinimumAccessAQFLevel() == 7) {
+            List<Resource> resources = resourcesByLocation.get(location.getName());
+            if (facility.equals("gradSpace")) {
+                if (location.getType().equals("STUDY_SPACE")) {
+                    StudySpace loc = (StudySpace) location;
+                    if (loc.getMinimumAccessAQFLevel() == 7) {
+                        keepLoc = false;
+                    }
+                } else if (location.getType().equals("LIBRARY")) {
                     keepLoc = false;
                 }
             } else if (facility.equals("quietStudy")) {
@@ -777,24 +821,21 @@ public class SearchResults extends AppCompatActivity {
             } else if (facility.equals("afterHours") && !location.getType().equals("STUDY_SPACE")) {
                 keepLoc = false;
             } else if (facility.equals("microwave")) {
-                // get resources
+                keepLoc = haveFacility(resources, ResourceType.MICROWAVE_OVEN);
             } else if (facility.equals("atm")) {
-                // get resources
-
+                keepLoc = haveFacility(resources, ResourceType.ATM);
             } else if (facility.equals("accessible")) {
                 // accessibility from building
                 Building building = buildingsByLocation.get(location.getId());
                 if (!building.isHasAccessibility()) {
                     keepLoc = false;
                 }
-
             } else if (facility.equals("vendingMachine")) {
-                // get resources
-
+                keepLoc = haveFacility(resources, ResourceType.VENDING_MACHINE);
             } else if (facility.equals("parking")) {
-                // get resources
-
+                keepLoc = haveFacility(resources, ResourceType.CAR_PARK);
             }
+
             if (keepLoc) {
                 filteredResults.add(location);
             }
@@ -802,4 +843,13 @@ public class SearchResults extends AppCompatActivity {
         return filteredResults;
     }
 
+    private boolean haveFacility(List<Resource> resources, ResourceType name) {
+        for (Resource resource : resources) {
+            ResourceType resourceType = resource.getType();
+            if (resourceType == name) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
