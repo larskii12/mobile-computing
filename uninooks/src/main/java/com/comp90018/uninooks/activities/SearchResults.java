@@ -41,6 +41,7 @@ public class SearchResults extends AppCompatActivity {
     List<Location> results;
 
     CardView cardView;
+    ImageButton returnButton;
     HashMap<Integer, List<Object>> locationToUI;
     HashMap<String, String> ratingsByLocation;
     HashMap<String, List<Resource>> resourcesByLocation;
@@ -59,18 +60,19 @@ public class SearchResults extends AppCompatActivity {
 //        Toast.makeText(getApplicationContext(), searchString, Toast.LENGTH_SHORT).show();
 
         resultCardArea = findViewById(R.id.resultCardArea);
+        returnButton = findViewById(R.id.returnButton);
         results = new ArrayList<>();
         locationToUI = new HashMap<>();
         ratingsByLocation = new HashMap<>();
         resourcesByLocation = new HashMap<>();
 
-        try {
-//            results = new LocationServiceImpl().findAllLocations("STUDY", searchString, true);
-            // get user and user id, and their favourited places
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+////            results = new LocationServiceImpl().findAllLocations("STUDY", searchString, true);
+//            // get user and user id, and their favourited places
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
 
 
         new Thread() {
@@ -82,24 +84,27 @@ public class SearchResults extends AppCompatActivity {
                         String searchString = intent.getStringExtra("searchQuery");
                         System.out.println(searchString);
                         results = new LocationServiceImpl().findAllLocations("STUDY", searchString, true);
+
+
                     } else if (intent.hasExtra("filters")) {
                         String[] filters = intent.getStringArrayExtra("filters");
                     }
 
 
-                    if (results.size() != 0) {
-                        TextView noResults = findViewById(R.id.noResults);
-                        noResults.setVisibility(View.VISIBLE);
-                   }
                     // have to get all the ratings here (any other API I call, have to be done here and not in the UI thread)
                     getAllRatings(results);
                     getAllResources(results);
 
-
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            addResultsToPage(results);
+                            if (results.size() == 0) {
+                                TextView noResults = findViewById(R.id.noResults);
+                                noResults.setVisibility(View.VISIBLE);
+                            } else {
+                                addResultsToPage(results);
+                            }
+
                         }
                     });
 
@@ -108,6 +113,8 @@ public class SearchResults extends AppCompatActivity {
                 }
             }
         }.start();
+
+        returnButton.setOnClickListener(returnListener);
     }
 
     @Override
@@ -117,6 +124,17 @@ public class SearchResults extends AppCompatActivity {
             updateClockColour(location);
         }
     }
+
+    /**
+     * This activity finishes, returns back to the previous page (search page)
+     */
+    private View.OnClickListener returnListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            finish();
+        }
+    };
+
     private void addResultsToPage(List<Location> results) {
 
         for (Location location : results) {
@@ -358,13 +376,13 @@ public class SearchResults extends AppCompatActivity {
     }
 
     private String getAverageRating(List<Review> reviewList) {
-        int totalScore = 0;
+        double totalScore = 0;
 
         for (Review review : reviewList) {
             totalScore += review.getScore();
         }
 
-        int averageScore = totalScore / reviewList.size();
+        double averageScore = totalScore / reviewList.size();
         String averageScoreText = String.valueOf(averageScore);
         return averageScoreText;
     }
@@ -379,7 +397,9 @@ public class SearchResults extends AppCompatActivity {
             String locationName = location.getName();
 
             try {
+                System.out.println("in search results, before getting avail resources");
                 List<Resource> availResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
+                System.out.println("in search results, gotten avail resources");
                 resourcesByLocation.put(locationName, availResources);
             } catch (Exception e) {
                 throw new RuntimeException(e);
