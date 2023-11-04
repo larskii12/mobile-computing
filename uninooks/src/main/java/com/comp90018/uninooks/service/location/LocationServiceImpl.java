@@ -242,6 +242,7 @@ public class LocationServiceImpl implements LocationService {
                     location.setOpenTime(resultSet.getTime("opening_time"));
                     location.setCloseTime(resultSet.getTime("closing_time"));
 
+                    ((Library) location).setHasQuietZones(resultSet.getBoolean("library_has_quiet_zones"));
                     location.setType("LIBRARY");
 
 //                    Array daysDb = resultSet.getArray("library_opening_days");
@@ -283,6 +284,8 @@ public class LocationServiceImpl implements LocationService {
 
                     location.setType("STUDY_SPACE");
                     ((StudySpace) location).setMinimumAccessAQFLevel(resultSet.getInt("study_space_minimum_access_AQF_level"));
+                    ((StudySpace) location).setTalkAllowed(resultSet.getBoolean("study_space_talk_allowed"));
+
 
 //                    Array daysDb = resultSet.getArray("study_space_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
