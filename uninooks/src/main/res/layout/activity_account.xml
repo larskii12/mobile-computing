@@ -135,6 +135,7 @@
 
     <!-- logout Information Option -->
     <LinearLayout
+        android:id="@+id/Account_Logout_Layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/border"
@@ -168,6 +169,7 @@
 
     <!-- Delete Information Option -->
     <LinearLayout
+        android:id="@+id/Account_Delete_Account_Layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/border"

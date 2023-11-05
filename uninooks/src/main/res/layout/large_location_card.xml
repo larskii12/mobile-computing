@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<RelativeLayout
+    android:id="@+id/resultCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="166dp"
+    android:layout_marginEnd="4dp"
+    android:layout_marginStart="4dp"
+    android:layout_marginTop="20dp"
+    android:background="@drawable/rounded_rectangle">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_toEndOf="@id/image"
+        android:fontFamily="@font/source_sans_pro"
+        android:text="Old Engineering"
+        android:textColor="@color/deepBlue"
+        android:textSize="20sp"
+        android:maxWidth="196dp"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="18sp"
+        android:autoSizeMaxTextSize="22sp"/>
+
+    <LinearLayout
+        android:id="@+id/distance"
+        android:layout_width="66dp"
+        android:layout_height="22dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginVertical="14dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="horizontal"
+        android:background="@drawable/rounded_button_long">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center"
+            android:background="@drawable/baseline_directions_walk_24" />
+
+        <TextView
+            android:id="@+id/distanceText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/source_sans_pro"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            android:text="500m"
+            android:textSize="18sp"
+            android:textColor="@color/deepBlue"/>
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/image"
+        android:layout_below="@id/title"
+        android:progressDrawable="@drawable/custom_progress"
+        android:progress="36"
+        android:progressTint="@color/green"/>
+
+    <ImageView
+        android:id="@+id/closingIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/closing"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="94dp"
+        android:layout_below="@id/progressBar"
+        android:layout_marginVertical="15dp"
+        android:backgroundTint="@color/deepBlue"/>
+
+    <TextView
+        android:id="@+id/openingHours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progressBar"
+        android:layout_marginTop="10dp"
+        android:layout_marginVertical="12dp"
+        android:layout_toEndOf="@id/closingIcon"
+        android:text="Opening hours: 10:50am - 11:59pm"
+        android:textColor="@color/deepBlue"
+        android:textSize="18sp"/>
+
+    <!--                    <TextView-->
+    <!--                        android:layout_width="wrap_content"-->
+    <!--                        android:layout_height="wrap_content"-->
+    <!--                        android:layout_toEndOf="@+id/progressBar1"-->
+    <!--                        android:layout_alignTop="@id/progressBar1"-->
+    <!--                        android:layout_marginStart="14dp"-->
+    <!--                        android:text="25%"-->
+    <!--                        android:textSize="10dp"/>-->
+
+    <LinearLayout
+        android:id="@+id/facilitiesIcons"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:layout_toEndOf="@id/image"
+        android:layout_below="@+id/closingIcon"
+        android:background="@drawable/rounded_button_long"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="10dp"
+        android:minWidth="0dp"
+        android:backgroundTint="#faf7f7">
+
+        <ImageView
+            android:id="@+id/gradSpace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gradspace_outline"
+            android:layout_marginEnd="6dp"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/noise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/volume_outline"
+            android:layout_marginEnd="6dp"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/afterHours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/lateaccess_outline"
+            android:layout_marginEnd="6dp"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/microwave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/microwave_outline"
+            android:layout_marginEnd="6dp"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/vendingMachine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/vending_machine_outline"
+            android:layout_marginEnd="6dp"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/atm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/atm_outline"
+            android:layout_marginEnd="6dp"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/accessible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/accessible_outline"
+            android:layout_marginEnd="6dp"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/parking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/parking_outline"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        app:cardElevation="4dp"
+        app:cardCornerRadius="20dp">
+
+        <ImageView
+            android:id="@+id/locImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/old_engineering" />
+    </androidx.cardview.widget.CardView>
+
+    <ImageButton
+        android:id="@+id/favButton"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/heart_outline"
+        android:layout_below="@id/openingHours"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentRight="true"/>
+
+    <LinearLayout
+        android:id="@+id/rating"
+        android:layout_width="90dp"
+        android:layout_height="30dp"
+        android:layout_below="@+id/image"
+        android:layout_alignStart="@id/image"
+        android:layout_alignEnd="@id/image"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:background="@drawable/rounded_rectangle">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/star_fill" />
+
+        <TextView
+            android:id="@+id/ratingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            android:fontFamily="@font/source_sans_pro"
+            android:text="4.8"
+            android:textSize="19sp" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>
+</androidx.cardview.widget.CardView>

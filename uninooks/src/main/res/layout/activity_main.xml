@@ -9,6 +9,7 @@
 
 
     <TextView
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Welcome to Uninooks!"
@@ -55,5 +56,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.672"
         app:backgroundTint="@color/primary"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
