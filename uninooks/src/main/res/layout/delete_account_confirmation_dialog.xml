@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="12sp"
             android:autofillHints="emailAddress"
-            android:hint="@string/login_email_or_username"
+            android:hint="@string/email_address"
             android:inputType="textEmailAddress" />
 
         <EditText
