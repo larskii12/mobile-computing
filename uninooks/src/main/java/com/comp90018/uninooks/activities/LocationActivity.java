@@ -161,7 +161,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             progress.setProgress(busyScore);
                             progressValue.setText(busyScore + "%");
                             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                            openHours.setText(sdf.format("Open hours: "+ space.getOpenTime()) + " - " + sdf.format(space.getCloseTime()));
+                            openHours.setText("Open hours: "+ sdf.format(space.getOpenTime()) + " - " + sdf.format(space.getCloseTime()));
                             if (busyScore >= 0 && busyScore <= 40) {
                                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green)));
                             } else if (busyScore > 40 && busyScore <= 80) {
