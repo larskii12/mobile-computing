@@ -149,5 +149,4 @@
         app:menu="@menu/bottom_menu"
         android:elevation="600dp"
         tools:layout_editor_absoluteX="0dp" />
-
 </RelativeLayout>
