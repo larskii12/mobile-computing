@@ -111,18 +111,18 @@
             android:hint="@string/Account_Pi_Edit_Name"
             android:inputType="text"
             android:paddingHorizontal="96dp"
-            android:visibility="gone" />
+            android:visibility="gone"
+             />
 
         <Button
             android:id="@+id/Pi_ButtonConfirmNewUserName"
             style="@style/Button.Primary.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="164dp"
-            android:scaleY="0.6"
-            android:scaleX="0.6"
+            android:layout_marginStart="180dp"
             android:text="@string/confirm"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            />
 
     </RelativeLayout>
 
@@ -345,18 +345,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:spinnerMode="dropdown"
-            android:visibility="gone" />
+            android:visibility="gone"
+             />
 
         <Button
             android:id="@+id/Pi_ButtonConfirmNewFaculty"
             style="@style/Button.Primary.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="164dp"
-            android:scaleY="0.6"
-            android:scaleX="0.6"
+            android:layout_marginTop="24dp"
+            android:layout_alignEnd="@id/SpinnerPiFacultyList"
             android:text="@string/confirm"
-            android:visibility="gone"/>
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:visibility="gone"
+            />
 
     </RelativeLayout>
 
@@ -421,11 +424,12 @@
             style="@style/Button.Primary.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="164dp"
-            android:scaleY="0.6"
-            android:scaleX="0.6"
+            android:layout_marginTop="24dp"
+            android:layout_alignEnd="@id/SpinnerPiDegreeList"
             android:text="@string/confirm"
-            android:visibility="gone"/>
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:visibility="gone" />
 
 
 

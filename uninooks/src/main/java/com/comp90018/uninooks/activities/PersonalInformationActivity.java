@@ -53,6 +53,8 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
 
     private EditText editUsernameEditText;
 
+    private Button buttonNewUserName;
+
     private EditText editTextNewEmail;
 
     private Button buttonNewEmailGetOTP;
@@ -60,6 +62,10 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     private EditText editTextEmailOTP;
 
     private Button buttonNewEmailVerifyOTP;
+
+    private Button buttonNewFaculty;
+
+    private Button buttonNewDegree;
 
     private final int OTP_TIMER = 20;
 
@@ -131,12 +137,14 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         });
 
         userNameTextView = findViewById(R.id.Account_Pi_Edit_Name);
+        buttonNewUserName = findViewById(R.id.Pi_ButtonConfirmNewUserName);
         editUsernameEditText = findViewById(R.id.EditTextNewUsername);
         editTextNewEmail = findViewById(R.id.EditTextConfirmNewEmail);
         buttonNewEmailGetOTP = findViewById(R.id.Pi_ButtonConfirmNewEmail);
         editTextEmailOTP = findViewById(R.id.Pi_EditTextEmailOTP);
         buttonNewEmailVerifyOTP = findViewById(R.id.Pi_ButtonOTPVerify);
-
+        buttonNewFaculty = findViewById(R.id.Pi_ButtonConfirmNewFaculty);
+        buttonNewDegree = findViewById(R.id.Pi_ButtonConfirmNewDegree);
         otp = "";
 
 
@@ -146,9 +154,11 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
             public void onClick(View v) {
                 if (editUsernameEditText.getVisibility() == View.GONE) {
                     editUsernameEditText.setVisibility(View.VISIBLE);
+                    buttonNewUserName.setVisibility(View.VISIBLE);
                     userNameTextView.setVisibility(View.GONE);
                 } else {
                     editUsernameEditText.setVisibility(View.GONE);
+                    buttonNewUserName.setVisibility(View.GONE);
                     userNameTextView.setVisibility(View.VISIBLE);
                 }
             }
@@ -278,10 +288,12 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
             public void onClick(View v) {
                 if (spinnerChangeDegreeList.getVisibility() == View.GONE) {
                     spinnerChangeDegreeList.setVisibility(View.VISIBLE);
+                    buttonNewDegree.setVisibility(View.VISIBLE);
                     degreeTextView.setVisibility(View.GONE);
                 } else {
                     spinnerChangeDegreeList.setVisibility(View.GONE);
                     degreeTextView.setVisibility(View.VISIBLE);
+                    spinnerChangeDegreeList.setVisibility(View.GONE);
                 }
             }
         });
@@ -302,9 +314,11 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
             public void onClick(View v) {
                 if (spinnerChangeFacultyList.getVisibility() == View.GONE) {
                     spinnerChangeFacultyList.setVisibility(View.VISIBLE);
+                    buttonNewFaculty.setVisibility(View.VISIBLE);
                     facultyTextView.setVisibility(View.GONE);
                 } else {
                     spinnerChangeFacultyList.setVisibility(View.GONE);
+                    buttonNewFaculty.setVisibility(View.GONE);
                     facultyTextView.setVisibility(View.VISIBLE);
                 }
             }
