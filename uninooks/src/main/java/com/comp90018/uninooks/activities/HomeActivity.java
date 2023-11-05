@@ -90,9 +90,9 @@ public class HomeActivity extends AppCompatActivity {
             lastAcceleration = SensorManager.GRAVITY_EARTH;
 
             //Filter buttons at the top - These need on click functions
-            ImageButton studyButton = (ImageButton) findViewById(R.id.studyButton);
-            ImageButton foodButton = (ImageButton) findViewById(R.id.foodButton);
-            ImageButton favouritesButton = (ImageButton) findViewById(R.id.favouritesButton);
+//            ImageButton studyButton = (ImageButton) findViewById(R.id.studyButton);
+//            ImageButton foodButton = (ImageButton) findViewById(R.id.foodButton);
+//            ImageButton favouritesButton = (ImageButton) findViewById(R.id.favouritesButton);
 
             TextView greetingMessage = (TextView) findViewById(R.id.textView);
             greetingMessage.setText("Good morning " + username);
@@ -105,11 +105,18 @@ public class HomeActivity extends AppCompatActivity {
                         locationAPI = new LocationServiceImpl();
                         ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(-1, -1), 10);
                         List<Location> studySpacesNearby = locationAPI.findAllLocations("STUDY", "", true);
+                        List<Favorite> favouriteSpaces = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACE"));
+                        List<StudySpace> favorites = new ArrayList<StudySpace>();
+                        for (Favorite favorite: favouriteSpaces) {
+                            StudySpace space = new LocationServiceImpl().findStudySpaceById(favorite.getStudySpaceId());
+                            favorites.add(space);
+                        }
                         getAllBusyRatings(closestStudySpaces);
 //                        List<Favorite> userFavorites = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACES"));
                         System.out.println(studySpacesNearby.get(2).getName());
                         LinearLayout nearbyLayout = findViewById(R.id.nearbyLayout);
                         LinearLayout topRatedLayout = findViewById(R.id.topRatedLayout);
+                        LinearLayout favoritesLayout = findViewById(R.id.favoritesLayout);
 //                    int i=0; i<5; i++)
                         runOnUiThread(new Runnable() {
                             @Override
@@ -142,6 +149,28 @@ public class HomeActivity extends AppCompatActivity {
                                     CardView newCard = createNewSmallCard(card,space);
                                     String spaceID = String.valueOf(space.getId());
                                     topRatedLayout.addView(newCard);
+                                    card.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            new Thread() {
+                                                public void run() {
+                                                    Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
+                                                    intent.putExtra("SPACE_ID_EXTRA", spaceID);
+                                                    System.out.println(spaceID);
+                                                    intent.putExtra("USERID_EXTRA", String.valueOf(userID));
+                                                    System.out.println(userID);
+                                                    startActivity(intent);
+                                                }
+                                            }.start();
+                                        }
+                                    });
+                                }
+                                for (StudySpace space : favorites){
+//                        Location space = studySpacesNearby.get(i);
+                                    CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, favoritesLayout, false);
+                                    CardView newCard = createNewSmallCard(card,space);
+                                    String spaceID = String.valueOf(space.getId());
+                                    favoritesLayout.addView(newCard);
                                     card.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
