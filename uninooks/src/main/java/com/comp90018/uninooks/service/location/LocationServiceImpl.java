@@ -233,7 +233,7 @@ public class LocationServiceImpl implements LocationService {
                 ResultSet resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
-                    Location location = new Location();
+                    Location location = new Library();
                     // Set location information
                     location.setId(resultSet.getInt("library_id"));
                     location.setName(resultSet.getString("library_name"));
@@ -241,6 +241,9 @@ public class LocationServiceImpl implements LocationService {
 
                     location.setOpenTime(resultSet.getTime("opening_time"));
                     location.setCloseTime(resultSet.getTime("closing_time"));
+
+                    ((Library) location).setHasQuietZones(resultSet.getBoolean("library_has_quiet_zones"));
+                    location.setType("LIBRARY");
 
 //                    Array daysDb = resultSet.getArray("library_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
@@ -270,7 +273,7 @@ public class LocationServiceImpl implements LocationService {
                 resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
-                    Location location = new Location();
+                    Location location = new StudySpace();
                     // Set location information
                     location.setId(resultSet.getInt("study_space_id"));
                     location.setName(resultSet.getString("study_space_name"));
@@ -278,6 +281,11 @@ public class LocationServiceImpl implements LocationService {
 
                     location.setOpenTime(resultSet.getTime("opening_time"));
                     location.setCloseTime(resultSet.getTime("closing_time"));
+
+                    location.setType("STUDY_SPACE");
+                    ((StudySpace) location).setMinimumAccessAQFLevel(resultSet.getInt("study_space_minimum_access_AQF_level"));
+                    ((StudySpace) location).setTalkAllowed(resultSet.getBoolean("study_space_talk_allowed"));
+
 
 //                    Array daysDb = resultSet.getArray("study_space_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
@@ -307,7 +315,7 @@ public class LocationServiceImpl implements LocationService {
                 ResultSet resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
-                    Location location = new Location();
+                    Location location = new Restaurant();
                     // Set review information
                     location.setId(resultSet.getInt("restaurant_id"));
                     location.setName(resultSet.getString("restaurant_name"));
@@ -315,6 +323,8 @@ public class LocationServiceImpl implements LocationService {
 
                     location.setOpenTime(resultSet.getTime("opening_time"));
                     location.setCloseTime(resultSet.getTime("closing_time"));
+
+                    location.setType("RESTAURANT");
 
 //                    Array daysDb = resultSet.getArray("restaurant_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
@@ -342,7 +352,7 @@ public class LocationServiceImpl implements LocationService {
                 ResultSet resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
-                    Location location = new Location();
+                    Location location = new Library();
                     // Set review information
                     location.setId(resultSet.getInt("library_id"));
                     location.setName(resultSet.getString("library_name"));
@@ -350,6 +360,8 @@ public class LocationServiceImpl implements LocationService {
 
                     location.setOpenTime(resultSet.getTime("opening_time"));
                     location.setCloseTime(resultSet.getTime("closing_time"));
+
+                    location.setType("ALL");
 
 //                    Array daysDb = resultSet.getArray("library_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
@@ -377,7 +389,7 @@ public class LocationServiceImpl implements LocationService {
                 resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
-                    Location location = new Location();
+                    Location location = new StudySpace();
                     // Set location information
                     location.setId(resultSet.getInt("study_space_id"));
                     location.setName(resultSet.getString("study_space_name"));
@@ -410,7 +422,7 @@ public class LocationServiceImpl implements LocationService {
                 resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
-                    Location location = new Location();
+                    Location location = new Restaurant();
                     // Set review information
                     location.setId(resultSet.getInt("restaurant_id"));
                     location.setName(resultSet.getString("restaurant_name"));
