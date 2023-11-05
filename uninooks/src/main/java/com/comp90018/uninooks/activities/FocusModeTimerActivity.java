@@ -1,15 +1,18 @@
 package com.comp90018.uninooks.activities;
 
-import android.graphics.drawable.Drawable;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.content.Intent;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.views.TimerView;
@@ -148,7 +151,9 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openSettings(v);
+                Intent Intent = new Intent(FocusModeTimerActivity.this, FocusModeSettingsActivity.class);
+
+                startActivity(Intent);
             }
         });
 
@@ -276,7 +281,8 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     }
 
     public void openSettings(View view) {
-        //       Intent intent = new Intent(this, SettingsActivity.class);
-        //       startActivity(intent);
-    }
+
+        }
+
+
 }
