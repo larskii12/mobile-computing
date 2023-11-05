@@ -39,7 +39,9 @@ import com.comp90018.uninooks.service.sortingComparators.RatingComparator;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -97,9 +99,7 @@ public class SearchResults extends AppCompatActivity {
                     // retrieve what was searched for/filtered for
                     if (intent.hasExtra("searchQuery")) {
                         String searchString = intent.getStringExtra("searchQuery");
-                        System.out.println(searchString);
                         results = new LocationServiceImpl().findAllLocations("STUDY", searchString, true);
-                        System.out.println("gotten results");
 
                     } else if (intent.hasExtra("filters")) {
                         results = new LocationServiceImpl().findAllLocations("STUDY", null, true);
@@ -170,17 +170,17 @@ public class SearchResults extends AppCompatActivity {
                 cardView = createRestaurantLocationCard((Restaurant) location);
             }
             resultCardArea.addView(cardView);
-            resultCardArea.setClickable(true);
-            resultCardArea.setOnClickListener(cardListener);
+            System.out.println("added card view into result card area");
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println("CURRENT LOCATION CLICK NAME: " + location.getName());
+                    // pass userID to locationID
+                }
+            });
         }
     }
 
-    private View.OnClickListener cardListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            // pass userID and study space ID to intent as extras
-        }
-    };
 
     private CardView createStudyLocationCard(StudySpace location) {
         List<Object> interactables = new ArrayList<>();
@@ -372,6 +372,7 @@ public class SearchResults extends AppCompatActivity {
             String openingTimeText = sdf.format(openingTime);
             String closingTimeText = sdf.format(closingTime);
 
+
             double hoursToClose = calcTimeToClose(closingTime);
             System.out.println("HOURS TO CLOSEEEE: " + hoursToClose);
 
@@ -477,6 +478,7 @@ public class SearchResults extends AppCompatActivity {
                 int locationID = location.getId();
                 String type = location.getType();
                 ReviewType typeEnum = ReviewType.valueOf(type);
+                System.out.println("ENTITY ID:" + locationID);
                 List<Review> reviewList = new ReviewServiceImpl().getReviewsByEntity(locationID, typeEnum);
                 String averageRating = getAverageRating(reviewList);
                 ratingsByLocation.put(locationName, averageRating);
@@ -646,8 +648,20 @@ public class SearchResults extends AppCompatActivity {
     }
 
     private double calcTimeToClose(Time closingTime) {
-        Date date = new Date();
-        Time currTime = new Time(date.getTime());
+//        Date date = new Date();
+//        Time currTime = new Time(date.getTime());
+
+        int hour = LocalTime.now().getHour();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Time currTime = new Time(calendar.getTimeInMillis());
+
+
+        System.out.println("CURRENT TIME: " + currTime);
 
         long timeDiffInSeconds = (closingTime.getHours() - currTime.getHours()) * 3600
                 + (closingTime.getMinutes() - currTime.getMinutes()) * 60
@@ -689,15 +703,13 @@ public class SearchResults extends AppCompatActivity {
         String locationName = location.getName();
         int locationID = location.getId();
         ProgressBar busyBar = getProgressBar(locationID);
-        Drawable customDrawable = ContextCompat.getDrawable(this, R.drawable.custom_progress);
+//        Drawable customDrawable = ContextCompat.getDrawable(this, R.drawable.custom_progress);
 
         Double busyRating = busyRatingByLocation.get(locationName);
-        System.out.println("BUSY RATING: " + busyRating);
         if (busyRating == null) {
             busyBar.setProgress(5);
         } else {
             int busyRatingPercent = (int) (busyRating * 20);
-            System.out.println("BUSY RATING PERCENTAGE: " + busyRatingPercent);
 
             Time closingTime = location.getCloseTime();
             double hoursToClose = calcTimeToClose(closingTime);
