@@ -20,10 +20,10 @@ public class ReviewServiceImpl implements ReviewService {
     /**
      * method to add a new review of an entity of a user into the database (To add review)
      *
-     * @param userId     as the user id
-     * @param entityId   as the entity id
-     * @param type       as the review type
-     * @param score      as the score
+     * @param userId   as the user id
+     * @param entityId as the entity id
+     * @param type     as the review type
+     * @param score    as the score
      * @throws Exception if any exceptions happens
      */
     public Review addReview(Integer userId, Integer entityId, ReviewType type, Integer score, String comment) throws Exception {
@@ -54,7 +54,7 @@ public class ReviewServiceImpl implements ReviewService {
             PreparedStatement preparedStatement = connector.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, score);
-            preparedStatement.setTimestamp(3,  currentDateTime);
+            preparedStatement.setTimestamp(3, currentDateTime);
             preparedStatement.setInt(4, entityId);
             preparedStatement.setString(5, comment);
 
@@ -212,8 +212,8 @@ public class ReviewServiceImpl implements ReviewService {
     /**
      * Get a user with specified email address
      *
-     * @param entityId   as the entity id
-     * @param type       as the review type
+     * @param entityId as the entity id
+     * @param type     as the review type
      * @return list of reviews
      */
     public List<Review> getReviewsByEntity(Integer entityId, ReviewType type) throws Exception {
@@ -284,5 +284,63 @@ public class ReviewServiceImpl implements ReviewService {
         catch (Exception e) {
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
+    }
+
+
+    public double getAverageRating(Integer entityId, ReviewType type) {
+
+        try {
+
+            String query;
+
+            switch (type) {
+
+                case GYM: // Add new gym review to the database
+                    query = "SELECT gym_id,ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
+                            "FROM mobilecomputing.\"review\" " +
+                            "WHERE gym_id IS NOT NULL and gym_id = ? " +
+                            "GROUP BY gym_id " +
+                            "ORDER BY average_rating DESC;";
+                    break;
+                case LIBRARY: // Add new library review to the database
+                    query = "SELECT review_library_id,ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
+                            "FROM mobilecomputing.\"review\" " +
+                            "WHERE review_library_id IS NOT NULL and review_library_id = ? " +
+                            "GROUP BY review_library_id " +
+                            "ORDER BY average_rating DESC;";
+                    break;
+                case RESTAURANT: // Add new restaurant review to the database
+                    query = "SELECT restaurant_id,ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
+                            "FROM mobilecomputing.\"review\" " +
+                            "WHERE restaurant_id IS NOT NULL and restaurant_id = ? " +
+                            "GROUP BY restaurant_id " +
+                            "ORDER BY average_rating DESC;";
+                    break;
+
+                case STUDY_SPACE: // Add new study space review to the database
+                    query = "SELECT review_study_space_id, ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
+                            "FROM mobilecomputing.\"review\" " +
+                            "WHERE review_study_space_id IS NOT NULL AND review_study_space_id = ? " +
+                            "GROUP BY review_study_space_id " +
+                            "ORDER BY average_rating DESC;";
+                    break;
+                default:
+                    throw new Exception("Invalid review type. Cannot retrieve review list.");
+            }
+
+            PreparedStatement preparedStatement = connector.prepareStatement(query);
+            preparedStatement.setInt(1, entityId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) { // Ensure there's a row in the result set
+
+                return Double.parseDouble(resultSet.getString("average_rating"));
+            }
+        }
+
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return 5;
     }
 }

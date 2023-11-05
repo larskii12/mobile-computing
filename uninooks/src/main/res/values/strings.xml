@@ -57,4 +57,7 @@
     <string name="Account_Settings">Settings</string>
     <string name="Account_Settings_Change_Password">Password</string>
     <string name="Account_Settings_Current_Password">***********</string>
+    <string name="Account_Delete_Account_Message">Are you sure you want to delete your account? You will lose everything such as usernames, favourites and more. If you are sure, press confirm button.</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 </resources>

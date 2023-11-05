@@ -4,12 +4,32 @@ public enum ResourceType {
 
     TOILET,
     ATM,
-    PARKING,
+    CAR_PARK,
     KITCHEN,
     MICROWAVE_OVEN,
-    CAR_PARK,
     VENDING_MACHINE,
     STOP1,
+
     EMERGENCY_PHONES,
     AED;
+
+
+    public static ResourceType toType(String resourceTypeFromSQL) {
+        String returnString = "";
+        String[] words = resourceTypeFromSQL.split(" ");
+
+        for (int i=0 ; i < words.length ; i++) {
+            returnString += words[i].toUpperCase();
+            if (i != words.length - 1) {
+                returnString = returnString + "_";
+            }
+        }
+
+        for (ResourceType type : ResourceType.values()) {
+            if (type.toString().equals(returnString)) {
+                return type;
+            }
+        }
+        return null;
+    }
 }
