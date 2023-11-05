@@ -74,6 +74,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         pomodoroButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                resetTimer();
                 seconds = 1500;
                 isPomodoro = true;
                 isShortPause = false;
@@ -86,6 +87,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         shortPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                resetTimer();
                 seconds = 300;
                 isPomodoro = false;
                 isShortPause = true;
@@ -98,6 +100,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         longPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                resetTimer();
                 seconds = 900;
                 isPomodoro = false;
                 isShortPause = false;
@@ -112,7 +115,8 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         timerStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTimerView.start(timer_length, isPaused);
+//                mTimerView.start(timer_length, isPaused);
+                mTimerView.start(seconds, isPaused);
                 startTimer();
             }
         });
@@ -267,6 +271,8 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             } else {
                 // Timer is done, you can implement actions here
                 isRunning = false;
+                timerStartButton.setVisibility(View.VISIBLE);
+                timerPauseButton.setVisibility(View.GONE);
             }
         }
     };
