@@ -114,8 +114,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 // launch the filter page
-//                Intent intent = new Intent(MapsActivity.this, FilterAdjustmentActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(MapsActivity.this, FilterAdjustmentActivity.class);
+                startActivity(intent);
             }
         });
 
