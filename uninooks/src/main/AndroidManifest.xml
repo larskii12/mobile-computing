@@ -61,7 +61,8 @@
       
         <activity
             android:name=".activities.SearchResults"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode = "singleTop"/>
         <activity
             android:name=".activities.FilterAdjustmentActivity"
             android:exported="false"
