@@ -72,7 +72,9 @@
     <string name="focus_heading">Your Study Buddy: Silencing Distractions with Pomodoro Power! </string>
     <string name="focus_subheading">Let\'s get to know Focus Mode!</string>
     <string name="focus_subheading1">What is Focus Mode? </string>
-    <string name="focus_paragraph1">Derived from its name, focus mode will help you concentrate on your studies for the set amount of time. This mode includes a Do Not Disturb feature, Pomodoro Timer, and a Background App Sensor.</string>
+<!--    <string name="focus_paragraph1">Derived from its name, focus mode will help you concentrate on your studies for the set amount of time. This mode includes a Do Not Disturb feature, Pomodoro Timer, and a Background App Sensor.</string>-->
+
+    <string name="focus_paragraph1">This mode utilises the Pomodoro technique to aid in your concentration while studying for the set amount of time. \n\nThis will turn on the Do Not Disturb feature on your device, temporarily disabling notifications.</string>
     <string name="focus_subheading2">What does Do Not Disturb do? </string>
     <string name="focus_paragraph2">This will disable notifications all social media and messaging applications</string>
     <string name="focus_last">Good luck students!</string>
