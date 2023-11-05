@@ -294,6 +294,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                     spinnerChangeDegreeList.setVisibility(View.GONE);
                     degreeTextView.setVisibility(View.VISIBLE);
                     spinnerChangeDegreeList.setVisibility(View.GONE);
+                    buttonNewDegree.setVisibility(View.GONE);
                 }
             }
         });
