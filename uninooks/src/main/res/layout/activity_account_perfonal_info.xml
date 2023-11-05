@@ -111,7 +111,18 @@
             android:hint="@string/Account_Pi_Edit_Name"
             android:inputType="text"
             android:paddingHorizontal="96dp"
-            android:visibility="gone" />
+            android:visibility="gone"
+             />
+
+        <Button
+            android:id="@+id/Pi_ButtonConfirmNewUserName"
+            style="@style/Button.Primary.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="180dp"
+            android:text="@string/confirm"
+            android:visibility="gone"
+            />
 
     </RelativeLayout>
 
@@ -190,6 +201,7 @@
             style="@style/TextInputStyle"
             android:layout_marginTop="12dp"
             android:layout_marginStart="48dp"
+            android:layout_marginEnd="48dp"
             android:hint="@string/Account_Pi_Edit_Email"
             android:inputType="textEmailAddress"
             android:paddingHorizontal="96dp"
@@ -202,15 +214,16 @@
             android:text="Verify Email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="64dp"
             android:layout_marginStart="48dp"
             android:visibility="gone"/>
 
         <EditText
             android:id="@+id/Pi_EditTextEmailOTP"
             style="@style/TextInputStyle"
-            android:layout_marginTop="108dp"
+            android:layout_marginTop="116dp"
             android:layout_marginStart="48dp"
+            android:layout_marginEnd="48dp"
             android:hint="Enter OTP"
             android:inputType="textEmailAddress"
             android:paddingHorizontal="96dp"
@@ -223,7 +236,7 @@
             android:text="Change Email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="160dp"
+            android:layout_marginTop="168dp"
             android:layout_marginStart="48dp"
             android:visibility="gone"/>
     </RelativeLayout>
@@ -334,6 +347,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:spinnerMode="dropdown"
+            android:visibility="gone"
+             />
+
+        <Button
+            android:id="@+id/Pi_ButtonConfirmNewFaculty"
+            style="@style/Button.Primary.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_alignEnd="@id/SpinnerPiFacultyList"
+            android:text="@string/confirm"
             android:visibility="gone" />
 
     </RelativeLayout>
@@ -393,6 +417,17 @@
             android:layout_height="wrap_content"
             android:spinnerMode="dropdown"
             android:visibility="gone" />
+
+        <Button
+            android:id="@+id/Pi_ButtonConfirmNewDegree"
+            style="@style/Button.Primary.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_alignEnd="@id/SpinnerPiDegreeList"
+            android:text="@string/confirm"
+            android:visibility="gone" />
+
 
 
     </RelativeLayout>

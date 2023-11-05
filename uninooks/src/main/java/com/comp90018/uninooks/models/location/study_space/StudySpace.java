@@ -14,6 +14,8 @@ public class StudySpace extends Location {
 
     private Integer capacity;
 
+    private double average_rating;
+
     public int getLibraryId() {
         return libraryId;
     }
@@ -53,4 +55,12 @@ public class StudySpace extends Location {
 //    public void setCapacity(Integer capacity) {
 //        this.capacity = capacity;
 //    }
+
+    public double getAverage_rating() {
+        return average_rating;
+    }
+
+    public void setAverage_rating(double rating) {
+        average_rating = rating;
+    }
 }
