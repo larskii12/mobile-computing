@@ -201,6 +201,7 @@
             style="@style/TextInputStyle"
             android:layout_marginTop="12dp"
             android:layout_marginStart="48dp"
+            android:layout_marginEnd="48dp"
             android:hint="@string/Account_Pi_Edit_Email"
             android:inputType="textEmailAddress"
             android:paddingHorizontal="96dp"
@@ -213,15 +214,16 @@
             android:text="Verify Email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="64dp"
             android:layout_marginStart="48dp"
             android:visibility="gone"/>
 
         <EditText
             android:id="@+id/Pi_EditTextEmailOTP"
             style="@style/TextInputStyle"
-            android:layout_marginTop="108dp"
+            android:layout_marginTop="116dp"
             android:layout_marginStart="48dp"
+            android:layout_marginEnd="48dp"
             android:hint="Enter OTP"
             android:inputType="textEmailAddress"
             android:paddingHorizontal="96dp"
@@ -234,7 +236,7 @@
             android:text="Change Email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="160dp"
+            android:layout_marginTop="168dp"
             android:layout_marginStart="48dp"
             android:visibility="gone"/>
     </RelativeLayout>
@@ -356,10 +358,7 @@
             android:layout_marginTop="24dp"
             android:layout_alignEnd="@id/SpinnerPiFacultyList"
             android:text="@string/confirm"
-            android:scaleX="0.6"
-            android:scaleY="0.6"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
     </RelativeLayout>
 
@@ -427,8 +426,6 @@
             android:layout_marginTop="24dp"
             android:layout_alignEnd="@id/SpinnerPiDegreeList"
             android:text="@string/confirm"
-            android:scaleX="0.6"
-            android:scaleY="0.6"
             android:visibility="gone" />
 
 
