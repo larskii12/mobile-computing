@@ -58,6 +58,8 @@
         <activity android:name=".activities.ResetPasswordActivity" />
         <activity android:name=".activities.ReportIssue" />
         <activity android:name=".activities.PersonalInformationActivity" />
+        <activity android:name=".activities.HomeActivity" />
+        <activity android:name=".activities.LocationActivity" />
 
     </application>
 
