@@ -7,16 +7,21 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.view.LayoutInflater;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Message;
+
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.content.Intent;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.comp90018.uninooks.R;
+import com.comp90018.uninooks.service.background_app.BackgroundAppService;
 import com.comp90018.uninooks.views.TimerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -55,17 +60,33 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private Button settingsButton;
     private BottomNavigationView bottomNav;
 
-    private Handler handler = new Handler();
-
     private boolean isRunning = false;
 
+    private boolean isPaused = false;
+
     private boolean isPomodoro = false;
-
     private boolean isShortPause = false;
-
     private boolean isLongPause = false;
 
-    private boolean isPaused = false;
+    @SuppressLint("HandlerLeak")
+    private final Handler handler = new Handler() {
+        @SuppressLint("SetTextI18n")
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    handler.postDelayed(timerRunnable, 1000);
+                    break;
+
+                case 1:
+
+                    break;
+
+                case 2:
+
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,13 +217,18 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         isInBackground = true;
-        mTimerView.stop();
+        // Detect the recent 20 seconds used apps
+        Intent serviceIntent = new Intent(this, BackgroundAppService.class);
+        startService(serviceIntent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         isInBackground = false;
+
+        Intent serviceIntent = new Intent(this, BackgroundAppService.class);
+        stopService(serviceIntent);
     }
 
     public void onStop(){
@@ -243,11 +269,12 @@ public class FocusModeTimerActivity extends AppCompatActivity {
 
     private void startTimer() {
         if (!isRunning) {
-            handler.postDelayed(timerRunnable, 1000);
+            handler.sendEmptyMessage(0);
             isRunning = true;
             isPaused = false;
             timerStartButton.setVisibility(View.GONE);
             timerPauseButton.setVisibility(View.VISIBLE);
+
         }
     }
 
