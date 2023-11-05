@@ -155,15 +155,6 @@ public class SearchResults extends AppCompatActivity {
         returnButton.setOnClickListener(returnListener);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        for (Location location : results) {
-            updateClockColour(location);
-            updateProgressBar(location);
-        }
-    }
-
     /**
      * This activity finishes, returns back to the previous page (search page)
      */
@@ -175,6 +166,9 @@ public class SearchResults extends AppCompatActivity {
     };
 
     private void addResultsToPage(List<Location> results) {
+        ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
+        System.out.println("adding results to page, going to make loading gif viisb le");
+        loadingGIF.setVisibility(View.VISIBLE);
 
         for (Location location : results) {
             String type = location.getType();
@@ -196,6 +190,7 @@ public class SearchResults extends AppCompatActivity {
                 }
             });
         }
+        loadingGIF.setVisibility(View.GONE);
     }
 
 
@@ -547,8 +542,10 @@ public class SearchResults extends AppCompatActivity {
             String locationName = location.getName();
 
             try {
-                System.out.println("in search results, before getting avail resources");
                 List<Resource> availResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
+                for (Resource r : availResources) {
+                    System.out.println(r.getName());
+                }
                 resourcesByLocation.put(locationName, availResources);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -753,13 +750,14 @@ public class SearchResults extends AppCompatActivity {
 
 //            double hoursToClose = calcTimeToClose(closingTime);
 //            if (hoursToClose <= 1) {
+
 //                busyBar.setProgress(5);
 //            }
             busyBar.setProgress(busyRatingPercent);
-            if (busyRatingPercent >= 0 && busyRatingPercent <= 40) {
+            if (busyRatingPercent >= 0 && busyRatingPercent <= 45) {
                 busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.green)));
 
-            } else if (busyRatingPercent > 40 && busyRatingPercent <= 80) {
+            } else if (busyRatingPercent > 45 && busyRatingPercent <= 75) {
                 busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.yellow)));
 
             } else {
@@ -874,7 +872,6 @@ public class SearchResults extends AppCompatActivity {
             } else if (facility.equals("atm")) {
                 keepLoc = haveFacility(resources, ResourceType.ATM);
             } else if (facility.equals("accessible")) {
-                // accessibility from building
                 Building building = buildingsByLocation.get(location.getId());
                 if (!building.isHasAccessibility()) {
                     keepLoc = false;

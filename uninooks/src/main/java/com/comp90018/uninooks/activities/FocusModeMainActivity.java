@@ -10,31 +10,26 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.comp90018.uninooks.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class FocusModeMainActivity extends AppCompatActivity {
 
-    ImageView toggleGif;
-
     ImageView studyGif;
 
-    ImageView goodLuckGif;
-
     Button startFocusButton;
+    BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_focus_main);
 
-        toggleGif = findViewById(R.id.focus_toggle);
         studyGif = findViewById(R.id.focus_studygif);
-        goodLuckGif = findViewById(R.id.focus_goodluck);
-
         startFocusButton = findViewById(R.id.btn_focus_mode);
+        bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setSelectedItemId(R.id.focusNav);
 
-        Glide.with(this).load(R.drawable.toggle).into(toggleGif);
         Glide.with(this).load(R.drawable.study).into(studyGif);
-        Glide.with(this).load(R.drawable.good_luck).into(goodLuckGif);
 
         startFocusButton.setOnClickListener(new View.OnClickListener() {
             @Override
