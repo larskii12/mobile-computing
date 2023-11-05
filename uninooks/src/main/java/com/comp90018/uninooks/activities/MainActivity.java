@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements GPSService {
         Button button = (Button) findViewById(R.id.button);
         Button loginButton = findViewById(R.id.loginButton);
         Button accountButton = findViewById(R.id.accountButton);
+        Button focusButton = findViewById(R.id.focusButton);
 
         accountButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +89,25 @@ public class MainActivity extends AppCompatActivity implements GPSService {
                         try {
                             gpsService.stopGPSUpdates();
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
+                        catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+            }
+        });
+
+        focusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            gpsService.stopGPSUpdates();
+                            Intent intent = new Intent(MainActivity.this, FocusModeSplashActivity.class);
                             startActivity(intent);
                         }
                         catch (Exception e){

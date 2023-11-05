@@ -21,11 +21,48 @@
         <item name="android:fontFamily">sans-serif-black</item>
     </style>
 
+    <style name="FocusTextHeading" parent="BaseText">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/deepBlue</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:fontWeight">600</item>
+        <item name="android:fontFamily">@font/inter</item>
+    </style>
+
+    <style name="FocusWhiteTextHeading" parent="BaseText">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontWeight">600</item>
+        <item name="android:fontFamily">@font/inter</item>
+    </style>
+
+    <style name="FocusWhiteTextHeadingBold" parent="BaseText">
+        <item name="android:textSize">34sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:fontWeight">600</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+    </style>
+
+    <style name="FocusMainTextAppName" parent="BaseText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontWeight">600</item>
+        <item name="android:fontFamily">@font/comfortaa</item>
+    </style>
+
     <!-- Sub-heading text style -->
     <style name="TextSubHeading" parent="BaseText">
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/primary</item>
         <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="FocusSubText" parent="BaseText">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:fontWeight">600</item>
+        <item name="android:fontFamily">@font/inter</item>
     </style>
 
     <!-- Sub-heading text style in Red -->
@@ -43,6 +80,28 @@
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
+    <style name="FocusWhiteTextRegular" parent="BaseText">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontWeight">1000</item>
+        <item name="android:fontFamily">@font/inter</item>
+    </style>
+
+    <style name="FocusWhiteTextParagraphRegular" parent="BaseText">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:fontWeight">1000</item>
+        <item name="android:fontFamily">@font/inter</item>
+    </style>
+
+    <style name="FocusTextRegular" parent="BaseText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <!-- Button Styles -->
     <style name="BaseButtonStyle">
         <item name="android:background">@drawable/rounded_button_background</item>
         <item name="android:textSize">16sp</item>

@@ -58,6 +58,10 @@
         <activity android:name=".activities.ResetPasswordActivity" />
         <activity android:name=".activities.ReportIssue" />
         <activity android:name=".activities.PersonalInformationActivity" />
+        <activity android:name=".activities.FocusModeSplashActivity" />
+        <activity android:name=".activities.FocusModeMainActivity" />
+        <activity android:name=".activities.FocusModeTimerActivity" />
+
       
         <activity
             android:name=".activities.SearchResults"
@@ -72,6 +76,7 @@
       
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.LocationActivity" />
+
 
 
     </application>

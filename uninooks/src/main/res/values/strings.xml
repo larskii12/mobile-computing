@@ -60,4 +60,20 @@
     <string name="Account_Delete_Account_Message">Are you sure you want to delete your account? You will lose everything such as usernames, favourites and more. If you are sure, press confirm button.</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+
+    <!-- Focus Mode Strings -->
+    <string name="back_to_home">Back to Home</string>
+    <string name="focus_mode">Focus Mode</string>
+    <string name="timer_pomodoro">Pomodoro</string>
+    <string name="timer_short_pause">Short Pause</string>
+    <string name="timer_long_pause">Long Pause</string>
+    <string name="start_time">25:00</string>
+    <string name="focus_start">Let\'s begin!</string>
+    <string name="focus_heading">Your Study Buddy: Silencing Distractions with Pomodoro Power! </string>
+    <string name="focus_subheading">Let\'s get to know Focus Mode!</string>
+    <string name="focus_subheading1">What is Focus Mode? </string>
+    <string name="focus_paragraph1">Derived from its name, focus mode will help you concentrate on your studies for the set amount of time. This mode includes a Do Not Disturb feature, Pomodoro Timer, and a Background App Sensor.</string>
+    <string name="focus_subheading2">What does Do Not Disturb do? </string>
+    <string name="focus_paragraph2">This will disable notifications all social media and messaging applications</string>
+    <string name="focus_last">Good luck students!</string>
 </resources>

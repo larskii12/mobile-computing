@@ -10,4 +10,8 @@
     <color name="primary">#FF000F46</color>
     <color name="lightGrey">#FFD6D6D6</color>
     <color name="grey">#808080</color>
+    <color name="primary_50_percent_opacity">#80FFFFFF</color>
+    <color name="transparent_opacity">#00FFFFFF</color>
+    <color name="timer_circle">#000F46</color>
+    <color name="stone_grey">#0f172a</color>
 </resources>
