@@ -61,8 +61,8 @@
         <activity android:name=".activities.FocusModeSplashActivity" />
         <activity android:name=".activities.FocusModeMainActivity" />
         <activity android:name=".activities.FocusModeTimerActivity" />
+        <activity android:name=".activities.FocusModeSettingsActivity" />
 
-      
         <activity
             android:name=".activities.SearchResults"
             android:exported="false"
