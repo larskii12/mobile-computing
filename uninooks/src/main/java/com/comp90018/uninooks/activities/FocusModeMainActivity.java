@@ -26,15 +26,15 @@ public class FocusModeMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_focus_main);
 
-        toggleGif = findViewById(R.id.focus_toggle);
+//        toggleGif = findViewById(R.id.focus_toggle);
         studyGif = findViewById(R.id.focus_studygif);
-        goodLuckGif = findViewById(R.id.focus_goodluck);
+//        goodLuckGif = findViewById(R.id.focus_goodluck);
 
         startFocusButton = findViewById(R.id.btn_focus_mode);
 
-        Glide.with(this).load(R.drawable.toggle).into(toggleGif);
+//        Glide.with(this).load(R.drawable.toggle).into(toggleGif);
         Glide.with(this).load(R.drawable.study).into(studyGif);
-        Glide.with(this).load(R.drawable.good_luck).into(goodLuckGif);
+//        Glide.with(this).load(R.drawable.good_luck).into(goodLuckGif);
 
         startFocusButton.setOnClickListener(new View.OnClickListener() {
             @Override
