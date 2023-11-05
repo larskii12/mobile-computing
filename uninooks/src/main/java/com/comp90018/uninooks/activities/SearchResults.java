@@ -40,6 +40,7 @@ import com.comp90018.uninooks.service.sortingComparators.RatingComparator;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -365,6 +366,8 @@ public class SearchResults extends AppCompatActivity {
         Time openingTime = location.getOpenTime();
         Time closingTime = location.getCloseTime();
 
+        System.out.println("LOCATION: " + location.getName());
+
         if (closingTime == null) {
             text = "Closed";
         } else {
@@ -376,8 +379,15 @@ public class SearchResults extends AppCompatActivity {
             double hoursToClose = calcTimeToClose(closingTime);
             System.out.println("HOURS TO CLOSEEEE: " + hoursToClose);
 
-            Date date = new Date();
-            Time currTime = new Time(date.getTime());
+            LocalTime localTimeAEDT = LocalTime.now(ZoneId.of("Australia/Melbourne"));
+            int hour = LocalTime.now().getHour();
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            Time currTime = new Time(calendar.getTimeInMillis());
 
             if (hoursToClose <= 0 || !withinRange(openingTime, closingTime, currTime)) {
                 text = "Closed";
@@ -397,16 +407,18 @@ public class SearchResults extends AppCompatActivity {
      * @return
      */
     private boolean withinRange(Time openingTime, Time closingTime, Time currTime) {
+        int closingHours = closingTime.getHours();
+        if (closingHours == 0) {
+            closingHours = 24;
+        }
         long openingTimeMillis = openingTime.getHours() * 3600 * 1000 + openingTime.getMinutes() * 60 * 1000;
-        long closingTimeMillis = closingTime.getHours() * 3600 * 1000 + closingTime.getMinutes() * 60 * 1000;
+        long closingTimeMillis = closingHours * 3600 * 1000 + closingTime.getMinutes() * 60 * 1000;
 
         long currTimeMillis = currTime.getHours() * 3600 * 1000 + currTime.getMinutes() * 60 * 1000;
 
         if (currTimeMillis >= openingTimeMillis && currTimeMillis <= closingTimeMillis) {
-            System.out.println("within range");
             return true;
         } else {
-            System.out.println("out of range");
             return false;
         }
     }
@@ -514,11 +526,6 @@ public class SearchResults extends AppCompatActivity {
             try {
                 System.out.println("in search results, before getting avail resources");
                 List<Resource> availResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
-                System.out.println("number of resources: " + availResources.size());
-                for (Resource resource : availResources) {
-                    System.out.println("RESOURCEEEE: " + resource.getName());
-                    System.out.println("RESOURCE TYPEEE: " + resource.getType());
-                }
                 resourcesByLocation.put(locationName, availResources);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -648,9 +655,7 @@ public class SearchResults extends AppCompatActivity {
     }
 
     private double calcTimeToClose(Time closingTime) {
-//        Date date = new Date();
-//        Time currTime = new Time(date.getTime());
-
+        LocalTime localTimeAEDT = LocalTime.now(ZoneId.of("Australia/Melbourne"));
         int hour = LocalTime.now().getHour();
 
         Calendar calendar = Calendar.getInstance();
@@ -660,10 +665,13 @@ public class SearchResults extends AppCompatActivity {
         calendar.set(Calendar.MILLISECOND, 0);
         Time currTime = new Time(calendar.getTimeInMillis());
 
+        int closeHour = closingTime.getHours();
 
-        System.out.println("CURRENT TIME: " + currTime);
+        if (closeHour == 0) {
+            closeHour = 24;
+        }
 
-        long timeDiffInSeconds = (closingTime.getHours() - currTime.getHours()) * 3600
+        long timeDiffInSeconds = (closeHour - currTime.getHours()) * 3600
                 + (closingTime.getMinutes() - currTime.getMinutes()) * 60
                 + (closingTime.getSeconds() - currTime.getSeconds());
 
@@ -677,8 +685,16 @@ public class SearchResults extends AppCompatActivity {
         ImageView closingIcon = getClosingIcon(locationID);
         Time openingTime = location.getOpenTime();
         Time closingTime = location.getCloseTime();
-        Date date = new Date();
-        Time currTime = new Time(date.getTime());
+
+        LocalTime localTimeAEDT = LocalTime.now(ZoneId.of("Australia/Melbourne"));
+        int hour = LocalTime.now().getHour();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Time currTime = new Time(calendar.getTimeInMillis());
 
         if (closingTime == null) {
             closingIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplication(), R.color.red), PorterDuff.Mode.SRC_IN);
@@ -703,30 +719,26 @@ public class SearchResults extends AppCompatActivity {
         String locationName = location.getName();
         int locationID = location.getId();
         ProgressBar busyBar = getProgressBar(locationID);
-//        Drawable customDrawable = ContextCompat.getDrawable(this, R.drawable.custom_progress);
+        Time closingTime = location.getCloseTime();
 
         Double busyRating = busyRatingByLocation.get(locationName);
-        if (busyRating == null) {
+        if (busyRating == null || closingTime == null) {
             busyBar.setProgress(5);
         } else {
             int busyRatingPercent = (int) (busyRating * 20);
 
-            Time closingTime = location.getCloseTime();
-            double hoursToClose = calcTimeToClose(closingTime);
-
-            if (hoursToClose <= 1) {
-                busyBar.setProgress(5);
-
-            } else if (busyRatingPercent >= 0 && busyRatingPercent <= 40) {
-                busyBar.setProgress(busyRatingPercent);
+//            double hoursToClose = calcTimeToClose(closingTime);
+//            if (hoursToClose <= 1) {
+//                busyBar.setProgress(5);
+//            }
+            busyBar.setProgress(busyRatingPercent);
+            if (busyRatingPercent >= 0 && busyRatingPercent <= 40) {
                 busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.green)));
 
             } else if (busyRatingPercent > 40 && busyRatingPercent <= 80) {
-                busyBar.setProgress(busyRatingPercent);
                 busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.yellow)));
 
             } else {
-                busyBar.setProgress(busyRatingPercent);
                 busyBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.red)));
             }
         }
