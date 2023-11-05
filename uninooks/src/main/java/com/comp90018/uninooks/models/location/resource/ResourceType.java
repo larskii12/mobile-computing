@@ -6,6 +6,8 @@ public enum ResourceType {
     ATM,
     PARKING,
     KITCHEN,
+    MICROWAVE_OVEN,
+    CAR_PARK,
     VENDING_MACHINE,
     STOP1,
     EMERGENCY_PHONES,

@@ -59,7 +59,9 @@
         <activity android:name=".activities.ReportIssue" />
         <activity android:name=".activities.PersonalInformationActivity" />
         <activity android:name=".activities.HomeActivity" />
-        <activity android:name=".activities.LocationActivity" />
+        <activity android:name=".activities.LocationActivity"
+            android:label="LocationActivity"
+            android:exported="true"/>
 
     </application>
 

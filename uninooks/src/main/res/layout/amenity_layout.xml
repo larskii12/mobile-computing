@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/resource_card"
+    android:paddingLeft="20dp">
+
+<LinearLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
@@ -13,11 +19,12 @@
         android:layout_width="32dp"
         android:layout_height="match_parent"
         android:contentDescription="accessible icon"
+        android:background="@drawable/accessible_outline"
         app:srcCompat="@drawable/accessible_outline" />
 
     <TextView
         android:id="@+id/expandedListItem"
-        android:layout_width="346dp"
+        android:layout_width="326dp"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
         android:paddingLeft="10dp"
@@ -28,3 +35,4 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="18sp" />
 </LinearLayout>
+</androidx.cardview.widget.CardView>

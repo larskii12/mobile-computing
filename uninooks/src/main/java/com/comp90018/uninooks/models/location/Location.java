@@ -45,6 +45,8 @@ public class Location {
 
     private double distanceFromCurrentPosition;
 
+    private String type;
+
     public LatLng getLocation() {
         return location;
     }
@@ -116,4 +118,8 @@ public class Location {
     public void setDistanceFromCurrentPosition(double distanceFromCurrentPosition) {
         this.distanceFromCurrentPosition = distanceFromCurrentPosition;
     }
+
+    public String getType() { return type;}
+
+    public void setType(String type) {this.type = type;}
 }

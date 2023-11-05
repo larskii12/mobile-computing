@@ -161,6 +161,8 @@ public class LocationServiceImpl implements LocationService {
                 studySpace.setOpenTime(resultSet.getTime("opening_time"));
                 studySpace.setCloseTime(resultSet.getTime("closing_time"));
 
+                studySpace.setType("STUDY_SPACE");
+
 
                 // Get the study space GPS location
                 String queryStudySpaceLocationQuery = "SELECT building_latitude, building_longitude FROM mobilecomputing.\"building\" WHERE \"building_id\" = ?";
@@ -242,6 +244,8 @@ public class LocationServiceImpl implements LocationService {
                     location.setOpenTime(resultSet.getTime("opening_time"));
                     location.setCloseTime(resultSet.getTime("closing_time"));
 
+                    location.setType("LIBRARY");
+
 //                    Array daysDb = resultSet.getArray("library_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
 //                    location.setOpeningDays(days);
@@ -279,6 +283,8 @@ public class LocationServiceImpl implements LocationService {
                     location.setOpenTime(resultSet.getTime("opening_time"));
                     location.setCloseTime(resultSet.getTime("closing_time"));
 
+                    location.setType("STUDY_SPACE");
+
 //                    Array daysDb = resultSet.getArray("study_space_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
 //                    location.setOpeningDays(days);
@@ -315,6 +321,8 @@ public class LocationServiceImpl implements LocationService {
 
                     location.setOpenTime(resultSet.getTime("opening_time"));
                     location.setCloseTime(resultSet.getTime("closing_time"));
+
+                    location.setType("RESTAURANT");
 
 //                    Array daysDb = resultSet.getArray("restaurant_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();

@@ -14,6 +14,8 @@ public class StudySpace extends Location {
 
     private Integer capacity;
 
+    private String type;
+
     public int getLibraryId() {
         return libraryId;
     }
@@ -37,6 +39,10 @@ public class StudySpace extends Location {
     public void setTalkAllowed(boolean talkAllowed) {
         isTalkAllowed = talkAllowed;
     }
+
+    public String getType() { return type;}
+
+    public void setType(String type) { this.type = type;}
 
 //    public Integer getFloorLevel() {
 //        return floorLevel;
