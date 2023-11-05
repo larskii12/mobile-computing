@@ -1,9 +1,11 @@
 package com.comp90018.uninooks.activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.VibrationEffect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +18,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.views.TimerView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import android.os.Vibrator;
 
 import java.util.List;
 
@@ -32,6 +37,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private int timer_length = 30;
 
     private int seconds = 30;
+    private Vibrator v;
 
     // Setup Timer Buttons
     private Button pomodoroButton;
@@ -47,6 +53,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private Button timerPauseButton;
     private Button timerResetButton;
     private Button settingsButton;
+    private BottomNavigationView bottomNav;
 
     private Handler handler = new Handler();
 
@@ -65,9 +72,13 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_focus_mode);
 
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
         // Initialize UI components and set up timer controls
         mTimerView = findViewById(R.id.timer);
         timerText = findViewById(R.id.timerTextView);
+        bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setSelectedItemId(R.id.focusNav);
 
         // Change to which setup for the timer
         pomodoroButton = findViewById(R.id.btn_pomodoro);
@@ -269,10 +280,23 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 updateTimerText();
                 handler.postDelayed(this, 1000);
             } else {
-                // Timer is done, you can implement actions here
+                v.vibrate(VibrationEffect.createOneShot(2000, VibrationEffect.DEFAULT_AMPLITUDE));
+
+                resetTimer();
                 isRunning = false;
                 timerStartButton.setVisibility(View.VISIBLE);
                 timerPauseButton.setVisibility(View.GONE);
+
+                if (isPomodoro) {
+                    seconds = 1500;
+                } else if (isShortPause) {
+                    seconds = 300;
+                } else if (isLongPause) {
+                    seconds = 900;
+                } else {
+                    seconds = 1500;
+                }
+                updateTimerText();
             }
         }
     };
@@ -288,7 +312,5 @@ public class FocusModeTimerActivity extends AppCompatActivity {
 
     public void openSettings(View view) {
 
-        }
-
-
+    }
 }
