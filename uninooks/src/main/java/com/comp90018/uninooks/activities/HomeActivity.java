@@ -21,6 +21,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -107,21 +108,18 @@ public class HomeActivity extends AppCompatActivity {
 //                        Location space = studySpacesNearby.get(i);
                                     CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, nearbyLayout, false);
                                     CardView newCard = createNewSmallCard(card,space);
+                                    System.out.println(space.getId());
+                                    String spaceID = String.valueOf(space.getId());
                                     nearbyLayout.addView(newCard);
-                                    card.setOnClickListener(new View.OnClickListener() {
+                                    newCard.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
                                         new Thread() {
                                             public void run() {
                                             Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                                            intent.putExtra("SPACE_ID_EXTRA", space.getId());
-//                                            intent.putExtra("SPACE_NAME_EXTRA", space.getName());
-//                                            intent.putExtra("BUILDING_ID_EXTRA", space.getBuildingId());
-//                                            intent.putExtra("LIBRARY_ID_EXTRA", space.getLibraryId());
-//                                            intent.putExtra("DISTANCE_EXTRA", space.getDistanceFromCurrentPosition());
-//                                            intent.putExtra("OPEN_EXTRA", space.getOpenTime());
-//                                            intent.putExtra("CLOSE_EXTRA", space.getCloseTime());
-                                            intent.putExtra("USERNAME_EXTRA", userID);
+                                            intent.putExtra("SPACE_ID_EXTRA", spaceID);
+                                            System.out.println(spaceID);
+                                            intent.putExtra("USERID_EXTRA", userID);
                                             startActivity(intent);
                                             }
                                         }.start();
@@ -162,26 +160,36 @@ public class HomeActivity extends AppCompatActivity {
             ImageView banner = (ImageView) card.findViewById(R.id.banner);
             banner.setBackgroundResource(R.drawable.old_engineering);
             ProgressBar progress = (ProgressBar) card.findViewById(R.id.progressBar);
+
             TextView locationName = (TextView) card.findViewById(R.id.location);
             locationName.setText(space.getName());
             TextView locationHours = (TextView) card.findViewById(R.id.hours);
             TextView distanceLabel = (TextView) card.findViewById(R.id.timeLabel);
-
-            long hoursToClose = getTimeToClose(space.getCloseTime());
-            locationHours.setText(space.getOpenTime().getTime() + " - " + space.getCloseTime().getTime());
-            distanceLabel.setText(space.getDistanceFromCurrentPosition() + " meters");
-//            locationHours.setText(space.getOpenTime() +"am - " + space.getCloseTime() + "pm");
             ImageView hoursIcon = (ImageView) card.findViewById(R.id.clockIcon);
-            hoursIcon.setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
-            hoursIcon.setBackgroundResource(R.drawable.baseline_access_time_24);
-            if(hoursToClose <= 1){
-//                hoursIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));
-                hoursIcon.setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+            if (space.getCloseTime() == null) {
+                locationHours.setText("Closed");
+                hoursIcon.setBackgroundResource(R.drawable.baseline_access_time_24);
+                hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+
             } else {
-                hoursIcon.setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
+                long hoursToClose = getTimeToClose(space.getCloseTime());
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+
+                locationHours.setText(sdf.format(space.getOpenTime()) + " - " + sdf.format(space.getCloseTime()));
+                hoursIcon.setBackgroundResource(R.drawable.baseline_access_time_24);
+                hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
+
+                if(hoursToClose <= 1){
+//                hoursIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));
+                    hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                } else {
+                    hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
+                }
             }
+            distanceLabel.setText(space.getDistanceFromCurrentPosition() + " m");
+//            locationHours.setText(space.getOpenTime() +"am - " + space.getCloseTime() + "pm");
+
             ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);
-//            if ()
             favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_border_24);
             favouriteIcon.setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
 //        favouriteIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));

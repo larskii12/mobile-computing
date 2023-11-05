@@ -2,8 +2,12 @@ package com.comp90018.uninooks.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.location.Location;
@@ -30,25 +34,38 @@ public class LocationActivity extends AppCompatActivity{
         context = getApplicationContext();
         Intent intent = getIntent();
         String userID = intent.getStringExtra("USERID_EXTRA");
-        Integer spaceID = Integer.valueOf(intent.getStringExtra("SPACE_ID_EXTRA"));
-//        Integer buildingID = Integer.valueOf(intent.getStringExtra("BUILDING_ID_EXTRA"));
-//        Integer distance = Integer.valueOf(intent.getStringExtra("DISTANCE_EXTRA"));
-//        Integer libraryID = Integer.valueOf(intent.getStringExtra("LIBRARY_ID_EXTRA"));
-//        String openTime = intent.getStringExtra("OPEN_EXTRA");
-//        String closeTime = intent.getStringExtra("CLOSE_EXTRA");
-//        String spaceName = intent.getStringExtra("SPACE_NAME_EXTRA");
+        String spaceID = intent.getStringExtra("SPACE_ID_EXTRA");
+        System.out.println(spaceID);
 
 
 //        List<Location> studySpacesNearby = new ArrayList<>();
 
-        List<Review> reviews = null;
-        try {
-            reviews = new ReviewServiceImpl().getReviewsByEntity(3, ReviewType.LIBRARY);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        for (Review review : reviews) {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    System.out.println(spaceID);
+                    List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(Integer.valueOf(spaceID), ReviewType.STUDY_SPACE);
+                    LinearLayout reviewsLayout = findViewById(R.id.reviews);
+                    runOnUiThread(new Runnable() {
 
-        }
+                        @Override
+                        public void run() {
+                            for(Review review : reviews) {
+                                System.out.println(review.getComment());
+                                CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.review_layout, reviewsLayout, false);
+                            }
+                        }
+                    });
+                } catch(
+                        Exception e)
+
+                {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+        }.start();
     }
 }

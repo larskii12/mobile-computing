@@ -54,16 +54,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
-        <TextClock
+        <TextView
             android:id="@+id/hours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="7dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/favouriteIcon"
             app:layout_constraintStart_toEndOf="@+id/clockIcon"
             app:layout_constraintTop_toBottomOf="@+id/location"
             tools:text="9am - 8pm" />
@@ -77,7 +75,6 @@
             android:layout_marginBottom="16dp"
             android:contentDescription="clockIcon"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/hours"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/location"
             app:srcCompat="@drawable/baseline_access_time_24" />
@@ -104,13 +101,11 @@
             android:id="@+id/favouriteIcon"
             android:layout_width="19dp"
             android:layout_height="19dp"
-            android:layout_marginStart="45dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/hours"
             app:layout_constraintTop_toBottomOf="@+id/location"
             app:srcCompat="@drawable/baseline_favorite_border_24" />
     </androidx.constraintlayout.widget.ConstraintLayout>
