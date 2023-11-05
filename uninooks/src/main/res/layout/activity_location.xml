@@ -24,7 +24,7 @@
         <ImageButton
             android:id="@+id/imageButton"
             android:layout_width="72dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@color/white"
             android:contentDescription="back button"
@@ -35,7 +35,7 @@
         <TextView
             android:id="@+id/textView5"
             android:layout_width="260dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="Old Engineering"
@@ -47,7 +47,7 @@
         <ImageButton
             android:id="@+id/imageButton1"
             android:layout_width="62dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@color/white"
             android:contentDescription="favourite icon"
@@ -89,7 +89,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/banana">
 
                 <View
-                    android:layout_width="2dp"
+                    android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
 
@@ -134,6 +134,7 @@
                         android:layout_width="20dp"
                         android:layout_height="match_parent"
                         android:contentDescription="walking icon"
+                        android:background="@drawable/directions_walk_32"
                         app:srcCompat="@drawable/directions_walk_32" />
 
                     <TextView
