@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -15,11 +16,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.comp90018.uninooks.R;
+import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.review.ReviewService;
+import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
 import com.comp90018.uninooks.service.user.UserService;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements GPSService {
 
@@ -108,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements GPSService {
                     public void run() {
                         try {
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -119,19 +124,80 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 //                            }
 
 
-                            // How to get closest study spaces
-//                            ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
+                            // How to access the closest libraries
+//                            ArrayList<Library> libraries = new LibraryServiceImpl().getClosestLibraries(new LatLng(-1, -1), 10);
+//                            for (Library library : libraries){
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Name   " + library.getName());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Building ID   " + library.getBuildingId());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Distance From Current Location   " + library.getDistanceFromCurrentPosition() + " meters");
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Library ID   " + library.getId());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Open Today   " + library.issOpenToday());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Opening Now   " + library.isOpeningNow());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Opening Time   " + library.getOpenTime());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Closing Time   " + library.getCloseTime());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library has quiet zone  " + library.isHasQuietZones());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "\n\n");
+//                            }
+
+                            // How to access the top rated libraries
+//                            ArrayList<Library> libraries = new LibraryServiceImpl().getTopRatedLibraries(new LatLng(-1, -1), 10);
+//                            for (Library library : libraries){
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Name   " + library.getName());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Building ID   " + library.getBuildingId());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Distance From Current Location   " + library.getDistanceFromCurrentPosition() + " meters");
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Library ID   " + library.getId());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Open Today   " + library.issOpenToday());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Opening Now   " + library.isOpeningNow());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Opening Time   " + library.getOpenTime());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Closing Time   " + library.getCloseTime());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library has quiet zone  " + library.isHasQuietZones());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Rating   " + library.getAverage_rating());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "\n\n");
+//                            }
+
+//                             How to get closest study spaces
+//                            ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(-1, -1), 50);
 //                            for (StudySpace studySpace : closestStudySpaces){
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Name   " + studySpace.getName());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space ID   " + studySpace.getId());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Building ID   " + studySpace.getBuildingId());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Distance From Current Location   " + studySpace.getDistanceFromCurrentPosition() + " meters");
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Library ID   " + studySpace.getLibraryId());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Open Today   " + studySpace.issOpenToday());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Opening Now   " + studySpace.isOpeningNow());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Talk Allowed   " + studySpace.isTalkAllowed());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Minimum AQF Level   " + studySpace.getMinimumAccessAQFLevel());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Opening Now   " + studySpace.isOpeningNow());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Opening Time   " + studySpace.getOpenTime());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Closing Time   " + studySpace.getCloseTime());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "\n\n");
 //                            }
+
+
+
+                            // How to get top rated study spaces
+//                           ArrayList<StudySpace> s = new StudySpaceServiceImpl().getTopRatedStudySpaces(new LatLng(1, 1), 50);
+//                           for (StudySpace studySpace: s){
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Name   " + studySpace.getName());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space ID   " + studySpace.getId());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Building ID   " + studySpace.getBuildingId());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Distance From Current Location   " + studySpace.getDistanceFromCurrentPosition() + " meters");
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Library ID   " + studySpace.getLibraryId());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Open Today   " + studySpace.issOpenToday());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Opening Now   " + studySpace.isOpeningNow());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Talk Allowed   " + studySpace.isTalkAllowed());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Minimum AQF Level   " + studySpace.getMinimumAccessAQFLevel());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Opening Now   " + studySpace.isOpeningNow());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Opening Time   " + studySpace.getOpenTime());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Closing Time   " + studySpace.getCloseTime());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Rating   " + studySpace.getAverage_rating());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "\n\n");
+//                           }
+
+                            // How to get a entity average review score
+//                            double average_rating = new ReviewServiceImpl().getAverageRating(1, ReviewType.LIBRARY);
+//                            Log.d("AAAAAAAAAAAAAAAAAAAAA", String.valueOf(average_rating));
+
 //
 //
                             // How to access review with a given entity and entity Type, to get id, you can obtain from the previous location service

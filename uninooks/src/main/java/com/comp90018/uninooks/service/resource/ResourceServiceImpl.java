@@ -87,8 +87,6 @@ public class ResourceServiceImpl implements ResourceService {
                 resource.setFloorLevel(resultSet.getInt("resource_floor_level"));
 
                 resourceList.add(resource);
-
-                System.out.println("dddddddddddddddddddddddddddd");
             }
 
             return resourceList;

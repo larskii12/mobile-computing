@@ -3,13 +3,13 @@ package com.comp90018.uninooks.service.busy_rating;
 import com.comp90018.uninooks.config.DatabaseHelper;
 import com.comp90018.uninooks.models.busy_rating.BusyRating;
 import com.comp90018.uninooks.models.review.ReviewType;
+import com.comp90018.uninooks.service.time.TimeServiceImpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Time;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
@@ -29,7 +29,7 @@ public class BusyRatingServiceImpl implements BusyRatingService {
     public Boolean addBusyRating(int entityId, ReviewType type, double busyRatingScore) throws Exception {
 
         // Get the current hour
-        int hour = LocalTime.now().getHour();
+        int hour = new TimeServiceImpl().getAEDTTimeHour();
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hour);
@@ -41,8 +41,7 @@ public class BusyRatingServiceImpl implements BusyRatingService {
         Time timeWithoutHour = new Time(calendar.getTimeInMillis());
 
         // Get date
-        ZonedDateTime zonedIST = ZonedDateTime.now(ZoneId.of("Australia/Sydney"));
-        Integer currentDayOfWeek = zonedIST.getDayOfWeek().getValue();
+        int currentDayOfWeek = new TimeServiceImpl().getWeekDate();
 
         try {
             String query = "";
