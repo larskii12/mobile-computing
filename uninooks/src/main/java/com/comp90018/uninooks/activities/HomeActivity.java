@@ -103,7 +103,7 @@ public class HomeActivity extends AppCompatActivity {
                 public void run() {
                     try {
                         locationAPI = new LocationServiceImpl();
-                        ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(-1, -1), 10);
+                        ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
                         List<Location> studySpacesNearby = locationAPI.findAllLocations("STUDY", "", true);
                         List<Favorite> favouriteSpaces = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACE"));
                         List<StudySpace> favorites = new ArrayList<StudySpace>();

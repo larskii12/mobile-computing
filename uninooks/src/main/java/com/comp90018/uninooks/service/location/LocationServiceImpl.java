@@ -182,7 +182,7 @@ public class LocationServiceImpl implements LocationService {
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             preparedStatement.setInt(1, locationId);
-            preparedStatement.setInt(2, currentDayOfWeek);
+//            preparedStatement.setInt(2, currentDayOfWeek);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
