@@ -2,6 +2,7 @@ package com.comp90018.uninooks.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -96,11 +97,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-//                String searchQuery = searchBar.getQuery().toString();
-//                Intent intent = new Intent(MapsActivity.this, SearchResults.class);
-//                intent.putExtra("searchQuery", searchQuery);
-//                startActivity(intent);
-                return false;
+                String searchQuery = searchBar.getQuery().toString();
+                Intent intent = new Intent(MapsActivity.this, SearchResults.class);
+                intent.putExtra("searchQuery", searchQuery);
+                startActivity(intent);
+                return true;
             }
 
             @Override
@@ -113,8 +114,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 // launch the filter page
-//                Intent intent = new Intent(MapsActivity.this, FilterAdjustmentActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(MapsActivity.this, FilterAdjustmentActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -151,7 +152,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         myLocation.getLongitude()), standardCameraZoom)); // Adjust zoom level as needed
                     }
 
-                    showTextMessage("Latest Location " + GPSServiceImpl.getLatestLocation().latitude + " " + GPSServiceImpl.getLatestLocation().longitude);
+                    showTextMessage("Location updated");
                 }
             }
         });
@@ -249,6 +250,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onGPSUpdate(Location location) {
-        showTextMessage("GPS Updated " + GPSServiceImpl.getLatestLocation().latitude + " " + GPSServiceImpl.getLatestLocation().longitude);
+
     }
 }

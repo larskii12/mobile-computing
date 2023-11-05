@@ -41,7 +41,7 @@ public class ResourceServiceImpl implements ResourceService {
                 resource.setName(resultSet.getString("resource_name"));
                 resource.setBuildingId(resultSet.getInt("resource_building_id"));
 
-                resource.setType(ResourceType.valueOf(resultSet.getString("resource_type")));
+                resource.setType(ResourceType.toType(resultSet.getString("resource_type")));
                 resource.setLatitude(resultSet.getDouble("resource_latitude"));
                 resource.setLongitude(resultSet.getDouble("resource_longitude"));
 
@@ -87,8 +87,6 @@ public class ResourceServiceImpl implements ResourceService {
                 resource.setFloorLevel(resultSet.getInt("resource_floor_level"));
 
                 resourceList.add(resource);
-
-                System.out.println("dddddddddddddddddddddddddddd");
             }
 
             return resourceList;

@@ -61,6 +61,22 @@
         <activity android:name=".activities.FocusModeSplashActivity" />
         <activity android:name=".activities.FocusModeMainActivity" />
         <activity android:name=".activities.FocusModeTimerActivity" />
+
+      
+        <activity
+            android:name=".activities.SearchResults"
+            android:exported="false"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name=".activities.FilterAdjustmentActivity"
+            android:exported="false"
+            android:parentActivityName=".activities.MapsActivity"/>
+      
+        <activity android:name=".activities.HomeActivity" />
+        <activity android:name=".activities.LocationActivity" />
+
+
+
     </application>
 
 </manifest>
