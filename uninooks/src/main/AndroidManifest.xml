@@ -9,6 +9,9 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.VIBRATE"/>
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -62,8 +65,8 @@
         <activity android:name=".activities.FocusModeSplashActivity" />
         <activity android:name=".activities.FocusModeMainActivity" />
         <activity android:name=".activities.FocusModeTimerActivity" />
+        <activity android:name=".activities.FocusModeSettingsActivity" />
 
-      
         <activity
             android:name=".activities.SearchResults"
             android:exported="false"
@@ -78,7 +81,11 @@
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.LocationActivity" />
 
-
+        <service
+            android:name=".service.background_app.BackgroundAppService"
+            android:enabled="true"
+            android:exported="false">
+        </service>
 
     </application>
 </manifest>
