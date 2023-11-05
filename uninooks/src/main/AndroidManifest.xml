@@ -58,6 +58,7 @@
         <activity android:name=".activities.ResetPasswordActivity" />
         <activity android:name=".activities.ReportIssue" />
         <activity android:name=".activities.PersonalInformationActivity" />
+      
         <activity
             android:name=".activities.SearchResults"
             android:exported="false" />
@@ -65,6 +66,10 @@
             android:name=".activities.FilterAdjustmentActivity"
             android:exported="false"
             android:parentActivityName=".activities.MapsActivity"/>
+      
+        <activity android:name=".activities.HomeActivity" />
+        <activity android:name=".activities.LocationActivity" />
+
 
     </application>
 
