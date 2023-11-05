@@ -23,18 +23,19 @@
 
         <ImageButton
             android:id="@+id/imageButton"
-            android:layout_width="72dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="8dp"
             android:background="@color/white"
             android:contentDescription="back button"
             android:clickable="true"
-            android:visibility="visible"
+            android:gravity="center"
             app:srcCompat="@drawable/arrow_back_fill" />
 
         <TextView
             android:id="@+id/textView5"
-            android:layout_width="260dp"
+            android:layout_width="210dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
@@ -45,13 +46,14 @@
             tools:ignore="RtlCompat" />
 
         <ImageButton
-            android:id="@+id/imageButton1"
-            android:layout_width="62dp"
+            android:id="@+id/favoriteButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:gravity="center"
             android:background="@color/white"
+            android:layout_marginRight="12dp"
+            android:layout_marginLeft="4dp"
             android:contentDescription="favourite icon"
-            android:visibility="visible"
             app:srcCompat="@drawable/baseline_favorite_border_32" />
     </LinearLayout>
 
@@ -131,7 +133,7 @@
 
                     <ImageView
                         android:id="@+id/walkIcon"
-                        android:layout_width="20dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:contentDescription="walking icon"
                         android:background="@drawable/directions_walk_32"
@@ -189,17 +191,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/open_hours">
 
-                <Button
+                <TextView
                     android:id="@+id/listTitle"
                     android:layout_width="410dp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@android:color/white"
-                    android:clickable="true"
-                    android:drawableRight="@drawable/baseline_arrow_drop_down_24"
+                    android:layout_margin="5dp"
+                    android:paddingLeft="18dp"
                     android:gravity="left|center_vertical"
-                    android:text="Amenities"
+                    android:text="Facilites:"
                     android:textColor="@android:color/black"
-                    android:textSize="20sp" />
+                    android:textSize="24sp" />
 
             </LinearLayout>
 
@@ -226,18 +228,22 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:paddingLeft="6dp"
                         android:text="Reviews:"
                         android:textColor="@color/deepBlue"
                         android:textSize="24sp" />
 
                     <Button
                         android:id="@+id/add_review"
-                        android:layout_width="wrap_content"
+                        android:layout_width="180dp"
                         android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:paddingLeft="4dp"
                         android:backgroundTint="@color/deepBlue"
                         android:drawableRight="@drawable/baseline_add_comment_24"
                         android:outlineAmbientShadowColor="@color/deepBlue"
                         android:text="Add Review"
+                        android:clickable="true"
                         android:textColor="@color/white"
                         android:textSize="18sp" />
                 </LinearLayout>
