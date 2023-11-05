@@ -1,10 +1,13 @@
 package com.comp90018.uninooks.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -12,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -37,6 +41,7 @@ import com.comp90018.uninooks.service.sortingComparators.DistanceComparator;
 import com.comp90018.uninooks.service.sortingComparators.NameComparator;
 import com.comp90018.uninooks.service.sortingComparators.RatingComparator;
 
+import java.sql.Time;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
@@ -45,10 +50,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
-import java.sql.Time;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 public class SearchResults extends AppCompatActivity {
@@ -68,6 +70,19 @@ public class SearchResults extends AppCompatActivity {
     Comparator<Location> nameComparator;
     Comparator<Location> distanceComparator;
     Comparator<Location> ratingComparator;
+
+    @SuppressLint("HandlerLeak")
+    private final Handler handler = new Handler() {
+        @SuppressLint("SetTextI18n")
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    String info = (String) msg.obj;
+                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 
 
     @Override
@@ -131,7 +146,8 @@ public class SearchResults extends AppCompatActivity {
                     });
 
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    showTextMessage("Something went wrong, please try again.");
+//                    throw new RuntimeException(e);
                 }
             }
         }.start();
@@ -295,6 +311,7 @@ public class SearchResults extends AppCompatActivity {
 
     /**
      * Each location put in hash map from locationID --> [capacity, closingIcon]
+     *
      * @param location
      * @return
      */
@@ -425,6 +442,7 @@ public class SearchResults extends AppCompatActivity {
 
     /**
      * Gets the corresponding rating for the library, and set that as the text in the location card
+     *
      * @param library
      * @param ratings
      */
@@ -435,6 +453,7 @@ public class SearchResults extends AppCompatActivity {
 
     /**
      * Gets the corresponding rating for the study space, and set that as the text in the location card
+     *
      * @param studySpace
      * @param ratings
      */
@@ -446,6 +465,7 @@ public class SearchResults extends AppCompatActivity {
 
     /**
      * Gets the corresponding rating for the restaurant, and set that as the text in the location card
+     *
      * @param restaurant
      * @param ratings
      */
@@ -456,6 +476,7 @@ public class SearchResults extends AppCompatActivity {
 
     /**
      * Links the building to the location for all results received
+     *
      * @param results
      */
     private void getAllBuildingsOfLocs(List<Location> results) {
@@ -479,6 +500,7 @@ public class SearchResults extends AppCompatActivity {
      * Using getReviewByEntity (giving entityID and reviewType), it will return a list of reviews
      * With this list of reviews, for each review, get the score of the review (.getScore)
      * Then, calculate the average reviews for this, and set that as the text
+     *
      * @param results
      * @return
      */
@@ -516,6 +538,7 @@ public class SearchResults extends AppCompatActivity {
 
     /**
      * Gets all resources of the building the location is in
+     *
      * @param results
      */
     private void getAllResources(List<Location> results) {
@@ -536,6 +559,7 @@ public class SearchResults extends AppCompatActivity {
 
     /**
      * Gets all the busy ratings of the locations
+     *
      * @param results
      */
     private void getAllBusyRatings(List<Location> results) {
@@ -636,7 +660,7 @@ public class SearchResults extends AppCompatActivity {
         for (Resource resource : resources) {
             ResourceType resourceType = resource.getType();
 
-            switch(resourceType) {
+            switch (resourceType) {
                 case ATM:
                     atmIcon.setVisibility(View.VISIBLE);
                     break;
@@ -746,6 +770,7 @@ public class SearchResults extends AppCompatActivity {
 
     /**
      * Progress bar is for how busy a location is currently (from busy rating)
+     *
      * @param locationID
      * @return
      */
@@ -875,5 +900,17 @@ public class SearchResults extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    /**
+     * Show message text
+     *
+     * @param text as the showing message
+     */
+    private void showTextMessage(String text) {
+        Message msg = new Message();
+        msg.what = 0;
+        msg.obj = text;
+        handler.sendMessage(msg);
     }
 }
