@@ -31,16 +31,20 @@ import com.comp90018.uninooks.databinding.ActivityLocationBinding;
 import com.comp90018.uninooks.databinding.ActivityMapsBinding;
 import com.comp90018.uninooks.models.busy_rating.BusyRating;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.comp90018.uninooks.models.location.building.Building;
 import com.comp90018.uninooks.models.location.resource.Resource;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.comp90018.uninooks.models.review.Review;
 import com.comp90018.uninooks.models.review.ReviewType;
 import com.comp90018.uninooks.models.user.User;
+import com.comp90018.uninooks.service.building.BuildingServiceImpl;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
@@ -106,6 +110,10 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     System.out.println(spaceID);
                     space = new LocationServiceImpl().findStudySpaceById(Integer.parseInt(spaceID));
                     List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(Integer.valueOf(spaceID), ReviewType.valueOf(space.getType()));
+                    System.out.println("Building id:" + space.getBuildingId());
+                    Building building = new BuildingServiceImpl().getBuilding(space.getBuildingId(), ReviewType.valueOf(space.getType()));
+
+
                     LinearLayout reviewsLayout = findViewById(R.id.reviews);
                     TextView locationName = findViewById(R.id.textView5);
                     ProgressBar progress = findViewById(R.id.progressBar);
@@ -156,12 +164,15 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
                         @Override
                         public void run() {
-                            backButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
                             locationName.setText(space.getName());
                             progress.setProgress(busyScore);
                             progressValue.setText(busyScore + "%");
-                            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                            openHours.setText("Open hours: "+ sdf.format(space.getOpenTime()) + " - " + sdf.format(space.getCloseTime()));
+                            if (space.getCloseTime() == null) {
+                                openHours.setText("Closed");
+                            } else {
+                                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                                openHours.setText("Open hours: " + sdf.format(space.getOpenTime()) + " - " + sdf.format(space.getCloseTime()));
+                            }
                             if (busyScore >= 0 && busyScore <= 40) {
                                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green)));
                             } else if (busyScore > 40 && busyScore <= 80) {
@@ -176,20 +187,65 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 CardView newCard = createNewSmallCard(card,review);
                                 reviewsLayout.addView(newCard);
                             }
-                            HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
-                            List<String> expandable = new ArrayList<String>();
-                            expandable.add("Amenities");
-                            List<String> amenities = new ArrayList<String>();
+//                            HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
+//                            List<String> expandable = new ArrayList<String>();
+//                            expandable.add("Amenities");
+//                            List<String> amenities = new ArrayList<String>();
                             for (Resource resource: resources) {
-                                amenities.add(resource.getName());
+//                                amenities.add(resource.getName());
                                 System.out.println(resource.getName());
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
-//                                CardView newCard = createNewSmallCard(card,review);
                                 TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                ImageView resourceIcon = card.findViewById(R.id.icon);
                                 resourceDef.setText(resource.getName());
-
+                                String resourceType = resource.getName();
+                                if (resourceType.contains("Microwave")) {
+                                    resourceIcon.setBackgroundResource(R.drawable.microwave_outline);
+                                } else if (resourceType.contains("Car")) {
+                                    resourceIcon.setBackgroundResource(R.drawable.parking_outline);
+                                } else if (resourceType.contains("Kitchen")) {
+                                    resourceIcon.setBackgroundResource(R.drawable.microwave_outline);
+                                } else if (resourceType.contains("Vending")) {
+                                    resourceIcon.setBackgroundResource(R.drawable.vending_machine_outline);
+                                }
                                 amenitiesList.addView(card);
 
+                            }
+                            if (space.isTalkAllowed()) {
+                                CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
+                                TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                ImageView resourceIcon = card.findViewById(R.id.icon);
+                                resourceDef.setText("Discussion allowed");
+                                resourceIcon.setBackgroundResource(R.drawable.volume_outline);
+                                amenitiesList.addView(card);
+                            }
+                            if (space.getMinimumAccessAQFLevel() > 7) {
+                                CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
+                                TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                ImageView resourceIcon = card.findViewById(R.id.icon);
+                                resourceDef.setText("Graduate student space");
+                                resourceIcon.setBackgroundResource(R.drawable.gradspace_outline);
+                                amenitiesList.addView(card);
+                            }
+                            if (space.getCloseTime()!= null) {
+                                boolean openLate = getTimeToClose(space.getCloseTime());
+                                if (openLate ) {
+                                    CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
+                                    TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                    ImageView resourceIcon = card.findViewById(R.id.icon);
+                                    resourceDef.setText("After hours access");
+                                    resourceIcon.setBackgroundResource(R.drawable.lateaccess_outline);
+                                    amenitiesList.addView(card);
+                                }
+                            }
+                            //check if the building is accessible and add that too
+                            if (building.isHasAccessibility()) {
+                                CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
+                                TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                ImageView resourceIcon = card.findViewById(R.id.icon);
+                                resourceDef.setText("Accessible Building");
+                                resourceIcon.setBackgroundResource(R.drawable.accessible_outline);
+                                amenitiesList.addView(card);
                             }
                         }
                     });
@@ -205,6 +261,17 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         }.start();
     }
 
+    private boolean getTimeToClose(Time closeTime){
+        Time currentTime = Time.valueOf("18:00:00");
+        int closeHour = closeTime.getHours();
+        if (closeHour == 0) {
+            closeHour = 24;
+        }
+        if (closeHour - currentTime.getHours() > 0) {
+            return true;
+        }
+        return false;
+    }
     private CardView createNewSmallCard(CardView card, Review review){
         TextView userComment = (TextView) card.findViewById(R.id.textView);
         userComment.setText(review.getComment());

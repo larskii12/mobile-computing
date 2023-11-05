@@ -17,7 +17,8 @@
     <ImageView
         android:id="@+id/icon"
         android:layout_width="32dp"
-        android:layout_height="match_parent"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
         android:contentDescription="accessible icon"
         android:background="@drawable/accessible_outline"
         app:srcCompat="@drawable/accessible_outline" />
