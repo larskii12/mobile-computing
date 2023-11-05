@@ -126,7 +126,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     TextView locationName = findViewById(R.id.textView5);
                     ProgressBar progress = findViewById(R.id.progressBar);
                     Double business = new BusyRatingServiceImpl().getAverageScoreFromEntity(Integer.valueOf(spaceID), ReviewType.valueOf(space.getType()));
-                    Integer busyScore = (int) (business *20);
+                    Integer busyScore = space.isOpeningNow() ? (int) (business *20) : 0;
                     TextView progressValue = findViewById(R.id.textView7);
                     TextView distance = findViewById(R.id.distance);
                     TextView openHours = findViewById(R.id.openHours);
