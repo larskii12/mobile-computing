@@ -69,7 +69,9 @@
             android:parentActivityName=".activities.MapsActivity"/>
       
         <activity android:name=".activities.HomeActivity" />
-        <activity android:name=".activities.LocationActivity" />
+        <activity android:name=".activities.LocationActivity"
+            android:label="LocationActivity"
+            android:exported="true"/>
 
 
     </application>
