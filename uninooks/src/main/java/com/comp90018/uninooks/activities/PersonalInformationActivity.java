@@ -63,6 +63,16 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
 
     private Button buttonNewEmailVerifyOTP;
 
+    private TextView passwordTextView;
+
+    private EditText editCurrentPassowrd;
+
+    private EditText editNewPassword;
+
+    private EditText editConfirmPassword;
+
+    private Button buttonConfirmNewPassword;
+
     private Button buttonNewFaculty;
 
     private Button buttonNewDegree;
@@ -143,6 +153,11 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         buttonNewEmailGetOTP = findViewById(R.id.Pi_ButtonConfirmNewEmail);
         editTextEmailOTP = findViewById(R.id.Pi_EditTextEmailOTP);
         buttonNewEmailVerifyOTP = findViewById(R.id.Pi_ButtonOTPVerify);
+        passwordTextView = findViewById(R.id.Account_Pi_Edit_Password);
+        editCurrentPassowrd = findViewById(R.id.Pi_EditTextCurrentPassword);
+        editNewPassword = findViewById(R.id.Pi_EditTextNewPassword);
+        editConfirmPassword = findViewById(R.id.Pi_EditTextConfirmNewPassword);
+        buttonConfirmNewPassword = findViewById(R.id.Pi_ButtonConfirmNewPassword);
         buttonNewFaculty = findViewById(R.id.Pi_ButtonConfirmNewFaculty);
         buttonNewDegree = findViewById(R.id.Pi_ButtonConfirmNewDegree);
         otp = "";
@@ -268,6 +283,19 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         editPasswordIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (editCurrentPassowrd.getVisibility() == View.GONE) {
+                    editCurrentPassowrd.setVisibility(View.VISIBLE);
+                    editNewPassword.setVisibility(View.VISIBLE);
+                    editConfirmPassword.setVisibility(View.VISIBLE);
+                    buttonConfirmNewPassword.setVisibility(View.VISIBLE);
+                    passwordTextView.setVisibility(View.GONE);
+                } else {
+                    editCurrentPassowrd.setVisibility(View.GONE);
+                    editNewPassword.setVisibility(View.GONE);
+                    editConfirmPassword.setVisibility(View.GONE);
+                    buttonConfirmNewPassword.setVisibility(View.GONE);
+                    passwordTextView.setVisibility(View.VISIBLE);
+                }
 
             }
         });
