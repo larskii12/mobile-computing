@@ -57,6 +57,12 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="Button.Outlined" parent="BaseButtonStyle">
+        <item name="android:background">@drawable/button_outlined</item>
+        <item name="android:textColor">@color/primary</item>
+    </style>
+
+
     <style name="Button.Primary.Small" parent="Button.Primary">
         <item name="android:textSize">12sp</item>
         <item name="android:paddingHorizontal">4dp</item>
