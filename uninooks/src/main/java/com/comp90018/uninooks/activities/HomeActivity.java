@@ -217,7 +217,7 @@ public class HomeActivity extends AppCompatActivity {
             banner.setBackgroundResource(R.drawable.old_engineering);
             ProgressBar progress = (ProgressBar) card.findViewById(R.id.progressBar);
             Double score = busyRatingsByLocation.get(space.getName());
-            Integer busyScore = (int) (score *20);
+            Integer busyScore = score != null ? (int) (score * 20) : 0;
             progress.setProgress(busyScore);
             if (busyScore >= 0 && busyScore <= 40) {
                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green)));

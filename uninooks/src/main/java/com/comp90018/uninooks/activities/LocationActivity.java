@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.comp90018.uninooks.models.favorite.Favorite;
 import com.comp90018.uninooks.models.location.building.Building;
 import com.comp90018.uninooks.models.location.resource.Resource;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
@@ -46,6 +47,7 @@ import com.comp90018.uninooks.models.review.ReviewType;
 import com.comp90018.uninooks.models.user.User;
 import com.comp90018.uninooks.service.building.BuildingServiceImpl;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
+import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
@@ -72,6 +74,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     private FusedLocationProviderClient fusedLocationClient;
     SupportMapFragment bananaFragment;
     StudySpace space;
+    boolean isFavorite;
 
     private final int standardCameraZoom = 18;
     @Override
@@ -112,26 +115,33 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(Integer.valueOf(spaceID), ReviewType.valueOf(space.getType()));
                     System.out.println("Building id:" + space.getBuildingId());
                     Building building = new BuildingServiceImpl().getBuilding(space.getBuildingId(), ReviewType.valueOf(space.getType()));
-
-
+                    List<Favorite> favorites = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID),ReviewType.valueOf(space.getType()));
+                    isFavorite = false;
+                    for (Favorite favorite: favorites) {
+                        if (favorite.getStudySpaceId() == space.getId()) {
+                            isFavorite = true;
+                        }
+                    }
                     LinearLayout reviewsLayout = findViewById(R.id.reviews);
                     TextView locationName = findViewById(R.id.textView5);
                     ProgressBar progress = findViewById(R.id.progressBar);
                     Double business = new BusyRatingServiceImpl().getAverageScoreFromEntity(Integer.valueOf(spaceID), ReviewType.valueOf(space.getType()));
-                    Integer busyScore = (int) (business *20);
+                    Integer busyScore = space.isOpeningNow() ? (int) (business *20) : 0;
                     TextView progressValue = findViewById(R.id.textView7);
                     TextView distance = findViewById(R.id.distance);
                     TextView openHours = findViewById(R.id.openHours);
 
                     ImageButton backButton = findViewById(R.id.imageButton);
+                    ImageButton favouriteButton = findViewById(R.id.favoriteButton);
 
+                    Button addReview = findViewById(R.id.add_review);
                     User user = null;
-                        System.out.println(userID);
-                        user = new UserServiceImpl().getUser(Integer.parseInt(userID));
+                    System.out.println(userID);
+                    user = new UserServiceImpl().getUser(Integer.parseInt(userID));
 
                     userName = user.getUserName();
 
-                    Button listTitle = findViewById(R.id.listTitle);
+                    TextView listTitle = findViewById(R.id.listTitle);
                     LinearLayout amenitiesList = findViewById(R.id.amenities);
                     System.out.println("Building id: " + space.getBuildingId());
 
@@ -149,12 +159,27 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             }.start();
                         }
                     });
-                    listTitle.setOnClickListener(new View.OnClickListener() {
+                    favouriteButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             new Thread() {
                                 public void run() {
-//                                    amenitiesList.setVisibility(View.VISIBLE);
+                                    try {
+                                        Favorite newFavorite = new FavoriteServiceImpl().addFavorite(Integer.parseInt(userID), Integer.valueOf(spaceID),ReviewType.valueOf(space.getType()));
+                                        isFavorite = true;
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                            }.start();
+                        }
+                    });
+                   addReview.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new Thread() {
+                                public void run() {
+//                                    add code to add a new review and open pop up
                                 }
                             }.start();
                         }
@@ -164,9 +189,18 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
                         @Override
                         public void run() {
+                            backButton.setBackgroundResource(R.drawable.arrow_back_fill);
                             locationName.setText(space.getName());
+                            listTitle.setText("Facilities");
                             progress.setProgress(busyScore);
                             progressValue.setText(busyScore + "%");
+                            if (isFavorite) {
+                                favouriteButton.setBackgroundResource(R.drawable.baseline_favorite_32);
+                                favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                            } else {
+                                favouriteButton.setBackgroundResource(R.drawable.baseline_favorite_border_32);
+                                favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
+                            }
                             if (space.getCloseTime() == null) {
                                 openHours.setText("Closed");
                             } else {

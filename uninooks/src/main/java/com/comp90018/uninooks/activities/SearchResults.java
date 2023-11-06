@@ -53,7 +53,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import pl.droidsonroids.gif.GifImageView;
 
 public class SearchResults extends AppCompatActivity {
     int userID;
