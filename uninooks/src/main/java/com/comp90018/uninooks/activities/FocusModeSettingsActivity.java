@@ -159,9 +159,9 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
     private void confirmSettings(String pomodoro, String shortBreak, String longBreak, Boolean onAutoPomodoro) {
         SharedPreferences sharedPreferences = getSharedPreferences("MySettings", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(getString(R.string.pomodoro_setting), Integer.parseInt(pomodoro));
-        editor.putInt(getString(R.string.short_break_setting), Integer.parseInt(shortBreak));
-        editor.putInt(getString(R.string.long_break_setting), Integer.parseInt(longBreak));
+        editor.putInt(getString(R.string.pomodoro_setting), Integer.parseInt(pomodoro)*60);
+        editor.putInt(getString(R.string.short_break_setting), Integer.parseInt(shortBreak)*60);
+        editor.putInt(getString(R.string.long_break_setting), Integer.parseInt(longBreak)*60);
         editor.putBoolean(getString(R.string.auto_pomodoro), onAutoPomodoro);
         editor.apply();
     }
