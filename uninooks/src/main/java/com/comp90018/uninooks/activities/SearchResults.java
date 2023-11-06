@@ -53,10 +53,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import pl.droidsonroids.gif.GifImageView;
-
 public class SearchResults extends AppCompatActivity {
-    int userID;
+    private int userID;
     LinearLayout resultCardArea;
     List<Location> results;
 
@@ -72,6 +70,8 @@ public class SearchResults extends AppCompatActivity {
     Comparator<Location> nameComparator;
     Comparator<Location> distanceComparator;
     Comparator<Location> ratingComparator;
+
+
 
     @SuppressLint("HandlerLeak")
     private final Handler handler = new Handler() {
@@ -93,7 +93,7 @@ public class SearchResults extends AppCompatActivity {
 
         setContentView(R.layout.activity_search_results);
         Intent intent = getIntent();
-//        userID = intent.getIntExtra("userID", 0);
+//        userID = Integer.parseInt(intent.getStringExtra("USERID_EXTRA"));
 
         resultCardArea = findViewById(R.id.resultCardArea);
         returnButton = findViewById(R.id.returnButton);
@@ -110,6 +110,8 @@ public class SearchResults extends AppCompatActivity {
         nameComparator = new NameComparator();
         distanceComparator = new DistanceComparator();
 
+
+
         new Thread() {
             @Override
             public void run() {
@@ -124,6 +126,7 @@ public class SearchResults extends AppCompatActivity {
                         HashMap<String, String> filters = (HashMap<String, String>) getIntent().getSerializableExtra("filters");
                         getAllBuildingsOfLocs(results);
                         getAllRatings(results);
+                        getAllResources(results);
                         ratingComparator = new RatingComparator(ratingsByLocation);
                         filterResults(filters);
                     }
@@ -169,7 +172,6 @@ public class SearchResults extends AppCompatActivity {
 
     private void addResultsToPage(List<Location> results) {
         ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
-        System.out.println("adding results to page, going to make loading gif viisb le");
         loadingGIF.setVisibility(View.VISIBLE);
 
         for (Location location : results) {
@@ -183,12 +185,16 @@ public class SearchResults extends AppCompatActivity {
                 cardView = createRestaurantLocationCard((Restaurant) location);
             }
             resultCardArea.addView(cardView);
-            System.out.println("added card view into result card area");
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("CURRENT LOCATION CLICK NAME: " + location.getName());
-                    // pass userID to locationID
+
+                    Intent intent = new Intent(SearchResults.this, LocationActivity.class);
+//                    String userIDString = String.valueOf(userID);
+                    String locationIDString = String.valueOf(location.getId());
+//                    intent.putExtra("USERID_EXTRA", userIDString);
+                    intent.putExtra("SPACE_ID_EXTRA", locationIDString);
+                    startActivity(intent);
                 }
             });
         }
@@ -380,8 +386,6 @@ public class SearchResults extends AppCompatActivity {
         Time openingTime = location.getOpenTime();
         Time closingTime = location.getCloseTime();
 
-        System.out.println("LOCATION: " + location.getName());
-
         if (closingTime == null) {
             text = "Closed";
         } else {
@@ -389,12 +393,10 @@ public class SearchResults extends AppCompatActivity {
             String openingTimeText = sdf.format(openingTime);
             String closingTimeText = sdf.format(closingTime);
 
-
             double hoursToClose = calcTimeToClose(closingTime);
-            System.out.println("HOURS TO CLOSEEEE: " + hoursToClose);
 
             LocalTime localTimeAEDT = LocalTime.now(ZoneId.of("Australia/Melbourne"));
-            int hour = LocalTime.now().getHour();
+            int hour = localTimeAEDT.now().getHour();
 
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, hour);
@@ -509,7 +511,6 @@ public class SearchResults extends AppCompatActivity {
                 int locationID = location.getId();
                 String type = location.getType();
                 ReviewType typeEnum = ReviewType.valueOf(type);
-                System.out.println("ENTITY ID:" + locationID);
                 List<Review> reviewList = new ReviewServiceImpl().getReviewsByEntity(locationID, typeEnum);
                 String averageRating = getAverageRating(reviewList);
                 ratingsByLocation.put(locationName, averageRating);
@@ -544,7 +545,6 @@ public class SearchResults extends AppCompatActivity {
             String locationName = location.getName();
 
             try {
-                System.out.println("in search results, before getting avail resources");
                 List<Resource> availResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
                 resourcesByLocation.put(locationName, availResources);
             } catch (Exception e) {
@@ -583,8 +583,8 @@ public class SearchResults extends AppCompatActivity {
         List<Favorite> favStudySpaces = new ArrayList<>();
 
 //        try {
-//            favLibraries = new FavoriteServiceImpl().getFavoritesByUser(2, ReviewType.LIBRARY);
-//            favStudySpaces = new FavoriteServiceImpl().getFavoritesByUser(2, ReviewType.STUDY_SPACE);
+//            favLibraries = new FavoriteServiceImpl().getFavoritesByUser(userID, ReviewType.LIBRARY);
+//            favStudySpaces = new FavoriteServiceImpl().getFavoritesByUser(userID, ReviewType.STUDY_SPACE);
 //            userFavs.addAll(favLibraries);
 //            userFavs.addAll(favStudySpaces);
 //
