@@ -370,24 +370,9 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.add_review_dialog);
 
-        RatingBar ratingBar = (RatingBar) findViewById(R.id.select_rating_bar);
         Button submitButton = dialog.findViewById(R.id.add_review_submit_Button);
         Button cancelButton = dialog.findViewById(R.id.add_review_cancel_Button);
         final EditText reviewEditText = dialog.findViewById(R.id.EditReview);
-
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                if(fromUser) {
-                    //Todo: add rating to database
-                    // The rating has been changed by the user
-                    // Process the rating value
-                    // You can now send this rating to your server or use it in your app
-                    Toast.makeText(getApplicationContext(), "Given Rating: " + rating, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
