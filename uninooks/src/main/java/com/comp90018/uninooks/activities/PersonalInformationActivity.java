@@ -173,7 +173,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                             try {
                                 new UserServiceImpl().updateUserName(userId, editUsernameEditText.getText().toString());
                                 reloadActivity();
-                                showTextMessage("Your username has been update successfully.");
+                                showTextMessage("User name updated successfully.");
                             } catch (Exception e) {
                                 showTextMessage(e.getMessage());
                             }
@@ -257,7 +257,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                             }
 
                         } catch (Exception e) {
-                            throw new RuntimeException("Some error happens, please contact the IT administrator");
+                            throw new RuntimeException("An error happened, please contact the IT administrator");
                         }
                     }
                 }.start();
@@ -278,8 +278,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                                 throw new RuntimeException(e);
                             }
 
-                            showTextMessage("Your email has been changed successfully.");
-
+                            showTextMessage("Email updated successfully.");
                             reloadActivity();
                         } else {
                             showTextMessage("OTP is not correct.");
@@ -342,7 +341,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                                     showTextMessage("Your old password is incorrect.");
                                 } else {
                                     new UserServiceImpl().updateUserPassword(userId, oldPassWord, newPassword);
-                                    showTextMessage("Your password has been updated successfully.");
+                                    showTextMessage("Password updated successfully.");
                                     reloadActivity();
                                 }
                             } catch (Exception e) {
@@ -426,6 +425,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
 
                         try {
                             new UserServiceImpl().updateUserAQFLevel(userId, aqfLevel);
+                            showTextMessage("Degree updated successfully");
                             reloadActivity();
                         } catch (Exception e) {
                             showTextMessage("An error happens, pleas contact the IT administrator.");
@@ -473,6 +473,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                             }
 
                             new UserServiceImpl().updateUserFaculty(userId, faculty);
+                            showTextMessage("Faculty updated successfully");
                             reloadActivity();
                         } catch (Exception e) {
                             showTextMessage("An error happens, pleas contact the IT administrator.");
