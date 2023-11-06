@@ -8,25 +8,43 @@
     android:background="@color/white"
     tools:context=".activities.FocusModeTimerActivity">
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView3"
-                style="@style/FocusTextHeading"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp"
-                android:text="@string/focus_mode" />
+                android:layout_height="88dp"
+                android:background="@color/white"
+                android:minHeight="90dp"
+                android:elevation="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:fontFamily="@font/source_sans_pro"
+                    android:layout_gravity="center"
+                    android:text="Focus Mode"
+                    android:textColor="@color/deepBlue"
+                    android:textSize="28sp" />
+
+            </androidx.appcompat.widget.Toolbar>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <Button
@@ -34,6 +52,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
+                    android:backgroundTint="@color/white"
+                    app:strokeColor="@color/deepBlue"
+                    app:strokeWidth="2dp"
+                    android:textColor="@color/deepBlue"
                     android:text="@string/timer_pomodoro" />
 
                 <Button
@@ -41,13 +63,69 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
+                    android:backgroundTint="@color/white"
+                    app:strokeColor="@color/deepBlue"
+                    app:strokeWidth="2dp"
+                    android:textColor="@color/deepBlue"
                     android:text="@string/timer_short_pause" />
 
                 <Button
                     android:id="@+id/btn_long_pause"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    app:strokeColor="@color/deepBlue"
+                    app:strokeWidth="2dp"
+                    android:textColor="@color/deepBlue"
                     android:text="@string/timer_long_pause" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/sequence1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/pomodoro_indicator"
+                    android:layout_marginStart="18dp"
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/sequence2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/pomodoro_indicator"
+                    android:layout_marginStart="4dp"
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/sequence3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/pomodoro_indicator"
+                    android:layout_marginStart="4dp"
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/sequence4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/pomodoro_indicator"
+                    android:layout_marginStart="4dp"
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/sequence5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/pomodoro_indicator"
+                    android:layout_marginStart="4dp"
+                    android:visibility="gone"/>
+
             </LinearLayout>
 
             <LinearLayout
