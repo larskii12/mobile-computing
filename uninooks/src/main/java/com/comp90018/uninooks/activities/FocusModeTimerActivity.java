@@ -2,6 +2,7 @@ package com.comp90018.uninooks.activities;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -67,6 +68,16 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private boolean isPomodoro = false;
     private boolean isShortPause = false;
     private boolean isLongPause = false;
+    private boolean settingsClicked = false;
+    private boolean onAutoSequence = false;
+
+    private int pomodoroTime = 1500;
+    private int shortPauseTime = 300;
+    private int longPauseTime = 900;
+    private int overallDefaultTime = 1500;
+
+    private int pomodoroSequenceNum = 0;
+    private int pomodoroSequenceMax = 4;
 
     @SuppressLint("HandlerLeak")
     private final Handler handler = new Handler() {
@@ -93,6 +104,8 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_focus_mode);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("MySettings", Context.MODE_PRIVATE);
+
         v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         // Initialize UI components and set up timer controls
@@ -106,12 +119,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         pomodoroButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetTimer();
-                seconds = 1500;
-                isPomodoro = true;
-                isShortPause = false;
-                isLongPause = false;
-                updateTimerText();
+                pomodoroButtonActions();
             }
         });
 
@@ -119,25 +127,17 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         shortPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetTimer();
-                seconds = 300;
-                isPomodoro = false;
-                isShortPause = true;
-                isLongPause = false;
-                updateTimerText();
+                shortPauseButtonActions();
+
             }
         });
+
 
         longPauseButton = findViewById(R.id.btn_long_pause);
         longPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetTimer();
-                seconds = 900;
-                isPomodoro = false;
-                isShortPause = false;
-                isLongPause = true;
-                updateTimerText();
+                longPauseButtonActions();
             }
         });
 
@@ -148,8 +148,14 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                mTimerView.start(timer_length, isPaused);
-                mTimerView.start(seconds, isPaused);
-                startTimer();
+                System.out.println("autosequence on: " + onAutoSequence);
+                if (onAutoSequence) {
+                    System.out.println("starting auto sequence");
+                    startAutoSequence();
+                } else {
+                    mTimerView.start(seconds, isPaused);
+                    startTimer();
+                }
             }
         });
 
@@ -170,13 +176,13 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 resetTimer();
                 if (isPomodoro) {
-                    seconds = 1500;
+                    seconds = pomodoroTime;
                 } else if (isShortPause) {
-                    seconds = 300;
+                    seconds = shortPauseTime;
                 } else if (isLongPause) {
-                    seconds = 900;
+                    seconds = longPauseTime;
                 } else {
-                    seconds = 1500;
+                    seconds = overallDefaultTime;
                 }
                 updateTimerText();
             }
@@ -187,6 +193,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                settingsClicked = true;
                 Intent Intent = new Intent(FocusModeTimerActivity.this, FocusModeSettingsActivity.class);
 
                 startActivity(Intent);
@@ -225,10 +232,24 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        isInBackground = false;
+        if (settingsClicked) {
+            retrieveSettings();
+            settingsClicked = false;
 
-        Intent serviceIntent = new Intent(this, BackgroundAppService.class);
-        stopService(serviceIntent);
+            if (onAutoSequence) {
+                resetTimer();
+                seconds = pomodoroTime;
+                isPomodoro = true;
+                isShortPause = false;
+                isLongPause = false;
+                updateTimerText();
+            }
+        } else {
+            isInBackground = false;
+
+            Intent serviceIntent = new Intent(this, BackgroundAppService.class);
+            stopService(serviceIntent);
+        }
     }
 
     public void onStop(){
@@ -267,14 +288,50 @@ public class FocusModeTimerActivity extends AppCompatActivity {
 //        }
 //    }
 
+    /**
+     * Actions to be executed when pomodoro button is clicked
+     */
+    private void pomodoroButtonActions() {
+        resetTimer();
+        seconds = pomodoroTime;
+        isPomodoro = true;
+        isShortPause = false;
+        isLongPause = false;
+        updateTimerText();
+    }
+
+    /**
+     * Actions to be executed when short pause button is clicked
+     */
+    private void shortPauseButtonActions() {
+        resetTimer();
+        seconds = shortPauseTime;
+        isPomodoro = false;
+        isShortPause = true;
+        isLongPause = false;
+        updateTimerText();
+    }
+
+    /**
+     * Actions to be executed when long pause button is clicked
+     */
+    private void longPauseButtonActions() {
+        resetTimer();
+        seconds = longPauseTime;
+        isPomodoro = false;
+        isShortPause = false;
+        isLongPause = true;
+        updateTimerText();
+    }
+
     private void startTimer() {
         if (!isRunning) {
+            System.out.println("starting timer..");
             handler.sendEmptyMessage(0);
             isRunning = true;
             isPaused = false;
             timerStartButton.setVisibility(View.GONE);
             timerPauseButton.setVisibility(View.VISIBLE);
-
         }
     }
 
@@ -303,10 +360,12 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         @Override
         public void run() {
             seconds--;
+            System.out.println(seconds);
             if (seconds >= 0) {
                 updateTimerText();
                 handler.postDelayed(this, 1000);
             } else {
+                System.out.println("timer is done");
                 v.vibrate(VibrationEffect.createOneShot(2000, VibrationEffect.DEFAULT_AMPLITUDE));
 
                 resetTimer();
@@ -314,14 +373,15 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 timerStartButton.setVisibility(View.VISIBLE);
                 timerPauseButton.setVisibility(View.GONE);
 
+                // if auto..., else do the below
                 if (isPomodoro) {
-                    seconds = 1500;
+                    seconds = pomodoroTime;
                 } else if (isShortPause) {
-                    seconds = 300;
+                    seconds = shortPauseTime;
                 } else if (isLongPause) {
-                    seconds = 900;
+                    seconds = longPauseTime;
                 } else {
-                    seconds = 1500;
+                    seconds = overallDefaultTime;
                 }
                 updateTimerText();
             }
@@ -336,6 +396,82 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         String timeString = String.format("%02d:%02d", minutes, secs);
         timerText.setText(timeString);
     }
+
+    /**
+     * Retrieve settings from the setting page
+     */
+    private void retrieveSettings() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MySettings", Context.MODE_PRIVATE);
+        pomodoroTime = sharedPreferences.getInt(getString(R.string.pomodoro_setting), pomodoroTime);
+        shortPauseTime = sharedPreferences.getInt(getString(R.string.short_break_setting), shortPauseTime);
+        longPauseTime = sharedPreferences.getInt(getString(R.string.long_break_setting), longPauseTime);
+        onAutoSequence = sharedPreferences.getBoolean(getString(R.string.auto_pomodoro), false);
+    }
+
+    /**
+     * Starts auto sequence of the pomodoro timer, ran on a separate thread
+     *
+     * focus --> short pause --> focus --> short pause --> focus --> short pause --> focus -->
+     * short pause --> focus --> long pause --> focus
+     *
+     * Buttons will be disabled while pomodoro sequence is running!!
+     */
+    private void startAutoSequence() {
+        pomodoroRunnable.run();
+    }
+
+    private Runnable pomodoroRunnable = new Runnable() {
+        @Override
+        public void run() {
+            seconds = pomodoroTime;
+            mTimerView.start(pomodoroTime, isPaused);
+            startTimer();
+            System.out.println("Pomodoro timer started");
+
+            if (pomodoroSequenceNum < pomodoroSequenceMax) {
+//                System.out.println("isPaused for pomodoro time:" + isPaused);
+//                mTimerView.start(pomodoroTime, isPaused);
+//                startTimer();
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Start the short pause timer
+                        seconds = shortPauseTime;
+                        System.out.println("isPaused for short pause:" + isPaused);
+                        mTimerView.start(shortPauseTime, isPaused);
+                        startTimer();
+                        System.out.println("Short pause timer started");
+
+                        // Increment the sequence number
+                        pomodoroSequenceNum++;
+                        System.out.println("Sequence number: " + pomodoroSequenceNum);
+
+                        // Trigger the next step in the sequence
+                        handler.postDelayed(pomodoroRunnable, shortPauseTime * 1000);
+                    }
+                }, pomodoroTime * 1000);
+            } else if (pomodoroSequenceNum == pomodoroSequenceMax) {
+                // do the long pause
+                // set pomodoroSequenceNum back to 0
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Start the short pause timer
+                        seconds = longPauseTime;
+                        System.out.println("isPaused for long pause:" + isPaused);
+                        mTimerView.start(longPauseTime, isPaused);
+                        startTimer();
+                        System.out.println("Long pause timer started");
+
+                        // Increment the sequence number
+                        pomodoroSequenceNum = 0;
+                        System.out.println("Sequence is done!");
+                    }
+                }, pomodoroTime * 1000);
+            }
+            }
+        };
 
     public void openSettings(View view) {
 
