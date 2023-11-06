@@ -1,5 +1,6 @@
 package com.comp90018.uninooks.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -10,7 +11,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -21,19 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
-import java.sql.Time;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import android.widget.Toast;
-import com.comp90018.uninooks.activities.LoginActivity;
 import com.comp90018.uninooks.R;
-import com.comp90018.uninooks.config.DatabaseHelper;
-import com.comp90018.uninooks.models.busy_rating.BusyRating;
 import com.comp90018.uninooks.models.favorite.Favorite;
 import com.comp90018.uninooks.models.location.Location;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
@@ -45,6 +33,14 @@ import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -212,12 +208,13 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
 
+        @SuppressLint("SetTextI18n")
         private CardView createNewSmallCard(CardView card, StudySpace space){
             ImageView banner = (ImageView) card.findViewById(R.id.banner);
             banner.setBackgroundResource(R.drawable.old_engineering);
             ProgressBar progress = (ProgressBar) card.findViewById(R.id.progressBar);
             Double score = busyRatingsByLocation.get(space.getName());
-            Integer busyScore = score != null ? (int) (score * 20) : 0;
+            Integer busyScore = score != null && space.isOpeningNow() ? (int) (score * 20) : 0;
             progress.setProgress(busyScore);
             if (busyScore >= 0 && busyScore <= 40) {
                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green)));
@@ -233,14 +230,16 @@ public class HomeActivity extends AppCompatActivity {
             ImageView hoursIcon = (ImageView) card.findViewById(R.id.clockIcon);
             hoursIcon.setBackgroundResource(R.drawable.baseline_access_time_24);
             if (space.getCloseTime() == null) {
-                locationHours.setText("Closed");
+                locationHours.setText("Closed Today");
                 hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+            }
 
-            } else {
+            else {
                 double hoursToClose = getTimeToClose(space.getCloseTime());
                 System.out.println("Hours to close: " + hoursToClose);
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                locationHours.setText(sdf.format(space.getOpenTime()) + " - " + sdf.format(space.getCloseTime()));
+
+                locationHours.setText(sdf.format(space.getOpenTime()) + " - " + ("23:59".equals(sdf.format(space.getCloseTime())) ? "00:00" : sdf.format(space.getCloseTime())));
                 hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
 
                 if (hoursToClose > 1){
@@ -249,7 +248,13 @@ public class HomeActivity extends AppCompatActivity {
                     hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
                 }
             }
-            distanceLabel.setText(space.getDistanceFromCurrentPosition() + " m");
+
+            if (space.getDistanceFromCurrentPosition() == -1){
+                distanceLabel.setText("N/A");
+            }
+            else{
+                distanceLabel.setText(space.getDistanceFromCurrentPosition() + " m");
+            }
 
             ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);
             favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_border_24);

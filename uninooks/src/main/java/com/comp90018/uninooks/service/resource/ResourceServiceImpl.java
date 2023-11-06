@@ -50,9 +50,13 @@ public class ResourceServiceImpl implements ResourceService {
                 resourceList.add(resource);
             }
 
+            connector.close();
+
             return resourceList;
         } // If exception happens when querying user
         catch (Exception e) {
+
+            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
     }
@@ -89,10 +93,12 @@ public class ResourceServiceImpl implements ResourceService {
                 resourceList.add(resource);
             }
 
+            connector.close();
             return resourceList;
         } // If exception happens when querying user
         catch (Exception e) {
-            e.printStackTrace();
+
+            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
     }

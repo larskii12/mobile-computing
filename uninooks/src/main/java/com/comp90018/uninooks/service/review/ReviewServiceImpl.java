@@ -7,6 +7,7 @@ import com.comp90018.uninooks.models.review.ReviewType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,11 +68,15 @@ public class ReviewServiceImpl implements ReviewService {
                 generatedKey = rs.getInt(1);
             }
 
+            connector.close();
+
             return getReview(generatedKey, type);
         }
 
         // If exception happens
         catch (Exception e) {
+
+            connector.close();
 
             // Unknown exceptions happens.
             throw new Exception("User added failed, please contact the IT administrator to report the issue.");
@@ -123,6 +128,8 @@ public class ReviewServiceImpl implements ReviewService {
 
                 review.setScore(resultSet.getInt("review_score"));
                 review.setTime(resultSet.getTimestamp("review_time"));
+
+                connector.close();
                 return review;
             }
 
@@ -130,8 +137,11 @@ public class ReviewServiceImpl implements ReviewService {
 
         // If exception happens when querying user
         catch (Exception e) {
+
+            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
+
         // Return user information
         return null;
     }
@@ -200,11 +210,15 @@ public class ReviewServiceImpl implements ReviewService {
 
                 reviewList.add(review);
             }
+
+            connector.close();
             return reviewList;
         }
 
         // If exception happens when querying user
         catch (Exception e) {
+
+            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
     }
@@ -277,17 +291,21 @@ public class ReviewServiceImpl implements ReviewService {
 
                 reviewList.add(review); // add review to the list
             }
+
+            connector.close();
             return reviewList;
         }
 
         // If exception happens when querying user
         catch (Exception e) {
+
+            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
     }
 
 
-    public double getAverageRating(Integer entityId, ReviewType type) {
+    public double getAverageRating(Integer entityId, ReviewType type) throws SQLException {
 
         try {
 
@@ -333,12 +351,17 @@ public class ReviewServiceImpl implements ReviewService {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) { // Ensure there's a row in the result set
+                Double rating = Double.parseDouble(resultSet.getString("average_rating"));
+                connector.close();
 
-                return Double.parseDouble(resultSet.getString("average_rating"));
+                return rating;
+
             }
         }
 
         catch (Exception e) {
+
+            connector.close();
             throw new RuntimeException(e);
         }
         return 5;

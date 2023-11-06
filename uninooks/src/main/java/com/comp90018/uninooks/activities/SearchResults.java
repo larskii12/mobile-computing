@@ -34,12 +34,15 @@ import com.comp90018.uninooks.models.review.Review;
 import com.comp90018.uninooks.models.review.ReviewType;
 import com.comp90018.uninooks.service.building.BuildingServiceImpl;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
+import com.comp90018.uninooks.service.gps.GPSServiceImpl;
+import com.comp90018.uninooks.service.library.LibraryServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
 import com.comp90018.uninooks.service.sortingComparators.DistanceComparator;
 import com.comp90018.uninooks.service.sortingComparators.NameComparator;
 import com.comp90018.uninooks.service.sortingComparators.RatingComparator;
+import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
 
 import java.sql.Time;
 import java.text.DecimalFormat;
@@ -68,7 +71,6 @@ public class SearchResults extends AppCompatActivity {
     HashMap<String, List<Resource>> resourcesByLocation;
     HashMap<String, Double> busyRatingByLocation;
     ArrayList<Favorite> userFavs;
-
     Comparator<Location> nameComparator;
     Comparator<Location> distanceComparator;
     Comparator<Location> ratingComparator;
@@ -133,6 +135,15 @@ public class SearchResults extends AppCompatActivity {
                         filterResults(filters);
                     }
 
+                    for (Location l: results) {
+                        if (l instanceof Library) {
+                            l.setDistanceFromCurrentPosition(new LibraryServiceImpl().calculateSpaceByWalkingDistance(GPSServiceImpl.getCurrentLocation(), new ArrayList<>(Collections.singletonList((Library) l))).get(0).getDistanceFromCurrentPosition());
+                        }
+                        else{
+                            l.setDistanceFromCurrentPosition(new StudySpaceServiceImpl().calculateSpaceByWalkingDistance(GPSServiceImpl.getCurrentLocation(), new ArrayList<>(Collections.singletonList((StudySpace) l))).get(0).getDistanceFromCurrentPosition());
+                        }
+                    }
+
                     // have to get all the ratings here (any other API I call, have to be done here and not in the UI thread)
                     getAllBuildingsOfLocs(results);
                     getAllRatings(results);
@@ -153,8 +164,9 @@ public class SearchResults extends AppCompatActivity {
                     });
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     showTextMessage("Something went wrong, please try again.");
-//                    throw new RuntimeException(e);
+                    finish();
                 }
             }
         }.start();
@@ -389,7 +401,7 @@ public class SearchResults extends AppCompatActivity {
         Time closingTime = location.getCloseTime();
 
         if (closingTime == null) {
-            text = "Closed";
+            text = "Closed Today";
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
             String openingTimeText = sdf.format(openingTime);
@@ -893,12 +905,18 @@ public class SearchResults extends AppCompatActivity {
     }
 
     private boolean haveFacility(List<Resource> resources, ResourceType name) {
-        for (Resource resource : resources) {
-            ResourceType resourceType = resource.getType();
-            if (resourceType == name) {
-                return true;
+
+        System.out.println(resources == null);
+
+        if (resources != null) {
+            for (Resource resource : resources) {
+                ResourceType resourceType = resource.getType();
+                if (resourceType == name) {
+                    return true;
+                }
             }
         }
+
         return false;
     }
 

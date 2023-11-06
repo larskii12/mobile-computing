@@ -60,6 +60,8 @@ public class FavoriteServiceImpl implements FavoriteService {
                 generatedKey = rs.getInt(1);
             }
 
+            connector.close();
+
             return getFavorite(generatedKey, type);
         }
 
@@ -110,8 +112,12 @@ public class FavoriteServiceImpl implements FavoriteService {
                         favorite.setStudySpaceId(resultSet.getInt("favourite_study_space_id"));
                         break;
                     default:
+                        connector.close();
                         throw new Exception("Invalid favourite type. Cannot retrieve favorite list.");
                 }
+
+                connector.close();
+
                 return favorite;
             }
 
@@ -189,11 +195,17 @@ public class FavoriteServiceImpl implements FavoriteService {
 
                 favoriteList.add(favorite);
             }
+
+            connector.close();
+
             return favoriteList;
         }
 
         // If exception happens when querying user
         catch (Exception e) {
+
+            connector.close();
+
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
     }
@@ -237,8 +249,14 @@ public class FavoriteServiceImpl implements FavoriteService {
 
             // Set user information
             if (resultSet.next()) { // Ensure there's a row in the result set
+
+                connector.close();
+
                 return true;
             } else {
+
+                connector.close();
+
                 return false;
             }
 
@@ -246,6 +264,9 @@ public class FavoriteServiceImpl implements FavoriteService {
 
         // If exception happens when querying user
         catch (Exception e) {
+
+            connector.close();
+
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
     }
