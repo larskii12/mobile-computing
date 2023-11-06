@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_marginTop="16dp"
-    android:padding="16dp">
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/addReviewTitle"
@@ -25,21 +25,17 @@
         android:justificationMode="inter_word"
         android:text="@string/how_was_your_experience" />
 
+
     <RatingBar
-        android:id="@+id/ratingBar"
-        style="?android:attr/ratingBarStyleIndicator"
+        android:id="@+id/review_ratingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:max="5"
-        android:paddingLeft="10dp"
-        android:layout_marginTop="12dp"
-        android:progressBackgroundTint="@color/white"
-        android:progressTint="@color/yellow"
-        android:rating="3"
         android:layout_gravity="center"
-        android:transformPivotX="0dp"
-        android:transformPivotY="0dp" />
-
+        android:layout_marginTop="12dp"
+        android:isIndicator="false"
+        android:max="5"
+        android:rating="0"
+        android:stepSize="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -67,20 +63,20 @@
             >
 
             <Button
-                android:id="@+id/account_delete_Cancel_Button"
+                android:id="@+id/add_review_cancel_Button"
                 style="@style/Button.Outlined"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="16dp"
+                android:layout_marginVertical="8dp"
                 android:layout_marginRight="36dp"
                 android:text="@string/cancel" />
 
             <Button
-                android:id="@+id/account_Delete_Confirm_Button"
+                android:id="@+id/add_review_submit_Button"
                 style="@style/Button.Primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="16dp"
+                android:layout_marginVertical="8dp"
                 android:text="@string/submit" />
         </LinearLayout>
 
