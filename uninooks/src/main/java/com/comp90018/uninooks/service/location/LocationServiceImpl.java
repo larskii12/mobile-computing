@@ -7,11 +7,9 @@ import com.comp90018.uninooks.models.location.LocationType;
 import com.comp90018.uninooks.models.location.library.Library;
 import com.comp90018.uninooks.models.location.restaurant.Restaurant;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
-import com.comp90018.uninooks.service.busy_rating.BusyRatingService;
 import com.comp90018.uninooks.service.time.TimeServiceImpl;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LocationServiceImpl implements LocationService {
-
-    BusyRatingService busyRatingService;
 
     Connection connector = new DatabaseHelper().getConnector();
 
@@ -96,11 +92,13 @@ public class LocationServiceImpl implements LocationService {
 
                 library.setHasQuietZones(resultSet.getBoolean("library_has_quiet_zones"));
 
+                connector.close();
+
                 return library;
             }
 
         } catch(Exception e){ // If exception happens when querying library
-            e.printStackTrace();
+            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
 
@@ -147,10 +145,13 @@ public class LocationServiceImpl implements LocationService {
                 restaurant.setFloorLevel(resultSet.getInt("restaurant_floor_level"));
                 restaurant.setHasVegetarianOptions(resultSet.getBoolean("restaurant_vegetarian_options"));
 
+                connector.close();
+
                 return restaurant;
             }
 
         } catch(Exception e){ // If exception happens when querying restaurant
+            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
 
@@ -161,50 +162,45 @@ public class LocationServiceImpl implements LocationService {
 
         StudySpace studySpace = new StudySpace();
 
-        // Get date of a week
+        // Get date and time
         int currentDayOfWeek = new TimeServiceImpl().getWeekDate();
-
-        // Get the current time
         Time currentTime = new TimeServiceImpl().getAEDTTime();
 
+        // Generate a fake date time for testing
+//        currentDayOfWeek = new TimeServiceImpl().getTestWeekDate(7);
+//        currentTime = new TimeServiceImpl().getTestAEDTTime(5, 0, 0);
+
         try {
-            String query = null;
-            try {
-                query = "SELECT * FROM mobilecomputing.study_space s " +
+                String query = "SELECT * FROM mobilecomputing.study_space s " +
                         "join mobilecomputing.opening_hours o  " + "" +
                         "on s.study_space_id = o.study_space_id " +
                         "join mobilecomputing.\"building\" b ON s.study_space_building_id = b.building_id " +
                         "WHERE s.study_space_id = ? and o.date = " + currentDayOfWeek;
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
-            }
 
-            PreparedStatement preparedStatement = connector.prepareStatement(query);
-            preparedStatement.setInt(1, locationId);
+                PreparedStatement preparedStatement = connector.prepareStatement(query);
+                preparedStatement.setInt(1, locationId);
 //            preparedStatement.setInt(2, currentDayOfWeek);
 
-            ResultSet resultSet = preparedStatement.executeQuery();
+                ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) { // Ensure there's a row in the result set
-                // Set study space information
-                studySpace.setId(resultSet.getInt("study_space_id"));
-                studySpace.setBuildingId(resultSet.getInt("study_space_building_id"));
-                studySpace.setName(resultSet.getString("study_space_name"));
+                if (resultSet.next()) { // Ensure there's a row in the result set
+                    // Set study space information
+                    studySpace.setId(resultSet.getInt("study_space_id"));
+                    studySpace.setBuildingId(resultSet.getInt("study_space_building_id"));
+                    studySpace.setName(resultSet.getString("study_space_name"));
 
-                studySpace.setOpenTime(resultSet.getTime("opening_time"));
-                studySpace.setCloseTime(resultSet.getTime("closing_time"));
+                    studySpace.setOpenTime(resultSet.getTime("opening_time"));
+                    studySpace.setCloseTime(resultSet.getTime("closing_time"));
 
-                studySpace.setType("STUDY_SPACE");
+                    studySpace.setType("STUDY_SPACE");
 
-                studySpace.setIsOpenToday(studySpace.getOpenTime() != null);
+                    studySpace.setIsOpenToday(studySpace.getOpenTime() != null);
 
-                if (studySpace.issOpenToday() && currentTime.after(studySpace.getOpenTime()) && currentTime.before(studySpace.getCloseTime())){
-                    studySpace.setIsOpeningNow(true);
-                }
+                    if (studySpace.issOpenToday() && currentTime.after(studySpace.getOpenTime()) && currentTime.before(studySpace.getCloseTime())) {
+                        studySpace.setIsOpeningNow(true);
+                    }
 
-                studySpace.setLocation(new LatLng(Double.parseDouble(resultSet.getString("building_latitude")), Double.parseDouble(resultSet.getString("building_longitude"))));
-
+                    studySpace.setLocation(new LatLng(Double.parseDouble(resultSet.getString("building_latitude")), Double.parseDouble(resultSet.getString("building_longitude"))));
 //                Array daysDb = resultSet.getArray("study_space_opening_days");
 //                Integer[] days = (Integer[]) daysDb.getArray();
 //                studySpace.setOpeningDays(days);
@@ -213,17 +209,20 @@ public class LocationServiceImpl implements LocationService {
 //                Time[] busyHours = (Time[]) busyDb.getArray();
 //                studySpace.setBusyHours(busyHours);
 
-                studySpace.setLibraryId(resultSet.getInt("study_space_library_id"));
- //               studySpace.setCapacity(resultSet.getInt("study_space_capacity"));
+                    studySpace.setLibraryId(resultSet.getInt("study_space_library_id"));
+//               studySpace.setCapacity(resultSet.getInt("study_space_capacity"));
 //                studySpace.setFloorLevel(resultSet.getInt(0));
-                studySpace.setMinimumAccessAQFLevel(resultSet.getInt("study_space_minimum_access_AQF_level"));
-                studySpace.setTalkAllowed(resultSet.getBoolean("study_space_talk_allowed"));
+                    studySpace.setMinimumAccessAQFLevel(resultSet.getInt("study_space_minimum_access_AQF_level"));
+                    studySpace.setTalkAllowed(resultSet.getBoolean("study_space_talk_allowed"));
 
-                return studySpace;
-            }
+                    connector.close();
+
+                    return studySpace;
+                }
 
         } catch(Exception e){ // If exception happens when querying study space
-            e.printStackTrace();
+
+            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
 
@@ -251,10 +250,14 @@ public class LocationServiceImpl implements LocationService {
             if (locationType.equals("STUDY")) {
                 // Query for extracting all filtered libraries
                 if (!searchName.equals("")) {
-                    query = "SELECT * FROM mobilecomputing.library l join mobilecomputing.opening_hours o on l.library_id = o.library_id " +
+                    query = "SELECT * FROM mobilecomputing.library l  " + "" +
+                            "join mobilecomputing.opening_hours o on l.library_id = o.library_id " +
+                            "join mobilecomputing.\"building\" b ON l.library_building_id = b.building_id " +
                             "WHERE lower(library_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
                 } else {
-                    query = "SELECT * FROM mobilecomputing.library l join mobilecomputing.opening_hours o on l.library_id = o.library_id " +
+                    query = "SELECT * FROM mobilecomputing.library l " + "" +
+                            "join mobilecomputing.opening_hours o on l.library_id = o.library_id " +
+                            "join mobilecomputing.\"building\" b ON l.library_building_id = b.building_id " +
                             "WHERE o.date = " + currentDayOfWeek;
                 }
 
@@ -272,9 +275,9 @@ public class LocationServiceImpl implements LocationService {
                     location.setOpenTime(resultSet.getTime("opening_time"));
                     location.setCloseTime(resultSet.getTime("closing_time"));
 
-                    ((Library) location).setHasQuietZones(resultSet.getBoolean("library_has_quiet_zones"));
-                    location.setType("LIBRARY");
+                    location.setLocation(new LatLng(resultSet.getDouble("building_latitude"), resultSet.getDouble("building_longitude")));
 
+                    ((Library) location).setHasQuietZones(resultSet.getBoolean("library_has_quiet_zones"));
                     location.setType("LIBRARY");
 
 //                    Array daysDb = resultSet.getArray("library_opening_days");
@@ -292,12 +295,15 @@ public class LocationServiceImpl implements LocationService {
 
                 // Query for extracting all filtered study spaces
                 if (!searchName.equals("")) {
-                    query = "SELECT * FROM mobilecomputing.study_space s join mobilecomputing.opening_hours o "+
+                    query = "SELECT * FROM mobilecomputing.study_space s  " + "" +
+                            "join mobilecomputing.opening_hours o "+
                             "on s.study_space_id = o.study_space_id " +
+                            "join mobilecomputing.\"building\" b ON s.study_space_building_id = b.building_id " +
                             "WHERE lower(study_space_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
                 } else {
                     query = "SELECT * FROM mobilecomputing.study_space s join mobilecomputing.opening_hours o "+
                             "on s.study_space_id = o.study_space_id " +
+                            "join mobilecomputing.\"building\" b ON s.study_space_building_id = b.building_id " +
                             "WHERE o.date = " + currentDayOfWeek;
                 }
 
@@ -313,6 +319,9 @@ public class LocationServiceImpl implements LocationService {
 
                     location.setOpenTime(resultSet.getTime("opening_time"));
                     location.setCloseTime(resultSet.getTime("closing_time"));
+
+                    location.setLocation(new LatLng(resultSet.getDouble("building_latitude"), resultSet.getDouble("building_longitude")));
+
 
                     location.setType("STUDY_SPACE");
                     ((StudySpace) location).setMinimumAccessAQFLevel(resultSet.getInt("study_space_minimum_access_AQF_level"));
@@ -331,6 +340,8 @@ public class LocationServiceImpl implements LocationService {
 
                     allLocations.add(location);
                 }
+
+                connector.close();
 
                 return allLocations;
 
@@ -370,6 +381,8 @@ public class LocationServiceImpl implements LocationService {
 
                     allLocations.add(location);
                 }
+
+                connector.close();
 
                 return allLocations;
 
@@ -475,13 +488,18 @@ public class LocationServiceImpl implements LocationService {
 
                     allLocations.add(location);
                 }
+
+                connector.close();
                 return allLocations;
+
             } else {
+
+                connector.close();
                 throw new Exception("Does not exist!!");
             }
 
         } catch(Exception e){ // If exception happens when querying library
-            System.out.print(e.getMessage());
+            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
 

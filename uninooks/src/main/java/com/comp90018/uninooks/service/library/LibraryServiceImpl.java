@@ -6,9 +6,8 @@ import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.activities.MainActivity;
 import com.comp90018.uninooks.config.DatabaseHelper;
 import com.comp90018.uninooks.models.location.library.Library;
-import com.comp90018.uninooks.models.review.ReviewType;
+import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
-import com.comp90018.uninooks.service.review.ReviewServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -31,8 +30,6 @@ import java.util.Properties;
 public class LibraryServiceImpl implements LibraryService{
 
     Connection connector = new DatabaseHelper().getConnector();
-
-    LocationServiceImpl libraryFinder = new LocationServiceImpl();
 
     ArrayList<Library> closestLibraries = new ArrayList<>();
 
@@ -61,19 +58,18 @@ public class LibraryServiceImpl implements LibraryService{
 
             int libraryId = Integer.parseInt(resultSet.getString("library_id"));
 
-            Library library = libraryFinder.findLibraryById(libraryId);
+            Library library = new LocationServiceImpl().findLibraryById(libraryId);
 
             // Exclude the closed libraries
             if (library != null){
-                allLibraries.add(libraryFinder.findLibraryById(libraryId));
+                allLibraries.add(new LocationServiceImpl().findLibraryById(libraryId));
             }
         }
 
-        // GIS check ordering, use on deployment
-//        LatLng currentLocation = new LatLng(GPSServiceImpl.getLatestLocation().latitude, GPSServiceImpl.getLatestLocation().longitude);
+        connector.close();
 
-        // Fake current position, use in development
-        LatLng currentLocation = new LatLng(-37.8000898318753, 144.96443598212284);
+        // Get current Position
+        LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
 
         allLibraries.sort((libraryOne, libraryTwo) -> {
             double dist1 = calculateDistance(libraryOne.getLocation(), currentLocation);
@@ -82,7 +78,7 @@ public class LibraryServiceImpl implements LibraryService{
         });
 
         // Sort ten libraries by waling distance from Google Map API
-        closestLibraries = CalculateSpaceByWalkingDistance(currentLocation, allLibraries);
+        closestLibraries = calculateSpaceByWalkingDistance(currentLocation, allLibraries);
         sortByDistance(closestLibraries);
 
         for (Library library : closestLibraries){
@@ -110,7 +106,7 @@ public class LibraryServiceImpl implements LibraryService{
      * @return sorted closest ten libraries by walking distance from current location
      * @throws IOException if exception happens
      */
-    private ArrayList<Library> CalculateSpaceByWalkingDistance(LatLng currentLocation, ArrayList<Library> libraries) throws IOException {
+    public ArrayList<Library> calculateSpaceByWalkingDistance(LatLng currentLocation, ArrayList<Library> libraries) throws IOException {
 
         String origin = currentLocation.latitude + "," + currentLocation.longitude;
 
@@ -294,20 +290,19 @@ public class LibraryServiceImpl implements LibraryService{
 
             int libraryId = Integer.parseInt(resultSet.getString("review_library_id"));
 
-            Library library = libraryFinder.findLibraryById(libraryId);
+            Library library = new LocationServiceImpl().findLibraryById(libraryId);
             library.setAverage_rating(Double.parseDouble(resultSet.getString("average_rating")));
 
             allLibraries.add(library);
         }
 
-        // GIS check ordering, use on deployment
-//        LatLng currentLocation = new LatLng(GPSServiceImpl.getLatestLocation().latitude, GPSServiceImpl.getLatestLocation().longitude);
+        connector.close();
 
-        // Fake current position, use in development
-        LatLng currentLocation = new LatLng(-37.8000898318753, 144.96443598212284);
+        // Get current Position
+        LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
 
         // Calculate the distance for each top rated study spaces
-        topRatedLibraries = CalculateSpaceByWalkingDistance(currentLocation, allLibraries);
+        topRatedLibraries = calculateSpaceByWalkingDistance(currentLocation, allLibraries);
 
         // Return opening study space first
         for (Library library : topRatedLibraries) {

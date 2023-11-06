@@ -55,4 +55,25 @@ public class TimeServiceImpl implements TimeService{
         LocalDate currentDate = LocalDate.now(ZoneId.of("Australia/Melbourne"));
         return currentDate.getDayOfWeek().getValue();
     }
+
+    @Override
+    public int getTestWeekDate(int weekDate) {
+        return weekDate;
+    }
+
+    @Override
+    public Time getTestAEDTTime(int hour, int minute, int second) {
+
+        String currentTimeStr = hour + ":" + minute + ":" + second;
+        return Time.valueOf(currentTimeStr);
+    }
+
+    @Override
+    public LocalTime getTestAEDTLocalTime(int hour, int minute, int second) {
+
+        String currentTimeStr = hour + ":" + minute + ":" + second;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss");
+
+        return LocalTime.parse(currentTimeStr, formatter);
+    }
 }

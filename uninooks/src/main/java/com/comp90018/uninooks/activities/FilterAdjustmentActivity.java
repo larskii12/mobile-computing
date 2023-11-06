@@ -1,6 +1,7 @@
 package com.comp90018.uninooks.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,7 +29,7 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
     ImageButton returnButton;
     Button resetButton;
     Button applyButton;
-    FrameLayout facilitiesLayout;
+    ConstraintLayout facilitiesLayout;
     RadioGroup ascGroup;
     RadioGroup descGroup;
     RadioButton selectedRadioButton;
@@ -168,6 +169,7 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
             } else {
                 // text is 0m - __m
                 distDisplay.setText("10m - " + distanceVal + "m");
+                distDisplay.setTextSize(18);
             }
             filtersChosen.put("DISTANCE", String.valueOf(distanceVal));
         }

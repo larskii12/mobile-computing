@@ -6,8 +6,8 @@ import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.activities.MainActivity;
 import com.comp90018.uninooks.config.DatabaseHelper;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
+import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
-import com.comp90018.uninooks.service.review.ReviewServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -30,8 +30,6 @@ import java.util.Properties;
 public class StudySpaceServiceImpl implements StudySpaceService {
 
     Connection connector = new DatabaseHelper().getConnector();
-
-    LocationServiceImpl studySpaceFinder = new LocationServiceImpl();
 
     ArrayList<StudySpace> closestStudySpaces = new ArrayList<>();
 
@@ -61,18 +59,15 @@ public class StudySpaceServiceImpl implements StudySpaceService {
             int studySpaceId = Integer.parseInt(resultSet.getString("study_space_id"));
 
             // Exclude the closed study spaces
-            StudySpace studySpace = studySpaceFinder.findStudySpaceById(studySpaceId);
+            StudySpace studySpace = new LocationServiceImpl().findStudySpaceById(studySpaceId);
 
             if (studySpace != null) {
-                allStudySpaces.add(studySpaceFinder.findStudySpaceById(studySpaceId));
+                allStudySpaces.add(new LocationServiceImpl().findStudySpaceById(studySpaceId));
             }
         }
 
-        // GIS check ordering, use on deployment
-//        LatLng currentLocation = new LatLng(GPSServiceImpl.getLatestLocation().latitude, GPSServiceImpl.getLatestLocation().longitude);
-
-        // Fake current position, use in development
-        LatLng currentLocation = new LatLng(-37.8000898318753, 144.96443598212284);
+        // Get current Position
+        LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
 
         allStudySpaces.sort((studySpaceOne, studySpaceTwo) -> {
             double dist1 = calculateDistance(studySpaceOne.getLocation(), currentLocation);
@@ -81,7 +76,7 @@ public class StudySpaceServiceImpl implements StudySpaceService {
         });
 
         // Sort ten study spaces by waling distance from Google Map API
-        closestStudySpaces = CalculateSpaceByWalkingDistance(currentLocation, allStudySpaces);
+        closestStudySpaces = calculateSpaceByWalkingDistance(currentLocation, allStudySpaces);
         sortByDistance(closestStudySpaces);
 
         // Return opening study space first
@@ -96,6 +91,8 @@ public class StudySpaceServiceImpl implements StudySpaceService {
         openingStudySpaces.addAll(closingStudySpaces);
 
         if (openingStudySpaces.size() <= size) {
+
+            connector.close();
             return openingStudySpaces;
         }
 
@@ -109,7 +106,7 @@ public class StudySpaceServiceImpl implements StudySpaceService {
      * @return sorted closest ten study spaces by walking distance from current location
      * @throws IOException if exception happens
      */
-    private ArrayList<StudySpace> CalculateSpaceByWalkingDistance(LatLng currentLocation, ArrayList<StudySpace> studySpaces) throws IOException {
+    public ArrayList<StudySpace> calculateSpaceByWalkingDistance(LatLng currentLocation, ArrayList<StudySpace> studySpaces) throws IOException {
 
         String origin = currentLocation.latitude + "," + currentLocation.longitude;
 
@@ -295,20 +292,17 @@ public class StudySpaceServiceImpl implements StudySpaceService {
 
             int studySpaceId = Integer.parseInt(resultSet.getString("review_study_space_id"));
 
-            StudySpace studySpace = studySpaceFinder.findStudySpaceById(studySpaceId);
+            StudySpace studySpace = new LocationServiceImpl().findStudySpaceById(studySpaceId);
             studySpace.setAverage_rating(Double.parseDouble(resultSet.getString("average_rating")));
 
             allStudySpaces.add(studySpace);
         }
 
-        // GIS check ordering, use on deployment
-//        LatLng currentLocation = new LatLng(GPSServiceImpl.getLatestLocation().latitude, GPSServiceImpl.getLatestLocation().longitude);
-
-        // Fake current position, use in development
-        LatLng currentLocation = new LatLng(-37.8000898318753, 144.96443598212284);
+        // Get current Position
+        LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
 
         // Calculate the distance for each top rated study spaces
-        topRatedStudySpaces = CalculateSpaceByWalkingDistance(currentLocation, allStudySpaces);
+        topRatedStudySpaces = calculateSpaceByWalkingDistance(currentLocation, allStudySpaces);
 
         // Return opening study space first
         for (StudySpace studySpace : topRatedStudySpaces) {
@@ -322,9 +316,12 @@ public class StudySpaceServiceImpl implements StudySpaceService {
         openingStudySpaces.addAll(closingStudySpaces);
 
         if (openingStudySpaces.size() <= size) {
+
+            connector.close();
             return openingStudySpaces;
         }
 
+        connector.close();
         return new ArrayList<>(openingStudySpaces.subList(0, size));
     }
 }

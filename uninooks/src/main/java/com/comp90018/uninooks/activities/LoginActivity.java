@@ -190,9 +190,6 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
             startActivity(intent);
             finish();
 
-            startActivity(intent);
-            finish();
-
         }
 
         return 0;

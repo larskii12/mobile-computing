@@ -45,17 +45,21 @@ public class UserServiceImpl implements UserService {
                 logInUser.setUserFaculty(resultSet.getString("user_faculty"));
                 logInUser.setUserAQFLevel(Integer.parseInt(resultSet.getString("user_AQF_level")));
 
+                connector.close();
+
                 return logInUser;
             }
 
             // If user not exist, password not correct or other exceptions
             else {
+                connector.close();
                 return null;
             }
         }
 
         // If log in fails
         catch (Exception e) {
+            connector.close();
             return null;
         }
     }
@@ -79,11 +83,13 @@ public class UserServiceImpl implements UserService {
 
         // Check all fields not empty, faculty can be 0, treat as a guest.
         if (userName.replaceAll("\\s", "").equals("") || userEmail.replaceAll("\\s", "").equals("") || userPassword.replaceAll("\\s", "").equals("")) {
+            connector.close();
             throw new Exception("All fields are required.");
         }
 
         // Check userAQF level is valid, 0 is guest.
         if (userAQFLevel < 0 || userAQFLevel > 10) {
+            connector.close();
             throw new Exception("AQF level invalid, AQF level should between 1 and 10.");
         }
 
@@ -102,6 +108,8 @@ public class UserServiceImpl implements UserService {
             // Execute query
             preparedStatement.executeUpdate();
 
+            connector.close();
+
             return true;
 
             //connection.createStatement().executeQuery(query);
@@ -112,15 +120,18 @@ public class UserServiceImpl implements UserService {
 
             // If user name has already been registered
             if (e.getMessage().contains("unique_user_username")) {
+                connector.close();
                 throw new Exception("This username has been registered, please try another one.");
             }
 
             // If email has already been registered
             else if (e.getMessage().contains("unique_user_email")) {
+                connector.close();
                 throw new Exception("This email has been registered, please try another one.");
             }
 
             // Unknown exceptions happens.
+            connector.close();
             throw new Exception("User added failed, please contact the IT administrator to report the issue.");
         }
     }
@@ -140,12 +151,14 @@ public class UserServiceImpl implements UserService {
             preparedStatement.setInt(1, userId);
             preparedStatement.executeUpdate();
 
+            connector.close();
+
             return true;
         }
 
         // If exception happens when deleting an user.
         catch (Exception e) {
-            e.printStackTrace();
+            connector.close();
             throw new Exception("User delete failed, please contact the IT administrator.");
         }
     }
@@ -179,6 +192,8 @@ public class UserServiceImpl implements UserService {
                 user.setUserFaculty(resultSet.getString("user_faculty"));
                 user.setUserAQFLevel(resultSet.getInt("user_AQF_level"));
 
+                connector.close();
+
                 return user;
             }
 
@@ -186,9 +201,13 @@ public class UserServiceImpl implements UserService {
 
         // If exception happens when querying user
         catch (Exception e) {
+
+            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
+
         // Return user information
+        connector.close();
         return null;
     }
 
@@ -208,6 +227,8 @@ public class UserServiceImpl implements UserService {
             ps.setInt(2, userId);
             ps.executeUpdate();
 
+            connector.close();
+
             return true;
         }
 
@@ -216,11 +237,15 @@ public class UserServiceImpl implements UserService {
 
             // If user name has been used.
             if (e.getMessage().contains("unique_user_username")) {
+
+                connector.close();
                 throw new Exception("This user name has been used, please try another one.");
             }
 
             // unknown exception happens when update user name
             else {
+
+                connector.close();
                 throw new Exception("Errors happened when update user information, please contact the IT administrator.");
             }
         }
@@ -243,11 +268,15 @@ public class UserServiceImpl implements UserService {
             ps.setInt(2, userId);
             ps.executeUpdate();
 
+            connector.close();
+
             return true;
         }
 
         // unknown exception happens when update user email
         catch (Exception e) {
+
+            connector.close();
 
             // If user name has been used.
             if (e.getMessage().contains("unique_user_email")) {
@@ -289,11 +318,14 @@ public class UserServiceImpl implements UserService {
                 ps.setInt(2, userId);
                 ps.executeUpdate();
 
+                connector.close();
+
                 return true;
             }
 
             // If old password is not correct
             else {
+                connector.close();
                 throw new Exception("Your old password is not correct, please try again.");
             }
 
@@ -301,6 +333,7 @@ public class UserServiceImpl implements UserService {
 
         // If exception happens
         catch (Exception e) {
+            connector.close();
             throw new Exception(e.getMessage());
         }
     }
@@ -318,11 +351,15 @@ public class UserServiceImpl implements UserService {
             ps.setString(3, userNameOrEmail);
             ps.executeUpdate();
 
+            connector.close();
+
             return true;
         }
 
         // If exception happens
         catch (Exception e) {
+
+            connector.close();
             throw new Exception("Error happened when changing password, please contact the IT administrator.");
         }
     }
@@ -344,12 +381,16 @@ public class UserServiceImpl implements UserService {
             ps.setInt(2, userId);
             ps.executeUpdate();
 
+            connector.close();
+
             return true;
 
         }
 
         // If exception happens
         catch (Exception e) {
+
+            connector.close();
             throw new Exception("Errors happened when update user information, please contact the IT administrator.");
         }
 
@@ -372,11 +413,15 @@ public class UserServiceImpl implements UserService {
             ps.setInt(2, userId);
             ps.executeUpdate();
 
+            connector.close();
+
             return true;
         }
 
         // If exception happens
         catch (Exception e) {
+
+            connector.close();
             throw new Exception("Errors happened when update user information, please contact the IT administrator.");
         }
     }
@@ -399,10 +444,13 @@ public class UserServiceImpl implements UserService {
         preparedStatement.setString(2, userNameOrEmail);
 
         ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()){
+            connector.close();
+            return true;
+        }
 
-        // Return this user exist or nor
-        return resultSet.next();
-
+        connector.close();
+        return false;
     }
 
 }
