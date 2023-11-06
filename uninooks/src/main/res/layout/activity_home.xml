@@ -20,14 +20,15 @@
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="237dp"
-            android:layout_height="44dp"
-            android:layout_marginStart="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginStart="25dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="5dp"
             android:layout_marginBottom="2dp"
             android:background="#FDFDFD"
-            android:gravity="center"
-            android:text="Good morning user1"
+            android:gravity="left"
+            android:text="Good morning"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -35,7 +36,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintVertical_bias="0.0"
             tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
