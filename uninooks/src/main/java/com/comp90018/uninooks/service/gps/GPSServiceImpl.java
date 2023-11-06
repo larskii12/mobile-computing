@@ -5,6 +5,7 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Looper;
 
+import com.comp90018.uninooks.service.emulator.EmulatorServiceImpl;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -66,10 +67,11 @@ public class GPSServiceImpl {
      * Get the GPS last location, static call without creating object crossing the app
      * @return latest GPS location
      */
-    public static LatLng getLatestLocation(){
-        if (locationsHistory.size() == 0){
+    public static LatLng getCurrentLocation(){
+        if (EmulatorServiceImpl.isEmulator() || locationsHistory.size() == 0){
 
             // Return a default location - Melbourne Connect
+//            LatLng melbourneConnect = new LatLng(38.17277920371164, -81.33774147106061);
             LatLng melbourneConnect = new LatLng(-37.8000, 144.9643);
             return melbourneConnect;
         }

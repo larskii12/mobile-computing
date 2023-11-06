@@ -99,11 +99,15 @@ public class BusyRatingServiceImpl implements BusyRatingService {
             // Execute query
             preparedStatement.executeUpdate();
 
+            connector.close();
+
             return true;
         }
 
         // If exception happens
         catch (Exception e) {
+
+            connector.close();
 
             // Unknown exceptions happens.
             throw new Exception("User added failed, please contact the IT administrator to report the issue.");
@@ -178,6 +182,9 @@ public class BusyRatingServiceImpl implements BusyRatingService {
                 busyRating.setAverageScore(resultSet.getDouble("average_score"));
                 busyRating.setCount(resultSet.getInt("busy_rating_count"));
                 busyRating.setTime(resultSet.getTime("busy_rating_time"));
+
+                connector.close();
+
                 return busyRating;
             }
 
@@ -185,6 +192,9 @@ public class BusyRatingServiceImpl implements BusyRatingService {
 
         // If exception happens when querying user
         catch (Exception e) {
+
+            connector.close();
+
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
         // Return user information
@@ -244,12 +254,18 @@ public class BusyRatingServiceImpl implements BusyRatingService {
 
             // Set user information
             if (resultSet.next()) { // Ensure there's a row in the result set
+
+                connector.close();
+
                 return resultSet.getDouble(1);
             }
         }
 
         // If exception happens when querying user
         catch (Exception e) {
+
+            connector.close();
+
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
         // Return user information

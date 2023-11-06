@@ -1,43 +1,27 @@
 package com.comp90018.uninooks.activities;
-import android.Manifest;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.ImageButton;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.databinding.ActivityLocationBinding;
-import com.comp90018.uninooks.databinding.ActivityMapsBinding;
-import com.comp90018.uninooks.models.busy_rating.BusyRating;
-
-import java.sql.Time;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
 import com.comp90018.uninooks.models.favorite.Favorite;
 import com.comp90018.uninooks.models.location.building.Building;
 import com.comp90018.uninooks.models.location.resource.Resource;
@@ -48,14 +32,12 @@ import com.comp90018.uninooks.models.user.User;
 import com.comp90018.uninooks.service.building.BuildingServiceImpl;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
+import com.comp90018.uninooks.service.gps.GPSService;
+import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
 import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
-import com.comp90018.uninooks.service.gps.GPSService;
-import com.comp90018.uninooks.service.gps.GPSServiceImpl;
-import com.comp90018.uninooks.service.location.LocationService;
-import com.comp90018.uninooks.service.review.ReviewService;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -63,6 +45,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class LocationActivity extends FragmentActivity implements OnMapReadyCallback, GPSService{
     private static Context context;
@@ -112,6 +100,11 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                 try {
                     System.out.println(spaceID);
                     space = new LocationServiceImpl().findStudySpaceById(Integer.parseInt(spaceID));
+
+                    // Get current Position
+                    LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
+
+                    space.setDistanceFromCurrentPosition(new StudySpaceServiceImpl().calculateSpaceByWalkingDistance(currentLocation, new ArrayList<>(Collections.singletonList(space))).get(0).getDistanceFromCurrentPosition());
                     List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(Integer.valueOf(spaceID), ReviewType.valueOf(space.getType()));
                     System.out.println("Building id:" + space.getBuildingId());
                     Building building = new BuildingServiceImpl().getBuilding(space.getBuildingId(), ReviewType.valueOf(space.getType()));
@@ -154,7 +147,9 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                     Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
                                     intent.putExtra("USERID_EXTRA", userID);
                                     intent.putExtra("USERNAME_EXTRA", userName);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
+                                    finish();
                                 }
                             }.start();
                         }
@@ -187,6 +182,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
                     runOnUiThread(new Runnable() {
 
+                        @SuppressLint("SetTextI18n")
                         @Override
                         public void run() {
                             backButton.setBackgroundResource(R.drawable.arrow_back_fill);
@@ -205,7 +201,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 openHours.setText("Closed");
                             } else {
                                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                                openHours.setText("Open hours: " + sdf.format(space.getOpenTime()) + " - " + sdf.format(space.getCloseTime()));
+                                openHours.setText("Open hours: " + sdf.format(space.getOpenTime()) + " - " + ("23:59".equals(sdf.format(space.getCloseTime())) ? "00:00" : sdf.format(space.getCloseTime())));
                             }
                             if (busyScore >= 0 && busyScore <= 40) {
                                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green)));
@@ -214,7 +210,13 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             } else {
                                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red)));
                             }
-                            distance.setText(space.getDistanceFromCurrentPosition() + " m");
+
+                            if (space.getDistanceFromCurrentPosition() == -1){
+                                distance.setText(" N/A");
+                            }
+                            else{
+                                distance.setText(space.getDistanceFromCurrentPosition() + " m");
+                            }
                             for(Review review : reviews) {
                                 System.out.println(review.getComment());
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.review_layout, reviewsLayout, false);

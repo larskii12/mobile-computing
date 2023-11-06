@@ -40,6 +40,9 @@ public class BuildingServiceImpl implements BuildingService {
                 building.setHasAccessibility(resultSet.getBoolean("building_accessibility"));
                 building.setLatitude(resultSet.getDouble("building_latitude"));
                 building.setLatitude(resultSet.getDouble("building_longitude"));
+
+                connector.close();
+
                 return building;
             }
 
