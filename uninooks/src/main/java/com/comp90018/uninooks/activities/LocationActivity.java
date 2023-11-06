@@ -1,5 +1,6 @@
 package com.comp90018.uninooks.activities;
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +9,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
@@ -130,6 +132,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     TextView progressValue = findViewById(R.id.textView7);
                     TextView distance = findViewById(R.id.distance);
                     TextView openHours = findViewById(R.id.openHours);
+                    Button addReviewButton = findViewById(R.id.add_review);
 
                     ImageButton backButton = findViewById(R.id.imageButton);
                     ImageButton favouriteButton = findViewById(R.id.favoriteButton);
@@ -183,6 +186,15 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 }
                             }.start();
                         }
+                    });
+
+                    addReviewButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                                showAddReviewDialog();
+
+                    }
                     });
 
                     runOnUiThread(new Runnable() {
@@ -352,4 +364,49 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, standardCameraZoom));
         }
     }
-}
+
+    private void showAddReviewDialog() {
+
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.add_review_dialog);
+
+        RatingBar ratingBar = (RatingBar) findViewById(R.id.select_rating_bar);
+        Button submitButton = dialog.findViewById(R.id.add_review_submit_Button);
+        Button cancelButton = dialog.findViewById(R.id.add_review_cancel_Button);
+        final EditText reviewEditText = dialog.findViewById(R.id.EditReview);
+
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                if(fromUser) {
+                    //Todo: add rating to database
+                    // The rating has been changed by the user
+                    // Process the rating value
+                    // You can now send this rating to your server or use it in your app
+                    Toast.makeText(getApplicationContext(), "Given Rating: " + rating, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss(); // Close the dialog
+            }
+        });
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String review = reviewEditText.getText().toString();
+                // TODO: Process the review string
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+    }
+
