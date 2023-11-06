@@ -25,8 +25,6 @@ public class FavoriteServiceImpl implements FavoriteService {
      */
     public Favorite addFavorite(Integer userId, Integer entityId, ReviewType type) throws Exception {
 
-        java.sql.Time sqlTime = new java.sql.Time(System.currentTimeMillis());
-
         try {
             String query;
 
@@ -59,17 +57,24 @@ public class FavoriteServiceImpl implements FavoriteService {
             if (rs.next()) {
                 generatedKey = rs.getInt(1);
             }
-
-            connector.close();
-
             return getFavorite(generatedKey, type);
         }
 
         // If exception happens
         catch (Exception e) {
-            
+
             // Unknown exceptions happens.
             throw new Exception("Favorite added failed, please contact the IT administrator to report the issue.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
     }
 
@@ -81,9 +86,8 @@ public class FavoriteServiceImpl implements FavoriteService {
      */
     public Favorite getFavorite(int favouriteId, ReviewType type) throws Exception {
 
-        Favorite favorite = new Favorite();
-
         try {
+            Favorite favorite = new Favorite();
 
             String query = "SELECT * FROM mobilecomputing.\"favourite\" WHERE \"favourite_id\" = ?";
 
@@ -112,21 +116,27 @@ public class FavoriteServiceImpl implements FavoriteService {
                         favorite.setStudySpaceId(resultSet.getInt("favourite_study_space_id"));
                         break;
                     default:
-                        connector.close();
                         throw new Exception("Invalid favourite type. Cannot retrieve favorite list.");
                 }
-
-                connector.close();
-
                 return favorite;
             }
-
         }
 
         // If exception happens when querying user
         catch (Exception e) {
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
+
         // Return user information
         return null;
     }
@@ -140,9 +150,9 @@ public class FavoriteServiceImpl implements FavoriteService {
      */
     public List<Favorite> getFavoritesByUser(int userId, ReviewType type) throws Exception {
 
-        List<Favorite> favoriteList = new ArrayList<>();
-
         try {
+
+            List<Favorite> favoriteList = new ArrayList<>();
 
             String query;
 
@@ -196,17 +206,22 @@ public class FavoriteServiceImpl implements FavoriteService {
                 favoriteList.add(favorite);
             }
 
-            connector.close();
-
             return favoriteList;
         }
 
         // If exception happens when querying user
         catch (Exception e) {
-
-            connector.close();
-
             throw new Exception("Some error happened, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
     }
 
@@ -218,8 +233,6 @@ public class FavoriteServiceImpl implements FavoriteService {
      * @return Review
      */
     public Boolean isFavoriteByUser(int userId, int entityId, ReviewType type) throws Exception {
-
-        Favorite favorite = new Favorite();
 
         try {
             String query;
@@ -249,14 +262,8 @@ public class FavoriteServiceImpl implements FavoriteService {
 
             // Set user information
             if (resultSet.next()) { // Ensure there's a row in the result set
-
-                connector.close();
-
                 return true;
             } else {
-
-                connector.close();
-
                 return false;
             }
 
@@ -264,11 +271,17 @@ public class FavoriteServiceImpl implements FavoriteService {
 
         // If exception happens when querying user
         catch (Exception e) {
-
-            connector.close();
-
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
-    }
 
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
+    }
 }

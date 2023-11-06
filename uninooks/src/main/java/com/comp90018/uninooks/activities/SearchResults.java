@@ -43,6 +43,7 @@ import com.comp90018.uninooks.service.sortingComparators.DistanceComparator;
 import com.comp90018.uninooks.service.sortingComparators.NameComparator;
 import com.comp90018.uninooks.service.sortingComparators.RatingComparator;
 import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
+import com.comp90018.uninooks.service.time.TimeServiceImpl;
 
 import java.sql.Time;
 import java.text.DecimalFormat;
@@ -409,8 +410,7 @@ public class SearchResults extends AppCompatActivity {
 
             double hoursToClose = calcTimeToClose(closingTime);
 
-            LocalTime localTimeAEDT = LocalTime.now(ZoneId.of("Australia/Melbourne"));
-            int hour = localTimeAEDT.now().getHour();
+            int hour = new TimeServiceImpl().getAEDTTimeHour();
 
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, hour);
@@ -420,7 +420,7 @@ public class SearchResults extends AppCompatActivity {
             Time currTime = new Time(calendar.getTimeInMillis());
 
             if (hoursToClose <= 0 || !withinRange(openingTime, closingTime, currTime)) {
-                text = "Closed";
+                text = "Closed, Open at " + openingTimeText;
             } else {
                 text = "Opening Hours: " + openingTimeText + " - " + closingTimeText;
             }

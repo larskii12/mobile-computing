@@ -32,12 +32,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements GPSService {
 
-    private ReviewService reviewService;
-
     private LocationService locationService;
-
-    private UserService userService;
-
     private static Context context;
 
     GPSServiceImpl gpsService;

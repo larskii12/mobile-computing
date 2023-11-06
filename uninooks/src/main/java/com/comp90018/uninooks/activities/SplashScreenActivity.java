@@ -80,18 +80,7 @@ public class SplashScreenActivity extends AppCompatActivity {
          * Emulator Testing Mode Detection
          */
         if (EmulatorServiceImpl.isEmulator()) {
-            new Thread() {
-                public void run() {
-                    while (true) {
-                        showTextMessage("Emulator Testing Mode");
-                        try {
-                            Thread.sleep(1000 * 20);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
-            }.start();
+            showTextMessage("Emulator Testing Mode");
         }
     }
 

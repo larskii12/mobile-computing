@@ -22,9 +22,8 @@ public class ResourceServiceImpl implements ResourceService {
      */
     public List<Resource> getResourceFromBuilding(int buildingId) throws Exception {
 
-        List<Resource> resourceList = new ArrayList<>();
-
         try {
+            List<Resource> resourceList = new ArrayList<>();
 
             String query = "SELECT * FROM mobilecomputing.\"resource\" WHERE \"resource_building_id\" = ?";
 
@@ -50,14 +49,20 @@ public class ResourceServiceImpl implements ResourceService {
                 resourceList.add(resource);
             }
 
-            connector.close();
-
             return resourceList;
         } // If exception happens when querying user
         catch (Exception e) {
-
-            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
     }
 
@@ -65,9 +70,8 @@ public class ResourceServiceImpl implements ResourceService {
 
     public List<Resource> getResourceFromKeyWord(String keyWord) throws Exception {
 
-        List<Resource> resourceList = new ArrayList<>();
-
         try {
+            List<Resource> resourceList = new ArrayList<>();
 
             String query = "SELECT * FROM mobilecomputing.\"resource\" WHERE LOWER(\"resource_name\") LIKE ?";
 
@@ -93,13 +97,21 @@ public class ResourceServiceImpl implements ResourceService {
                 resourceList.add(resource);
             }
 
-            connector.close();
             return resourceList;
         } // If exception happens when querying user
         catch (Exception e) {
 
-            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
     }
 }

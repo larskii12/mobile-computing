@@ -29,6 +29,7 @@ import com.comp90018.uninooks.models.review.ReviewType;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingService;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
+import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
@@ -50,13 +51,11 @@ public class HomeActivity extends AppCompatActivity {
 
         // Declaring sensorManager
         // and acceleration constants
-        private static Context context;
-
+        private Context context;
         private SensorManager sensorManager;
         private float acceleration = 0f;
         private float currentAcceleration = 0f;
         private float lastAcceleration = 0f;
-
         HashMap<String, Double> busyRatingsByLocation;
 
 
@@ -102,11 +101,13 @@ public class HomeActivity extends AppCompatActivity {
                         ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
                         List<Location> studySpacesNearby = locationAPI.findAllLocations("STUDY", "", true);
                         List<Favorite> favouriteSpaces = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACE"));
-                        List<StudySpace> favorites = new ArrayList<StudySpace>();
+                        ArrayList <StudySpace> favorites = new ArrayList<StudySpace>();
                         for (Favorite favorite: favouriteSpaces) {
                             StudySpace space = new LocationServiceImpl().findStudySpaceById(favorite.getStudySpaceId());
                             favorites.add(space);
                         }
+                        new StudySpaceServiceImpl().calculateSpaceByWalkingDistance(GPSServiceImpl.getCurrentLocation(), favorites);
+
                         getAllBusyRatings(closestStudySpaces);
 //                        List<Favorite> userFavorites = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACES"));
                         System.out.println(studySpacesNearby.get(2).getName());
@@ -230,7 +231,7 @@ public class HomeActivity extends AppCompatActivity {
             ImageView hoursIcon = (ImageView) card.findViewById(R.id.clockIcon);
             hoursIcon.setBackgroundResource(R.drawable.baseline_access_time_24);
             if (space.getCloseTime() == null) {
-                locationHours.setText("Closed Today");
+                locationHours.setText("Close Today");
                 hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
             }
 
@@ -305,9 +306,6 @@ public class HomeActivity extends AppCompatActivity {
         protected void onPause() {
             sensorManager.unregisterListener(sensorListener);
             super.onPause();
-        }
-        public static Context getAppContext() {
-            return context;
         }
 
 
