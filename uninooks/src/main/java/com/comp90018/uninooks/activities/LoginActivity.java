@@ -178,7 +178,7 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
             System.out.println("User AQF level: " + logInUser.getUserAQFLevel());
 
             // Show login successful message
-            showTextMessage("Login successfully.");
+//            showTextMessage("Login successfully.");
 
 //            Intent intent = new Intent(LoginActivity.this, AccountActivity.class);
             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);

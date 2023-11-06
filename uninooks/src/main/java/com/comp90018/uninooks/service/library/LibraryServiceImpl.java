@@ -44,59 +44,72 @@ public class LibraryServiceImpl implements LibraryService{
     @Override
     public ArrayList<Library> getClosestLibraries(LatLng location, int size) throws Exception {
 
-        String query = "SELECT library_id, library_building_id FROM mobilecomputing.\"library\"";
+        try {
+            String query = "SELECT library_id, library_building_id FROM mobilecomputing.\"library\"";
 
-        PreparedStatement preparedStatement = connector.prepareStatement(query);
-        ResultSet resultSet = preparedStatement.executeQuery();
+            PreparedStatement preparedStatement = connector.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-        ArrayList<Library> allLibraries = new ArrayList<>();
-        ArrayList<Library> openingLibraries = new ArrayList<>();
-        ArrayList<Library> closingLibraries = new ArrayList<>();
+            ArrayList<Library> allLibraries = new ArrayList<>();
+            ArrayList<Library> openingLibraries = new ArrayList<>();
+            ArrayList<Library> closingLibraries = new ArrayList<>();
 
-        // Set user information
-        while (resultSet.next()) { // Ensure there's a row in the result set
+            // Set user information
+            while (resultSet.next()) { // Ensure there's a row in the result set
 
-            int libraryId = Integer.parseInt(resultSet.getString("library_id"));
+                int libraryId = Integer.parseInt(resultSet.getString("library_id"));
 
-            Library library = new LocationServiceImpl().findLibraryById(libraryId);
+                Library library = new LocationServiceImpl().findLibraryById(libraryId);
 
-            // Exclude the closed libraries
-            if (library != null){
-                allLibraries.add(new LocationServiceImpl().findLibraryById(libraryId));
+                // Exclude the closed libraries
+                if (library != null) {
+                    allLibraries.add(new LocationServiceImpl().findLibraryById(libraryId));
+                }
             }
+
+            // Get current Position
+            LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
+
+            allLibraries.sort((libraryOne, libraryTwo) -> {
+                double dist1 = calculateDistance(libraryOne.getLocation(), currentLocation);
+                double dist2 = calculateDistance(libraryTwo.getLocation(), currentLocation);
+                return Double.compare(dist1, dist2);
+            });
+
+            // Sort ten libraries by waling distance from Google Map API
+            closestLibraries = calculateSpaceByWalkingDistance(currentLocation, allLibraries);
+            sortByDistance(closestLibraries);
+
+            for (Library library : closestLibraries) {
+                if (library.isOpeningNow()) {
+                    openingLibraries.add(library);
+                } else {
+                    closingLibraries.add(library);
+                }
+            }
+
+            openingLibraries.addAll(closingLibraries);
+
+            if (openingLibraries.size() <= size) {
+                return openingLibraries;
+            }
+
+            return new ArrayList<>(openingLibraries.subList(0, size));
         }
 
-        connector.close();
-
-        // Get current Position
-        LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
-
-        allLibraries.sort((libraryOne, libraryTwo) -> {
-            double dist1 = calculateDistance(libraryOne.getLocation(), currentLocation);
-            double dist2 = calculateDistance(libraryTwo.getLocation(), currentLocation);
-            return Double.compare(dist1, dist2);
-        });
-
-        // Sort ten libraries by waling distance from Google Map API
-        closestLibraries = calculateSpaceByWalkingDistance(currentLocation, allLibraries);
-        sortByDistance(closestLibraries);
-
-        for (Library library : closestLibraries){
-            if (library.isOpeningNow()){
-                openingLibraries.add(library);
-            }
-            else{
-                closingLibraries.add(library);
-            }
+        catch (Exception e){
+            throw new Exception();
         }
 
-        openingLibraries.addAll(closingLibraries);
-
-        if (openingLibraries.size() <= size){
-            return openingLibraries;
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
-
-        return new ArrayList<>(openingLibraries.subList(0, size));
     }
 
     /**
@@ -108,17 +121,17 @@ public class LibraryServiceImpl implements LibraryService{
      */
     public ArrayList<Library> calculateSpaceByWalkingDistance(LatLng currentLocation, ArrayList<Library> libraries) throws IOException {
 
-        String origin = currentLocation.latitude + "," + currentLocation.longitude;
-
-        StringBuilder destination = new StringBuilder();
-
-        for (Library library : libraries) {
-
-            destination.append(library.getLocation().latitude).append(",").append(library.getLocation().longitude).append("|");
-            System.out.println(library.getName());
-        }
-
         try {
+
+            String origin = currentLocation.latitude + "," + currentLocation.longitude;
+
+            StringBuilder destination = new StringBuilder();
+
+            for (Library library : libraries) {
+
+                destination.append(library.getLocation().latitude).append(",").append(library.getLocation().longitude).append("|");
+                System.out.println(library.getName());
+            }
 
             InputStream inputStream = MainActivity.getAppContext().getResources().openRawResource(R.raw.config);
             Properties properties = new Properties();
@@ -272,53 +285,68 @@ public class LibraryServiceImpl implements LibraryService{
      */
     @Override
     public ArrayList<Library> getTopRatedLibraries(LatLng location, int size) throws Exception {
-        String query = "SELECT review_library_id, ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
-                "FROM mobilecomputing.\"review\" " +
-                "WHERE review_library_id IS NOT NULL " +
-                "GROUP BY review_library_id " +
-                "ORDER BY average_rating DESC;";
 
-        PreparedStatement preparedStatement = connector.prepareStatement(query);
-        ResultSet resultSet = preparedStatement.executeQuery();
+        try {
+            String query = "SELECT review_library_id, ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
+                    "FROM mobilecomputing.\"review\" " +
+                    "WHERE review_library_id IS NOT NULL " +
+                    "GROUP BY review_library_id " +
+                    "ORDER BY average_rating DESC;";
 
-        ArrayList<Library> allLibraries = new ArrayList<>();
-        ArrayList<Library> openingLibraries = new ArrayList<>();
-        ArrayList<Library> closingLibraries = new ArrayList<>();
+            PreparedStatement preparedStatement = connector.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-        // Set user information
-        while (resultSet.next()) { // Ensure there's a row in the result set
+            ArrayList<Library> allLibraries = new ArrayList<>();
+            ArrayList<Library> openingLibraries = new ArrayList<>();
+            ArrayList<Library> closingLibraries = new ArrayList<>();
 
-            int libraryId = Integer.parseInt(resultSet.getString("review_library_id"));
+            // Set user information
+            while (resultSet.next()) { // Ensure there's a row in the result set
 
-            Library library = new LocationServiceImpl().findLibraryById(libraryId);
-            library.setAverage_rating(Double.parseDouble(resultSet.getString("average_rating")));
+                int libraryId = Integer.parseInt(resultSet.getString("review_library_id"));
 
-            allLibraries.add(library);
+                Library library = new LocationServiceImpl().findLibraryById(libraryId);
+                library.setAverage_rating(Double.parseDouble(resultSet.getString("average_rating")));
+
+                allLibraries.add(library);
+            }
+
+            // Get current Position
+            LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
+
+            // Calculate the distance for each top rated study spaces
+            topRatedLibraries = calculateSpaceByWalkingDistance(currentLocation, allLibraries);
+
+            // Return opening study space first
+            for (Library library : topRatedLibraries) {
+                if (library.isOpeningNow()) {
+                    openingLibraries.add(library);
+                } else {
+                    closingLibraries.add(library);
+                }
+            }
+
+            openingLibraries.addAll(closingLibraries);
+
+            if (openingLibraries.size() <= size) {
+                return openingLibraries;
+            }
+
+            return new ArrayList<>(openingLibraries.subList(0, size));
         }
 
-        connector.close();
+        catch (Exception e){
+            throw new Exception();
+        }
 
-        // Get current Position
-        LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
-
-        // Calculate the distance for each top rated study spaces
-        topRatedLibraries = calculateSpaceByWalkingDistance(currentLocation, allLibraries);
-
-        // Return opening study space first
-        for (Library library : topRatedLibraries) {
-            if (library.isOpeningNow()) {
-                openingLibraries.add(library);
-            } else {
-                closingLibraries.add(library);
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
             }
         }
-
-        openingLibraries.addAll(closingLibraries);
-
-        if (openingLibraries.size() <= size) {
-            return openingLibraries;
-        }
-
-        return new ArrayList<>(openingLibraries.subList(0, size));
     }
 }

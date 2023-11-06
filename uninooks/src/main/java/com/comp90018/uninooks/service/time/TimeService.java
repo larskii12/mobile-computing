@@ -16,10 +16,4 @@ public interface TimeService {
 
     public int getWeekDate();
 
-    public int getTestWeekDate(int weekDate);
-
-    public Time getTestAEDTTime(int hour, int minute, int second);
-
-    public LocalTime getTestAEDTLocalTime(int hour, int minute, int second);
-
 }

@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,15 +39,15 @@ public class LocationServiceImpl implements LocationService {
 
     public Library findLibraryById(int locationId) throws Exception {
 
-        Library library = new Library();
-
-        // Get date of a week
-        int currentDayOfWeek = new TimeServiceImpl().getWeekDate();
-
-        // Get the current time
-        Time currentTime = new TimeServiceImpl().getAEDTTime();
-
         try {
+            Library library = new Library();
+
+            // Get date of a week
+            int currentDayOfWeek = new TimeServiceImpl().getWeekDate();
+
+            // Get the current time
+            Time currentTime = new TimeServiceImpl().getAEDTTime();
+
             String query = "SELECT * FROM mobilecomputing.library l " +
                     "join mobilecomputing.opening_hours o on l.library_id = o.library_id " +
                     "join mobilecomputing.\"building\" b ON l.library_building_id = b.building_id " +
@@ -92,14 +93,22 @@ public class LocationServiceImpl implements LocationService {
 
                 library.setHasQuietZones(resultSet.getBoolean("library_has_quiet_zones"));
 
-                connector.close();
-
                 return library;
             }
 
         } catch(Exception e){ // If exception happens when querying library
-            connector.close();
+
             throw new Exception("Some error happened, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
 
         return null;
@@ -107,15 +116,16 @@ public class LocationServiceImpl implements LocationService {
 
     public Restaurant findRestaurantById(int locationId) throws Exception {
 
-        Restaurant restaurant = new Restaurant();
-
-        // Get date of a week
-        int currentDayOfWeek = new TimeServiceImpl().getWeekDate();
-
-        // Get the current time
-        Time currentTime = new TimeServiceImpl().getAEDTTime();
-
         try {
+
+            Restaurant restaurant = new Restaurant();
+
+            // Get date of a week
+            int currentDayOfWeek = new TimeServiceImpl().getWeekDate();
+
+            // Get the current time
+            Time currentTime = new TimeServiceImpl().getAEDTTime();
+
             String query = "SELECT * FROM mobilecomputing.restaurant r join mobilecomputing.opening_hours o " +
                     "on r.restaurant_id = o.restaurant_id " +
                     "WHERE r.restaurant_id = ? and o.date = " + currentDayOfWeek;
@@ -145,14 +155,21 @@ public class LocationServiceImpl implements LocationService {
                 restaurant.setFloorLevel(resultSet.getInt("restaurant_floor_level"));
                 restaurant.setHasVegetarianOptions(resultSet.getBoolean("restaurant_vegetarian_options"));
 
-                connector.close();
-
                 return restaurant;
             }
 
         } catch(Exception e){ // If exception happens when querying restaurant
-            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (SQLException e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
 
         return null;
@@ -160,47 +177,44 @@ public class LocationServiceImpl implements LocationService {
 
     public StudySpace findStudySpaceById(int locationId) throws Exception {
 
-        StudySpace studySpace = new StudySpace();
-
-        // Get date and time
-        int currentDayOfWeek = new TimeServiceImpl().getWeekDate();
-        Time currentTime = new TimeServiceImpl().getAEDTTime();
-
-        // Generate a fake date time for testing
-//        currentDayOfWeek = new TimeServiceImpl().getTestWeekDate(7);
-//        currentTime = new TimeServiceImpl().getTestAEDTTime(5, 0, 0);
-
         try {
-                String query = "SELECT * FROM mobilecomputing.study_space s " +
-                        "join mobilecomputing.opening_hours o  " + "" +
-                        "on s.study_space_id = o.study_space_id " +
-                        "join mobilecomputing.\"building\" b ON s.study_space_building_id = b.building_id " +
-                        "WHERE s.study_space_id = ? and o.date = " + currentDayOfWeek;
 
-                PreparedStatement preparedStatement = connector.prepareStatement(query);
-                preparedStatement.setInt(1, locationId);
+            StudySpace studySpace = new StudySpace();
+
+            // Get date and time
+            int currentDayOfWeek = new TimeServiceImpl().getWeekDate();
+            Time currentTime = new TimeServiceImpl().getAEDTTime();
+
+            String query = "SELECT * FROM mobilecomputing.study_space s " +
+                    "join mobilecomputing.opening_hours o  " + "" +
+                    "on s.study_space_id = o.study_space_id " +
+                    "join mobilecomputing.\"building\" b ON s.study_space_building_id = b.building_id " +
+                    "WHERE s.study_space_id = ? and o.date = " + currentDayOfWeek;
+
+            PreparedStatement preparedStatement = connector.prepareStatement(query);
+            preparedStatement.setInt(1, locationId);
 //            preparedStatement.setInt(2, currentDayOfWeek);
 
-                ResultSet resultSet = preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-                if (resultSet.next()) { // Ensure there's a row in the result set
-                    // Set study space information
-                    studySpace.setId(resultSet.getInt("study_space_id"));
-                    studySpace.setBuildingId(resultSet.getInt("study_space_building_id"));
-                    studySpace.setName(resultSet.getString("study_space_name"));
+            if (resultSet.next()) { // Ensure there's a row in the result set
+                // Set study space information
+                studySpace.setId(resultSet.getInt("study_space_id"));
+                studySpace.setBuildingId(resultSet.getInt("study_space_building_id"));
+                studySpace.setName(resultSet.getString("study_space_name"));
 
-                    studySpace.setOpenTime(resultSet.getTime("opening_time"));
-                    studySpace.setCloseTime(resultSet.getTime("closing_time"));
+                studySpace.setOpenTime(resultSet.getTime("opening_time"));
+                studySpace.setCloseTime(resultSet.getTime("closing_time"));
 
-                    studySpace.setType("STUDY_SPACE");
+                studySpace.setType("STUDY_SPACE");
 
-                    studySpace.setIsOpenToday(studySpace.getOpenTime() != null);
+                studySpace.setIsOpenToday(studySpace.getOpenTime() != null);
 
-                    if (studySpace.issOpenToday() && currentTime.after(studySpace.getOpenTime()) && currentTime.before(studySpace.getCloseTime())) {
-                        studySpace.setIsOpeningNow(true);
-                    }
+                if (studySpace.issOpenToday() && currentTime.after(studySpace.getOpenTime()) && currentTime.before(studySpace.getCloseTime())) {
+                    studySpace.setIsOpeningNow(true);
+                }
 
-                    studySpace.setLocation(new LatLng(Double.parseDouble(resultSet.getString("building_latitude")), Double.parseDouble(resultSet.getString("building_longitude"))));
+                studySpace.setLocation(new LatLng(Double.parseDouble(resultSet.getString("building_latitude")), Double.parseDouble(resultSet.getString("building_longitude"))));
 //                Array daysDb = resultSet.getArray("study_space_opening_days");
 //                Integer[] days = (Integer[]) daysDb.getArray();
 //                studySpace.setOpeningDays(days);
@@ -209,21 +223,28 @@ public class LocationServiceImpl implements LocationService {
 //                Time[] busyHours = (Time[]) busyDb.getArray();
 //                studySpace.setBusyHours(busyHours);
 
-                    studySpace.setLibraryId(resultSet.getInt("study_space_library_id"));
+                studySpace.setLibraryId(resultSet.getInt("study_space_library_id"));
 //               studySpace.setCapacity(resultSet.getInt("study_space_capacity"));
 //                studySpace.setFloorLevel(resultSet.getInt(0));
-                    studySpace.setMinimumAccessAQFLevel(resultSet.getInt("study_space_minimum_access_AQF_level"));
-                    studySpace.setTalkAllowed(resultSet.getBoolean("study_space_talk_allowed"));
+                studySpace.setMinimumAccessAQFLevel(resultSet.getInt("study_space_minimum_access_AQF_level"));
+                studySpace.setTalkAllowed(resultSet.getBoolean("study_space_talk_allowed"));
 
-                    connector.close();
-
-                    return studySpace;
-                }
+                return studySpace;
+            }
 
         } catch(Exception e){ // If exception happens when querying study space
 
-            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
 
         return null;
@@ -234,17 +255,18 @@ public class LocationServiceImpl implements LocationService {
                                            String name,
                                            boolean isAscending) throws Exception {
 
-        List<Location> allLocations = new ArrayList<>();
-
-        String searchName = "";
-        if (name != null){
-            searchName = name.toLowerCase();
-        }
-
-        LocalDate currentDate = LocalDate.now();
-        Integer currentDayOfWeek = currentDate.getDayOfWeek().getValue();
-
         try {
+
+            List<Location> allLocations = new ArrayList<>();
+
+            String searchName = "";
+            if (name != null){
+                searchName = name.toLowerCase();
+            }
+
+            LocalDate currentDate = LocalDate.now();
+            Integer currentDayOfWeek = currentDate.getDayOfWeek().getValue();
+
             String query;
             PreparedStatement preparedStatement;
             if (locationType.equals("STUDY")) {
@@ -341,8 +363,6 @@ public class LocationServiceImpl implements LocationService {
                     allLocations.add(location);
                 }
 
-                connector.close();
-
                 return allLocations;
 
             } else if (locationType.equals("FOOD")) {
@@ -381,8 +401,6 @@ public class LocationServiceImpl implements LocationService {
 
                     allLocations.add(location);
                 }
-
-                connector.close();
 
                 return allLocations;
 
@@ -488,19 +506,24 @@ public class LocationServiceImpl implements LocationService {
 
                     allLocations.add(location);
                 }
-
-                connector.close();
                 return allLocations;
 
             } else {
-
-                connector.close();
                 throw new Exception("Does not exist!!");
             }
 
         } catch(Exception e){ // If exception happens when querying library
-            connector.close();
             throw new Exception("Some error happened, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
 
     }
