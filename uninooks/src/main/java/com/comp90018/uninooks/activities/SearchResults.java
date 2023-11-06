@@ -53,6 +53,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+
+
 public class SearchResults extends AppCompatActivity {
     private int userID;
     LinearLayout resultCardArea;

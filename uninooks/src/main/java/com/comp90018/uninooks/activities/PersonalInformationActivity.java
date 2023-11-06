@@ -63,6 +63,16 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
 
     private Button buttonNewEmailVerifyOTP;
 
+    private TextView passwordTextView;
+
+    private EditText editCurrentPassword;
+
+    private EditText editNewPassword;
+
+    private EditText editConfirmPassword;
+
+    private Button buttonConfirmNewPassword;
+
     private Button buttonNewFaculty;
 
     private Button buttonNewDegree;
@@ -143,9 +153,35 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         buttonNewEmailGetOTP = findViewById(R.id.Pi_ButtonConfirmNewEmail);
         editTextEmailOTP = findViewById(R.id.Pi_EditTextEmailOTP);
         buttonNewEmailVerifyOTP = findViewById(R.id.Pi_ButtonOTPVerify);
+        passwordTextView = findViewById(R.id.Account_Pi_Edit_Password);
+        editCurrentPassword = findViewById(R.id.Pi_EditTextCurrentPassword);
+        editNewPassword = findViewById(R.id.Pi_EditTextNewPassword);
+        editConfirmPassword = findViewById(R.id.Pi_EditTextConfirmNewPassword);
+        buttonConfirmNewPassword = findViewById(R.id.Pi_ButtonConfirmNewPassword);
         buttonNewFaculty = findViewById(R.id.Pi_ButtonConfirmNewFaculty);
         buttonNewDegree = findViewById(R.id.Pi_ButtonConfirmNewDegree);
         otp = "";
+
+        buttonNewUserName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (editUsernameEditText.getText().toString().trim().isEmpty()) {
+                    showTextMessage("User Name cannot be empty");
+                } else {
+                    new Thread() {
+                        public void run() {
+                            try {
+                                new UserServiceImpl().updateUserName(userId, editUsernameEditText.getText().toString());
+                                reloadActivity();
+                                showTextMessage("Your username has been update successfully.");
+                            } catch (Exception e) {
+                                showTextMessage(e.getMessage());
+                            }
+                        }
+                    }.start();
+                }
+            }
+        });
 
 
         ImageView editNameIcon = findViewById(R.id.Account_Pi_Ic_Edit_Name);
@@ -191,7 +227,6 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         });
 
 
-
         // Change Password
         buttonNewEmailGetOTP.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,22 +237,14 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
 
                             // If email is empty
                             if (editTextNewEmail.getText().toString().trim().isEmpty()) {
-                                showTextMessage("New Email cannot be empty");
-                            }
-
-                            else if (editTextNewEmail.getText().toString().equals(userEmail)){
+                                showTextMessage("Email cannot be empty");
+                            } else if (editTextNewEmail.getText().toString().equals(userEmail)) {
                                 showTextMessage("New email cannot same as the current email.");
-                            }
-
-                            else if (new UserServiceImpl().hasUser(editTextNewEmail.getText().toString())){
+                            } else if (new UserServiceImpl().hasUser(editTextNewEmail.getText().toString())) {
                                 showTextMessage("This email has been registered with us, please try another one.");
-                            }
-
-                            else if (!editTextNewEmail.getText().toString().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")){
+                            } else if (!editTextNewEmail.getText().toString().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
                                 showTextMessage("This is not a valid email address format.");
-                            }
-
-                            else {
+                            } else {
                                 Message msg = new Message();
                                 msg.what = 2;
                                 msg.obj = OTP_TIMER;
@@ -242,9 +269,9 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
             @Override
             public void onClick(View v) {
 
-                new Thread(){
-                    public void run(){
-                        if (!otp.isEmpty() && otp.equals(editTextEmailOTP.getText().toString())){
+                new Thread() {
+                    public void run() {
+                        if (!otp.isEmpty() && otp.equals(editTextEmailOTP.getText().toString())) {
                             try {
                                 new UserServiceImpl().updateUserEmail(userId, newUserEmail);
                             } catch (Exception e) {
@@ -254,8 +281,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                             showTextMessage("Your email has been changed successfully.");
 
                             reloadActivity();
-                        }
-                        else{
+                        } else {
                             showTextMessage("OTP is not correct.");
                         }
                     }
@@ -268,7 +294,63 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         editPasswordIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (editCurrentPassword.getVisibility() == View.GONE) {
+                    editCurrentPassword.setVisibility(View.VISIBLE);
+                    editNewPassword.setVisibility(View.VISIBLE);
+                    editConfirmPassword.setVisibility(View.VISIBLE);
+                    buttonConfirmNewPassword.setVisibility(View.VISIBLE);
+                    passwordTextView.setVisibility(View.GONE);
+                } else {
+                    editCurrentPassword.setVisibility(View.GONE);
+                    editNewPassword.setVisibility(View.GONE);
+                    editConfirmPassword.setVisibility(View.GONE);
+                    buttonConfirmNewPassword.setVisibility(View.GONE);
+                    passwordTextView.setVisibility(View.VISIBLE);
+                }
 
+            }
+        });
+
+        /**
+         * Change password button
+         */
+        buttonConfirmNewPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String oldPassWord = editCurrentPassword.getText().toString();
+                String newPassword = editNewPassword.getText().toString();
+                String newPassWordConfirm = editConfirmPassword.getText().toString();
+
+                System.out.println(oldPassWord);
+                System.out.println(newPassword);
+                System.out.println(newPassWordConfirm);
+
+                if (oldPassWord.trim().isEmpty()) {
+                    showTextMessage("Your old password is incorrect.");
+                } else if (newPassword.length() < 8 || newPassWordConfirm.length() < 8) {
+                    showTextMessage("New Password at least 8 characters.");
+                } else if (!newPassword.equals(newPassWordConfirm)) {
+                    showTextMessage("Your new password is not identical.");
+                } else {
+                    new Thread() {
+                        public void run() {
+
+                            try {
+
+                                if (new UserServiceImpl().logIn(userEmail, oldPassWord) == null) {
+                                    showTextMessage("Your old password is incorrect.");
+                                } else {
+                                    new UserServiceImpl().updateUserPassword(userId, oldPassWord, newPassword);
+                                    showTextMessage("Your password has been updated successfully.");
+                                    reloadActivity();
+                                }
+                            } catch (Exception e) {
+                                showTextMessage("An error happens, pleas contact the IT administrator.");
+                            }
+                        }
+                    }.start();
+                }
             }
         });
 
@@ -299,6 +381,60 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
             }
         });
 
+        buttonNewDegree.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread() {
+                    public void run() {
+
+                        int aqfLevel = 0;
+
+                        switch (spinnerChangeDegreeList.getSelectedItem().toString()) {
+                            case "Certificate I":
+                                aqfLevel = 1;
+                                break;
+                            case "Certificate II":
+                                aqfLevel = 2;
+                                break;
+                            case "Certificate III":
+                                aqfLevel = 3;
+                                break;
+                            case "Certificate IV":
+                                aqfLevel = 4;
+                                break;
+                            case "Diploma":
+                                aqfLevel = 5;
+                                break;
+                            case "Advanced Diploma, Associate Degree":
+                                aqfLevel = 6;
+                                break;
+                            case "Bachelor Degree":
+                                aqfLevel = 7;
+                                break;
+                            case "Bachelor Honours Degree":
+                                aqfLevel = 8;
+                                break;
+                            case "Masters Degree":
+                                aqfLevel = 9;
+                                break;
+                            case "Doctoral Degree":
+                                aqfLevel = 10;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        try {
+                            new UserServiceImpl().updateUserAQFLevel(userId, aqfLevel);
+                            reloadActivity();
+                        } catch (Exception e) {
+                            showTextMessage("An error happens, pleas contact the IT administrator.");
+                        }
+                    }
+                }.start();
+            }
+        });
+
         facultyTextView = findViewById(R.id.Account_Pi_Edit_Faculty);
         ImageView editFacultyIcon = findViewById(R.id.Account_Pi_Ic_Edit_Faculty);
 
@@ -324,6 +460,29 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                 }
             }
         });
+
+        buttonNewFaculty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(){
+                    public void run(){
+                        try {
+                            String faculty = spinnerChangeFacultyList.getSelectedItem().toString();
+                            if (faculty.equals("Please select your faculty (optional)")){
+                                faculty = "Not Provided";
+                            }
+
+                            new UserServiceImpl().updateUserFaculty(userId, faculty);
+                            reloadActivity();
+                        } catch (Exception e) {
+                            showTextMessage("An error happens, pleas contact the IT administrator.");
+                        }
+                    }
+                }.start();
+            }
+        });
+
+
 
         new Thread() {
             public void run(){

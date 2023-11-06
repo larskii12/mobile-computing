@@ -29,6 +29,8 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private EditText editTextResetPasswordNewPasswordConfirm;
     private Button buttonResetPasswordConfirm;
 
+    private String userEmail;
+
     @SuppressLint("HandlerLeak")
 
     private final Handler handler = new Handler() {
@@ -79,12 +81,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
                     break;
 
-//                case 3:
-//                    buttonGetResetPasswordOTP.setEnabled(false);
-//                    buttonGetResetPasswordOTP.setText("Sending");
-//                    buttonGetResetPasswordOTP.setBackgroundColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.grey));
-//
-//                    break;
+                case 3:
+                    editTextResetPasswordEmail.setText(userEmail);
+                    break;
             }
         }
     };
@@ -93,6 +92,10 @@ public class ResetPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
+
+        Intent intent = getIntent();
+        userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
+        handler.sendEmptyMessage(3);
 
         editTextResetPasswordEmail = findViewById(R.id.EditTextResetPasswordEmail);
         editTextResetPasswordOTP = findViewById(R.id.EditTextResetPasswordOTP);
@@ -223,7 +226,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
         new Thread() {
             public void run() {
                 Intent intent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
+                finish();
             }
         }.start();
 
