@@ -78,4 +78,11 @@
     <string name="focus_subheading2">What does Do Not Disturb do? </string>
     <string name="focus_paragraph2">This will disable notifications all social media and messaging applications</string>
     <string name="focus_last">Good luck students!</string>
+
+
+    <!-- Focus Mode Strings -->
+    <string name="pomodoro_setting">Pomodoro Time</string>
+    <string name="short_break_setting">Short Break Time</string>
+    <string name="long_break_setting">Long Break Time</string>
+    <string name="auto_pomodoro">Pomodoro Sequence</string>
 </resources>
