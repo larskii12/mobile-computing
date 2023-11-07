@@ -136,7 +136,9 @@ public class StudySpaceServiceImpl implements StudySpaceService {
 //                studySpace.setAverage_rating(Double.parseDouble(resultSet.getString("average_rating")));
 //                studySpace.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), studySpace.getLocation()));
 
-                allStudySpaces.add(studySpace);
+                if (studySpace != null){
+                    allStudySpaces.add(studySpace);
+                }
             }
 
 //            // Get current Position
