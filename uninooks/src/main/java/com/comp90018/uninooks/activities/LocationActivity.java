@@ -373,6 +373,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         Button submitButton = dialog.findViewById(R.id.add_review_submit_Button);
         Button cancelButton = dialog.findViewById(R.id.add_review_cancel_Button);
         final EditText reviewEditText = dialog.findViewById(R.id.EditReview);
+        final RatingBar ratingBar = dialog.findViewById(R.id.review_ratingBar);
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -386,7 +387,15 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
             public void onClick(View v) {
 
                 String review = reviewEditText.getText().toString();
-                // TODO: Process the review string
+
+                int rating = (int) ratingBar.getRating();
+
+                if (rating == 0) {
+                    Toast.makeText(getApplicationContext(), "Please enter a review", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                //TODO: add review star rating (int rating) to database
+
                 dialog.dismiss();
             }
         });
