@@ -226,23 +226,8 @@ public class SearchResults extends AppCompatActivity {
                     intent.putExtra("USER_ID_EXTRA", userId);
                     intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                     intent.putExtra("USER_NAME_EXTRA", userName);
-//                    String locationIDString = String.valueOf(location.getId());
-//                    intent.putExtra("SPACE_ID_EXTRA", locationIDString);
-
                     intent.putExtra("LOCATION_ID", location.getId());
                     intent.putExtra("LOCATION_TYPE", location.getType());
-
-//                    if (location.getType().equals("LIBRARY")) {
-//                        intent.putExtra("LOCATION", (Library) location);
-//                    }
-//                    // STUDY_SPACE
-//                    else if (type.equals("STUDY_SPACE")) {
-//                        intent.putExtra("LOCATION", (StudySpace) location);
-//                    }
-//                    // Restaurant
-//                    else {
-//                        intent.putExtra("LOCATION", (Restaurant) location);
-//                    }
 
                     startActivity(intent);
 
@@ -454,7 +439,6 @@ public class SearchResults extends AppCompatActivity {
         Time closingTime = location.getCloseTime();
 
         if (closingTime == null) {
-            Log.d("AAAAAAAAAAAAAAAAAAAAA", "aaaaaaaaaaaaaaa");
             text = "Close Today";
         }
 

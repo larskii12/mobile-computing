@@ -113,7 +113,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public boolean onQueryTextSubmit(String s) {
                 String searchQuery = searchBar.getQuery().toString();
                 Intent intent = new Intent(MapsActivity.this, SearchResults.class);
+
+                intent.putExtra("USER_ID_EXTRA", userId);
+                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                intent.putExtra("USER_NAME_EXTRA", userName);
                 intent.putExtra("searchQuery", searchQuery);
+
                 startActivity(intent);
                 return true;
             }

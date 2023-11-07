@@ -10,7 +10,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,7 +36,6 @@ import com.comp90018.uninooks.models.location.restaurant.Restaurant;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.comp90018.uninooks.models.review.Review;
 import com.comp90018.uninooks.models.review.ReviewType;
-import com.comp90018.uninooks.models.user.User;
 import com.comp90018.uninooks.service.building.BuildingServiceImpl;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
@@ -46,7 +44,6 @@ import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
-import com.comp90018.uninooks.service.user.UserServiceImpl;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -54,8 +51,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -178,9 +173,14 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     List<Favorite> favorites = new FavoriteServiceImpl().getFavoritesByUser(userId,ReviewType.valueOf(location.getType()));
                     isFavorite = false;
                     for (Favorite favorite: favorites) {
-                        if (favorite.getStudySpaceId() == location.getId()) {
+                        if (location.getType().equals("LIBRARY") && favorite.getLibraryId() == location.getId()) {
                             isFavorite = true;
                         }
+                        else if (location.getType().equals("STUDY_SPACE") && favorite.getStudySpaceId() == location.getId()) {
+                            isFavorite = true;
+                        }
+                        else isFavorite = location.getType().equals("RESTAURANT") && favorite.getRestaurantId() == location.getId();
+
                     }
                     LinearLayout reviewsLayout = findViewById(R.id.reviews);
                     TextView locationName = findViewById(R.id.textView5);
@@ -279,7 +279,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             }
                             if (location.getCloseTime() == null) {
                                 openHours.setText("Close today");
-                            } else if(location.getCloseTime() != null && location.isOpenToday()){
+                            } else if(location.getCloseTime() != null && location.isOpeningNow()){
                                 @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                                 openHours.setText("Closed, open at " + sdf.format((location.getOpenTime())));
                             }
