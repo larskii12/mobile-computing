@@ -205,7 +205,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             }
                             if (busyScore >= 0 && busyScore <= 40) {
                                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green)));
-                            } else if (busyScore > 40 && busyScore <= 80) {
+                            } else if (busyScore > 40 && busyScore <= 75) {
                                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.yellow)));
                             } else {
                                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red)));
