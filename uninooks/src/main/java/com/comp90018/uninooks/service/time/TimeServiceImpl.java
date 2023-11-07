@@ -18,7 +18,7 @@ public class TimeServiceImpl implements TimeService{
         return Time.valueOf(currentTimeStr);
 
         // Fake time for nigh testing
-//        return Time.valueOf("02:00:00");
+//        return Time.valueOf("13:15:00");
     }
 
     @Override
@@ -27,7 +27,7 @@ public class TimeServiceImpl implements TimeService{
         return currentDate.getDayOfWeek().getValue();
 
         // Fake date for weekend testing
-//        return 6;
+//        return 3;
     }
 
     @Override

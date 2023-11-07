@@ -192,7 +192,7 @@
                 <HorizontalScrollView
                     android:id="@+id/horizontalScrollView"
                     android:layout_width="match_parent"
-                    android:layout_height="190dp"
+                    android:layout_height="200dp"
                     android:layout_marginStart="7dp"
                     android:layout_marginTop="7dp"
                     android:layout_marginBottom="4dp"
@@ -226,7 +226,7 @@
                 <HorizontalScrollView
                     android:id="@+id/horizontalScrollView1"
                     android:layout_width="match_parent"
-                    android:layout_height="190dp"
+                    android:layout_height="200dp"
                     android:layout_marginStart="7dp"
                     android:layout_marginTop="7dp"
                     android:layout_marginBottom="4dp"
@@ -291,7 +291,7 @@
                 <HorizontalScrollView
                     android:id="@+id/horizontalScrollView2"
                     android:layout_width="match_parent"
-                    android:layout_height="190dp"
+                    android:layout_height="200dp"
                     android:layout_marginStart="7dp"
                     android:layout_marginTop="7dp"
                     android:layout_marginBottom="4dp"

@@ -199,6 +199,10 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
                             }
 
+                            else if (!username.matches("\\w{1,10}")) {
+                                showTextMessage("User name can only contain letters, numbers, and underscores, less than 10 characters");
+                            }
+
                             else if (new UserServiceImpl().hasUser(editTextSignUpUserName.getText().toString())){
                                 showTextMessage("This user name has been registered with us, please try another one.");
                             }
@@ -353,13 +357,6 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
             return false;
         }
-
-        // Advanced check needed
-//        if (!email.contains("@")){
-//            showTextMessage("Your email format is not correct.");
-//
-//            return false;
-//        }
 
         if (!password.equals(passwordConfirmation)) {
             System.out.println("Passwords do not match");

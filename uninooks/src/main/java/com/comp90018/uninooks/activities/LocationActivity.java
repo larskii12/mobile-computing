@@ -1,6 +1,4 @@
 package com.comp90018.uninooks.activities;
-import android.Manifest;
-import android.app.Dialog;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -10,7 +8,9 @@ import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,7 +31,9 @@ import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.databinding.ActivityLocationBinding;
 import com.comp90018.uninooks.models.favorite.Favorite;
 import com.comp90018.uninooks.models.location.building.Building;
+import com.comp90018.uninooks.models.location.library.Library;
 import com.comp90018.uninooks.models.location.resource.Resource;
+import com.comp90018.uninooks.models.location.restaurant.Restaurant;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.comp90018.uninooks.models.review.Review;
 import com.comp90018.uninooks.models.review.ReviewType;
@@ -41,6 +43,7 @@ import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
+import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
@@ -51,6 +54,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -59,22 +64,24 @@ import java.util.List;
 public class LocationActivity extends FragmentActivity implements OnMapReadyCallback, GPSService{
     private Context context;
 
-    private String userName;
     private ActivityLocationBinding binding;
     GPSServiceImpl gpsService;
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
     SupportMapFragment bananaFragment;
-    StudySpace space;
+    com.comp90018.uninooks.models.location.Location location;
     boolean isFavorite;
-
-    String userId;
 
     private final int standardCameraZoom = 18;
 
-    private int userID;
+//    private BottomNavigationView bottomNav;
 
-    private int spaceID;
+    private int userId;
+    private String userEmail;
+    private String userName;
+    private int locationId;
+
+    private String locationType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,30 +90,103 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
         setContentView(binding.getRoot());
         context = getApplicationContext();
+
         Intent intent = getIntent();
-        space = intent.getParcelableExtra("parcel");
-        userID = intent.getIntExtra("USERID_EXTRA", 6);
+        userId = intent.getIntExtra("USER_ID_EXTRA", 0);
+        userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
+        userName = intent.getStringExtra("USER_NAME_EXTRA");
+        locationId = intent.getIntExtra("LOCATION_ID", 0);
+        locationType = intent.getStringExtra("LOCATION_TYPE");
+
+//        bottomNav = findViewById(R.id.bottom_navigation);
+//        bottomNav.setSelectedItemId(R.id.homeNav);
+
+//        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+//            @SuppressLint("NonConstantResourceId")
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//                int id = item.getItemId();
+//
+//                if (id == R.id.homeNav){
+//                    Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
+//
+//                    // Pass the user to next page
+//                    intent.putExtra("USER_ID_EXTRA", userId);
+//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+//                    intent.putExtra("USER_NAME_EXTRA", userName);
+//
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    startActivity(intent);
+//                    finish();
+//                }
+//
+//                else if (id == R.id.searchNav) {
+//                    Intent intent = new Intent(LocationActivity.this, MapsActivity.class);
+//
+//                    // Pass the user to next page
+//                    intent.putExtra("USER_ID_EXTRA", userId);
+//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+//                    intent.putExtra("USER_NAME_EXTRA", userName);
+//
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    startActivity(intent);
+//                    finish();
+//
+//                } else if (id == R.id.focusNav) {
+//                    Intent intent = new Intent(LocationActivity.this, StudyZoneActivity.class);
+//
+//                    // Pass the user to next page
+//                    intent.putExtra("USER_ID_EXTRA", userId);
+//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+//                    intent.putExtra("USER_NAME_EXTRA", userName);
+//                    startActivity(intent);
+//                    finish();
+//
+//                } else {
+//                    Intent intent = new Intent(LocationActivity.this, AccountActivity.class);
+//
+//                    // Pass the user to next page
+//                    intent.putExtra("USER_ID_EXTRA", userId);
+//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+//                    intent.putExtra("USER_NAME_EXTRA", userName);
+//                    startActivity(intent);
+//                }
+//
+//                return false;
+//            }
+//        });
+
 
         new Thread() {
             @Override
             public void run() {
                 try {
-                    spaceID = space.getId();
-                    List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(spaceID, ReviewType.valueOf(space.getType()));
+
+                    if (locationType.equals("LIBRARY")){
+                        location = (Library) new LocationServiceImpl().findLibraryById(locationId);
+
+                    } else if (locationType.equals("STUDY_SPACE")){
+                        location = (StudySpace) new LocationServiceImpl().findStudySpaceById(locationId);
+                    } else {
+                        location = (Restaurant) new LocationServiceImpl().findRestaurantById(locationId);
+                    }
+
+                    List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(locationId, ReviewType.valueOf(location.getType()));
+
                     //System.out.println("Building id:" + space.getBuildingId());
-                    Building building = new BuildingServiceImpl().getBuilding(space.getBuildingId(), ReviewType.valueOf(space.getType()));
-                    List<Favorite> favorites = new FavoriteServiceImpl().getFavoritesByUser(userID,ReviewType.valueOf(space.getType()));
+                    Building building = new BuildingServiceImpl().getBuilding(location.getBuildingId(), ReviewType.valueOf(location.getType()));
+                    List<Favorite> favorites = new FavoriteServiceImpl().getFavoritesByUser(userId,ReviewType.valueOf(location.getType()));
                     isFavorite = false;
                     for (Favorite favorite: favorites) {
-                        if (favorite.getStudySpaceId() == space.getId()) {
+                        if (favorite.getStudySpaceId() == location.getId()) {
                             isFavorite = true;
                         }
                     }
                     LinearLayout reviewsLayout = findViewById(R.id.reviews);
                     TextView locationName = findViewById(R.id.textView5);
                     ProgressBar progress = findViewById(R.id.progressBar);
-                    Double business = new BusyRatingServiceImpl().getAverageScoreFromEntity(spaceID, ReviewType.valueOf(space.getType()));
-                    Integer busyScore = space.isOpeningNow() ? (int) (business *20) : 0;
+                    Double business = new BusyRatingServiceImpl().getAverageScoreFromEntity(locationId, ReviewType.valueOf(location.getType()));
+                    Integer busyScore = location.isOpeningNow() ? (int) (business *20) : 0;
                     TextView progressValue = findViewById(R.id.textView7);
                     TextView distance = findViewById(R.id.distance);
                     TextView openHours = findViewById(R.id.openHours);
@@ -116,31 +196,33 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     ImageButton favouriteButton = findViewById(R.id.favoriteButton);
 
                     Button addReview = findViewById(R.id.add_review);
-                    User user = null;
-
-                    //System.out.println(userID);
-                    user = new UserServiceImpl().getUser(userID);
-
-                    userName = user.getUserName();
+//                    User user = null;
+//
+//                    //System.out.println(userID);
+//                    user = new UserServiceImpl().getUser(userId);
+//
+//                    userName = user.getUserName();
 
                     TextView listTitle = findViewById(R.id.listTitle);
                     LinearLayout amenitiesList = findViewById(R.id.amenities);
                     //System.out.println("Building id: " + space.getBuildingId());
 
-                    List<Resource> resources = new ResourceServiceImpl().getResourceFromBuilding(space.getBuildingId());
+                    List<Resource> resources = new ResourceServiceImpl().getResourceFromBuilding(location.getBuildingId());
                     backButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            new Thread() {
-                                public void run() {
-                                    Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
-                                    intent.putExtra("USERID_EXTRA", userId);
-                                    intent.putExtra("USERNAME_EXTRA", userName);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            }.start();
+
+                            finish();
+//                            new Thread() {
+//                                public void run() {
+//                                    Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
+//                                    intent.putExtra("USERID_EXTRA", userId);
+//                                    intent.putExtra("USERNAME_EXTRA", userName);
+//                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                                    startActivity(intent);
+//                                    finish();
+//                                }
+//                            }.start();
                         }
                     });
                     favouriteButton.setOnClickListener(new View.OnClickListener() {
@@ -149,7 +231,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             new Thread() {
                                 public void run() {
                                     try {
-                                        Favorite newFavorite = new FavoriteServiceImpl().addFavorite(userID, spaceID,ReviewType.valueOf(space.getType()));
+                                        Favorite newFavorite = new FavoriteServiceImpl().addFavorite(userId, locationId,ReviewType.valueOf(location.getType()));
                                         isFavorite = true;
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
@@ -184,7 +266,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                         @Override
                         public void run() {
                             backButton.setBackgroundResource(R.drawable.arrow_back_fill);
-                            locationName.setText(space.getName());
+                            locationName.setText(location.getName());
                             listTitle.setText("Facilities");
                             progress.setProgress(busyScore);
                             progressValue.setText(busyScore + "%");
@@ -195,11 +277,15 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 favouriteButton.setBackgroundResource(R.drawable.baseline_favorite_border_32);
                                 favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), PorterDuff.Mode.SRC_IN);
                             }
-                            if (space.getCloseTime() == null) {
-                                openHours.setText("Closed");
-                            } else {
-                                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                                openHours.setText("Open hours: " + sdf.format(space.getOpenTime()) + " - " + ("23:59".equals(sdf.format(space.getCloseTime())) ? "00:00" : sdf.format(space.getCloseTime())));
+                            if (location.getCloseTime() == null) {
+                                openHours.setText("Close today");
+                            } else if(location.getCloseTime() != null && location.isOpenToday()){
+                                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                                openHours.setText("Closed, open at " + sdf.format((location.getOpenTime())));
+                            }
+                            else {
+                                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                                openHours.setText("Open hours: " + sdf.format(location.getOpenTime()) + " - " + ("23:59".equals(sdf.format(location.getCloseTime())) ? "00:00" : sdf.format(location.getCloseTime())));
                             }
                             if (busyScore >= 0 && busyScore <= 40) {
                                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green)));
@@ -209,11 +295,11 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red)));
                             }
 
-                            if (space.getDistanceFromCurrentPosition() == -1 || !GPSServiceImpl.getGPSPermission()){
+                            if (location.getDistanceFromCurrentPosition() == -1 || !GPSServiceImpl.getGPSPermission()){
                                 distance.setText("N/A");
                             }
                             else{
-                                distance.setText(space.getDistanceFromCurrentPosition() + "m");
+                                distance.setText(location.getDistanceFromCurrentPosition() + "m");
                             }
                             for(Review review : reviews) {
                                 //System.out.println(review.getComment());
@@ -245,7 +331,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 amenitiesList.addView(card);
 
                             }
-                            if (space.isTalkAllowed()) {
+                            if (location instanceof StudySpace && ((StudySpace)location).isTalkAllowed()) {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
                                 TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
                                 ImageView resourceIcon = card.findViewById(R.id.icon);
@@ -253,7 +339,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 resourceIcon.setBackgroundResource(R.drawable.volume_outline);
                                 amenitiesList.addView(card);
                             }
-                            if (space.getMinimumAccessAQFLevel() > 7) {
+                            if (location instanceof StudySpace && ((StudySpace)location).getMinimumAccessAQFLevel() > 7) {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
                                 TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
                                 ImageView resourceIcon = card.findViewById(R.id.icon);
@@ -261,8 +347,8 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 resourceIcon.setBackgroundResource(R.drawable.gradspace_outline);
                                 amenitiesList.addView(card);
                             }
-                            if (space.getCloseTime()!= null) {
-                                boolean openLate = getTimeToClose(space.getCloseTime());
+                            if (location.getCloseTime()!= null) {
+                                boolean openLate = getTimeToClose(location.getCloseTime());
                                 if (openLate ) {
                                     CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
                                     TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
@@ -337,11 +423,11 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         int minCameraZoom = 15;
         mMap.setMinZoomPreference(minCameraZoom);
 
-        if (space != null) {
-            LatLng currentLocation = space.getLocation();
+        if (location != null) {
+            LatLng currentLocation = location.getLocation();
             mMap.addMarker(new MarkerOptions()
                     .position(currentLocation)
-                    .title(space.getName()));
+                    .title(location.getName()));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, standardCameraZoom));
         } else {
             mMap.moveCamera(CameraUpdateFactory.zoomTo(standardCameraZoom));
@@ -384,17 +470,5 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         });
 
         dialog.show();
-    }
-
-    /**
-     * Back gesture detested
-     */
-    public void onBackPressed() {
-        Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
-        intent.putExtra("USERID_EXTRA", userId);
-        intent.putExtra("USERNAME_EXTRA", userName);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
     }
 }

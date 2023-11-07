@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             preparedStatement.setString(1, userNameOrEmail);
-            preparedStatement.setString(2, userNameOrEmail);
+            preparedStatement.setString(2, userNameOrEmail.toLowerCase());
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             preparedStatement.setString(1, userName);
-            preparedStatement.setString(2, userEmail);
+            preparedStatement.setString(2, userEmail.toLowerCase());
             preparedStatement.setString(3, BCrypt.hashpw(userPassword, BCrypt.gensalt()));
             preparedStatement.setString(4, userFaculty);
             preparedStatement.setInt(5, userAQFLevel);
@@ -295,7 +295,7 @@ public class UserServiceImpl implements UserService {
 
             String query = "UPDATE mobilecomputing.\"user\" SET \"user_email\" = ? WHERE \"user_id\" = ?";
             PreparedStatement ps = connector.prepareStatement(query);
-            ps.setString(1, newUserEmail);
+            ps.setString(1, newUserEmail.toLowerCase());
             ps.setInt(2, userId);
             ps.executeUpdate();
 

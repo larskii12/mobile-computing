@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.comp90018.uninooks.config.DatabaseHelper;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
-import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -12,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 public class StudySpaceServiceImpl implements StudySpaceService {
@@ -70,6 +70,7 @@ public class StudySpaceServiceImpl implements StudySpaceService {
             closestStudySpaces = allStudySpaces;
 
             for (StudySpace studySpace : closestStudySpaces) {
+
                 if (studySpace.isOpeningNow()) {
                     openingStudySpaces.add(studySpace);
                 } else {
@@ -132,11 +133,11 @@ public class StudySpaceServiceImpl implements StudySpaceService {
 
                 int studySpaceId = Integer.parseInt(resultSet.getString("review_study_space_id"));
 
+                // Exclude the closed study spaces
                 StudySpace studySpace = new LocationServiceImpl().findStudySpaceById(studySpaceId);
-//                studySpace.setAverage_rating(Double.parseDouble(resultSet.getString("average_rating")));
-//                studySpace.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), studySpace.getLocation()));
 
-                if (studySpace != null){
+                if (studySpace != null) {
+//                    studySpace.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), studySpace.getLocation()));
                     allStudySpaces.add(studySpace);
                 }
             }
@@ -144,11 +145,18 @@ public class StudySpaceServiceImpl implements StudySpaceService {
 //            // Get current Position
 //            LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
 //
-//            // Calculate the distance for each top rated study spaces
-//            topRatedStudySpaces = calculateDistance(currentLocation, allStudySpaces);
+            allStudySpaces.sort(Comparator.comparingDouble(StudySpace::getAverage_rating));
+            Collections.reverse(allStudySpaces);
+
+//
+//            // Sort ten study spaces by waling distance from Google Map API
+//            closestStudySpaces = calculateSpaceByWalkingDistance(currentLocation, allStudySpaces);
+//            sortByDistance(closestStudySpaces);
 
             // Return opening study space first
-            for (StudySpace studySpace : topRatedStudySpaces) {
+
+            for (StudySpace studySpace : allStudySpaces) {
+
                 if (studySpace.isOpeningNow()) {
                     openingStudySpaces.add(studySpace);
                 } else {
@@ -167,6 +175,7 @@ public class StudySpaceServiceImpl implements StudySpaceService {
         }
 
         catch (Exception e){
+            e.printStackTrace();
             throw new Exception();
         }
 

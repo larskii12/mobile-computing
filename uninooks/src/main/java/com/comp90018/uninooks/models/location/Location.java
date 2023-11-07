@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.Serializable;
 import java.sql.Time;
 
 public class Location implements Parcelable {
@@ -171,7 +170,7 @@ public class Location implements Parcelable {
         this.distanceFromCurrentPosition = distanceFromCurrentPosition;
     }
 
-    public boolean issOpenToday() {
+    public boolean isOpenToday() {
         return isOpenToday;
     }
 
