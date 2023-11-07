@@ -178,18 +178,15 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
             System.out.println("User AQF level: " + logInUser.getUserAQFLevel());
 
             // Show login successful message
-            showTextMessage("Login successfully.");
+//            showTextMessage("Login successfully.");
 
 //            Intent intent = new Intent(LoginActivity.this, AccountActivity.class);
-            Intent intent = new Intent(LoginActivity.this, AccountActivity.class);
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
             // Pass the user to next page
             intent.putExtra("USERNAME_EXTRA", logInUser.getUserName());
             intent.putExtra("USERID_EXTRA", String.valueOf(logInUser.getUserId()));
             System.out.println("Opening the page");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-
             startActivity(intent);
             finish();
 

@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
+import com.comp90018.uninooks.service.emulator.EmulatorServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 
 @SuppressLint("CustomSplashScreen")
@@ -73,6 +74,13 @@ public class SplashScreenActivity extends AppCompatActivity {
             // Start main activity
             startMainActivity();
             finish();
+        }
+
+        /**
+         * Emulator Testing Mode Detection
+         */
+        if (EmulatorServiceImpl.isEmulator()) {
+            showTextMessage("Emulator Testing Mode");
         }
     }
 

@@ -58,6 +58,16 @@ public class UserServiceImpl implements UserService {
         catch (Exception e) {
             return null;
         }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
     }
 
 
@@ -77,17 +87,17 @@ public class UserServiceImpl implements UserService {
                            String userFaculty,
                            int userAQFLevel) throws Exception {
 
-        // Check all fields not empty, faculty can be 0, treat as a guest.
-        if (userName.replaceAll("\\s", "").equals("") || userEmail.replaceAll("\\s", "").equals("") || userPassword.replaceAll("\\s", "").equals("")) {
-            throw new Exception("All fields are required.");
-        }
-
-        // Check userAQF level is valid, 0 is guest.
-        if (userAQFLevel < 0 || userAQFLevel > 10) {
-            throw new Exception("AQF level invalid, AQF level should between 1 and 10.");
-        }
-
         try {
+
+            // Check all fields not empty, faculty can be 0, treat as a guest.
+            if (userName.replaceAll("\\s", "").equals("") || userEmail.replaceAll("\\s", "").equals("") || userPassword.replaceAll("\\s", "").equals("")) {
+                throw new Exception("All fields are required.");
+            }
+
+            // Check userAQF level is valid, 0 is guest.
+            if (userAQFLevel < 0 || userAQFLevel > 10) {
+                throw new Exception("AQF level invalid, AQF level should between 1 and 10.");
+            }
 
             // Add new user to the database
             String query = "INSERT INTO mobilecomputing.\"user\" (\"user_name\", \"user_email\", \"user_password\", \"user_faculty\", \"user_AQF_level\") VALUES (?, ?, ?, ?, ?)";
@@ -123,6 +133,16 @@ public class UserServiceImpl implements UserService {
             // Unknown exceptions happens.
             throw new Exception("User added failed, please contact the IT administrator to report the issue.");
         }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
     }
 
 
@@ -133,6 +153,7 @@ public class UserServiceImpl implements UserService {
      * @throws Exception, if delete fails, show the exception
      */
     public boolean deleteUser(int userId) throws Exception {
+
         try {
             String query = "DELETE FROM mobilecomputing.\"user\" WHERE \"user_id\" = ?";
 
@@ -145,8 +166,17 @@ public class UserServiceImpl implements UserService {
 
         // If exception happens when deleting an user.
         catch (Exception e) {
-            e.printStackTrace();
             throw new Exception("User delete failed, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
     }
 
@@ -159,9 +189,9 @@ public class UserServiceImpl implements UserService {
      */
     public User getUser(int userId) throws Exception {
 
-        User user = new User();
-
         try {
+
+            User user = new User();
 
             String query = "SELECT * FROM mobilecomputing.\"user\" WHERE \"user_id\" = ?";
 
@@ -186,11 +216,24 @@ public class UserServiceImpl implements UserService {
 
         // If exception happens when querying user
         catch (Exception e) {
+
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
+
         // Return user information
         return null;
     }
+
 
     /**
      * Update user name
@@ -200,6 +243,7 @@ public class UserServiceImpl implements UserService {
      * @throws Exception, if duplication or other exception happens
      */
     public boolean updateUserName(int userId, String newUserName) throws Exception {
+
         try {
 
             String query = "UPDATE mobilecomputing.\"user\" SET \"user_name\" = ? WHERE \"user_id\" = ?";
@@ -207,7 +251,6 @@ public class UserServiceImpl implements UserService {
             ps.setString(1, newUserName);
             ps.setInt(2, userId);
             ps.executeUpdate();
-
             return true;
         }
 
@@ -216,12 +259,24 @@ public class UserServiceImpl implements UserService {
 
             // If user name has been used.
             if (e.getMessage().contains("unique_user_username")) {
+
                 throw new Exception("This user name has been used, please try another one.");
             }
 
             // unknown exception happens when update user name
             else {
+
                 throw new Exception("Errors happened when update user information, please contact the IT administrator.");
+            }
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
             }
         }
     }
@@ -235,6 +290,7 @@ public class UserServiceImpl implements UserService {
      * @throws Exception, if duplication or other exception happens
      */
     public boolean updateUserEmail(int userId, String newUserEmail) throws Exception {
+
         try {
 
             String query = "UPDATE mobilecomputing.\"user\" SET \"user_email\" = ? WHERE \"user_id\" = ?";
@@ -259,6 +315,16 @@ public class UserServiceImpl implements UserService {
                 throw new Exception("Errors happened when update user information, please contact the IT administrator.");
             }
         }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
     }
 
 
@@ -270,6 +336,7 @@ public class UserServiceImpl implements UserService {
      * @throws Exception, if exception happens
      */
     public boolean updateUserPassword(int userId, String oldUserPassword, String newUserPassword) throws Exception {
+
         try {
             // Get the user
             String query = "SELECT user_password FROM mobilecomputing.\"user\" WHERE \"user_id\" = ?";
@@ -303,11 +370,22 @@ public class UserServiceImpl implements UserService {
         catch (Exception e) {
             throw new Exception(e.getMessage());
         }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
     }
 
 
     public boolean resetUserPassword(String userNameOrEmail, String newUserPassword) throws Exception {
-        // Change password
+
+        // Reset and Change password
         try {
 
             String queryChangePassword = "UPDATE mobilecomputing.\"user\" SET \"user_password\" = ? WHERE \"user_name\" = ? OR \"user_email\" = ?";
@@ -317,12 +395,12 @@ public class UserServiceImpl implements UserService {
             ps.setString(2, userNameOrEmail);
             ps.setString(3, userNameOrEmail);
             ps.executeUpdate();
-
             return true;
         }
 
         // If exception happens
         catch (Exception e) {
+
             throw new Exception("Error happened when changing password, please contact the IT administrator.");
         }
     }
@@ -336,6 +414,7 @@ public class UserServiceImpl implements UserService {
      * @throws Exception, if exception happens
      */
     public boolean updateUserFaculty(int userId, String newUserFaculty) throws Exception {
+
         try {
 
             String query = "UPDATE mobilecomputing.\"user\" SET \"user_faculty\" = ? WHERE \"user_id\" = ?";
@@ -350,7 +429,18 @@ public class UserServiceImpl implements UserService {
 
         // If exception happens
         catch (Exception e) {
+
             throw new Exception("Errors happened when update user information, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
 
     }
@@ -371,13 +461,23 @@ public class UserServiceImpl implements UserService {
             ps.setInt(1, newAQFLevel);
             ps.setInt(2, userId);
             ps.executeUpdate();
-
             return true;
         }
 
         // If exception happens
         catch (Exception e) {
+
             throw new Exception("Errors happened when update user information, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
     }
 
@@ -388,21 +488,38 @@ public class UserServiceImpl implements UserService {
      * @return true if user exist, else false
      * @throws SQLException
      */
-    public boolean hasUser(String userNameOrEmail) throws SQLException {
+    public boolean hasUser(String userNameOrEmail) throws Exception {
 
-        String query = "SELECT * FROM mobilecomputing.\"user\" WHERE \"user_name\" = ? OR \"user_email\" = ?";
+        try{
+            String query = "SELECT * FROM mobilecomputing.\"user\" WHERE \"user_name\" = ? OR \"user_email\" = ?";
 
-        Connection connector = new DatabaseHelper().getConnector();
+            Connection connector = new DatabaseHelper().getConnector();
 
-        PreparedStatement preparedStatement = connector.prepareStatement(query);
-        preparedStatement.setString(1, userNameOrEmail);
-        preparedStatement.setString(2, userNameOrEmail);
+            PreparedStatement preparedStatement = connector.prepareStatement(query);
+            preparedStatement.setString(1, userNameOrEmail);
+            preparedStatement.setString(2, userNameOrEmail);
 
-        ResultSet resultSet = preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return true;
+            }
+        }
 
-        // Return this user exist or nor
-        return resultSet.next();
+        catch (Exception e){
+            throw new Exception();
+        }
 
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
+
+        return false;
     }
 
 }

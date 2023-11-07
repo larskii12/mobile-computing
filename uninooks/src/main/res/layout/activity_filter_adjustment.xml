@@ -54,20 +54,10 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-
-
-
-
-
         </LinearLayout>
 
 
-
-
     </androidx.appcompat.widget.Toolbar>
-
-
-
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -75,10 +65,12 @@
         android:layout_marginTop="88dp"
         android:layout_marginBottom="70dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
 
         <LinearLayout
@@ -99,7 +91,7 @@
                 android:layout_height="1dp"
                 android:background="#E3E3E3" />
 
-            <FrameLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/distanceFilter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -111,42 +103,32 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="20dp"
                     android:fontFamily="@font/source_sans_pro"
                     android:text="Distance Away"
                     android:textColor="@color/deepBlue"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/distanceIndicator"
+                    android:layout_width="119dp"
+                    android:layout_height="25dp"
                     android:layout_gravity="center_horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:layout_marginTop="22dp"
-                    android:layout_marginEnd="-120dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="20dp"
                     android:autoSizeTextType="uniform"
                     android:background="@drawable/rounded_button_long"
                     android:fontFamily="@font/source_sans_pro"
                     android:text="10m"
                     android:textAlignment="center"
                     android:textColor="@color/deepBlue"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toEndOf="@+id/distanceHeader"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <SeekBar
-                    android:id="@+id/seekBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginTop="52dp"
-                    android:min="10"
-                    android:max="1000"
-                    android:progressTint="@color/deepBlue"
-                    android:splitTrack="false"
-                    android:thumb="@drawable/thumb_seekbar"
-                    android:thumbTint="@color/deepBlue"
-                    android:visibility="visible" />
-            </FrameLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
                 android:id="@+id/distanceSeparator"
@@ -154,7 +136,19 @@
                 android:layout_height="1dp"
                 android:background="#E3E3E3" />
 
-            <FrameLayout
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:max="1000"
+                android:min="10"
+                android:progressTint="@color/deepBlue"
+                android:splitTrack="false"
+                android:thumb="@drawable/thumb_seekbar"
+                android:thumbTint="@color/deepBlue"
+                android:visibility="visible" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/facilitiesFilter"
                 android:layout_width="match_parent"
                 android:layout_height="300dp">
@@ -163,130 +157,117 @@
                     android:id="@+id/facilitiesTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
                     android:fontFamily="@font/source_sans_pro"
                     android:text="Facilities"
                     android:textColor="@color/deepBlue"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <CheckBox
                     android:id="@+id/gradSpaceCheck"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="58dp"
+                    android:layout_marginTop="45dp"
                     android:buttonTint="@color/deepBlue"
+                    android:tag="gradSpace"
                     android:text="Graduate Space"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
                     app:buttonTint="@color/deepBlue"
-                    android:tag="gradSpace"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.16"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <CheckBox
                     android:id="@+id/quietStudyCheck"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="230dp"
-                    android:layout_marginTop="58dp"
+                    android:layout_marginTop="45dp"
                     android:buttonTint="@color/deepBlue"
+                    android:tag="quietStudy"
                     android:text="Quiet Study"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
                     app:buttonTint="@color/deepBlue"
-                    android:tag="quietStudy"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.38"
+                    app:layout_constraintStart_toEndOf="@+id/gradSpaceCheck"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <CheckBox
                     android:id="@+id/afterHoursCheck"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="118dp"
+                    android:layout_marginTop="20dp"
                     android:buttonTint="@color/deepBlue"
+                    android:tag="afterHours"
                     android:text="After Hours Access"
                     android:textColor="@color/deepBlue"
-                    android:textSize="17sp"
+                    android:textSize="18sp"
                     app:buttonTint="@color/deepBlue"
-                    android:tag="afterHours"/>
+                    app:layout_constraintStart_toStartOf="@+id/gradSpaceCheck"
+                    app:layout_constraintTop_toBottomOf="@+id/gradSpaceCheck" />
 
                 <CheckBox
                     android:id="@+id/microwaveCheck"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="230dp"
-                    android:layout_marginTop="118dp"
+                    android:layout_marginTop="20dp"
                     android:buttonTint="@color/deepBlue"
+                    android:tag="microwave"
                     android:text="Microwaves"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
                     app:buttonTint="@color/deepBlue"
-                    android:tag="microwave"/>
-
-                <CheckBox
-                    android:id="@+id/ATMCheck"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="178dp"
-                    android:buttonTint="@color/deepBlue"
-                    android:text="ATM"
-                    android:textColor="@color/deepBlue"
-                    android:textSize="18sp"
-                    app:buttonTint="@color/deepBlue"
-                    android:tag="atm"/>
+                    app:layout_constraintStart_toStartOf="@id/afterHoursCheck"
+                    app:layout_constraintTop_toBottomOf="@+id/afterHoursCheck" />
 
                 <CheckBox
                     android:id="@+id/accessibleCheck"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="230dp"
-                    android:layout_marginTop="178dp"
+                    android:layout_marginTop="20dp"
                     android:buttonTint="@color/deepBlue"
+                    android:tag="accessible"
                     android:text="Accessible"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
                     app:buttonTint="@color/deepBlue"
-                    android:tag="accessible"/>
+                    app:layout_constraintStart_toStartOf="@id/quietStudyCheck"
+                    app:layout_constraintTop_toBottomOf="@+id/quietStudyCheck" />
 
                 <CheckBox
                     android:id="@+id/vendingMachineCheck"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="238dp"
+                    android:layout_marginTop="20dp"
                     android:buttonTint="@color/deepBlue"
+                    android:tag="vendingMachine"
                     android:text="Vending Machine"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
                     app:buttonTint="@color/deepBlue"
-                    android:tag="vendingMachine"/>
+                    app:layout_constraintStart_toStartOf="@id/microwaveCheck"
+                    app:layout_constraintTop_toBottomOf="@+id/microwaveCheck" />
 
                 <CheckBox
                     android:id="@+id/parkingCheck"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="230dp"
-                    android:layout_marginTop="238dp"
+                    android:layout_marginTop="20dp"
                     android:buttonTint="@color/deepBlue"
+                    android:tag="parking"
                     android:text="Parking Space"
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
                     app:buttonTint="@color/deepBlue"
-                    android:tag="parking"/>
-
-<!--                <CheckBox-->
-<!--                    android:id="@+id/bathroomCheck"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="20dp"-->
-<!--                    android:layout_marginTop="298dp"-->
-<!--                    android:buttonTint="@color/deepBlue"-->
-<!--                    android:text="Bathroom"-->
-<!--                    android:textColor="@color/deepBlue"-->
-<!--                    android:textSize="18sp"-->
-<!--                    app:buttonTint="@color/deepBlue" />-->
-
-            </FrameLayout>
+                    app:layout_constraintStart_toStartOf="@id/accessibleCheck"
+                    app:layout_constraintTop_toBottomOf="@+id/accessibleCheck" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
                 android:id="@+id/facilitiesSeparator"
@@ -294,27 +275,34 @@
                 android:layout_height="1dp"
                 android:background="#E3E3E3" />
 
-            <FrameLayout
-                android:id="@+id/sortFilter"
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/facilitiesSeparator2"
                 android:layout_width="match_parent"
-                android:layout_height="250dp">
+                android:layout_height="227dp">
 
                 <TextView
                     android:id="@+id/sortTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
                     android:fontFamily="@font/source_sans_pro"
                     android:text="Sort by"
                     android:textColor="@color/deepBlue"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <RadioGroup
                     android:id="@+id/radioGroupAsc"
-                    android:layout_width="204dp"
-                    android:layout_height="190dp"
-                    android:layout_marginTop="50dp">
+                    android:layout_width="200dp"
+                    android:layout_height="218dp"
+                    android:layout_marginTop="36dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.135"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <RadioButton
                         android:id="@+id/nameAsc"
@@ -351,14 +339,18 @@
                         android:textColor="@color/deepBlue"
                         android:textSize="18sp"
                         app:buttonTint="@color/deepBlue" />
+
                 </RadioGroup>
 
                 <RadioGroup
                     android:id="@+id/radioGroupDesc"
-                    android:layout_width="204dp"
-                    android:layout_height="190dp"
-                    android:layout_marginStart="204dp"
-                    android:layout_marginTop="50dp">
+                    android:layout_width="200dp"
+                    android:layout_height="218dp"
+                    android:layout_marginTop="36dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.3"
+                    app:layout_constraintStart_toEndOf="@id/radioGroupAsc"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <RadioButton
                         android:id="@+id/nameDesc"
@@ -396,45 +388,55 @@
                         android:textSize="18sp"
                         app:buttonTint="@color/deepBlue" />
                 </RadioGroup>
-            </FrameLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="79dp"
+                android:background="@drawable/rectangle_border"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <Button
+                    android:id="@+id/resetButton"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="@color/white"
+                    android:fontFamily="@font/source_sans_pro"
+                    android:text="Reset"
+                    android:textColor="@color/deepBlue"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="2dp" />
+
+                <Button
+                    android:id="@+id/applyButton"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="32dp"
+                    android:backgroundTint="@color/deepBlue"
+                    android:fontFamily="@font/source_sans_pro"
+                    android:text="Apply"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="2dp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         </LinearLayout>
     </ScrollView>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="@drawable/rectangle_border"
-        android:foregroundGravity="bottom"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <Button
-            android:id="@+id/resetButton"
-            android:layout_width="160dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:backgroundTint="@color/white"
-            app:strokeColor="@color/black"
-            app:strokeWidth="2dp"
-            android:layout_marginStart="30dp"
-            android:text="Reset"
-            android:textColor="@color/deepBlue"
-            android:fontFamily="@font/source_sans_pro"
-            android:textSize="20sp"/>
-
-        <Button
-            android:id="@+id/applyButton"
-            android:layout_width="160dp"
-            android:layout_height="50dp"
-            android:backgroundTint="@color/deepBlue"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="224dp"
-            android:text="Apply"
-            android:fontFamily="@font/source_sans_pro"
-            android:textSize="20sp"/>
-
-    </FrameLayout>
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
