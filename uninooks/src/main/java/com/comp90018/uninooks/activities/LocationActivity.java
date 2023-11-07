@@ -1,7 +1,7 @@
 package com.comp90018.uninooks.activities;
-import android.Manifest;
-import android.app.Dialog;
+
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -10,17 +10,15 @@ import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.ImageButton;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -406,7 +404,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         });
 
         dialog.show();
-    }
     }
 
     /**
