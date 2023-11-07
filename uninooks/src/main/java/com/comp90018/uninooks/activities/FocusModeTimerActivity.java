@@ -1,15 +1,13 @@
 package com.comp90018.uninooks.activities;
 
+
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.os.VibrationEffect;
-import android.view.LayoutInflater;
-import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Handler;
+import android.util.Log;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Message;
@@ -19,29 +17,34 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.service.background_app.BackgroundAppService;
 import com.comp90018.uninooks.views.TimerView;
+import com.comp90018.uninooks.worker.FocusModeWorker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import android.os.Vibrator;
 
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class FocusModeTimerActivity extends AppCompatActivity {
 
-    private List<String> unwantedApps;
+    private int pomodoroTimer;
 
-    CountDownTimer countDownTimer;
+    private int shortPauseTimer;
 
-    private CountDownTimer pomodoroTimer;
+    private int longPauseTimer;
 
-    private boolean isInBackground = false;
+    public static boolean isCurrentlyOnApp = false;
 
-    private int timer_length = 30;
+    private int timer_length = 60;
 
-    private int seconds = 30;
+    private int seconds = 60;
     private Vibrator v;
 
     // Setup Timer Buttons
@@ -60,13 +63,15 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private Button settingsButton;
     private BottomNavigationView bottomNav;
 
-    private boolean isRunning = false;
+    public static boolean isRunning = false;
 
     private boolean isPaused = false;
 
     private boolean isPomodoro = false;
     private boolean isShortPause = false;
     private boolean isLongPause = false;
+
+    SharedPreferences.Editor editor;
 
     @SuppressLint("HandlerLeak")
     private final Handler handler = new Handler() {
@@ -75,14 +80,6 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             switch (msg.what) {
                 case 0:
                     handler.postDelayed(timerRunnable, 1000);
-                    break;
-
-                case 1:
-
-                    break;
-
-                case 2:
-
                     break;
             }
         }
@@ -101,13 +98,20 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setSelectedItemId(R.id.focusNav);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("uninooks", MODE_PRIVATE);
+        pomodoroTimer = sharedPreferences.getInt("pomodoroTimer", 1500);
+        shortPauseTimer = sharedPreferences.getInt("shortPauseTimer", 300);
+        longPauseTimer = sharedPreferences.getInt("longPauseTimer", 900);
+
+        editor = sharedPreferences.edit();
+
         // Change to which setup for the timer
         pomodoroButton = findViewById(R.id.btn_pomodoro);
         pomodoroButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resetTimer();
-                seconds = 1500;
+                seconds = pomodoroTimer;
                 isPomodoro = true;
                 isShortPause = false;
                 isLongPause = false;
@@ -120,7 +124,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 resetTimer();
-                seconds = 300;
+                seconds = shortPauseTimer;
                 isPomodoro = false;
                 isShortPause = true;
                 isLongPause = false;
@@ -133,7 +137,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 resetTimer();
-                seconds = 900;
+                seconds = longPauseTimer;
                 isPomodoro = false;
                 isShortPause = false;
                 isLongPause = true;
@@ -148,8 +152,8 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                mTimerView.start(timer_length, isPaused);
-                mTimerView.start(seconds, isPaused);
                 startTimer();
+                mTimerView.start(seconds+1, isPaused);
             }
         });
 
@@ -170,13 +174,13 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 resetTimer();
                 if (isPomodoro) {
-                    seconds = 1500;
+                    seconds = pomodoroTimer;
                 } else if (isShortPause) {
-                    seconds = 300;
+                    seconds = shortPauseTimer;
                 } else if (isLongPause) {
-                    seconds = 900;
+                    seconds = longPauseTimer;
                 } else {
-                    seconds = 1500;
+                    seconds = pomodoroTimer;
                 }
                 updateTimerText();
             }
@@ -188,16 +192,11 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent Intent = new Intent(FocusModeTimerActivity.this, FocusModeSettingsActivity.class);
-
                 startActivity(Intent);
             }
         });
 
-
-        // Initialize unwantedApps list
-//        SharedPreferences preferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-//        String unwantedAppsList = preferences.getString("unwanted_apps", "");
-//        unwantedApps = new ArrayList<>(Arrays.asList(unwantedAppsList.split(",")));
+        isCurrentlyOnApp = true;
     }
 
     public void onStart(){
@@ -216,19 +215,23 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        isInBackground = true;
-        // Detect the recent 20 seconds used apps
-        Intent serviceIntent = new Intent(this, BackgroundAppService.class);
-        startService(serviceIntent);
+        if (isRunning) {
+            isCurrentlyOnApp = false;
+            // Detect the recent 20 seconds used apps
+
+            startServiceViaWorker();
+            startService();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        isInBackground = false;
-
-        Intent serviceIntent = new Intent(this, BackgroundAppService.class);
-        stopService(serviceIntent);
+        if (isRunning) {
+            isCurrentlyOnApp = true;
+            Log.d("TimerActivity", "Service has stopped");
+            stopService();
+        }
     }
 
     public void onStop(){
@@ -237,35 +240,8 @@ public class FocusModeTimerActivity extends AppCompatActivity {
 
     public void onDestroy(){
         super.onDestroy();
+        stopService();
     }
-
-//    public void startPomodoroTimer(long duration) {
-//        pomodoroTimer = new CountDownTimer(duration, 1000) {
-//            public void onTick(long millisUntilFinished) {
-//                // Update timer UI
-//            }
-//
-//            public void onFinish() {
-//                // Handle Pomodoro timer completion
-//            }
-//        }.start();
-//    }
-
-    // Add methods for checking and monitoring other apps
-    // ...
-
-    // Additional methods and logic
-    // ...
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if(requestCode == Request_Code_Location){
-//            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-//                updateLocation();
-//            }
-//        }
-//    }
 
     private void startTimer() {
         if (!isRunning) {
@@ -274,7 +250,6 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             isPaused = false;
             timerStartButton.setVisibility(View.GONE);
             timerPauseButton.setVisibility(View.VISIBLE);
-
         }
     }
 
@@ -307,21 +282,23 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 updateTimerText();
                 handler.postDelayed(this, 1000);
             } else {
+                isRunning = false;
+                if (!isScreenOn()) {
+                    Log.d("FocusModeTimerActivity", "trying to stop service and notify");
+                    isCurrentlyOnApp = true;
+                    stopService();
+                }
                 v.vibrate(VibrationEffect.createOneShot(2000, VibrationEffect.DEFAULT_AMPLITUDE));
 
                 resetTimer();
-                isRunning = false;
-                timerStartButton.setVisibility(View.VISIBLE);
-                timerPauseButton.setVisibility(View.GONE);
-
                 if (isPomodoro) {
-                    seconds = 1500;
+                    seconds = pomodoroTimer;
                 } else if (isShortPause) {
-                    seconds = 300;
+                    seconds = shortPauseTimer;
                 } else if (isLongPause) {
-                    seconds = 900;
+                    seconds = longPauseTimer;
                 } else {
-                    seconds = 1500;
+                    seconds = pomodoroTimer;
                 }
                 updateTimerText();
             }
@@ -337,7 +314,43 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         timerText.setText(timeString);
     }
 
-    public void openSettings(View view) {
+    private boolean isScreenOn() {
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        return powerManager.isInteractive();
+    }
+
+    public void startService() {
+        Log.d("FocusModeTimerActivity", "startService called");
+        if (!BackgroundAppService.isServiceRunning) {
+            Intent serviceIntent = new Intent(this, BackgroundAppService.class);
+            ContextCompat.startForegroundService(this, serviceIntent);
+        }
+    }
+
+    public void stopService() {
+        Log.d("FocusModeTimerActivity", "stopService called");
+        if (BackgroundAppService.isServiceRunning) {
+            Intent serviceIntent = new Intent(this, BackgroundAppService.class);
+            stopService(serviceIntent);
+        }
+    }
+
+    public void startServiceViaWorker() {
+        String UNIQUE_WORK_NAME = "StartMyServiceViaWorker";
+        WorkManager workManager = WorkManager.getInstance(this);
+
+        // As per Documentation: The minimum repeat interval that can be defined is 15 minutes
+        // (same as the JobScheduler API), but in practice 15 doesn't work. Using 16 here
+        PeriodicWorkRequest request =
+                new PeriodicWorkRequest.Builder(
+                        FocusModeWorker.class,
+                        16,
+                        TimeUnit.MINUTES)
+                        .build();
+
+        // to schedule a unique work, no matter how many times app is opened i.e. startServiceViaWorker gets called
+        // do check for AutoStart permission
+        workManager.enqueueUniquePeriodicWork(UNIQUE_WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request);
 
     }
 }
