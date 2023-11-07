@@ -17,14 +17,14 @@ import java.util.ArrayList;
 
 public class GPSServiceImpl {
 
-    private FusedLocationProviderClient fusedLocationProviderClient;
+    private final FusedLocationProviderClient fusedLocationProviderClient;
 
     private LocationCallback locationCallback;
 
-    private LocationRequest locationRequestConfig;
+    private final LocationRequest locationRequestConfig;
 
     private static ArrayList<Location> locationsHistory;
-    private GPSService gpsService;
+    private final GPSService gpsService;
 
     private static boolean GPSPermissionStatus;
 
