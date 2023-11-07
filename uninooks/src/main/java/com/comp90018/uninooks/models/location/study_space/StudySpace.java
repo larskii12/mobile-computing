@@ -1,5 +1,11 @@
 package com.comp90018.uninooks.models.location.study_space;
 
+import static java.util.Objects.nonNull;
+
+import android.os.Parcel;
+
+import androidx.annotation.NonNull;
+
 import com.comp90018.uninooks.models.location.Location;
 
 public class StudySpace extends Location {
@@ -17,6 +23,34 @@ public class StudySpace extends Location {
     private double average_rating;
 
     private String type;
+
+    public StudySpace() {
+        super();
+    }
+
+    protected StudySpace(Parcel in) {
+        super(in);
+
+        libraryId = in.readInt();
+        minimumAccessAQFLevel = in.readInt();
+        type = in.readString();
+        isTalkAllowed = in.readByte() != 0;
+        floorLevel = in.readInt();
+        capacity = in.readInt();
+        average_rating = in.readDouble();
+    }
+
+    public static final Creator<StudySpace> CREATOR = new Creator<StudySpace>() {
+        @Override
+        public StudySpace createFromParcel(Parcel in) {
+            return new StudySpace(in);
+        }
+
+        @Override
+        public StudySpace[] newArray(int size) {
+            return new StudySpace[size];
+        }
+    };
 
     public int getLibraryId() {
         return libraryId;
@@ -61,12 +95,32 @@ public class StudySpace extends Location {
 //    public void setCapacity(Integer capacity) {
 //        this.capacity = capacity;
 //    }
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
-//    public double getAverage_rating() {
-//        return average_rating;
-//    }
-//
-//    public void setAverage_rating(double rating) {
-//        average_rating = rating;
-//    }
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+
+        dest.writeInt(libraryId);
+
+        if(nonNull(minimumAccessAQFLevel)) {
+            dest.writeInt(minimumAccessAQFLevel);
+        }
+
+        dest.writeString(type);
+
+        byte isTalkAllowedByte = (byte)(isTalkAllowed?1:0);
+        dest.writeByte(isTalkAllowedByte);
+
+        if(nonNull(floorLevel)) {
+            dest.writeInt(floorLevel);
+        }
+
+        if(nonNull(capacity)) {
+            dest.writeInt(capacity);
+        }
+    }
 }

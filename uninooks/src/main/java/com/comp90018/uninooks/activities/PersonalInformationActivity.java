@@ -20,7 +20,7 @@ import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.user.User;
-import com.comp90018.uninooks.service.mail.mailServiceImpl;
+import com.comp90018.uninooks.service.mail.MailServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
 
 public class PersonalInformationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -562,7 +562,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         counter.obj = OTP_TIMER;
         handler.sendMessage(counter);
 
-        String newOTP = String.valueOf(new mailServiceImpl().sendOTP(editTextNewEmail.getText().toString()));
+        String newOTP = String.valueOf(new MailServiceImpl().sendOTP(editTextNewEmail.getText().toString()));
 
         return newOTP;
     }
