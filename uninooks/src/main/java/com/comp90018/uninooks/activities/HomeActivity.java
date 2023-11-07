@@ -59,6 +59,7 @@ public class HomeActivity extends AppCompatActivity {
         HashMap<String, Double> busyRatingsByLocation;
 
 
+        @SuppressLint("SetTextI18n")
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -106,7 +107,7 @@ public class HomeActivity extends AppCompatActivity {
                             StudySpace space = new LocationServiceImpl().findStudySpaceById(favorite.getStudySpaceId());
                             favorites.add(space);
                         }
-                        new StudySpaceServiceImpl().calculateSpaceByWalkingDistance(GPSServiceImpl.getCurrentLocation(), favorites);
+//                        new StudySpaceServiceImpl().calculateSpaceByWalkingDistance(GPSServiceImpl.getCurrentLocation(), favorites);
 
                         getAllBusyRatings(closestStudySpaces);
 //                        List<Favorite> userFavorites = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACES"));
@@ -230,7 +231,7 @@ public class HomeActivity extends AppCompatActivity {
             TextView distanceLabel = (TextView) card.findViewById(R.id.timeLabel);
             ImageView hoursIcon = (ImageView) card.findViewById(R.id.clockIcon);
             hoursIcon.setBackgroundResource(R.drawable.baseline_access_time_24);
-            if (space.getCloseTime() == null) {
+            if (!space.issOpenToday()) {
                 locationHours.setText("Close Today");
                 hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
             }
@@ -250,11 +251,11 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
 
-            if (space.getDistanceFromCurrentPosition() == -1){
+            if (space.getDistanceFromCurrentPosition() == -1 || !GPSServiceImpl.getGPSPermission()){
                 distanceLabel.setText("N/A");
             }
             else{
-                distanceLabel.setText(space.getDistanceFromCurrentPosition() + " m");
+                distanceLabel.setText(space.getDistanceFromCurrentPosition() + "m");
             }
 
             ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);

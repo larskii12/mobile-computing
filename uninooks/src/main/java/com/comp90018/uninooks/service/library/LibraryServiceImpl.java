@@ -175,11 +175,11 @@ public class LibraryServiceImpl implements LibraryService{
                 int position = 0;
 
                 // Iterate each library and set the distance to current location
-                for (Library library : libraries){
-
-                    library.setDistanceFromCurrentPosition(distances.get(position));
-                    position++;
-                }
+//                for (Library library : libraries){
+//
+////                    library.setDistanceFromCurrentPosition(distances.get(position));
+//                    position++;
+//                }
 
                 return libraries;
 
