@@ -473,6 +473,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private final Runnable timerRunnable = new Runnable() {
         @Override
         public void run() {
+            System.out.println(seconds);
             seconds--;
             if (seconds >= 0) {
                 updateTimerText();
@@ -568,48 +569,56 @@ public class FocusModeTimerActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            System.out.println("CURRENT SECONDS: " + seconds);
-            System.out.println("isPomodoro: " + isPomodoro);
-            System.out.println("isShort: " + isShortPause);
-            System.out.println("isLong: " + isLongPause);
-
-            if (pomodoroSequenceNum > 0) {
-                System.out.println("TO SET INDICATOR IN ARRAY (have to -1): " + pomodoroSequenceNum);
+//            System.out.println("CURRENT SECONDS: " + seconds);
+//            System.out.println("isPomodoro: " + isPomodoro);
+//            System.out.println("isShort: " + isShortPause);
+//            System.out.println("isLong: " + isLongPause);
+//&& (isShortPause || isLongPause)
+            if (pomodoroSequenceNum > 0 && !wasPaused) {
+//                System.out.println("TO SET INDICATOR IN ARRAY (have to -1): " + pomodoroSequenceNum);
                 sequenceIndicators[pomodoroSequenceNum-1].setVisibility(View.VISIBLE);
-                // can vibrate here?
                 System.out.println("SEQUENCE OVER, WILL VIBRATE");
+            }
 
+            if (seconds <= 2) {
+                System.out.println("mode switched");
                 switchModes();
-
-//                if (pomodoroSequenceNum == 5) {
-//                    // have to end it but not sure how to end it
-//                    pomodoroSequenceNum = 0;
-//                    clearSequenceIndicators();
-//                }
             }
 
             if (inSequence && isPomodoro && wasPaused) {
                 timeSpentPaused = (int) ((playTimestamp - stopTimestamp) / 1000);
                 System.out.println("time spent paused in pom (s) " + timeSpentPaused);
-                handler.postDelayed(pomodoroRunnable, (seconds) * 1000);
                 mTimerView.start(seconds, isPaused);
                 startTimer(" from 1");
                 wasPaused = false;
-
-                // need to switch modes to the next (short or long), and make isPomodoro false
+                handler.postDelayed(pomodoroRunnable, (seconds) * 1000);
 
             } else if (inSequence && isShortPause && wasPaused) {
                 timeSpentPaused = (int) ((playTimestamp - stopTimestamp) / 1000);
                 System.out.println("time spent paused in short (s) " + timeSpentPaused);
+
                 mTimerView.start(seconds, isPaused);
                 startTimer(" from 2");
                 wasPaused = false;
+
+//                if (seconds <= 3) {
+//                    System.out.println("mode switched");
+//                    switchModes();
+//                }
+                handler.postDelayed(pomodoroRunnable, (seconds) * 1000);
             } else if (inSequence && isLongPause && wasPaused) {
                 timeSpentPaused = (int) ((playTimestamp - stopTimestamp) / 1000);
                 System.out.println("time spent paused in long (s) " + timeSpentPaused);
+
                 mTimerView.start(seconds, isPaused);
                 startTimer(" from 3");
                 wasPaused = false;
+
+//                if (seconds <= 3) {
+//                    System.out.println("mode switched");
+//                    switchModes();
+//                }
+                handler.postDelayed(pomodoroRunnable, (seconds) * 1000);
             } else if (pomodoroSequenceNum < pomodoroSequenceMax) {
                 inSequence = true;
 
@@ -619,7 +628,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                     mTimerView.start(pomodoroTime, isPaused);
 
                     startTimer(" from 4");
-                    System.out.println("Pomodoro timer started");
+                    System.out.println("Pomodoro timer started 1");
 
                     isPomodoro = true;
                     isShortPause = false;
@@ -667,7 +676,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 clickPomodoroButton();
                 mTimerView.start(pomodoroTime, isPaused);
                 startTimer(" from 6");
-                System.out.println("Pomodoro timer started");
+                System.out.println("Pomodoro timer started 2");
 
                 isPomodoro = true;
                 isShortPause = false;
