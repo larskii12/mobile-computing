@@ -20,9 +20,8 @@ public class BuildingServiceImpl implements BuildingService {
      */
     public Building getBuilding(int buildingId, ReviewType type) throws Exception {
 
-        Building building = new Building();
-
         try {
+            Building building = new Building();
 
             String query = "SELECT * FROM mobilecomputing.\"building\" WHERE \"building_id\" = ?";
 
@@ -40,6 +39,7 @@ public class BuildingServiceImpl implements BuildingService {
                 building.setHasAccessibility(resultSet.getBoolean("building_accessibility"));
                 building.setLatitude(resultSet.getDouble("building_latitude"));
                 building.setLatitude(resultSet.getDouble("building_longitude"));
+
                 return building;
             }
 
@@ -49,6 +49,17 @@ public class BuildingServiceImpl implements BuildingService {
         catch (Exception e) {
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
+
         // Return user information
         return null;
     }

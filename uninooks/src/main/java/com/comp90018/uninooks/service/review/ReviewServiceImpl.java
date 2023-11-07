@@ -7,6 +7,7 @@ import com.comp90018.uninooks.models.review.ReviewType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +29,11 @@ public class ReviewServiceImpl implements ReviewService {
      */
     public Review addReview(Integer userId, Integer entityId, ReviewType type, Integer score, String comment) throws Exception {
 
-        // Get current time
-        java.sql.Timestamp currentDateTime = new java.sql.Timestamp((System.currentTimeMillis() / 1000) * 1000);
-
         try {
+
+            // Get current time
+            java.sql.Timestamp currentDateTime = new java.sql.Timestamp((System.currentTimeMillis() / 1000) * 1000);
+
             String query;
 
             switch (type) {
@@ -66,7 +68,6 @@ public class ReviewServiceImpl implements ReviewService {
             if (rs.next()) {
                 generatedKey = rs.getInt(1);
             }
-
             return getReview(generatedKey, type);
         }
 
@@ -75,6 +76,16 @@ public class ReviewServiceImpl implements ReviewService {
 
             // Unknown exceptions happens.
             throw new Exception("User added failed, please contact the IT administrator to report the issue.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
 
     }
@@ -87,9 +98,9 @@ public class ReviewServiceImpl implements ReviewService {
      */
     public Review getReview(int reviewId, ReviewType type) throws Exception {
 
-        Review review = new Review();
-
         try {
+
+            Review review = new Review();
 
             String query = "SELECT * FROM mobilecomputing.\"review\" WHERE \"review_id\" = ?";
 
@@ -123,6 +134,7 @@ public class ReviewServiceImpl implements ReviewService {
 
                 review.setScore(resultSet.getInt("review_score"));
                 review.setTime(resultSet.getTimestamp("review_time"));
+
                 return review;
             }
 
@@ -130,8 +142,20 @@ public class ReviewServiceImpl implements ReviewService {
 
         // If exception happens when querying user
         catch (Exception e) {
+
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
+
         // Return user information
         return null;
     }
@@ -144,9 +168,9 @@ public class ReviewServiceImpl implements ReviewService {
      */
     public List<Review> getReviewsByUser(int userId, Integer entityId, ReviewType type) throws Exception {
 
-        List<Review> reviewList = new ArrayList<>();
-
         try {
+
+            List<Review> reviewList = new ArrayList<>();
 
             String query;
 
@@ -200,12 +224,24 @@ public class ReviewServiceImpl implements ReviewService {
 
                 reviewList.add(review);
             }
+
             return reviewList;
         }
 
         // If exception happens when querying user
         catch (Exception e) {
+
             throw new Exception("Some error happened, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
     }
 
@@ -218,9 +254,9 @@ public class ReviewServiceImpl implements ReviewService {
      */
     public List<Review> getReviewsByEntity(Integer entityId, ReviewType type) throws Exception {
 
-        List<Review> reviewList = new ArrayList<>();
-
         try {
+
+            List<Review> reviewList = new ArrayList<>();
 
             String query;
 
@@ -277,17 +313,29 @@ public class ReviewServiceImpl implements ReviewService {
 
                 reviewList.add(review); // add review to the list
             }
+
             return reviewList;
         }
 
         // If exception happens when querying user
         catch (Exception e) {
+
             throw new Exception("Some error happened, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
     }
 
 
-    public double getAverageRating(Integer entityId, ReviewType type) {
+    public double getAverageRating(Integer entityId, ReviewType type) throws SQLException {
 
         try {
 
@@ -333,14 +381,28 @@ public class ReviewServiceImpl implements ReviewService {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) { // Ensure there's a row in the result set
+                Double rating = Double.parseDouble(resultSet.getString("average_rating"));
 
-                return Double.parseDouble(resultSet.getString("average_rating"));
+                return rating;
+
             }
         }
 
         catch (Exception e) {
+
             throw new RuntimeException(e);
         }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
+
         return 5;
     }
 }

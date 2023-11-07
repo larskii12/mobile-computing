@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
+import com.comp90018.uninooks.service.emulator.EmulatorService;
+import com.comp90018.uninooks.service.emulator.EmulatorServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
@@ -30,12 +32,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements GPSService {
 
-    private ReviewService reviewService;
-
     private LocationService locationService;
-
-    private UserService userService;
-
     private static Context context;
 
     GPSServiceImpl gpsService;

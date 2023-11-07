@@ -62,11 +62,11 @@ public class StudySpace extends Location {
 //        this.capacity = capacity;
 //    }
 
-    public double getAverage_rating() {
-        return average_rating;
-    }
-
-    public void setAverage_rating(double rating) {
-        average_rating = rating;
-    }
+//    public double getAverage_rating() {
+//        return average_rating;
+//    }
+//
+//    public void setAverage_rating(double rating) {
+//        average_rating = rating;
+//    }
 }

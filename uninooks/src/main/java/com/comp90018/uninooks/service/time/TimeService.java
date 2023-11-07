@@ -16,5 +16,4 @@ public interface TimeService {
 
     public int getWeekDate();
 
-
 }

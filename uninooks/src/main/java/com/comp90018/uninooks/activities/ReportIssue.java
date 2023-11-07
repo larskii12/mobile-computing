@@ -67,7 +67,7 @@ public class ReportIssue extends AppCompatActivity {
                         public void run() {
                             try {
                                 handler.sendEmptyMessage(1);
-                                new mailServiceImpl().raiseIssue(editTextRaiseIssue.getText().toString() + "\n\nReport Location: " + GPSServiceImpl.getLatestLocation().latitude + ", " + GPSServiceImpl.getLatestLocation().longitude);
+                                new mailServiceImpl().raiseIssue(editTextRaiseIssue.getText().toString() + "\n\nReport Location: " + GPSServiceImpl.getCurrentLocation().latitude + ", " + GPSServiceImpl.getCurrentLocation().longitude);
                                 handler.sendEmptyMessage(2);
                             } catch (Exception e) {
                                 throw new RuntimeException("An error occurs when raising app issue, please contact the IT administrator.");
