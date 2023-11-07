@@ -8,7 +8,6 @@ import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -175,6 +174,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     for (Favorite favorite: favorites) {
                         if (location.getType().equals("LIBRARY") && favorite.getLibraryId() == location.getId()) {
                             isFavorite = true;
+
                         }
                         else if (location.getType().equals("STUDY_SPACE") && favorite.getStudySpaceId() == location.getId()) {
                             isFavorite = true;
@@ -231,8 +231,30 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             new Thread() {
                                 public void run() {
                                     try {
-                                        Favorite newFavorite = new FavoriteServiceImpl().addFavorite(userId, locationId,ReviewType.valueOf(location.getType()));
-                                        isFavorite = true;
+                                        if (!isFavorite) {
+                                            new FavoriteServiceImpl().addFavorite(userId, locationId, ReviewType.valueOf(location.getType()));
+                                            isFavorite = true;
+
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    favouriteButton.setBackgroundResource(R.drawable.baseline_favorite_32);
+                                                    favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), PorterDuff.Mode.SRC_IN);
+                                                }
+                                            });
+                                        }
+                                        else{
+                                            new FavoriteServiceImpl().removeFavorite(userId, locationId, ReviewType.valueOf(location.getType()));
+                                            isFavorite = false;
+
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    favouriteButton.setBackgroundResource(R.drawable.baseline_favorite_border_32);
+                                                    favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), PorterDuff.Mode.SRC_IN);
+                                                }
+                                            });
+                                        }
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
                                     }
