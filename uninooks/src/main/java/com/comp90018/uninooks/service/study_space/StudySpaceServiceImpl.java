@@ -1,7 +1,5 @@
 package com.comp90018.uninooks.service.study_space;
 
-import android.util.Log;
-
 import com.comp90018.uninooks.config.DatabaseHelper;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
@@ -13,17 +11,18 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class StudySpaceServiceImpl implements StudySpaceService {
 
     Connection connector = new DatabaseHelper().getConnector();
 
-    ArrayList<StudySpace> closestStudySpaces = new ArrayList<>();
-
-    ArrayList<StudySpace> topRatedStudySpaces = new ArrayList<>();
-
     /**
      * Get ten closest study spaces and return to the Main UI to show
+     *
      * @param location as the current location
      * @return ten sorted closest study spaces by walking distance
      * @throws Exception if any exception happens
@@ -37,39 +36,53 @@ public class StudySpaceServiceImpl implements StudySpaceService {
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            ArrayList<StudySpace> allStudySpaces = new ArrayList<>();
+            List<StudySpace> allStudySpaces = Collections.synchronizedList(new ArrayList<>());
             ArrayList<StudySpace> openingStudySpaces = new ArrayList<>();
             ArrayList<StudySpace> closingStudySpaces = new ArrayList<>();
 
-            // Set user information
-            while (resultSet.next()) { // Ensure there's a row in the result set
 
-                int studySpaceId = Integer.parseInt(resultSet.getString("study_space_id"));
+            ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-                // Exclude the closed study spaces
-                StudySpace studySpace = new LocationServiceImpl().findStudySpaceById(studySpaceId);
+            ArrayList<Integer> studySpacedIds = new ArrayList<>();
 
-                if (studySpace != null) {
-//                    studySpace.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), studySpace.getLocation()));
-                    allStudySpaces.add(studySpace);
-                }
+            while (resultSet.next()){
+                studySpacedIds.add(Integer.parseInt(resultSet.getString("study_space_id")));
             }
 
-//            // Get current Position
-//            LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
-//
-             allStudySpaces.sort(Comparator.comparingDouble(StudySpace::getDistanceFromCurrentPosition));
+            for (Integer studySpaceId: studySpacedIds) {
+                executorService.submit(new Runnable() {
 
-//
-//            // Sort ten study spaces by waling distance from Google Map API
-//            closestStudySpaces = calculateSpaceByWalkingDistance(currentLocation, allStudySpaces);
-//            sortByDistance(closestStudySpaces);
+                    @Override
+                    public void run() {
+                        StudySpace studySpace = null;
+                        try {
+                            studySpace = new LocationServiceImpl().findStudySpaceById(studySpaceId);
+                            if (studySpace != null) {
+                                allStudySpaces.add(studySpace);
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+            }
 
-            // Return opening study space first
+            executorService.shutdown();
+            try {
+                if (!executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)) {
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executorService.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
 
-            closestStudySpaces = allStudySpaces;
+            synchronized (allStudySpaces){
+                allStudySpaces.sort(Comparator.comparingDouble(StudySpace::getDistanceFromCurrentPosition));
+            }
 
-            for (StudySpace studySpace : closestStudySpaces) {
+            // Show the opening study space first
+            for (StudySpace studySpace : allStudySpaces) {
 
                 if (studySpace.isOpeningNow()) {
                     openingStudySpaces.add(studySpace);
@@ -88,7 +101,7 @@ public class StudySpaceServiceImpl implements StudySpaceService {
             return new ArrayList<>(openingStudySpaces.subList(0, size));
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             e.printStackTrace();
             throw new Exception();
         }
@@ -124,36 +137,46 @@ public class StudySpaceServiceImpl implements StudySpaceService {
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            ArrayList<StudySpace> allStudySpaces = new ArrayList<>();
+            List<StudySpace> allStudySpaces = Collections.synchronizedList(new ArrayList<>());
             ArrayList<StudySpace> openingStudySpaces = new ArrayList<>();
             ArrayList<StudySpace> closingStudySpaces = new ArrayList<>();
 
-            // Set user information
-            while (resultSet.next()) { // Ensure there's a row in the result set
 
-                int studySpaceId = Integer.parseInt(resultSet.getString("review_study_space_id"));
+            ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-                // Exclude the closed study spaces
-                StudySpace studySpace = new LocationServiceImpl().findStudySpaceById(studySpaceId);
+            ArrayList<Integer> studySpacedIds = new ArrayList<>();
 
-                if (studySpace != null) {
-//                    studySpace.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), studySpace.getLocation()));
-                    allStudySpaces.add(studySpace);
-                }
+            while (resultSet.next()){
+                studySpacedIds.add(Integer.parseInt(resultSet.getString("review_study_space_id")));
             }
 
-//            // Get current Position
-//            LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
-//
-            allStudySpaces.sort(Comparator.comparingDouble(StudySpace::getAverage_rating));
-            Collections.reverse(allStudySpaces);
+            for (Integer studySpaceId: studySpacedIds) {
+                executorService.submit(new Runnable() {
 
-//
-//            // Sort ten study spaces by waling distance from Google Map API
-//            closestStudySpaces = calculateSpaceByWalkingDistance(currentLocation, allStudySpaces);
-//            sortByDistance(closestStudySpaces);
+                    @Override
+                    public void run() {
+                        StudySpace studySpace = null;
+                        try {
+                            studySpace = new LocationServiceImpl().findStudySpaceById(studySpaceId);
+                            if (studySpace != null) {
+                                allStudySpaces.add(studySpace);
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+            }
 
-            // Return opening study space first
+            executorService.shutdown();
+            try {
+                if (!executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)) {
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executorService.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
 
             for (StudySpace studySpace : allStudySpaces) {
 

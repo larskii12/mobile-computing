@@ -16,11 +16,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.comp90018.uninooks.R;
+import com.comp90018.uninooks.models.location.library.Library;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.comp90018.uninooks.service.emulator.EmulatorService;
 import com.comp90018.uninooks.service.emulator.EmulatorServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
+import com.comp90018.uninooks.service.library.LibraryServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.review.ReviewService;
 import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
@@ -129,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Building ID   " + library.getBuildingId());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Distance From Current Location   " + library.getDistanceFromCurrentPosition() + " meters");
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Library ID   " + library.getId());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Open Today   " + library.issOpenToday());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Open Today   " + library.isOpenToday());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Opening Now   " + library.isOpeningNow());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Opening Time   " + library.getOpenTime());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Closing Time   " + library.getCloseTime());
@@ -144,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Building ID   " + library.getBuildingId());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Distance From Current Location   " + library.getDistanceFromCurrentPosition() + " meters");
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Library ID   " + library.getId());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Open Today   " + library.issOpenToday());
+//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Open Today   " + library.isOpenToday());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Opening Now   " + library.isOpeningNow());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Opening Time   " + library.getOpenTime());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Closing Time   " + library.getCloseTime());

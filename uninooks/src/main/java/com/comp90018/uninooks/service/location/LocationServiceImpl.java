@@ -559,6 +559,7 @@ public class LocationServiceImpl implements LocationService {
                 resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
+
                     Location location = new Restaurant();
                     // Set review information
                     location.setId(resultSet.getInt("restaurant_id"));
