@@ -8,11 +8,13 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -28,6 +30,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GPSService {
 
@@ -119,24 +122,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-//            bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-//            @SuppressLint("NonConstantResourceId")
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.homeNav:
-//                        // go to home navigation page (Linda's page)
-//                        break;
-//                    case R.id.focusNav:
-//                        // go to focus page
-//                        break;
-//                    case R.id.accountNav:
-//                        // go to account page
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
+            bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @SuppressLint("NonConstantResourceId")
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.homeNav) {
+                    // pass user ID
+                    System.out.println("going to home page");
+                } else if (id == R.id.focusNav) {
+                    // go to focus page
+                    // pass user ID (maybe)
+                    System.out.println("going to focus page");
+                } else if (id == R.id.accountNav) {
+                    // go to account page
+                    // pass user ID
+                    System.out.println("going to account nav page");
+                }
+                return false;
+            }
+        });
 
         /**
          * Move camera to the current location
