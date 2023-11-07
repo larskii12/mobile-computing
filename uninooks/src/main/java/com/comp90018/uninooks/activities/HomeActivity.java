@@ -121,7 +121,7 @@ public class HomeActivity extends AppCompatActivity {
                             public void run() {
                                 for (StudySpace space : closestStudySpaces){
                                     CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, nearbyLayout, false);
-                                    CardView newCard = createNewSmallCard(card,space);
+                                    CardView newCard = createNewSmallCard(card, space, "distance");
 //                                    System.out.println(space.getId());
                                     String spaceID = String.valueOf(space.getId());
                                     nearbyLayout.addView(newCard);
@@ -141,10 +141,11 @@ public class HomeActivity extends AppCompatActivity {
                                         }
                                     });
                                 }
+
                                 for (StudySpace space : closestStudySpaces){
 //                        Location space = studySpacesNearby.get(i);
                                     CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, topRatedLayout, false);
-                                    CardView newCard = createNewSmallCard(card,space);
+                                    CardView newCard = createNewSmallCard(card, space, "rating");
                                     String spaceID = String.valueOf(space.getId());
                                     topRatedLayout.addView(newCard);
                                     card.setOnClickListener(new View.OnClickListener() {
@@ -166,7 +167,7 @@ public class HomeActivity extends AppCompatActivity {
                                 for (StudySpace space : favorites){
 //                        Location space = studySpacesNearby.get(i);
                                     CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, favoritesLayout, false);
-                                    CardView newCard = createNewSmallCard(card,space);
+                                    CardView newCard = createNewSmallCard(card, space, "favorite");
                                     String spaceID = String.valueOf(space.getId());
                                     favoritesLayout.addView(newCard);
                                     card.setOnClickListener(new View.OnClickListener() {
@@ -211,7 +212,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         @SuppressLint("SetTextI18n")
-        private CardView createNewSmallCard(CardView card, StudySpace space){
+        private CardView createNewSmallCard(CardView card, StudySpace space, String type){
             ImageView banner = (ImageView) card.findViewById(R.id.banner);
             banner.setBackgroundResource(R.drawable.old_engineering);
             ProgressBar progress = (ProgressBar) card.findViewById(R.id.progressBar);
@@ -251,11 +252,17 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
 
-            if (space.getDistanceFromCurrentPosition() == -1 || !GPSServiceImpl.getGPSPermission()){
-                distanceLabel.setText("N/A");
+            if (type.equals("rating")){
+                distanceLabel.setText(String.valueOf(space.getAverage_rating()));
             }
+
             else{
-                distanceLabel.setText(space.getDistanceFromCurrentPosition() + "m");
+                if (space.getDistanceFromCurrentPosition() == -1 || !GPSServiceImpl.getGPSPermission()){
+                    distanceLabel.setText("N/A");
+                }
+                else{
+                    distanceLabel.setText(space.getDistanceFromCurrentPosition() + "m");
+                }
             }
 
             ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);
