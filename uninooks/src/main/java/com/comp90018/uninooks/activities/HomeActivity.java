@@ -106,7 +106,7 @@ public class HomeActivity extends AppCompatActivity {
                     ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
                     List<Location> studySpacesNearby = locationAPI.findAllLocations("STUDY", "", true);
                     List<Favorite> favouriteSpaces = new FavoriteServiceImpl().getFavoritesByUser(userID, ReviewType.valueOf("STUDY_SPACE"));
-                    ArrayList <StudySpace> favorites = new ArrayList<StudySpace>();
+                    ArrayList <StudySpace> favorites = new ArrayList<>();
                     for (Favorite favorite: favouriteSpaces) {
                         StudySpace space = new LocationServiceImpl().findStudySpaceById(favorite.getStudySpaceId());
                         favorites.add(space);
@@ -139,10 +139,7 @@ public class HomeActivity extends AppCompatActivity {
                                             public void run() {
                                                 Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
                                                 intent.putExtra("parcel", space);
-//                                                intent.putExtra("SPACE_ID_EXTRA", space.getId());
-//                                                System.out.println(spaceID);
                                                 intent.putExtra("USERID_EXTRA", userID);
-//                                                System.out.println(userID);
                                                 startActivity(intent);
                                             }
                                         }.start();
@@ -162,10 +159,8 @@ public class HomeActivity extends AppCompatActivity {
                                         new Thread() {
                                             public void run() {
                                                 Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                                                intent.putExtra("SPACE_ID_EXTRA", space.getId());
-                                                System.out.println(spaceID);
+                                                intent.putExtra("parcel", space);
                                                 intent.putExtra("USERID_EXTRA", userID);
-                                                System.out.println(userID);
                                                 startActivity(intent);
                                             }
                                         }.start();
@@ -185,10 +180,8 @@ public class HomeActivity extends AppCompatActivity {
                                         new Thread() {
                                             public void run() {
                                                 Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                                                intent.putExtra("SPACE_ID_EXTRA", space.getId());
-                                                System.out.println(spaceID);
+                                                intent.putExtra("parcel", space);
                                                 intent.putExtra("USERID_EXTRA", userID);
-                                                System.out.println(userID);
                                                 startActivity(intent);
                                             }
                                         }.start();
