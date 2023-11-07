@@ -8,11 +8,14 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -28,6 +31,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GPSService {
 
@@ -118,25 +122,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
+//        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
 
-//            bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-//            @SuppressLint("NonConstantResourceId")
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.homeNav:
-//                        // go to home navigation page (Linda's page)
-//                        break;
-//                    case R.id.focusNav:
-//                        // go to focus page
-//                        break;
-//                    case R.id.accountNav:
-//                        // go to account page
-//                        break;
-//                }
-//                return false;
+//        @Override
+//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//
+//            int id = NavigationBarView.getId();
+//
+//            switch (item.getItemId()) {
+//                case R.id.homeNav:
+//                    // go to home navigation page (Linda's page)
+//                    break;
+//                case R.id.focusNav:
+//                    // go to focus page
+//                    break;
+//                case R.id.accountNav:
+//                    // go to account page
+//                    break;
 //            }
-//        });
+//            return false;
+//        }
+//    });
 
         /**
          * Move camera to the current location
@@ -146,11 +152,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 if (mMap != null && mMap.isMyLocationEnabled()) {
                     Location myLocation = mMap.getMyLocation();
-                    if (myLocation != null) {
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                new LatLng(myLocation.getLatitude(),
-                                        myLocation.getLongitude()), standardCameraZoom)); // Adjust zoom level as needed
-                    }
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                            new LatLng(myLocation.getLatitude(),
+                                    myLocation.getLongitude()), standardCameraZoom)); // Adjust zoom level as needed
 
                     showTextMessage("Location updated");
                 }

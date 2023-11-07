@@ -102,6 +102,7 @@ public class HomeActivity extends AppCompatActivity {
                         ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
                         List<Location> studySpacesNearby = locationAPI.findAllLocations("STUDY", "", true);
                         List<Favorite> favouriteSpaces = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACE"));
+
                         ArrayList <StudySpace> favorites = new ArrayList<StudySpace>();
                         for (Favorite favorite: favouriteSpaces) {
                             StudySpace space = new LocationServiceImpl().findStudySpaceById(favorite.getStudySpaceId());
