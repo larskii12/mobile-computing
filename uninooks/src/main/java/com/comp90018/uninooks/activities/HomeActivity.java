@@ -10,6 +10,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -34,6 +36,8 @@ import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -56,6 +60,8 @@ public class HomeActivity extends AppCompatActivity {
         private float acceleration = 0f;
         private float currentAcceleration = 0f;
         private float lastAcceleration = 0f;
+        private BottomNavigationView bottomNav;
+
         HashMap<String, Double> busyRatingsByLocation;
 
 
@@ -69,6 +75,9 @@ public class HomeActivity extends AppCompatActivity {
             String username = intent.getStringExtra("USERNAME_EXTRA");
             String userID = intent.getStringExtra("USERID_EXTRA");
             System.out.println(userID);
+
+            bottomNav = findViewById(R.id.bottom_navigation);
+            bottomNav.setSelectedItemId(R.id.homeNav);
 
             List<Location> studySpacesNearby = new ArrayList<>();
             List<Location> studySpacesTop = new ArrayList<>();
@@ -92,6 +101,31 @@ public class HomeActivity extends AppCompatActivity {
 
             TextView greetingMessage = (TextView) findViewById(R.id.textView);
             greetingMessage.setText("Good morning " + username);
+
+            bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+                @SuppressLint("NonConstantResourceId")
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    int id = item.getItemId();
+                    if (id == R.id.homeNav) {
+                        ;
+                    } else if (id == R.id.focusNav) {
+                        // go to focus page
+                        // pass user ID (maybe)
+                        System.out.println("going to focus page");
+                    } else if (id == R.id.accountNav) {
+                        // go to account page
+                        // pass user ID
+                        System.out.println("going to account nav page");
+                    }
+
+                    else if (id == R.id.searchNav) {
+                        Intent intent = new Intent(HomeActivity.this, MapsActivity.class);
+                        startActivity(intent);
+                    }
+                    return false;
+                }
+            });
 
 
             new Thread() {

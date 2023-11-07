@@ -82,7 +82,6 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
                                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
 
                                 // Pass the user to next page
-                                intent.putExtra("USERNAME_EXTRA", user.getUserName());
                                 intent.putExtra("USERID_EXTRA", String.valueOf(user.getUserId()));
 
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

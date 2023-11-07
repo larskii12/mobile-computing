@@ -99,7 +99,6 @@
                     android:layout_height="match_parent"
                     android:layout_weight="5"
                     android:minHeight="20dp"
-                    android:progress="70"
                     android:progressDrawable="@drawable/progress_bar_background"
                     android:progressTint="@color/green"
                     android:radius="8dp" />

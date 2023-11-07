@@ -33,6 +33,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+import java.util.Map;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GPSService {
 
     private GoogleMap mMap;
@@ -131,7 +133,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 int id = item.getItemId();
                 if (id == R.id.homeNav) {
                     // pass user ID
-                    System.out.println("going to home page");
+                    Intent intent = new Intent(MapsActivity.this, HomeActivity.class);
+
+                    // Pass the user to next page
+//                    intent.putExtra("USERNAME_EXTRA", userName);
+//                    intent.putExtra("USERID_EXTRA", String.valueOf(user.getUserId()));
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                 } else if (id == R.id.focusNav) {
                     // go to focus page
                     // pass user ID (maybe)
@@ -140,6 +149,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     // go to account page
                     // pass user ID
                     System.out.println("going to account nav page");
+                }
+
+                else if (id == R.id.searchNav) {
+                    Intent intent = new Intent(MapsActivity.this, MapsActivity.class);
+                    startActivity(intent);
                 }
                 return false;
             }
