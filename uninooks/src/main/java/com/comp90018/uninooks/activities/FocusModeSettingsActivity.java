@@ -28,6 +28,14 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
     EditText pomodoroTime;
     EditText shortBreakTime;
     EditText longBreakTime;
+    int pomodoroTimeValue;
+    int shortBreakTimeValue;
+    int longBreakTimeValue;
+    Boolean onAutoSequence;
+
+    private int pomodoroTimeDefault = 25;
+    private int shortPauseTimeDefault = 5;
+    private int longPauseTimeDefault = 15;
 
 
 
@@ -47,6 +55,9 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
         pomodoroTime = findViewById(R.id.EditTextFocusSettingMins); // these are all in minutes, have to convert to milliiseconds
         shortBreakTime = findViewById(R.id.EditTextFocusShortBreakSetting);
         longBreakTime = findViewById(R.id.EditTextFocusLongBreakSetting);
+
+        // retrieve settings, and place those in the editTexts + toggle enabled or not
+        retrieveSettings();
 
         // Set the click listener for the Pomodoro Timer LinearLayout
         pomodoroTimerLayout.setOnClickListener(new View.OnClickListener() {
@@ -159,10 +170,38 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
     private void confirmSettings(String pomodoro, String shortBreak, String longBreak, Boolean onAutoPomodoro) {
         SharedPreferences sharedPreferences = getSharedPreferences("MySettings", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        if (pomodoro.equals("")) {
+            pomodoro = String.valueOf(pomodoroTimeDefault);
+        }
+        if (shortBreak.equals("")) {
+            shortBreak = String.valueOf(shortPauseTimeDefault);
+        }
+        if (longBreak.equals("")) {
+            longBreak = String.valueOf(longPauseTimeDefault);
+        }
+
         editor.putInt(getString(R.string.pomodoro_setting), Integer.parseInt(pomodoro)*60);
         editor.putInt(getString(R.string.short_break_setting), Integer.parseInt(shortBreak)*60);
         editor.putInt(getString(R.string.long_break_setting), Integer.parseInt(longBreak)*60);
         editor.putBoolean(getString(R.string.auto_pomodoro), onAutoPomodoro);
         editor.apply();
+    }
+
+    /**
+     * Times are all in minutes
+     */
+    private void retrieveSettings() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MySettings", Context.MODE_PRIVATE);
+        pomodoroTimeValue = sharedPreferences.getInt(getString(R.string.pomodoro_setting), pomodoroTimeDefault);
+        shortBreakTimeValue = sharedPreferences.getInt(getString(R.string.short_break_setting), shortPauseTimeDefault);
+        longBreakTimeValue = sharedPreferences.getInt(getString(R.string.long_break_setting), longPauseTimeDefault);
+        onAutoSequence = sharedPreferences.getBoolean(getString(R.string.auto_pomodoro), false);
+
+        pomodoroTime.setText(String.valueOf(pomodoroTimeValue/60));
+        shortBreakTime.setText(String.valueOf(shortBreakTimeValue/60));
+        longBreakTime.setText(String.valueOf(longBreakTimeValue/60));
+        toggleSwitch.setChecked(onAutoSequence);
+
     }
 }
