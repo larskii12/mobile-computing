@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -44,7 +45,6 @@ import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
-import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -55,8 +55,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class LocationActivity extends FragmentActivity implements OnMapReadyCallback, GPSService{
@@ -71,6 +69,8 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     StudySpace space;
     boolean isFavorite;
 
+    String userId;
+
     private final int standardCameraZoom = 18;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +78,10 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         setContentView(R.layout.activity_location);
         context = getApplicationContext();
         Intent intent = getIntent();
-        String userID = intent.getStringExtra("USERID_EXTRA");
+        userId = intent.getStringExtra("USERID_EXTRA");
         String spaceID = intent.getStringExtra("SPACE_ID_EXTRA");
         System.out.println(spaceID);
-        System.out.println(userID);
+        System.out.println(userId);
 
 //        binding = ActivityLocationBinding.inflate(getLayoutInflater());
 //
@@ -111,11 +111,11 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     // Get current Position
                     LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
 
-                    space.setDistanceFromCurrentPosition(new StudySpaceServiceImpl().calculateSpaceByWalkingDistance(currentLocation, new ArrayList<>(Collections.singletonList(space))).get(0).getDistanceFromCurrentPosition());
+//                    space.setDistanceFromCurrentPosition(GPSServiceImpl.getCurrentLocation(), space.getLocation());
                     List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(Integer.valueOf(spaceID), ReviewType.valueOf(space.getType()));
                     System.out.println("Building id:" + space.getBuildingId());
                     Building building = new BuildingServiceImpl().getBuilding(space.getBuildingId(), ReviewType.valueOf(space.getType()));
-                    List<Favorite> favorites = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID),ReviewType.valueOf(space.getType()));
+                    List<Favorite> favorites = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userId),ReviewType.valueOf(space.getType()));
                     isFavorite = false;
                     for (Favorite favorite: favorites) {
                         if (favorite.getStudySpaceId() == space.getId()) {
@@ -137,8 +137,8 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
                     Button addReview = findViewById(R.id.add_review);
                     User user = null;
-                    System.out.println(userID);
-                    user = new UserServiceImpl().getUser(Integer.parseInt(userID));
+                    System.out.println(userId);
+                    user = new UserServiceImpl().getUser(Integer.parseInt(userId));
 
                     userName = user.getUserName();
 
@@ -153,7 +153,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             new Thread() {
                                 public void run() {
                                     Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
-                                    intent.putExtra("USERID_EXTRA", userID);
+                                    intent.putExtra("USERID_EXTRA", userId);
                                     intent.putExtra("USERNAME_EXTRA", userName);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
@@ -168,7 +168,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             new Thread() {
                                 public void run() {
                                     try {
-                                        Favorite newFavorite = new FavoriteServiceImpl().addFavorite(Integer.parseInt(userID), Integer.valueOf(spaceID),ReviewType.valueOf(space.getType()));
+                                        Favorite newFavorite = new FavoriteServiceImpl().addFavorite(Integer.parseInt(userId), Integer.valueOf(spaceID),ReviewType.valueOf(space.getType()));
                                         isFavorite = true;
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
@@ -209,10 +209,10 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             progressValue.setText(busyScore + "%");
                             if (isFavorite) {
                                 favouriteButton.setBackgroundResource(R.drawable.baseline_favorite_32);
-                                favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                                favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), PorterDuff.Mode.SRC_IN);
                             } else {
                                 favouriteButton.setBackgroundResource(R.drawable.baseline_favorite_border_32);
-                                favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
+                                favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), PorterDuff.Mode.SRC_IN);
                             }
                             if (space.getCloseTime() == null) {
                                 openHours.setText("Closed");
@@ -228,11 +228,11 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red)));
                             }
 
-                            if (space.getDistanceFromCurrentPosition() == -1){
-                                distance.setText(" N/A");
+                            if (space.getDistanceFromCurrentPosition() == -1 || !GPSServiceImpl.getGPSPermission()){
+                                distance.setText("N/A");
                             }
                             else{
-                                distance.setText(space.getDistanceFromCurrentPosition() + " m");
+                                distance.setText(space.getDistanceFromCurrentPosition() + "m");
                             }
                             for(Review review : reviews) {
                                 System.out.println(review.getComment());
@@ -409,5 +409,16 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
         dialog.show();
     }
-    }
 
+    /**
+     * Back gesture detested
+     */
+    public void onBackPressed() {
+        Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
+        intent.putExtra("USERID_EXTRA", userId);
+        intent.putExtra("USERNAME_EXTRA", userName);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+}

@@ -1,12 +1,16 @@
 package com.comp90018.uninooks.service.location;
 
 
+import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.config.DatabaseHelper;
 import com.comp90018.uninooks.models.location.Location;
 import com.comp90018.uninooks.models.location.LocationType;
 import com.comp90018.uninooks.models.location.library.Library;
 import com.comp90018.uninooks.models.location.restaurant.Restaurant;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
+import com.comp90018.uninooks.models.review.ReviewType;
+import com.comp90018.uninooks.service.gps.GPSServiceImpl;
+import com.comp90018.uninooks.service.review.ReviewServiceImpl;
 import com.comp90018.uninooks.service.time.TimeServiceImpl;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -69,15 +73,20 @@ public class LocationServiceImpl implements LocationService {
                 library.setOpenTime(resultSet.getTime("opening_time"));
                 library.setCloseTime(resultSet.getTime("closing_time"));
 
+                library.setLocation(new LatLng(Double.parseDouble(resultSet.getString("building_latitude")), Double.parseDouble(resultSet.getString("building_longitude"))));
+                library.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), library.getLocation()));
+
+                library.setAverage_rating(new ReviewServiceImpl().getAverageRating(locationId, ReviewType.LIBRARY));
+
                 library.setIsOpenToday(library.getOpenTime() != null);
 
                 // Set is open now or not
-                if (library.issOpenToday() && currentTime.after(library.getOpenTime()) && currentTime.before(library.getCloseTime())){
-
+                if (library.getOpenTime() != null && currentTime.after(library.getOpenTime()) && currentTime.before(library.getCloseTime())){
                     library.setIsOpeningNow(true);
+                    library.setIsOpenToday(true);
                 }
 
-                library.setLocation(new LatLng(Double.parseDouble(resultSet.getString("building_latitude")), Double.parseDouble(resultSet.getString("building_longitude"))));
+//                library.setAverage_rating(Double.parseDouble(resultSet.getString("average_rating")));
 
 //                Array daysDb = resultSet.getArray("library_opening_days");
 //                Integer[] days = (Integer[]) daysDb.getArray();
@@ -118,13 +127,9 @@ public class LocationServiceImpl implements LocationService {
 
         try {
 
-            Restaurant restaurant = new Restaurant();
-
-            // Get date of a week
             int currentDayOfWeek = new TimeServiceImpl().getWeekDate();
 
-            // Get the current time
-            Time currentTime = new TimeServiceImpl().getAEDTTime();
+            Restaurant restaurant = new Restaurant();
 
             String query = "SELECT * FROM mobilecomputing.restaurant r join mobilecomputing.opening_hours o " +
                     "on r.restaurant_id = o.restaurant_id " +
@@ -143,6 +148,15 @@ public class LocationServiceImpl implements LocationService {
 
                 restaurant.setOpenTime(resultSet.getTime("opening_time"));
                 restaurant.setCloseTime(resultSet.getTime("closing_time"));
+
+//                restaurant.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), restaurant.getLocation()));
+//                restaurant.setAverage_rating(Double.parseDouble(resultSet.getString("average_rating")));
+
+                Time currentTime = new TimeServiceImpl().getAEDTTime();
+                if (restaurant.getOpenTime() != null && currentTime.after(restaurant.getOpenTime()) && currentTime.before(restaurant.getCloseTime())){
+                    restaurant.setIsOpeningNow(true);
+                    restaurant.setIsOpenToday(true);
+                }
 
 //                Array daysDb = resultSet.getArray("restaurant_opening_days");
 //                Integer[] days = (Integer[]) daysDb.getArray();
@@ -198,6 +212,7 @@ public class LocationServiceImpl implements LocationService {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) { // Ensure there's a row in the result set
+
                 // Set study space information
                 studySpace.setId(resultSet.getInt("study_space_id"));
                 studySpace.setBuildingId(resultSet.getInt("study_space_building_id"));
@@ -206,15 +221,20 @@ public class LocationServiceImpl implements LocationService {
                 studySpace.setOpenTime(resultSet.getTime("opening_time"));
                 studySpace.setCloseTime(resultSet.getTime("closing_time"));
 
+                studySpace.setLocation(new LatLng(Double.parseDouble(resultSet.getString("building_latitude")), Double.parseDouble(resultSet.getString("building_longitude"))));
+                studySpace.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), studySpace.getLocation()));
+
+                studySpace.setAverage_rating(new ReviewServiceImpl().getAverageRating(locationId, ReviewType.STUDY_SPACE));
+
                 studySpace.setType("STUDY_SPACE");
 
                 studySpace.setIsOpenToday(studySpace.getOpenTime() != null);
 
-                if (studySpace.issOpenToday() && currentTime.after(studySpace.getOpenTime()) && currentTime.before(studySpace.getCloseTime())) {
+                if (studySpace.getOpenTime() != null && currentTime.after(studySpace.getOpenTime()) && currentTime.before(studySpace.getCloseTime())){
                     studySpace.setIsOpeningNow(true);
+                    studySpace.setIsOpenToday(true);
                 }
 
-                studySpace.setLocation(new LatLng(Double.parseDouble(resultSet.getString("building_latitude")), Double.parseDouble(resultSet.getString("building_longitude"))));
 //                Array daysDb = resultSet.getArray("study_space_opening_days");
 //                Integer[] days = (Integer[]) daysDb.getArray();
 //                studySpace.setOpeningDays(days);
@@ -233,6 +253,7 @@ public class LocationServiceImpl implements LocationService {
             }
 
         } catch(Exception e){ // If exception happens when querying study space
+            e.printStackTrace();
 
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
@@ -265,7 +286,7 @@ public class LocationServiceImpl implements LocationService {
             }
 
             LocalDate currentDate = LocalDate.now();
-            Integer currentDayOfWeek = currentDate.getDayOfWeek().getValue();
+            int currentDayOfWeek = new TimeServiceImpl().getWeekDate();
 
             String query;
             PreparedStatement preparedStatement;
@@ -299,8 +320,18 @@ public class LocationServiceImpl implements LocationService {
 
                     location.setLocation(new LatLng(resultSet.getDouble("building_latitude"), resultSet.getDouble("building_longitude")));
 
+                    location.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), location.getLocation()));
+
                     ((Library) location).setHasQuietZones(resultSet.getBoolean("library_has_quiet_zones"));
                     location.setType("LIBRARY");
+
+                    location.setAverage_rating(new ReviewServiceImpl().getAverageRating(location.getId(), ReviewType.LIBRARY));
+
+                    Time currentTime = new TimeServiceImpl().getAEDTTime();
+                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
+                        location.setIsOpeningNow(true);
+                        location.setIsOpenToday(true);
+                    }
 
 //                    Array daysDb = resultSet.getArray("library_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
@@ -343,7 +374,15 @@ public class LocationServiceImpl implements LocationService {
                     location.setCloseTime(resultSet.getTime("closing_time"));
 
                     location.setLocation(new LatLng(resultSet.getDouble("building_latitude"), resultSet.getDouble("building_longitude")));
+                    location.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), location.getLocation()));
 
+                    location.setAverage_rating(new ReviewServiceImpl().getAverageRating(location.getId(), ReviewType.STUDY_SPACE));
+
+                    Time currentTime = new TimeServiceImpl().getAEDTTime();
+                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
+                        location.setIsOpeningNow(true);
+                        location.setIsOpenToday(true);
+                    }
 
                     location.setType("STUDY_SPACE");
                     ((StudySpace) location).setMinimumAccessAQFLevel(resultSet.getInt("study_space_minimum_access_AQF_level"));
@@ -391,6 +430,14 @@ public class LocationServiceImpl implements LocationService {
 
                     location.setType("RESTAURANT");
 
+                    Time currentTime = new TimeServiceImpl().getAEDTTime();
+                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
+                        location.setIsOpeningNow(true);
+                        location.setIsOpenToday(true);
+                    }
+
+                    location.setAverage_rating(new ReviewServiceImpl().getAverageRating(location.getId(), ReviewType.RESTAURANT));
+
 //                    Array daysDb = resultSet.getArray("restaurant_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
 //                    location.setOpeningDays(days);
@@ -426,7 +473,18 @@ public class LocationServiceImpl implements LocationService {
                     location.setOpenTime(resultSet.getTime("opening_time"));
                     location.setCloseTime(resultSet.getTime("closing_time"));
 
-                    location.setType("ALL");
+                    location.setLocation(new LatLng(resultSet.getDouble("building_latitude"), resultSet.getDouble("building_longitude")));
+                    location.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), location.getLocation()));
+
+                    location.setType("LIBRARY");
+
+                    location.setAverage_rating(new ReviewServiceImpl().getAverageRating(location.getId(), ReviewType.LIBRARY));
+
+                    Time currentTime = new TimeServiceImpl().getAEDTTime();
+                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
+                        location.setIsOpeningNow(true);
+                        location.setIsOpenToday(true);
+                    }
 
 //                    Array daysDb = resultSet.getArray("library_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
@@ -463,6 +521,19 @@ public class LocationServiceImpl implements LocationService {
                     location.setOpenTime(resultSet.getTime("opening_time"));
                     location.setCloseTime(resultSet.getTime("closing_time"));
 
+                    location.setType("STUDY_SPACE");
+
+                    Time currentTime = new TimeServiceImpl().getAEDTTime();
+                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
+                        location.setIsOpeningNow(true);
+                        location.setIsOpenToday(true);
+                    }
+
+                    location.setLocation(new LatLng(resultSet.getDouble("building_latitude"), resultSet.getDouble("building_longitude")));
+                    location.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), location.getLocation()));
+
+                    location.setAverage_rating(new ReviewServiceImpl().getAverageRating(location.getId(), ReviewType.STUDY_SPACE));
+
 //                    Array daysDb = resultSet.getArray("study_space_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
 //                    location.setOpeningDays(days);
@@ -496,6 +567,19 @@ public class LocationServiceImpl implements LocationService {
                     location.setOpenTime(resultSet.getTime("opening_time"));
                     location.setCloseTime(resultSet.getTime("closing_time"));
 
+                    location.setType("RESTAURANT");
+
+                    location.setLocation(new LatLng(resultSet.getDouble("building_latitude"), resultSet.getDouble("building_longitude")));
+                    location.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), location.getLocation()));
+
+                    location.setAverage_rating(new ReviewServiceImpl().getAverageRating(location.getId(), ReviewType.RESTAURANT));
+
+                    Time currentTime = new TimeServiceImpl().getAEDTTime();
+                    if (location.issOpenToday() && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
+                        location.setIsOpeningNow(true);
+                        location.setIsOpenToday(true);
+                    }
+
 //                    Array daysDb = resultSet.getArray("restaurant_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
 //                    location.setOpeningDays(days);
@@ -525,6 +609,30 @@ public class LocationServiceImpl implements LocationService {
                 }
             }
         }
+    }
 
+
+    /**
+     * Calculate distance between two points, sphere considered.
+     *
+     * @param source      source point
+     * @param destination destination point
+     * @return distance between two points
+     */
+    public int calculateDistance(LatLng source, LatLng destination) {
+
+        // Earth radius in meters
+        final int R = 6371000;
+
+        double latDistance = Math.toRadians(destination.latitude - source.latitude);
+        double lonDistance = Math.toRadians(destination.longitude - source.longitude);
+
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(source.latitude)) * Math.cos(Math.toRadians(destination.latitude))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double distance = R * c;
+        return (int) distance;
     }
 }

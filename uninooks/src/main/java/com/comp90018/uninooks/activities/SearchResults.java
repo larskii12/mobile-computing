@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -35,14 +36,11 @@ import com.comp90018.uninooks.models.review.ReviewType;
 import com.comp90018.uninooks.service.building.BuildingServiceImpl;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
-import com.comp90018.uninooks.service.library.LibraryServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
-import com.comp90018.uninooks.service.review.ReviewServiceImpl;
 import com.comp90018.uninooks.service.sortingComparators.DistanceComparator;
 import com.comp90018.uninooks.service.sortingComparators.NameComparator;
 import com.comp90018.uninooks.service.sortingComparators.RatingComparator;
-import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
 import com.comp90018.uninooks.service.time.TimeServiceImpl;
 
 import java.sql.Time;
@@ -128,21 +126,14 @@ public class SearchResults extends AppCompatActivity {
 
                     } else if (intent.hasExtra("filters")) {
                         results = new LocationServiceImpl().findAllLocations("STUDY", null, true);
+
+
                         HashMap<String, String> filters = (HashMap<String, String>) getIntent().getSerializableExtra("filters");
                         getAllBuildingsOfLocs(results);
                         getAllRatings(results);
                         getAllResources(results);
                         ratingComparator = new RatingComparator(ratingsByLocation);
                         filterResults(filters);
-                    }
-
-                    for (Location l: results) {
-                        if (l instanceof Library) {
-                            l.setDistanceFromCurrentPosition(new LibraryServiceImpl().calculateSpaceByWalkingDistance(GPSServiceImpl.getCurrentLocation(), new ArrayList<>(Collections.singletonList((Library) l))).get(0).getDistanceFromCurrentPosition());
-                        }
-                        else{
-                            l.setDistanceFromCurrentPosition(new StudySpaceServiceImpl().calculateSpaceByWalkingDistance(GPSServiceImpl.getCurrentLocation(), new ArrayList<>(Collections.singletonList((StudySpace) l))).get(0).getDistanceFromCurrentPosition());
-                        }
                     }
 
                     // have to get all the ratings here (any other API I call, have to be done here and not in the UI thread)
@@ -186,10 +177,30 @@ public class SearchResults extends AppCompatActivity {
     };
 
     private void addResultsToPage(List<Location> results) {
+
         ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
         loadingGIF.setVisibility(View.VISIBLE);
 
+        // List opening location first
+        ArrayList<Location> openingLocations = new ArrayList<>();
+        ArrayList<Location> closingLocations = new ArrayList<>();
+
         for (Location location : results) {
+            if (location.isOpeningNow()){
+                openingLocations.add(location);
+            }
+
+            else{
+                closingLocations.add(location);
+            }
+        }
+        results.clear();
+        openingLocations.addAll(closingLocations);
+        results = openingLocations;
+
+
+        for (Location location : results) {
+
             String type = location.getType();
 
             if (type.equals("LIBRARY")) {
@@ -243,9 +254,14 @@ public class SearchResults extends AppCompatActivity {
         // set the image!!!
 
         // set the distance away!!!!!
-        Double dist = location.getDistanceFromCurrentPosition();
-        int distInt = (int) Math.round(dist);
-        distanceAway.setText(distInt + "m");
+        int dist = location.getDistanceFromCurrentPosition();
+//        int distInt = (int) Math.round(dist);
+        if(dist == -1 || !GPSServiceImpl.getGPSPermission()){
+            distanceAway.setText(" N/A");
+        }
+        else{
+            distanceAway.setText(dist + "m");
+        }
 
         // set the clock colour
         updateClockColour(location);
@@ -297,9 +313,14 @@ public class SearchResults extends AppCompatActivity {
         setTitle(location, cardTitle);
 
         // set the distance away!!!!!!
-        Double dist = location.getDistanceFromCurrentPosition();
-        int distInt = (int) Math.round(dist);
-        distanceAway.setText(distInt + "m");
+        int dist = location.getDistanceFromCurrentPosition();
+//        int distInt = (int) Math.round(dist);
+        if(dist == -1 || !GPSServiceImpl.getGPSPermission()){
+            distanceAway.setText(" N/A");
+        }
+        else{
+            distanceAway.setText(dist + "m");
+        }
 
         // set the clock colour
         updateClockColour(location);
@@ -360,9 +381,15 @@ public class SearchResults extends AppCompatActivity {
         setTitle(location, cardTitle);
 
         // set the distance away!!!!
-        Double dist = location.getDistanceFromCurrentPosition();
-        int distInt = (int) Math.round(dist);
-        distanceAway.setText(distInt + "m");
+        int dist = location.getDistanceFromCurrentPosition();
+//        int distInt = (int) Math.round(dist);
+        if(dist == -1 || !GPSServiceImpl.getGPSPermission()){
+            distanceAway.setText(" N/A");
+        }
+        else{
+            distanceAway.setText(dist + "m");
+        }
+
 
         // set the clock colour
         updateClockColour(location);
@@ -402,11 +429,14 @@ public class SearchResults extends AppCompatActivity {
         Time closingTime = location.getCloseTime();
 
         if (closingTime == null) {
-            text = "Closed Today";
-        } else {
+            Log.d("AAAAAAAAAAAAAAAAAAAAA", "aaaaaaaaaaaaaaa");
+            text = "Close Today";
+        }
+
+        else {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
             String openingTimeText = sdf.format(openingTime);
-            String closingTimeText = sdf.format(closingTime);
+            String closingTimeText = (sdf.format(closingTime)).equals("23:59") ? "00:00" : sdf.format(closingTime);
 
             double hoursToClose = calcTimeToClose(closingTime);
 
@@ -460,8 +490,8 @@ public class SearchResults extends AppCompatActivity {
      * @param ratings
      */
     private void setRatingsText(Library library, TextView ratings) {
-        String rating = ratingsByLocation.get(library.getName());
-        ratings.setText(rating);
+//        String rating = ratingsByLocation.get(library.getAverage_rating());
+        ratings.setText(String.valueOf(library.getAverage_rating()));
     }
 
     /**
@@ -471,8 +501,9 @@ public class SearchResults extends AppCompatActivity {
      * @param ratings
      */
     private void setRatingsText(StudySpace studySpace, TextView ratings) {
-        String rating = ratingsByLocation.get(studySpace.getName());
-        ratings.setText(rating);
+//        String rating = ratingsByLocation.get(studySpace.getName());
+//        ratings.setText(rating);
+        ratings.setText(String.valueOf(studySpace.getAverage_rating()));
     }
 
 
@@ -523,10 +554,11 @@ public class SearchResults extends AppCompatActivity {
 
             try {
                 int locationID = location.getId();
-                String type = location.getType();
-                ReviewType typeEnum = ReviewType.valueOf(type);
-                List<Review> reviewList = new ReviewServiceImpl().getReviewsByEntity(locationID, typeEnum);
-                String averageRating = getAverageRating(reviewList);
+//                String type = location.getType();
+//                ReviewType typeEnum = ReviewType.valueOf(type);
+//                List<Review> reviewList = new ReviewServiceImpl().getReviewsByEntity(locationID, typeEnum);
+//                String averageRating = getAverageRating(reviewList);
+                String averageRating = String.valueOf(location.getAverage_rating());
                 ratingsByLocation.put(locationName, averageRating);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -600,7 +632,7 @@ public class SearchResults extends AppCompatActivity {
 //            favLibraries = new FavoriteServiceImpl().getFavoritesByUser(userID, ReviewType.LIBRARY);
 //            favStudySpaces = new FavoriteServiceImpl().getFavoritesByUser(userID, ReviewType.STUDY_SPACE);
 //            userFavs.addAll(favLibraries);
-//            userFavs.addAll(favStudySpaces);
+//            userFavs.addAll(favStudySpaces);e
 //
 //        } catch (Exception e) {
 //            throw new RuntimeException(e);
@@ -690,15 +722,15 @@ public class SearchResults extends AppCompatActivity {
     }
 
     private double calcTimeToClose(Time closingTime) {
-        LocalTime localTimeAEDT = LocalTime.now(ZoneId.of("Australia/Melbourne"));
-        int hour = LocalTime.now().getHour();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        Time currTime = new Time(calendar.getTimeInMillis());
+//        LocalTime localTimeAEDT = LocalTime.now(ZoneId.of("Australia/Melbourne"));
+//        int hour = LocalTime.now().getHour();
+//
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(Calendar.HOUR_OF_DAY, hour);
+//        calendar.set(Calendar.MINUTE, 0);
+//        calendar.set(Calendar.SECOND, 0);
+//        calendar.set(Calendar.MILLISECOND, 0);
+        Time currTime = new TimeServiceImpl().getAEDTTime();
 
         int closeHour = closingTime.getHours();
 
@@ -721,15 +753,15 @@ public class SearchResults extends AppCompatActivity {
         Time openingTime = location.getOpenTime();
         Time closingTime = location.getCloseTime();
 
-        LocalTime localTimeAEDT = LocalTime.now(ZoneId.of("Australia/Melbourne"));
-        int hour = LocalTime.now().getHour();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        Time currTime = new Time(calendar.getTimeInMillis());
+//        LocalTime localTimeAEDT = LocalTime.now(ZoneId.of("Australia/Melbourne"));
+//        int hour = LocalTime.now().getHour();
+//
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(Calendar.HOUR_OF_DAY, hour);
+//        calendar.set(Calendar.MINUTE, 0);
+//        calendar.set(Calendar.SECOND, 0);
+//        calendar.set(Calendar.MILLISECOND, 0);
+        Time currTime = new TimeServiceImpl().getAEDTTime();
 
         if (closingTime == null) {
             closingIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplication(), R.color.red), PorterDuff.Mode.SRC_IN);
@@ -757,8 +789,8 @@ public class SearchResults extends AppCompatActivity {
         Time closingTime = location.getCloseTime();
 
         Double busyRating = busyRatingByLocation.get(locationName);
-        if (busyRating == null || closingTime == null) {
-            busyBar.setProgress(5);
+        if (!location.issOpenToday() || !location.isOpeningNow()) {
+            busyBar.setProgress(0);
         } else {
             int busyRatingPercent = (int) (busyRating * 20);
 
@@ -801,7 +833,7 @@ public class SearchResults extends AppCompatActivity {
         if (filters.containsKey("DISTANCE")) {
             // remove results that are beyond this distance
             int distance = Integer.parseInt(filters.get("DISTANCE"));
-            distanceRemove(distance);
+            results = distanceRemove(distance);
         }
 
         // RADIO
@@ -820,12 +852,14 @@ public class SearchResults extends AppCompatActivity {
         }
     }
 
-    private void distanceRemove(int distance) {
+    private List<Location> distanceRemove(int distance) {
+        List<Location> filteredResults = new ArrayList<>();
         for (Location location : results) {
-            if (location.getDistanceFromCurrentPosition() > distance) {
-                results.remove(location);
+            if (location.getDistanceFromCurrentPosition() <= distance) {
+                filteredResults.add(location);
             }
         }
+        return filteredResults;
     }
 
     private void sortResults(String sortBy) {

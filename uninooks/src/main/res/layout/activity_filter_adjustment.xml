@@ -223,8 +223,8 @@
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
                     app:buttonTint="@color/deepBlue"
-                    app:layout_constraintStart_toStartOf="@id/quietStudyCheck"
-                    app:layout_constraintTop_toBottomOf="@+id/quietStudyCheck" />
+                    app:layout_constraintStart_toStartOf="@id/afterHoursCheck"
+                    app:layout_constraintTop_toBottomOf="@+id/afterHoursCheck" />
 
                 <CheckBox
                     android:id="@+id/accessibleCheck"
@@ -237,8 +237,8 @@
                     android:textColor="@color/deepBlue"
                     android:textSize="18sp"
                     app:buttonTint="@color/deepBlue"
-                    app:layout_constraintStart_toStartOf="@id/afterHoursCheck"
-                    app:layout_constraintTop_toBottomOf="@+id/afterHoursCheck" />
+                    app:layout_constraintStart_toStartOf="@id/quietStudyCheck"
+                    app:layout_constraintTop_toBottomOf="@+id/quietStudyCheck" />
 
                 <CheckBox
                     android:id="@+id/vendingMachineCheck"
@@ -300,7 +300,7 @@
                     android:layout_height="218dp"
                     android:layout_marginTop="36dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.15"
+                    app:layout_constraintHorizontal_bias="0.135"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -348,8 +348,8 @@
                     android:layout_height="218dp"
                     android:layout_marginTop="36dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.85"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintHorizontal_bias="0.3"
+                    app:layout_constraintStart_toEndOf="@id/radioGroupAsc"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <RadioButton
@@ -394,7 +394,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
 
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="79dp"
                 android:background="@drawable/rectangle_border"
                 app:layout_constraintBottom_toBottomOf="parent">
 

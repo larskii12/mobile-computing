@@ -22,6 +22,15 @@ public class TimeServiceImpl implements TimeService{
     }
 
     @Override
+    public int getWeekDate() {
+        LocalDate currentDate = LocalDate.now(ZoneId.of("Australia/Melbourne"));
+        return currentDate.getDayOfWeek().getValue();
+
+        // Fake date for weekend testing
+//        return 6;
+    }
+
+    @Override
     public LocalTime getAEDTLocalTime() {
 
         LocalTime localTimeAEDT = LocalTime.now(ZoneId.of("Australia/Melbourne"));
@@ -51,14 +60,5 @@ public class TimeServiceImpl implements TimeService{
     public int getAEDTTimeSecond() {
         LocalTime localTimeAEDT = LocalTime.now(ZoneId.of("Australia/Melbourne"));
         return localTimeAEDT.getSecond();
-    }
-
-    @Override
-    public int getWeekDate() {
-        LocalDate currentDate = LocalDate.now(ZoneId.of("Australia/Melbourne"));
-        return currentDate.getDayOfWeek().getValue();
-
-        // Fake date for weekend testing
-//        return 7;
     }
 }
