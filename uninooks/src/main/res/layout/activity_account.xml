@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,7 +8,11 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:id="@+id/Account_Hero_Banner"
         android:layout_height="208dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/account_hero_banner">
 
 
@@ -45,7 +49,7 @@
                 style="@style/WhiteTextHeading"
                 android:layout_width="wrap_content"
                 android:paddingLeft="16dp"
-                android:text="Good Morning,"
+                android:text="Hello,"
                 android:textAlignment="textStart" />
 
         </LinearLayout>
@@ -70,8 +74,11 @@
         android:id="@+id/Account_Personal_Info_Layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="300dp"
         android:background="@drawable/border"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:clickable="true"
         android:focusable="true"
         android:gravity="center_vertical"
@@ -100,42 +107,13 @@
 
     </LinearLayout>
 
-    <!-- settings Information Option -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        tools:ignore="UseCompoundDrawables">
-
-        <ImageView
-            android:id="@+id/Account_Setting_Icon"
-            style="@style/IconStyle"
-            android:src="@drawable/ic_settings" />
-
-        <TextView
-            android:id="@+id/Account_Settings_Text"
-            style="@style/TextSubHeading"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_weight="1"
-            android:text="Settings" />
-
-        <ImageView
-            android:id="@+id/Account_Settings_Arrow_Right"
-            style="@style/IconStyle"
-            android:src="@drawable/ic_arrow_right" />
-
-    </LinearLayout>
-
     <!-- logout Information Option -->
     <LinearLayout
         android:id="@+id/Account_Logout_Layout"
+        android:layout_marginTop="360dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/border"
@@ -170,6 +148,10 @@
     <!-- Delete Information Option -->
     <LinearLayout
         android:id="@+id/Account_Delete_Account_Layout"
+        android:layout_marginTop="420dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/border"
@@ -201,4 +183,16 @@
 
     </LinearLayout>
 
-</LinearLayout>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        app:itemBackground="@color/white"
+        app:itemIconSize="33dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_menu" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
