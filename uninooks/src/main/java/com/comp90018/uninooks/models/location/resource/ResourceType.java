@@ -6,12 +6,12 @@ public enum ResourceType {
     ATM,
     CAR_PARK,
     KITCHEN,
+    MICROWAVE_OVEN,
     VENDING_MACHINE,
     STOP1,
 
     EMERGENCY_PHONES,
-    AED,
-    MICROWAVE_OVEN;
+    AED;
 
 
     public static ResourceType toType(String resourceTypeFromSQL) {
