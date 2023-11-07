@@ -92,11 +92,9 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private int longPauseTime = 900;
     private int overallDefaultTime = 1500;
 
-    private int pomodoroSequenceNum = 4;
+    private int pomodoroSequenceNum = 0;
     private int pomodoroSequenceMax = 4;
 
-    private long stopTimestamp = 0;
-    private long playTimestamp = 0;
 
 
 
@@ -178,13 +176,12 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         timerStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playTimestamp = System.currentTimeMillis();
+                System.out.println("timer start button is clicked");
                 if (onAutoSequence) {
-//                    disableAllButtons();
                     startAutoSequence();
                 } else {
                     mTimerView.start(seconds, isPaused);
-                    startTimer("0");
+                    startTimer();
                 }
             }
         });
@@ -195,7 +192,6 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         timerPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stopTimestamp = System.currentTimeMillis();
                 pauseTimer();
             }
         });
@@ -269,6 +265,8 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         System.out.println("in on resume");
+
+        System.out.println("settings clicked = " + settingsClicked);
         if (settingsClicked) {
             retrieveSettings();
             settingsClicked = false;
@@ -453,9 +451,8 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         longPauseButton.setTextColor(ContextCompat.getColor(this, R.color.deepBlue));
     }
 
-    private void startTimer(String where) {
+    private void startTimer() {
         if (!isRunning) {
-            System.out.println("starting timer.." + where);
             handler.sendEmptyMessage(0);
             isRunning = true;
             isPaused = false;
@@ -471,7 +468,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             isPaused = true;
             wasPaused = true;
             handler.removeCallbacks(timerRunnable);
-            handler.removeCallbacksAndMessages(pomodoroRunnable);
+//            handler.removeCallbacksAndMessages(pomodoroRunnable);
             handler.removeCallbacksAndMessages(null);
             timer_length = seconds;
             timerStartButton.setVisibility(View.VISIBLE);
@@ -484,7 +481,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         isRunning = false;
         seconds = 0;
         handler.removeCallbacks(timerRunnable);
-        handler.removeCallbacksAndMessages(pomodoroRunnable);
+        handler.removeCallbacksAndMessages(null);
         timerStartButton.setVisibility(View.VISIBLE);
         timerPauseButton.setVisibility(View.GONE);
     }
@@ -509,9 +506,9 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 timerStartButton.setVisibility(View.VISIBLE);
                 timerPauseButton.setVisibility(View.GONE);
 
-                if (pomodoroSequenceNum == 5) {
-                    sequenceIndicators[pomodoroSequenceNum-1].setVisibility(View.VISIBLE);
-                    enableAllButtons();
+                if (pomodoroSequenceNum == 6) {
+                    sequenceIndicators[pomodoroSequenceNum-2].setVisibility(View.VISIBLE);
+                    pomodoroSequenceNum = 0;
                 }
 
                 if (isPomodoro) {
@@ -580,6 +577,9 @@ public class FocusModeTimerActivity extends AppCompatActivity {
      * Buttons will be disabled while pomodoro sequence is running!!
      */
     private void startAutoSequence() {
+        if (!inSequence) {
+            clearSequenceIndicators();
+        }
         pomodoroRunnable.run();
     }
 
@@ -599,8 +599,10 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 continueTimerAfterPause();
             } else if (wasReset) {
                 System.out.println("current mode was reset");
+                if (isShortPause || isLongPause) {
+                    pomodoroSequenceNum--;
+                }
                 continueTimerAfterReset();
-                pomodoroSequenceNum--; // maybe have to set a condition where if press reset but without pressing play, then it doesn't decrease anymore?? I think it only comes here if play is pressed though
             } else if (pomodoroSequenceNum < pomodoroSequenceMax) {
                 // pomodoro-short pause pair
                 // if current mode is pomodoro, it will run focus then short break
@@ -624,6 +626,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 runPomodoro();
                 System.out.println("Sequence is done!");
                 pomodoroSequenceNum++;
+                System.out.println("num: " + pomodoroSequenceNum);
             }
         }
     };
@@ -633,7 +636,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
      */
     private void continueTimerAfterPause() {
         mTimerView.start(seconds+1, isPaused);
-        startTimer("paused");
+        startTimer();
         wasPaused = false;
         handler.postDelayed(pomodoroRunnable, (seconds+1) * 1000);
     }
@@ -644,7 +647,12 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private void continueTimerAfterReset() {
         wasReset = false;
         if (isPomodoro) {
-            runPomodoro();
+            if (pomodoroSequenceNum == pomodoroSequenceMax) {
+                pomodoroLongBreak();
+            } else {
+                pomodoroShortBreak();
+            }
+//            runPomodoro();
         } else if (isShortPause) {
             runShortBreak();
         } else if (isLongPause) {
@@ -673,7 +681,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             public void run() {
                 runShortBreak();
             }
-        }, (pomodoroTime) * 1000);
+        }, (pomodoroTime+1) * 1000);
     }
 
     /**
@@ -688,7 +696,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             public void run() {
                 runLongBreak();
             }
-        }, (pomodoroTime) * 1000);
+        }, (pomodoroTime+1) * 1000);
     }
 
     /**
@@ -701,7 +709,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         clickShortPauseButton();
         mTimerView.start(shortPauseTime, isPaused);
 
-        startTimer(" from 4.5");
+        startTimer();
         System.out.println("ShortPause timer started");
 
         isPomodoro = false;
@@ -709,7 +717,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         isLongPause = false;
 
         pomodoroSequenceNum++;
-        handler.postDelayed(pomodoroRunnable, (shortPauseTime) * 1000);
+        handler.postDelayed(pomodoroRunnable, (shortPauseTime+1) * 1000);
     }
 
     /**
@@ -721,7 +729,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
 
         seconds = longPauseTime;
         mTimerView.start(longPauseTime, isPaused);
-        startTimer(" from 7");
+        startTimer();
         System.out.println("Long pause timer started");
 
         isPomodoro = false;
@@ -729,7 +737,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         isLongPause = true;
         pomodoroSequenceNum++;
 
-        handler.postDelayed(pomodoroRunnable, (longPauseTime) * 1000);
+        handler.postDelayed(pomodoroRunnable, (longPauseTime+1) * 1000);
     }
 
     /**
@@ -739,7 +747,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         seconds = pomodoroTime;
         clickPomodoroButton();
         mTimerView.start(pomodoroTime, isPaused);
-        startTimer(" from 8");
+        startTimer();
         System.out.println("Pomodoro");
         isPomodoro = true;
         isShortPause = false;
