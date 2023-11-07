@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
-import com.comp90018.uninooks.service.mail.mailServiceImpl;
+import com.comp90018.uninooks.service.mail.MailServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
 
 public class SignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -274,7 +274,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         counter.obj = OTP_TIMER;
         handler.sendMessage(counter);
 
-        String newOTP = String.valueOf(new mailServiceImpl().sendOTP(editTextSignUpEmail.getText().toString()));
+        String newOTP = String.valueOf(new MailServiceImpl().sendOTP(editTextSignUpEmail.getText().toString()));
 
         return newOTP;
     }

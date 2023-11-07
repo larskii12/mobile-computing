@@ -22,7 +22,7 @@ import javax.mail.internet.MimeMessage;
 /**
  * Class for sending OTP email
  */
-public class mailServiceImpl extends javax.mail.Authenticator implements mailService {
+public class MailServiceImpl extends javax.mail.Authenticator implements MailService {
 
     /**
      * Method to send email

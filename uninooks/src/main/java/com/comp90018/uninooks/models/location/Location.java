@@ -1,10 +1,16 @@
 package com.comp90018.uninooks.models.location;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
 import java.sql.Time;
 
-public class Location {
+public class Location implements Parcelable {
 
     /**
      * Location ID if acceptable
@@ -66,6 +72,32 @@ public class Location {
     private String type;
 
     private double average_rating;
+
+    public Location() {}
+    protected Location(Parcel in) {
+        id = in.readInt();
+        buildingId = in.readInt();
+        name = in.readString();
+        isOpenToday = in.readByte() != 0;
+        isOpeningNow = in.readByte() != 0;
+        isOpen24By7 = in.readByte() != 0;
+        location = in.readParcelable(LatLng.class.getClassLoader());
+        distanceFromCurrentPosition = in.readInt();
+        type = in.readString();
+        average_rating = in.readDouble();
+    }
+
+    public static final Creator<Location> CREATOR = new Creator<Location>() {
+        @Override
+        public Location createFromParcel(Parcel in) {
+            return new Location(in);
+        }
+
+        @Override
+        public Location[] newArray(int size) {
+            return new Location[size];
+        }
+    };
 
     public LatLng getLocation() {
         return location;
@@ -175,4 +207,30 @@ public class Location {
         average_rating = rating;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(buildingId);
+        dest.writeString(name);
+
+        byte isOpenTodayByte = (byte)(isOpenToday?1:0);
+        dest.writeByte(isOpenTodayByte);
+
+        byte isOpeningNowByte = (byte)(isOpeningNow?1:0);
+        dest.writeByte(isOpeningNowByte);
+
+        byte isOpen24By7Byte = (byte)(isOpen24By7?1:0);
+        dest.writeByte(isOpen24By7Byte);
+
+        dest.writeParcelable(location, flags);
+        dest.writeInt(distanceFromCurrentPosition);
+        dest.writeString(type);
+
+        dest.writeDouble(average_rating);
+    }
 }

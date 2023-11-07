@@ -180,7 +180,7 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
             showTextMessage("Your input does not match our records, please try again.");
             return null;
         }
-
+      
         return logInUser;
     }
 

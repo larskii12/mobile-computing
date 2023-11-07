@@ -22,6 +22,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -40,7 +41,6 @@ import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
-import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
@@ -50,13 +50,14 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class LocationActivity extends FragmentActivity implements OnMapReadyCallback, GPSService{
-    private static Context context;
+    private Context context;
 
     private String userName;
     private ActivityLocationBinding binding;
@@ -70,50 +71,31 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     String userId;
 
     private final int standardCameraZoom = 18;
+
+    private int userID;
+
+    private int spaceID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location);
+        binding = ActivityLocationBinding.inflate(getLayoutInflater());
+
+        setContentView(binding.getRoot());
         context = getApplicationContext();
         Intent intent = getIntent();
-        userId = intent.getStringExtra("USERID_EXTRA");
-        String spaceID = intent.getStringExtra("SPACE_ID_EXTRA");
-        System.out.println(spaceID);
-        System.out.println(userId);
-
-//        binding = ActivityLocationBinding.inflate(getLayoutInflater());
-//
-//        setContentView(binding.getRoot());
-//
-        gpsService = new GPSServiceImpl( this, this);
-//
-//        bananaFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.banana);
-//
-//        bananaFragment.getMapAsync( this);
-
-
-
-
-
-
-//        List<Location> studySpacesNearby = new ArrayList<>();
+        space = intent.getParcelableExtra("parcel");
+        userID = intent.getIntExtra("USERID_EXTRA", 6);
 
         new Thread() {
             @Override
             public void run() {
                 try {
-                    System.out.println(spaceID);
-                    space = new LocationServiceImpl().findStudySpaceById(Integer.parseInt(spaceID));
-
-                    // Get current Position
-                    LatLng currentLocation = GPSServiceImpl.getCurrentLocation();
-
-//                    space.setDistanceFromCurrentPosition(GPSServiceImpl.getCurrentLocation(), space.getLocation());
-                    List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(Integer.valueOf(spaceID), ReviewType.valueOf(space.getType()));
-                    System.out.println("Building id:" + space.getBuildingId());
+                    spaceID = space.getId();
+                    List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(spaceID, ReviewType.valueOf(space.getType()));
+                    //System.out.println("Building id:" + space.getBuildingId());
                     Building building = new BuildingServiceImpl().getBuilding(space.getBuildingId(), ReviewType.valueOf(space.getType()));
-                    List<Favorite> favorites = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userId),ReviewType.valueOf(space.getType()));
+                    List<Favorite> favorites = new FavoriteServiceImpl().getFavoritesByUser(userID,ReviewType.valueOf(space.getType()));
                     isFavorite = false;
                     for (Favorite favorite: favorites) {
                         if (favorite.getStudySpaceId() == space.getId()) {
@@ -123,7 +105,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     LinearLayout reviewsLayout = findViewById(R.id.reviews);
                     TextView locationName = findViewById(R.id.textView5);
                     ProgressBar progress = findViewById(R.id.progressBar);
-                    Double business = new BusyRatingServiceImpl().getAverageScoreFromEntity(Integer.valueOf(spaceID), ReviewType.valueOf(space.getType()));
+                    Double business = new BusyRatingServiceImpl().getAverageScoreFromEntity(spaceID, ReviewType.valueOf(space.getType()));
                     Integer busyScore = space.isOpeningNow() ? (int) (business *20) : 0;
                     TextView progressValue = findViewById(R.id.textView7);
                     TextView distance = findViewById(R.id.distance);
@@ -135,14 +117,15 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
                     Button addReview = findViewById(R.id.add_review);
                     User user = null;
-                    System.out.println(userId);
-                    user = new UserServiceImpl().getUser(Integer.parseInt(userId));
+
+                    //System.out.println(userID);
+                    user = new UserServiceImpl().getUser(userID);
 
                     userName = user.getUserName();
 
                     TextView listTitle = findViewById(R.id.listTitle);
                     LinearLayout amenitiesList = findViewById(R.id.amenities);
-                    System.out.println("Building id: " + space.getBuildingId());
+                    //System.out.println("Building id: " + space.getBuildingId());
 
                     List<Resource> resources = new ResourceServiceImpl().getResourceFromBuilding(space.getBuildingId());
                     backButton.setOnClickListener(new View.OnClickListener() {
@@ -166,7 +149,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             new Thread() {
                                 public void run() {
                                     try {
-                                        Favorite newFavorite = new FavoriteServiceImpl().addFavorite(Integer.parseInt(userId), Integer.valueOf(spaceID),ReviewType.valueOf(space.getType()));
+                                        Favorite newFavorite = new FavoriteServiceImpl().addFavorite(userID, spaceID,ReviewType.valueOf(space.getType()));
                                         isFavorite = true;
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
@@ -233,7 +216,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 distance.setText(space.getDistanceFromCurrentPosition() + "m");
                             }
                             for(Review review : reviews) {
-                                System.out.println(review.getComment());
+                                //System.out.println(review.getComment());
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.review_layout, reviewsLayout, false);
                                 CardView newCard = createNewSmallCard(card,review);
                                 reviewsLayout.addView(newCard);
@@ -244,7 +227,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 //                            List<String> amenities = new ArrayList<String>();
                             for (Resource resource: resources) {
 //                                amenities.add(resource.getName());
-                                System.out.println(resource.getName());
+                                //System.out.println(resource.getName());
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
                                 TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
                                 ImageView resourceIcon = card.findViewById(R.id.icon);
@@ -308,8 +291,14 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                 }
 
             }
-
         }.start();
+
+        gpsService = new GPSServiceImpl( this, this);
+//
+        bananaFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.banana);
+
+        bananaFragment.getMapAsync( this);
     }
 
     private boolean getTimeToClose(Time closeTime){
@@ -328,7 +317,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         userComment.setText(review.getComment());
         RatingBar rating = (RatingBar) card.findViewById(R.id.ratingBar);
         rating.setRating(review.getScore());
-        System.out.println("Review score:" + review.getScore());
+        //System.out.println("Review score:" + review.getScore());
         ImageView userImage = (ImageView) card.findViewById(R.id.imageView2);
 
         return card;
@@ -340,33 +329,22 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
         int maxCameraZoom = 30;
         mMap.setMaxZoomPreference(maxCameraZoom);
         int minCameraZoom = 15;
         mMap.setMinZoomPreference(minCameraZoom);
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(standardCameraZoom));
 
-//        // Show the user location
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//            mMap.setMyLocationEnabled(true);
-//        }
-//
-//        mMap.getUiSettings().setMyLocationButtonEnabled(false);
-//
-//        // Get the latest current position
-////        fusedLocationClient.getLastLocation()
-////                .addOnSuccessListener(this, location -> {
-////                    if (location != null) {
-////                        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-////                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, standardCameraZoom));
-////                    }
-////                });
         if (space != null) {
             LatLng currentLocation = space.getLocation();
+            mMap.addMarker(new MarkerOptions()
+                    .position(currentLocation)
+                    .title(space.getName()));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, standardCameraZoom));
+        } else {
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(standardCameraZoom));
         }
     }
 
