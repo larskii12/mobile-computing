@@ -1,5 +1,6 @@
 package com.comp90018.uninooks.activities;
-
+import android.Manifest;
+import android.app.Dialog;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,10 @@ import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -123,6 +128,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     TextView progressValue = findViewById(R.id.textView7);
                     TextView distance = findViewById(R.id.distance);
                     TextView openHours = findViewById(R.id.openHours);
+                    Button addReviewButton = findViewById(R.id.add_review);
 
                     ImageButton backButton = findViewById(R.id.imageButton);
                     ImageButton favouriteButton = findViewById(R.id.favoriteButton);
@@ -178,6 +184,15 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 }
                             }.start();
                         }
+                    });
+
+                    addReviewButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                                showAddReviewDialog();
+
+                    }
                     });
 
                     runOnUiThread(new Runnable() {
@@ -353,6 +368,45 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
             LatLng currentLocation = space.getLocation();
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, standardCameraZoom));
         }
+    }
+
+    private void showAddReviewDialog() {
+
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.add_review_dialog);
+
+        Button submitButton = dialog.findViewById(R.id.add_review_submit_Button);
+        Button cancelButton = dialog.findViewById(R.id.add_review_cancel_Button);
+        final EditText reviewEditText = dialog.findViewById(R.id.EditReview);
+        final RatingBar ratingBar = dialog.findViewById(R.id.review_ratingBar);
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss(); // Close the dialog
+            }
+        });
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String review = reviewEditText.getText().toString();
+
+                int rating = (int) ratingBar.getRating();
+
+                if (rating == 0) {
+                    Toast.makeText(getApplicationContext(), "Please enter a review", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                //TODO: add review star rating (int rating) to database
+
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
     }
 
     /**
