@@ -11,6 +11,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -35,6 +37,8 @@ import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -57,12 +61,17 @@ public class HomeActivity extends AppCompatActivity {
     private float acceleration = 0f;
     private float currentAcceleration = 0f;
     private float lastAcceleration = 0f;
+    private BottomNavigationView bottomNav;
+
     HashMap<String, Double> busyRatingsByLocation;
 
     private String username;
 
     private int userID;
 
+
+    bottomNav = findViewById(R.id.bottom_navigation);
+    bottomNav.setSelectedItemId(R.id.homeNav);
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -94,23 +103,51 @@ public class HomeActivity extends AppCompatActivity {
 //            ImageButton foodButton = (ImageButton) findViewById(R.id.foodButton);
 //            ImageButton favouritesButton = (ImageButton) findViewById(R.id.favouritesButton);
 
-        TextView greetingMessage = (TextView) findViewById(R.id.textView);
-        greetingMessage.setText("Good morning " + username);
 
+            TextView greetingMessage = (TextView) findViewById(R.id.textView);
+            greetingMessage.setText("Good morning " + username);
 
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    locationAPI = new LocationServiceImpl();
-                    ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
-                    List<Location> studySpacesNearby = locationAPI.findAllLocations("STUDY", "", true);
-                    List<Favorite> favouriteSpaces = new FavoriteServiceImpl().getFavoritesByUser(userID, ReviewType.valueOf("STUDY_SPACE"));
-                    ArrayList <StudySpace> favorites = new ArrayList<>();
-                    for (Favorite favorite: favouriteSpaces) {
-                        StudySpace space = new LocationServiceImpl().findStudySpaceById(favorite.getStudySpaceId());
-                        favorites.add(space);
+            bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+                @SuppressLint("NonConstantResourceId")
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    int id = item.getItemId();
+                    if (id == R.id.homeNav) {
+                        ;
+                    } else if (id == R.id.focusNav) {
+                        // go to focus page
+                        // pass user ID (maybe)
+                        System.out.println("going to focus page");
+                    } else if (id == R.id.accountNav) {
+                        // go to account page
+                        // pass user ID
+                        System.out.println("going to account nav page");
                     }
+
+                    else if (id == R.id.searchNav) {
+                        Intent intent = new Intent(HomeActivity.this, MapsActivity.class);
+                        startActivity(intent);
+                    }
+                    return false;
+                }
+            });
+
+
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        locationAPI = new LocationServiceImpl();
+                        ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
+                        List<Location> studySpacesNearby = locationAPI.findAllLocations("STUDY", "", true);
+                        List<Favorite> favouriteSpaces = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACE"));
+
+                        ArrayList <StudySpace> favorites = new ArrayList<StudySpace>();
+                        for (Favorite favorite: favouriteSpaces) {
+                            StudySpace space = new LocationServiceImpl().findStudySpaceById(favorite.getStudySpaceId());
+                            favorites.add(space);
+                        }
+                      
 //                        new StudySpaceServiceImpl().calculateSpaceByWalkingDistance(GPSServiceImpl.getCurrentLocation(), favorites);
 
                     getAllBusyRatings(closestStudySpaces);

@@ -8,11 +8,14 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -28,6 +31,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
+
+import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GPSService {
 
@@ -118,25 +124,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
+//        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
 
-//            bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-//            @SuppressLint("NonConstantResourceId")
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.homeNav:
-//                        // go to home navigation page (Linda's page)
-//                        break;
-//                    case R.id.focusNav:
-//                        // go to focus page
-//                        break;
-//                    case R.id.accountNav:
-//                        // go to account page
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
+            bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @SuppressLint("NonConstantResourceId")
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.homeNav) {
+                    // pass user ID
+                    Intent intent = new Intent(MapsActivity.this, HomeActivity.class);
+
+                    // Pass the user to next page
+//                    intent.putExtra("USERNAME_EXTRA", userName);
+//                    intent.putExtra("USERID_EXTRA", String.valueOf(user.getUserId()));
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                } else if (id == R.id.focusNav) {
+                    // go to focus page
+                    // pass user ID (maybe)
+                    System.out.println("going to focus page");
+                } else if (id == R.id.accountNav) {
+                    // go to account page
+                    // pass user ID
+                    System.out.println("going to account nav page");
+                }
+
+                else if (id == R.id.searchNav) {
+                    Intent intent = new Intent(MapsActivity.this, MapsActivity.class);
+                    startActivity(intent);
+                }
+                return false;
+            }
+        });
 
         /**
          * Move camera to the current location
@@ -146,11 +167,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 if (mMap != null && mMap.isMyLocationEnabled()) {
                     Location myLocation = mMap.getMyLocation();
-                    if (myLocation != null) {
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                new LatLng(myLocation.getLatitude(),
-                                        myLocation.getLongitude()), standardCameraZoom)); // Adjust zoom level as needed
-                    }
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                            new LatLng(myLocation.getLatitude(),
+                                    myLocation.getLongitude()), standardCameraZoom)); // Adjust zoom level as needed
 
                     showTextMessage("Location updated");
                 }

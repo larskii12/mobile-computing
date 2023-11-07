@@ -1,4 +1,6 @@
 package com.comp90018.uninooks.activities;
+import android.Manifest;
+import android.app.Dialog;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
