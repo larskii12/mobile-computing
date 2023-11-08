@@ -40,12 +40,17 @@
 
             </androidx.appcompat.widget.Toolbar>
 
+
             <LinearLayout
+                android:id="@+id/modeButtons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <Button
                     android:id="@+id/btn_pomodoro"
@@ -81,52 +86,65 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="20dp">
+
+                <ImageView
+                    android:id="@+id/pseudoIndicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/pomodoro_indicator"
+                    android:backgroundTint="@color/white"/>
 
                 <ImageView
                     android:id="@+id/sequence1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/pomodoro_indicator"
-                    android:layout_marginStart="18dp"
+                    android:background="@drawable/star_fill"
+                    android:backgroundTint="@color/deepBlue"
+                    android:layout_marginStart="-18dp"
                     android:visibility="gone"/>
 
                 <ImageView
                     android:id="@+id/sequence2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/pomodoro_indicator"
-                    android:layout_marginStart="4dp"
+                    android:background="@drawable/star_fill"
+                    android:backgroundTint="@color/deepBlue"
+                    android:layout_marginStart="12dp"
                     android:visibility="gone"/>
 
                 <ImageView
                     android:id="@+id/sequence3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/pomodoro_indicator"
-                    android:layout_marginStart="4dp"
+                    android:background="@drawable/star_fill"
+                    android:backgroundTint="@color/deepBlue"
+                    android:layout_marginStart="12dp"
                     android:visibility="gone"/>
 
                 <ImageView
                     android:id="@+id/sequence4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/pomodoro_indicator"
-                    android:layout_marginStart="4dp"
+                    android:background="@drawable/star_fill"
+                    android:backgroundTint="@color/deepBlue"
+                    android:layout_marginStart="12dp"
                     android:visibility="gone"/>
 
                 <ImageView
                     android:id="@+id/sequence5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/pomodoro_indicator"
-                    android:layout_marginStart="4dp"
+                    android:background="@drawable/star_fill"
+                    android:backgroundTint="@color/deepBlue"
+                    android:layout_marginStart="12dp"
                     android:visibility="gone"/>
-
             </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -167,12 +185,12 @@
 
             <FrameLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="106dp"
                     android:layout_marginBottom="40dp"
                     android:gravity="center"
                     android:orientation="horizontal">
@@ -204,7 +222,6 @@
                         android:layout_width="34dp"
                         android:layout_height="34dp"
                         android:layout_marginTop="5dp"
-                        android:layout_marginEnd="20dp"
                         android:background="@drawable/gear_solid"/>
                 </LinearLayout>
             </FrameLayout>
