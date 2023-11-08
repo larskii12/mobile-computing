@@ -46,8 +46,6 @@ import com.comp90018.uninooks.service.time.TimeServiceImpl;
 import java.sql.Time;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -74,6 +72,10 @@ public class SearchResults extends AppCompatActivity {
     Comparator<Location> distanceComparator;
     Comparator<Location> ratingComparator;
 
+    private int userId;
+    private String userEmail;
+    private String userName;
+
 
 
     @SuppressLint("HandlerLeak")
@@ -95,8 +97,11 @@ public class SearchResults extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_search_results);
+
         Intent intent = getIntent();
-//        userID = Integer.parseInt(intent.getStringExtra("USERID_EXTRA"));
+        userId = intent.getIntExtra("USER_ID_EXTRA", 0);
+        userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
+        userName = intent.getStringExtra("USER_NAME_EXTRA");
 
         resultCardArea = findViewById(R.id.resultCardArea);
         returnButton = findViewById(R.id.returnButton);
@@ -216,11 +221,16 @@ public class SearchResults extends AppCompatActivity {
                 public void onClick(View v) {
 
                     Intent intent = new Intent(SearchResults.this, LocationActivity.class);
-//                    String userIDString = String.valueOf(userID);
-                    String locationIDString = String.valueOf(location.getId());
-//                    intent.putExtra("USERID_EXTRA", userIDString);
-                    intent.putExtra("SPACE_ID_EXTRA", locationIDString);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+                    intent.putExtra("LOCATION_ID", location.getId());
+                    intent.putExtra("LOCATION_TYPE", location.getType());
+
                     startActivity(intent);
+
                 }
             });
         }
@@ -429,7 +439,6 @@ public class SearchResults extends AppCompatActivity {
         Time closingTime = location.getCloseTime();
 
         if (closingTime == null) {
-            Log.d("AAAAAAAAAAAAAAAAAAAAA", "aaaaaaaaaaaaaaa");
             text = "Close Today";
         }
 
@@ -490,7 +499,6 @@ public class SearchResults extends AppCompatActivity {
      * @param ratings
      */
     private void setRatingsText(Library library, TextView ratings) {
-//        String rating = ratingsByLocation.get(library.getAverage_rating());
         ratings.setText(String.valueOf(library.getAverage_rating()));
     }
 
@@ -789,7 +797,7 @@ public class SearchResults extends AppCompatActivity {
         Time closingTime = location.getCloseTime();
 
         Double busyRating = busyRatingByLocation.get(locationName);
-        if (!location.issOpenToday() || !location.isOpeningNow()) {
+        if (!location.isOpenToday() || !location.isOpeningNow()) {
             busyBar.setProgress(0);
         } else {
             int busyRatingPercent = (int) (busyRating * 20);

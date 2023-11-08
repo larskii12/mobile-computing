@@ -1,7 +1,6 @@
 package com.comp90018.uninooks.service.location;
 
 
-import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.config.DatabaseHelper;
 import com.comp90018.uninooks.models.location.Location;
 import com.comp90018.uninooks.models.location.LocationType;
@@ -67,8 +66,8 @@ public class LocationServiceImpl implements LocationService {
 
                 // Set library information
                 library.setId(resultSet.getInt("library_id"));
-                library.setName(resultSet.getString("library_name"));
                 library.setBuildingId(resultSet.getInt("library_building_id"));
+                library.setName(resultSet.getString("library_name"));
 
                 library.setOpenTime(resultSet.getTime("opening_time"));
                 library.setCloseTime(resultSet.getTime("closing_time"));
@@ -77,6 +76,8 @@ public class LocationServiceImpl implements LocationService {
                 library.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), library.getLocation()));
 
                 library.setAverage_rating(new ReviewServiceImpl().getAverageRating(locationId, ReviewType.LIBRARY));
+
+                library.setType("LIBRARY");
 
                 library.setIsOpenToday(library.getOpenTime() != null);
 
@@ -558,6 +559,7 @@ public class LocationServiceImpl implements LocationService {
                 resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) { // Iterate all the resulting rows from the query
+
                     Location location = new Restaurant();
                     // Set review information
                     location.setId(resultSet.getInt("restaurant_id"));
@@ -575,7 +577,7 @@ public class LocationServiceImpl implements LocationService {
                     location.setAverage_rating(new ReviewServiceImpl().getAverageRating(location.getId(), ReviewType.RESTAURANT));
 
                     Time currentTime = new TimeServiceImpl().getAEDTTime();
-                    if (location.issOpenToday() && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
+                    if (location.isOpenToday() && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
                         location.setIsOpeningNow(true);
                         location.setIsOpenToday(true);
                     }

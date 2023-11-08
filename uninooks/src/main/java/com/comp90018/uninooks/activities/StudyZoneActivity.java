@@ -1,6 +1,7 @@
 package com.comp90018.uninooks.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -22,10 +23,19 @@ public class StudyZoneActivity extends AppCompatActivity {
     private boolean isInBackground = false;
     private List<String> unwantedApps;
 
+    private int userId;
+    private String userEmail;
+    private String userName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_study);
+
+        Intent intent = getIntent();
+        userId = intent.getIntExtra("USER_ID_EXTRA", 0);
+        userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
+        userName = intent.getStringExtra("USER_NAME_EXTRA");
 
         // Initialize UI components and set up timer controls
         // ...

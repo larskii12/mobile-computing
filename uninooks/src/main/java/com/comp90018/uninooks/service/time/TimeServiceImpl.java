@@ -18,7 +18,7 @@ public class TimeServiceImpl implements TimeService{
         return Time.valueOf(currentTimeStr);
 
         // Fake time for nigh testing
-//        return Time.valueOf("02:00:00");
+//        return Time.valueOf("03:00:00");
     }
 
     @Override

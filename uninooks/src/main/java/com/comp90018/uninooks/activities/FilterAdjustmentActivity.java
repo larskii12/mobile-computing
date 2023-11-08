@@ -1,14 +1,10 @@
 package com.comp90018.uninooks.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -16,6 +12,9 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.comp90018.uninooks.R;
 
@@ -37,11 +36,20 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
     SeekBar seekBar;
     HashMap<String, String> filtersChosen;
 
+    private int userId;
+    private String userEmail;
+    private String userName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter_adjustment);
         filtersChosen = new HashMap<>();
+
+        Intent intent = getIntent();
+        userId = intent.getIntExtra("USER_ID_EXTRA", 0);
+        userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
+        userName = intent.getStringExtra("USER_NAME_EXTRA");
 
         returnButton = findViewById(R.id.returnButton);
         applyButton = findViewById(R.id.applyButton);
@@ -70,9 +78,9 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
     private View.OnClickListener returnListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (getIntent().hasExtra("filters")) {
-                getIntent().removeExtra("filters");
-            }
+//            if (getIntent().hasExtra("filters")) {
+//                getIntent().removeExtra("filters");
+//            }
             finish();
         }
     };
@@ -87,12 +95,21 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(FilterAdjustmentActivity.this, SearchResults.class);
+
             retrieveAllCheckedBox();
             for (String key : filtersChosen.keySet()) {
                 String value = filtersChosen.get(key);
                 System.out.println("Key: " + key + " Value: " + value);
             }
+
+            // Pass the filter to next page
             intent.putExtra("filters", filtersChosen);
+
+            // Pass the user to next page
+            intent.putExtra("USER_ID_EXTRA", userId);
+            intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+            intent.putExtra("USER_NAME_EXTRA", userName);
+
             startActivity(intent);
         }
     };

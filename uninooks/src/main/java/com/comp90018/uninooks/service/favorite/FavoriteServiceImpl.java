@@ -64,7 +64,7 @@ public class FavoriteServiceImpl implements FavoriteService {
         catch (Exception e) {
 
             // Unknown exceptions happens.
-            throw new Exception("Favorite added failed, please contact the IT administrator to report the issue.");
+            throw new Exception("Favorite add failed, please contact the IT administrator to report the issue.");
         }
 
         finally {
@@ -77,6 +77,67 @@ public class FavoriteServiceImpl implements FavoriteService {
             }
         }
     }
+
+
+    /**
+     * Remove favorite
+     * @param userId as user id
+     * @param entityId as entity id
+     * @param type as type
+     * @return true if success, otherwise false
+     * @throws Exception if any exception
+     */
+    public boolean removeFavorite(Integer userId, Integer entityId, ReviewType type) throws Exception {
+
+        try {
+            String query;
+
+            switch (type) {
+
+                case GYM: // Add new gym favourite to the database
+                    query = "DELETE FROM mobilecomputing.favourite WHERE favourite_user_id = ? and favourite_gym_id = ?;";
+                    break;
+                case LIBRARY: // Add new library favourite to the database
+                    query = "DELETE FROM mobilecomputing.favourite WHERE favourite_user_id = ? and favourite_library_id = ?;";
+                    break;
+                case RESTAURANT: // Add new restaurant favourite to the database
+                    query = "DELETE FROM mobilecomputing.favourite WHERE favourite_user_id = ? and favourite_restaurant_id = ?;";
+                    break;
+                case STUDY_SPACE: // Add new study space favourite to the database
+                    query = "DELETE FROM mobilecomputing.favourite WHERE favourite_user_id = ? and favourite_study_space_id = ?;";
+                    break;
+                default:
+                    throw new Exception("Invalid favourite type. Review not created.");
+            }
+            PreparedStatement preparedStatement = connector.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, entityId);
+
+            // Execute query
+            preparedStatement.executeUpdate();
+
+            return true;
+        }
+
+        // If exception happens
+        catch (Exception e) {
+            e.printStackTrace();
+
+            // Unknown exceptions happens.
+            throw new Exception("Favorite remove failed, please contact the IT administrator to report the issue.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
+    }
+
 
     /**
      * Get a user with specified email address

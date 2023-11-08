@@ -58,7 +58,8 @@
         <activity android:name=".activities.ResetPasswordActivity" />
         <activity android:name=".activities.ReportIssue" />
         <activity android:name=".activities.PersonalInformationActivity" />
-      
+        <activity android:name=".activities.StudyZoneActivity" />
+
         <activity
             android:name=".activities.SearchResults"
             android:exported="false"

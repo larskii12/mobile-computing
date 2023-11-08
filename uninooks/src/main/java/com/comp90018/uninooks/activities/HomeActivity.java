@@ -9,7 +9,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,13 +35,14 @@ import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -65,13 +65,9 @@ public class HomeActivity extends AppCompatActivity {
 
     HashMap<String, Double> busyRatingsByLocation;
 
-    private String username;
-
-    private int userID;
-
-
-    bottomNav = findViewById(R.id.bottom_navigation);
-    bottomNav.setSelectedItemId(R.id.homeNav);
+    private int userId;
+    private String userEmail;
+    private String userName;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -79,12 +75,17 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         context = getApplicationContext();
-        Intent intent = getIntent();
-        username = intent.getStringExtra("USERNAME_EXTRA");
-        userID = intent.getIntExtra("USERID_EXTRA", 6);
 
-        List<Location> studySpacesNearby = new ArrayList<>();
-        List<Location> studySpacesTop = new ArrayList<>();
+        Intent intent = getIntent();
+        userId = intent.getIntExtra("USER_ID_EXTRA", 0);
+        userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
+        userName = intent.getStringExtra("USER_NAME_EXTRA");
+
+//        List<Location> studySpacesNearby = new ArrayList<>();
+//        List<Location> studySpacesTop = new ArrayList<>();
+
+        bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setSelectedItemId(R.id.homeNav);
 
         busyRatingsByLocation = new HashMap<>();
 
@@ -105,69 +106,140 @@ public class HomeActivity extends AppCompatActivity {
 
 
             TextView greetingMessage = (TextView) findViewById(R.id.textView);
-            greetingMessage.setText("Good morning " + username);
+            greetingMessage.setText("Good morning " + userName);
 
             bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
                 @SuppressLint("NonConstantResourceId")
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     int id = item.getItemId();
-                    if (id == R.id.homeNav) {
-                        ;
-                    } else if (id == R.id.focusNav) {
-                        // go to focus page
-                        // pass user ID (maybe)
-                        System.out.println("going to focus page");
-                    } else if (id == R.id.accountNav) {
-                        // go to account page
-                        // pass user ID
-                        System.out.println("going to account nav page");
+
+                    if (id == R.id.homeNav){
+                        reloadActivity();
                     }
 
                     else if (id == R.id.searchNav) {
                         Intent intent = new Intent(HomeActivity.this, MapsActivity.class);
+
+                        // Pass the user to next page
+                        intent.putExtra("USER_ID_EXTRA", userId);
+                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                        intent.putExtra("USER_NAME_EXTRA", userName);
+
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+
+                    } else if (id == R.id.focusNav) {
+                        Intent intent = new Intent(HomeActivity.this, StudyZoneActivity.class);
+
+                        // Pass the user to next page
+                        intent.putExtra("USER_ID_EXTRA", userId);
+                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                        intent.putExtra("USER_NAME_EXTRA", userName);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Intent intent = new Intent(HomeActivity.this, AccountActivity.class);
+
+                        // Pass the user to next page
+                        intent.putExtra("USER_ID_EXTRA", userId);
+                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                        intent.putExtra("USER_NAME_EXTRA", userName);
                         startActivity(intent);
                     }
+
                     return false;
                 }
             });
 
 
             new Thread() {
+
+                ArrayList<StudySpace> closestStudySpaces = new ArrayList<>();
+                ArrayList<StudySpace> topRatedStudySpaces = new ArrayList<>();
+
                 @Override
                 public void run() {
                     try {
-                        locationAPI = new LocationServiceImpl();
-                        ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(1, 1), 10);
-                        List<Location> studySpacesNearby = locationAPI.findAllLocations("STUDY", "", true);
-                        List<Favorite> favouriteSpaces = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACE"));
+                    locationAPI = new LocationServiceImpl();
 
-                        ArrayList <StudySpace> favorites = new ArrayList<StudySpace>();
-                        for (Favorite favorite: favouriteSpaces) {
-                            StudySpace space = new LocationServiceImpl().findStudySpaceById(favorite.getStudySpaceId());
-                            favorites.add(space);
+                    ArrayList<StudySpace> allStudySpaces = new StudySpaceServiceImpl().getAllStudySpaces();
+                    ArrayList<StudySpace> openingStudySpaces = new ArrayList<>();
+                    ArrayList<StudySpace> closingStudySpaces = new ArrayList<>();
+
+                    for (StudySpace studySpace : allStudySpaces){
+                        if (studySpace.isOpeningNow()){
+                            openingStudySpaces.add(studySpace);
                         }
-                      
+                        else{
+                            closingStudySpaces.add(studySpace);
+                        }
+                    }
+
+                    if (openingStudySpaces.size() >= 10){
+
+                        closestStudySpaces = new ArrayList<>(openingStudySpaces);
+                        topRatedStudySpaces = new ArrayList<>(openingStudySpaces);
+                        closestStudySpaces.sort(Comparator.comparingDouble(StudySpace::getDistanceFromCurrentPosition));
+                        topRatedStudySpaces.sort(Comparator.comparingDouble(StudySpace::getAverage_rating));
+                        Collections.reverse(topRatedStudySpaces);
+                    }
+
+                    else{
+                        closestStudySpaces = new ArrayList<>(openingStudySpaces);
+                        topRatedStudySpaces = new ArrayList<>(openingStudySpaces);
+                        closestStudySpaces.sort(Comparator.comparingDouble(StudySpace::getDistanceFromCurrentPosition));
+                        topRatedStudySpaces.sort(Comparator.comparingDouble(StudySpace::getAverage_rating));
+                        Collections.reverse(topRatedStudySpaces);
+
+                        // closest closed study spaces
+                        ArrayList<StudySpace> closedCloestStudySpaces = new ArrayList<>(closingStudySpaces);
+                        ArrayList<StudySpace> closedTopRatedSpaces = new ArrayList<>(closingStudySpaces);
+                        closedCloestStudySpaces.sort(Comparator.comparingDouble(StudySpace::getDistanceFromCurrentPosition));
+                        closedTopRatedSpaces.sort(Comparator.comparingDouble(StudySpace::getAverage_rating));
+                        Collections.reverse(closedTopRatedSpaces);
+
+                        closestStudySpaces.addAll(closedCloestStudySpaces);
+                        topRatedStudySpaces.addAll(closedTopRatedSpaces);
+                    }
+
+                    List<Location> studySpacesNearby = locationAPI.findAllLocations("STUDY", "", true);
+                    List<Favorite> favouriteSpaces = new FavoriteServiceImpl().getFavoritesByUser(userId, ReviewType.valueOf("STUDY_SPACE"));
+
+                    ArrayList <StudySpace> favorites = new ArrayList<StudySpace>();
+                    for (Favorite favorite: favouriteSpaces) {
+                        StudySpace space = new LocationServiceImpl().findStudySpaceById(favorite.getStudySpaceId());
+                        favorites.add(space);
+                    }
+
 //                        new StudySpaceServiceImpl().calculateSpaceByWalkingDistance(GPSServiceImpl.getCurrentLocation(), favorites);
 
-                    getAllBusyRatings(closestStudySpaces);
+                getAllBusyRatings(closestStudySpaces);
 //                        List<Favorite> userFavorites = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACES"));
-                    System.out.println(studySpacesNearby.get(2).getName());
-                    LinearLayout nearbyLayout = findViewById(R.id.nearbyLayout);
-                    LinearLayout topRatedLayout = findViewById(R.id.topRatedLayout);
-                    LinearLayout favoritesLayout = findViewById(R.id.favoritesLayout);
+                System.out.println(studySpacesNearby.get(2).getName());
+                LinearLayout nearbyLayout = findViewById(R.id.nearbyLayout);
+                LinearLayout topRatedLayout = findViewById(R.id.topRatedLayout);
+                LinearLayout favoritesLayout = findViewById(R.id.favoritesLayout);
 //                    int i=0; i<5; i++)
 
-                    ArrayList<StudySpace> topRatedSpaces = new StudySpaceServiceImpl().getTopRatedStudySpaces(new LatLng(1, 1), 10);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             // Nearby Section
-                            for (StudySpace space : closestStudySpaces){
+                            for (StudySpace space : closestStudySpaces.subList(0, 10)){
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, nearbyLayout, false);
                                 CardView newCard = createNewSmallCard(card,space, "distance");
 //                                    System.out.println(space.getId());
                                 String spaceID = String.valueOf(space.getId());
+                                for (StudySpace favorite: favorites) {
+                                    if (favorite.getName().equals(space.getName())) {
+                                        ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
+                                        favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
+                                        favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                                    }
+                                }
+
                                 nearbyLayout.addView(newCard);
                                 newCard.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -175,8 +247,11 @@ public class HomeActivity extends AppCompatActivity {
                                         new Thread() {
                                             public void run() {
                                                 Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                                                intent.putExtra("parcel", space);
-                                                intent.putExtra("USERID_EXTRA", userID);
+                                                intent.putExtra("USER_ID_EXTRA", userId);
+                                                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                                intent.putExtra("USER_NAME_EXTRA", userName);
+                                                intent.putExtra("LOCATION_ID", space.getId());
+                                                intent.putExtra("LOCATION_TYPE", space.getType());
                                                 startActivity(intent);
                                             }
                                         }.start();
@@ -184,20 +259,31 @@ public class HomeActivity extends AppCompatActivity {
                                 });
                             }
                             // Top Rated Section
-                            for (StudySpace space : topRatedSpaces){
+                            for (StudySpace space : topRatedStudySpaces.subList(0, 10)){
 //                        Location space = studySpacesNearby.get(i);
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, topRatedLayout, false);
                                 CardView newCard = createNewSmallCard(card,space,"rating");
                                 String spaceID = String.valueOf(space.getId());
+                                for (StudySpace favorite: favorites) {
+                                    if (favorite.getName().equals(space.getName())) {
+                                        ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
+                                        favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
+                                        favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                                    }
+                                }
                                 topRatedLayout.addView(newCard);
+
                                 card.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         new Thread() {
                                             public void run() {
                                                 Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                                                intent.putExtra("parcel", space);
-                                                intent.putExtra("USERID_EXTRA", userID);
+                                                intent.putExtra("USER_ID_EXTRA", userId);
+                                                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                                intent.putExtra("USER_NAME_EXTRA", userName);
+                                                intent.putExtra("LOCATION_ID", space.getId());
+                                                intent.putExtra("LOCATION_TYPE", space.getType());
                                                 startActivity(intent);
                                             }
                                         }.start();
@@ -210,6 +296,9 @@ public class HomeActivity extends AppCompatActivity {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, favoritesLayout, false);
                                 CardView newCard = createNewSmallCard(card,space,"favorite");
                                 String spaceID = String.valueOf(space.getId());
+                                ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
+                                favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
+                                favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
                                 favoritesLayout.addView(newCard);
                                 card.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -217,8 +306,11 @@ public class HomeActivity extends AppCompatActivity {
                                         new Thread() {
                                             public void run() {
                                                 Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                                                intent.putExtra("parcel", space);
-                                                intent.putExtra("USERID_EXTRA", userID);
+                                                intent.putExtra("USER_ID_EXTRA", userId);
+                                                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                                intent.putExtra("USER_NAME_EXTRA", userName);
+                                                intent.putExtra("LOCATION_ID", space.getId());
+                                                intent.putExtra("LOCATION_TYPE", space.getType());
                                                 startActivity(intent);
                                             }
                                         }.start();
@@ -271,7 +363,7 @@ public class HomeActivity extends AppCompatActivity {
         TextView distanceLabel = (TextView) card.findViewById(R.id.timeLabel);
         ImageView hoursIcon = (ImageView) card.findViewById(R.id.clockIcon);
         hoursIcon.setBackgroundResource(R.drawable.baseline_access_time_24);
-        if (!space.issOpenToday()) {
+        if (!space.isOpenToday()) {
             locationHours.setText("Close Today");
             hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
         }
@@ -284,10 +376,10 @@ public class HomeActivity extends AppCompatActivity {
             locationHours.setText(sdf.format(space.getOpenTime()) + " - " + ("23:59".equals(sdf.format(space.getCloseTime())) ? "00:00" : sdf.format(space.getCloseTime())));
             hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
 
-            if (hoursToClose > 1){
-                hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
-            } else {
+            if (hoursToClose < 1 || !space.isOpeningNow()){
                 hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+            } else {
+                hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
             }
         }
 
@@ -305,6 +397,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);
+
         favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_border_24);
         favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
 //        favouriteIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));
@@ -355,6 +448,12 @@ public class HomeActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    private void reloadActivity(){
+        Intent intent = getIntent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+        startActivity(intent);
+    }
 
 }
 

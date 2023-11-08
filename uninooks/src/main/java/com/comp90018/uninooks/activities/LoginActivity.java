@@ -34,6 +34,10 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
 
     private GPSServiceImpl gpsService;
 
+    int userId;
+
+    String userName;
+
     String userEmail;
 
     @SuppressLint("HandlerLeak")
@@ -69,6 +73,10 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
         buttonLogInGoToSignup = findViewById(R.id.ButtonLogInGoToSignup);
         buttonLogInForgetPassword = findViewById(R.id.ButtonLogInForgetPassword);
 
+        userId = -1;
+        userEmail = "";
+        userName = "";
+
         buttonLoginLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,10 +87,17 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
                             User user = loginUser();
 
                             if (user != null){
+
+                                userId = user.getUserId();
+                                userEmail = user.getUserEmail();
+                                userName = user.getUserName();
+
                                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
 
                                 // Pass the user to next page
-                                intent.putExtra("USERID_EXTRA", String.valueOf(user.getUserId()));
+                                intent.putExtra("USER_ID_EXTRA", userId);
+                                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                intent.putExtra("USER_NAME_EXTRA", userName);
 
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
