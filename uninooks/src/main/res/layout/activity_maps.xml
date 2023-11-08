@@ -76,24 +76,52 @@
         tools:context=".activities.MapsActivity"
         tools:visibility="visible" />
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="44dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/map">
 
+        <ImageButton
+            android:id="@+id/filterButton"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="20dp"
+            android:backgroundTint="@color/white"
+            android:drawableTop="@drawable/filter_list"
+            android:elevation="5dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/filter_list"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/searchBar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/deepBlue" />
+
+        <ImageButton
+            android:id="@+id/locate_my_location"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="80dp"
+            android:layout_gravity="bottom|end"
+            android:background="@android:color/transparent"
+            android:src="@drawable/location"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <android.widget.SearchView
             android:id="@+id/searchBar"
-            android:layout_width="311dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="19dp"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="6dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="636dp"
+            android:layout_marginEnd="110dp"
             android:background="@color/white"
             android:backgroundTint="#FFFFFF"
             android:contextClickable="true"
@@ -102,40 +130,11 @@
             android:iconifiedByDefault="false"
             android:queryHint="Search Here"
             android:searchIcon="@drawable/search_icon"
-            app:layout_constraintBottom_toBottomOf="@+id/map"
-            app:layout_constraintEnd_toEndOf="@+id/map"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/map"
-            app:layout_constraintTop_toTopOf="@+id/map"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/filterButton"
-            android:layout_width="57dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="338dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="636dp"
-            android:backgroundTint="@color/white"
-            android:drawableTop="@drawable/filter_list"
-            android:elevation="5dp"
-            android:padding="12dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/filter_list"
-            app:tint="@color/deepBlue" />
-
-        <ImageButton
-            android:id="@+id/locate_my_location"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="86dp"
-            android:src="@drawable/location"
-            android:background="@android:color/transparent" />
-
-    </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

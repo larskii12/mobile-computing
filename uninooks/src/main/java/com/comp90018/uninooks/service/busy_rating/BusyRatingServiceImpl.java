@@ -28,22 +28,23 @@ public class BusyRatingServiceImpl implements BusyRatingService {
      */
     public Boolean addBusyRating(int entityId, ReviewType type, double busyRatingScore) throws Exception {
 
-        // Get the current hour
-        int hour = new TimeServiceImpl().getAEDTTimeHour();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        // Get the time with hour only
-        Time timeWithoutHour = new Time(calendar.getTimeInMillis());
-
-        // Get date
-        int currentDayOfWeek = new TimeServiceImpl().getWeekDate();
-
         try {
+
+            // Get the current hour
+            int hour = new TimeServiceImpl().getAEDTTimeHour();
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+
+            // Get the time with hour only
+            Time timeWithoutHour = new Time(calendar.getTimeInMillis());
+
+            // Get date
+            int currentDayOfWeek = new TimeServiceImpl().getWeekDate();
+
             String query = "";
 
             switch (type) {
@@ -98,7 +99,6 @@ public class BusyRatingServiceImpl implements BusyRatingService {
 
             // Execute query
             preparedStatement.executeUpdate();
-
             return true;
         }
 
@@ -107,6 +107,16 @@ public class BusyRatingServiceImpl implements BusyRatingService {
 
             // Unknown exceptions happens.
             throw new Exception("User added failed, please contact the IT administrator to report the issue.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
     }
 
@@ -120,9 +130,9 @@ public class BusyRatingServiceImpl implements BusyRatingService {
 
     public BusyRating getBusyRating(int entityId, ReviewType type) throws Exception {
 
-        BusyRating busyRating = new BusyRating();
-
         try {
+
+            BusyRating busyRating = new BusyRating();
 
             String query;
 
@@ -178,6 +188,7 @@ public class BusyRatingServiceImpl implements BusyRatingService {
                 busyRating.setAverageScore(resultSet.getDouble("average_score"));
                 busyRating.setCount(resultSet.getInt("busy_rating_count"));
                 busyRating.setTime(resultSet.getTime("busy_rating_time"));
+
                 return busyRating;
             }
 
@@ -185,8 +196,20 @@ public class BusyRatingServiceImpl implements BusyRatingService {
 
         // If exception happens when querying user
         catch (Exception e) {
+
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
+
         // Return user information
         return null;
     }
@@ -200,12 +223,12 @@ public class BusyRatingServiceImpl implements BusyRatingService {
 
     public Double getAverageScoreFromEntity(int entityId, ReviewType type) throws Exception {
 
-        // converting to IST
-        ZonedDateTime zonedIST = ZonedDateTime.now(ZoneId.of("Australia/Sydney"));
-        //System.out.println(zonedIST.getHour());
-        Integer currentDayOfWeek = zonedIST.getDayOfWeek().getValue();
-
         try {
+
+            // converting to IST
+            ZonedDateTime zonedIST = ZonedDateTime.now(ZoneId.of("Australia/Sydney"));
+            //System.out.println(zonedIST.getHour());
+            Integer currentDayOfWeek = zonedIST.getDayOfWeek().getValue();
 
             String query;
 
@@ -244,13 +267,25 @@ public class BusyRatingServiceImpl implements BusyRatingService {
 
             // Set user information
             if (resultSet.next()) { // Ensure there's a row in the result set
+
                 return resultSet.getDouble(1);
             }
         }
 
         // If exception happens when querying user
         catch (Exception e) {
+
             throw new Exception("Some error happened, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
         // Return user information
         return null;

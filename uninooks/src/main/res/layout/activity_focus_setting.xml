@@ -79,10 +79,12 @@
             android:layout_marginTop="26dp">
 
             <ImageView
+                android:id="@+id/pomTimeIcon"
                 style="@style/IconStyle"
                 android:src="@drawable/ic_arrow_down"
                 android:layout_marginStart="32dp"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="center"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -141,10 +143,12 @@
             android:layout_marginTop="30dp">
 
             <ImageView
+                android:id="@+id/shortTimeIcon"
                 style="@style/IconStyle"
                 android:src="@drawable/ic_arrow_down"
                 android:layout_marginStart="32dp"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="center"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -200,10 +204,12 @@
             android:layout_marginTop="30dp">
 
             <ImageView
+                android:id="@+id/longTimeIcon"
                 style="@style/IconStyle"
                 android:src="@drawable/ic_arrow_down"
                 android:layout_marginStart="32dp"
-                android:layout_marginEnd="8dp" />
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="center"/>
 
             <TextView
                 android:layout_width="wrap_content"

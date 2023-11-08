@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
-import com.comp90018.uninooks.service.mail.mailServiceImpl;
+import com.comp90018.uninooks.service.mail.MailServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
 
 public class SignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -199,6 +199,10 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
                             }
 
+                            else if (!username.matches("\\w{1,10}")) {
+                                showTextMessage("User name can only contain letters, numbers, and underscores, less than 10 characters");
+                            }
+
                             else if (new UserServiceImpl().hasUser(editTextSignUpUserName.getText().toString())){
                                 showTextMessage("This user name has been registered with us, please try another one.");
                             }
@@ -274,7 +278,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         counter.obj = OTP_TIMER;
         handler.sendMessage(counter);
 
-        String newOTP = String.valueOf(new mailServiceImpl().sendOTP(editTextSignUpEmail.getText().toString()));
+        String newOTP = String.valueOf(new MailServiceImpl().sendOTP(editTextSignUpEmail.getText().toString()));
 
         return newOTP;
     }
@@ -353,13 +357,6 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
             return false;
         }
-
-        // Advanced check needed
-//        if (!email.contains("@")){
-//            showTextMessage("Your email format is not correct.");
-//
-//            return false;
-//        }
 
         if (!password.equals(passwordConfirmation)) {
             System.out.println("Passwords do not match");

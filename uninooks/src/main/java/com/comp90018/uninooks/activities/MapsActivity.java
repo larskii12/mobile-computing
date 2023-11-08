@@ -8,11 +8,13 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -28,6 +30,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GPSService {
 
@@ -44,6 +47,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final int standardCameraZoom = 18;
 
     GPSServiceImpl gpsService;
+
+    private int userId;
+
+    private String userEmail;
+
+    private String userName;
 
     @SuppressLint("HandlerLeak")
     private final Handler handler = new Handler() {
@@ -65,6 +74,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
 
         setContentView(binding.getRoot());
+
+        Intent intent = getIntent();
+        userId = intent.getIntExtra("USER_ID_EXTRA", 0);
+        userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
+        userName = intent.getStringExtra("USER_NAME_EXTRA");
 
         gpsService = new GPSServiceImpl(this, this);
 
@@ -99,7 +113,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public boolean onQueryTextSubmit(String s) {
                 String searchQuery = searchBar.getQuery().toString();
                 Intent intent = new Intent(MapsActivity.this, SearchResults.class);
+
+                intent.putExtra("USER_ID_EXTRA", userId);
+                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                intent.putExtra("USER_NAME_EXTRA", userName);
                 intent.putExtra("searchQuery", searchQuery);
+
                 startActivity(intent);
                 return true;
             }
@@ -113,30 +132,62 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // launch the filter page
                 Intent intent = new Intent(MapsActivity.this, FilterAdjustmentActivity.class);
+
+                // Pass the user to next page
+                intent.putExtra("USER_ID_EXTRA", userId);
+                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                intent.putExtra("USER_NAME_EXTRA", userName);
+
                 startActivity(intent);
             }
         });
+//        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
 
-//            bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-//            @SuppressLint("NonConstantResourceId")
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.homeNav:
-//                        // go to home navigation page (Linda's page)
-//                        break;
-//                    case R.id.focusNav:
-//                        // go to focus page
-//                        break;
-//                    case R.id.accountNav:
-//                        // go to account page
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
+        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @SuppressLint("NonConstantResourceId")
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+
+                if (id == R.id.homeNav){
+                    Intent intent = new Intent(MapsActivity.this, HomeActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+
+                else if (id == R.id.searchNav) {
+                    ;
+
+                } else if (id == R.id.focusNav) {
+                    Intent intent = new Intent(MapsActivity.this, StudyZoneActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Intent intent = new Intent(MapsActivity.this, AccountActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+                    startActivity(intent);
+                }
+
+                return false;
+            }
+        });
 
         /**
          * Move camera to the current location
@@ -144,15 +195,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locateMyLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mMap != null && mMap.isMyLocationEnabled()) {
-                    Location myLocation = mMap.getMyLocation();
-                    if (myLocation != null) {
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                new LatLng(myLocation.getLatitude(),
-                                        myLocation.getLongitude()), standardCameraZoom)); // Adjust zoom level as needed
-                    }
+                try{
+                    if (mMap != null && mMap.isMyLocationEnabled()) {
+                        Location myLocation = mMap.getMyLocation();
 
-                    showTextMessage("Location updated");
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), standardCameraZoom)); // Adjust zoom level as needed
+                    }
+                }
+
+                catch (Exception e){
+                    System.out.println("Location update fails, please try again.");
                 }
             }
         });
