@@ -84,5 +84,8 @@
     <string name="pomodoro_setting">Pomodoro Time</string>
     <string name="short_break_setting">Short Break Time</string>
     <string name="long_break_setting">Long Break Time</string>
+    <string name="never_show_again_setting">Never Show Again</string>
     <string name="auto_pomodoro">Pomodoro Sequence</string>
+    <string name="dialogMessage">Note: navigating away from this page will restart all timers and sequence </string>
+    <string name="neverShowMessage">Never show this message again</string>
 </resources>
