@@ -378,7 +378,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         userComment.setText(review.getComment());
         RatingBar rating = (RatingBar) card.findViewById(R.id.ratingBar);
         rating.setRating(review.getScore());
-        //System.out.println("Review score:" + review.getScore());
+        System.out.println("Review comment:" + review.getComment());
         ImageView userImage = (ImageView) card.findViewById(R.id.imageView2);
 
         return card;
@@ -439,11 +439,30 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     return;
                 }
                 //TODO: add review star rating (int rating) to database
+                new Thread(){
+                    public void run() {
+                        try {
+                            Review addedReview = new ReviewServiceImpl().addReview(userId,locationId,ReviewType.valueOf(location.getType()),rating,review);
+                            System.out.println("Success");
+//                            reloadActivity();
+                        } catch (Exception e) {
+                            System.out.println("Failed");
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }.start();
+
 
                 dialog.dismiss();
             }
         });
 
         dialog.show();
+    }
+    private void reloadActivity(){
+        Intent intent = getIntent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+        startActivity(intent);
     }
 }
