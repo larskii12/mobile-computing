@@ -7,8 +7,8 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="410dp"
-        android:layout_height="115dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
         android:layout_margin="0dp"
@@ -26,8 +26,8 @@
             android:background="@drawable/account_outline"/>
 
         <LinearLayout
-            android:layout_width="300dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
 

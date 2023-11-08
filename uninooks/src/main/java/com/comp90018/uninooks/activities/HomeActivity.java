@@ -232,6 +232,14 @@ public class HomeActivity extends AppCompatActivity {
                                 CardView newCard = createNewSmallCard(card,space, "distance");
 //                                    System.out.println(space.getId());
                                 String spaceID = String.valueOf(space.getId());
+                                for (StudySpace favorite: favorites) {
+                                    if (favorite.getName().equals(space.getName())) {
+                                        ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
+                                        favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
+                                        favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                                    }
+                                }
+
                                 nearbyLayout.addView(newCard);
                                 newCard.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -256,6 +264,13 @@ public class HomeActivity extends AppCompatActivity {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, topRatedLayout, false);
                                 CardView newCard = createNewSmallCard(card,space,"rating");
                                 String spaceID = String.valueOf(space.getId());
+                                for (StudySpace favorite: favorites) {
+                                    if (favorite.getName().equals(space.getName())) {
+                                        ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
+                                        favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
+                                        favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                                    }
+                                }
                                 topRatedLayout.addView(newCard);
 
                                 card.setOnClickListener(new View.OnClickListener() {
@@ -281,6 +296,9 @@ public class HomeActivity extends AppCompatActivity {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, favoritesLayout, false);
                                 CardView newCard = createNewSmallCard(card,space,"favorite");
                                 String spaceID = String.valueOf(space.getId());
+                                ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
+                                favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
+                                favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
                                 favoritesLayout.addView(newCard);
                                 card.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -379,6 +397,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);
+
         favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_border_24);
         favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
 //        favouriteIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));

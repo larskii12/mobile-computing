@@ -40,6 +40,7 @@ import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
+import com.comp90018.uninooks.service.library.LibraryServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
@@ -174,12 +175,13 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     for (Favorite favorite: favorites) {
                         if (location.getType().equals("LIBRARY") && favorite.getLibraryId() == location.getId()) {
                             isFavorite = true;
-
                         }
                         else if (location.getType().equals("STUDY_SPACE") && favorite.getStudySpaceId() == location.getId()) {
                             isFavorite = true;
                         }
-                        else isFavorite = location.getType().equals("RESTAURANT") && favorite.getRestaurantId() == location.getId();
+                        else if (location.getType().equals("RESTAURANT") && favorite.getRestaurantId() == location.getId()) {
+                            isFavorite = true;
+                        }
 
                     }
                     LinearLayout reviewsLayout = findViewById(R.id.reviews);
@@ -303,11 +305,10 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 openHours.setText("Close today");
                             } else if(location.getCloseTime() != null && !location.isOpeningNow()){
                                 @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                                openHours.setText("Closed, open at " + sdf.format((location.getOpenTime())));
-                            }
-                            else {
-                                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                                 openHours.setText("Open hours: " + sdf.format(location.getOpenTime()) + " - " + ("23:59".equals(sdf.format(location.getCloseTime())) ? "00:00" : sdf.format(location.getCloseTime())));
+                            } else if (location.getCloseTime() != null && !location.isOpeningNow()) {
+                                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                                openHours.setText("Closed, open at " + sdf.format((location.getOpenTime())));
                             }
                             if (busyScore >= 0 && busyScore <= 40) {
                                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green)));
