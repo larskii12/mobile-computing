@@ -3,6 +3,7 @@ package com.comp90018.uninooks.activities;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -72,12 +73,15 @@ public class HomeActivity extends AppCompatActivity {
     private int randomRange;
     private StudySpace randomSpace;
 
+    private SharedPreferences sharedPreferences;
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         context = getApplicationContext();
+
 
         Intent intent = getIntent();
         userId = intent.getIntExtra("USER_ID_EXTRA", 0);

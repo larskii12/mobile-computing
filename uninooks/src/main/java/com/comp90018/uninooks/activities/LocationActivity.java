@@ -303,7 +303,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             }
                             if (location.getCloseTime() == null) {
                                 openHours.setText("Close today");
-                            } else if(location.getCloseTime() != null && !location.isOpeningNow()){
+                            } else if(location.getCloseTime() != null && location.isOpeningNow()){
                                 @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                                 openHours.setText("Open hours: " + sdf.format(location.getOpenTime()) + " - " + ("23:59".equals(sdf.format(location.getCloseTime())) ? "00:00" : sdf.format(location.getCloseTime())));
                             } else if (location.getCloseTime() != null && !location.isOpeningNow()) {
