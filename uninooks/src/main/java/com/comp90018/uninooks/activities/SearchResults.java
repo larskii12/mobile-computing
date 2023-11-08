@@ -70,6 +70,7 @@ public class SearchResults extends AppCompatActivity {
     Comparator<Location> nameComparator;
     Comparator<Location> distanceComparator;
     Comparator<Location> ratingComparator;
+    ProgressBar loadingGIF;
 
     private int userId;
     private String userEmail;
@@ -105,6 +106,8 @@ public class SearchResults extends AppCompatActivity {
         resultCardArea = findViewById(R.id.resultCardArea);
         returnButton = findViewById(R.id.returnButton);
 
+        loadingGIF = findViewById(R.id.loadingGIF);
+
         results = new ArrayList<>();
         userFavs = new ArrayList<>();
 
@@ -116,8 +119,6 @@ public class SearchResults extends AppCompatActivity {
 
         nameComparator = new NameComparator();
         distanceComparator = new DistanceComparator();
-
-
 
         new Thread() {
             @Override
@@ -153,6 +154,7 @@ public class SearchResults extends AppCompatActivity {
                             if (results.size() == 0) {
                                 TextView noResults = findViewById(R.id.noResults);
                                 noResults.setVisibility(View.VISIBLE);
+                                loadingGIF.setVisibility(View.GONE);
                             } else {
                                 addResultsToPage(results);
                             }
@@ -181,8 +183,6 @@ public class SearchResults extends AppCompatActivity {
     };
 
     private void addResultsToPage(List<Location> results) {
-
-        ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
         loadingGIF.setVisibility(View.VISIBLE);
 
         // List opening location first
