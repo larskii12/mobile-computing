@@ -6,12 +6,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="80dp"
         android:layout_marginBottom="20dp"
-        android:layout_marginRight="10dp"
         android:orientation="vertical"
-
         android:padding="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -30,8 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:justificationMode="inter_word"
-            android:padding="12dp"
+            android:padding="5dp"
             android:text="Helping you find the best study space" />
         <ImageView
             android:id="@+id/imageView"
@@ -50,7 +45,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:justificationMode="inter_word"
-            android:padding="12dp"
+            android:padding="5dp"
             android:text="Not sure what you're looking for?" />
         <TextView
             style="@style/TextSubHeading"
@@ -58,16 +53,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:justificationMode="inter_word"
-            android:padding="12dp"
+            android:padding="5dp"
             android:text="Shake your device for a suggestion" />
-        <Button
-            android:id="@+id/add_review_submit_Button"
-            style="@style/Button.Primary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:text="Get Started" />
+<!--        <Button-->
+<!--            android:id="@+id/add_review_submit_Button"-->
+<!--            style="@style/Button.Primary"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:text="Get Started" />-->
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

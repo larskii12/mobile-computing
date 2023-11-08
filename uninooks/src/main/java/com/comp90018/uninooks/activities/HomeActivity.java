@@ -1,7 +1,10 @@
 package com.comp90018.uninooks.activities;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -74,6 +77,7 @@ public class HomeActivity extends AppCompatActivity {
     private StudySpace randomSpace;
 
     private SharedPreferences sharedPreferences;
+    public boolean neverShowAgain;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -81,6 +85,9 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         context = getApplicationContext();
+        sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
+        showDialog();
+
 
 
         Intent intent = getIntent();
@@ -483,6 +490,65 @@ public class HomeActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         finish();
         startActivity(intent);
+    }
+
+    private void showDialog() {
+        neverShowAgain = sharedPreferences.getBoolean(getString(R.string.never_show_welcome), false);
+        if (!neverShowAgain) {
+            Dialog dialog = createDialog();
+            dialog.show();
+        }
+    }
+    private Dialog createDialog() {
+        String[] choices = {"I understand, don't show this again"};
+        final boolean[] neverShowAgainDialog = {false};
+
+        // Use the Builder class for convenient dialog construction.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.activity_onboarding, null))
+                // Add action buttons
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        neverShowAgainDialog[0] = true;
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean(getString(R.string.never_show_welcome), neverShowAgainDialog[0]);
+                        editor.apply();
+                    }
+                });
+        return builder.create();
+
+//        builder.setTitle(R.string.dialogMessage)
+//                .setSingleChoiceItems(choices, -1, new DialogInterface.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        neverShowAgainDialog[0] = true;
+//                    }
+//                })
+//                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        SharedPreferences.Editor editor = sharedPreferences.edit();
+//                        editor.putBoolean(getString(R.string.never_show_again_setting), neverShowAgainDialog[0]);
+//                        editor.apply();
+//                    }
+//                })
+//                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        // User cancels the dialog.
+//                        // Stay on current page, don't do anything
+//                        // Settings are not changed
+//                    }
+//                });
+        // Create the AlertDialog object and return it.
+//        return builder.create();
     }
 
 }
