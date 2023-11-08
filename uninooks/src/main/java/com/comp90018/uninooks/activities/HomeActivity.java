@@ -472,6 +472,7 @@ public class HomeActivity extends AppCompatActivity {
             float delta = currentAcceleration - lastAcceleration;
             acceleration = acceleration * 0.9f + delta;
             if (acceleration > 20) {
+                sensorManager.unregisterListener(sensorListener);
                 Toast.makeText(getApplicationContext(), "Opening a random Space", Toast.LENGTH_SHORT).show();
                 randomRange = topRatedStudySpaces.size();
                 int rand = (int)(Math.random() * randomRange);
