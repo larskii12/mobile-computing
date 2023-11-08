@@ -167,7 +167,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     ;
 
                 } else if (id == R.id.focusNav) {
-                    Intent intent = new Intent(MapsActivity.this, StudyZoneActivity.class);
+                    Intent intent = new Intent(MapsActivity.this, FocusModeSplashActivity.class);
 
                     // Pass the user to next page
                     intent.putExtra("USER_ID_EXTRA", userId);

@@ -134,7 +134,7 @@ public class HomeActivity extends AppCompatActivity {
                         finish();
 
                     } else if (id == R.id.focusNav) {
-                        Intent intent = new Intent(HomeActivity.this, StudyZoneActivity.class);
+                        Intent intent = new Intent(HomeActivity.this, FocusModeSplashActivity.class);
 
                         // Pass the user to next page
                         intent.putExtra("USER_ID_EXTRA", userId);
