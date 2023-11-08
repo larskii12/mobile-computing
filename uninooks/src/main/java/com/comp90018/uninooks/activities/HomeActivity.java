@@ -445,17 +445,16 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
 
-        if (type.equals("rating")) {
-            ImageView ratingIcon = card.findViewById(R.id.starRating);
-            ratingIcon.setBackgroundResource(R.drawable.star_solid);
-        } else {
+        if (!type.equals("rating")) {
             ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);
 
             favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_border_24);
             favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
 //        favouriteIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));
             //check if the favourites list includes this user and favourite
-
+        } else {
+            ImageView ratingIcon = card.findViewById(R.id.starRating);
+            ratingIcon.setBackgroundResource(R.drawable.star_solid);
         }
 
         return card;
