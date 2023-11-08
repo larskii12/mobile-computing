@@ -84,6 +84,8 @@ public class Location implements Parcelable {
         distanceFromCurrentPosition = in.readInt();
         type = in.readString();
         average_rating = in.readDouble();
+        openTime = new Time(in.readLong());
+        closeTime = new Time(in.readLong());
     }
 
     public static final Creator<Location> CREATOR = new Creator<Location>() {
@@ -231,5 +233,11 @@ public class Location implements Parcelable {
         dest.writeString(type);
 
         dest.writeDouble(average_rating);
+
+        long openTimeInMillis = openTime.getTime();
+        dest.writeLong(openTimeInMillis);
+
+        long closeTimeInMillis = closeTime.getTime();
+        dest.writeLong(closeTimeInMillis);
     }
 }

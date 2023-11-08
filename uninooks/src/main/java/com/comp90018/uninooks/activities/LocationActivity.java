@@ -8,6 +8,7 @@ import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -54,6 +55,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LocationActivity extends FragmentActivity implements OnMapReadyCallback, GPSService{
@@ -90,24 +92,90 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         userId = intent.getIntExtra("USER_ID_EXTRA", 0);
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
         userName = intent.getStringExtra("USER_NAME_EXTRA");
-        locationId = intent.getIntExtra("LOCATION_ID", 0);
+//        locationId = intent.getIntExtra("LOCATION_ID", 0);
         locationType = intent.getStringExtra("LOCATION_TYPE");
 
+        if (locationType.equals("LIBRARY")){
+            location = (Library) intent.getParcelableExtra("LOCATION");
+        } else if (locationType.equals("STUDY_SPACE")){
+            location = (StudySpace) intent.getParcelableExtra("LOCATION");
+        } else {
+            location = (Restaurant) intent.getParcelableExtra("LOCATION");
+        }
 
+
+//        bottomNav = findViewById(R.id.bottom_navigation);
+//        bottomNav.setSelectedItemId(R.id.homeNav);
+
+//        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+//            @SuppressLint("NonConstantResourceId")
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//                int id = item.getItemId();
+//
+//                if (id == R.id.homeNav){
+//                    Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
+//
+//                    // Pass the user to next page
+//                    intent.putExtra("USER_ID_EXTRA", userId);
+//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+//                    intent.putExtra("USER_NAME_EXTRA", userName);
+//
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    startActivity(intent);
+//                    finish();
+//                }
+//
+//                else if (id == R.id.searchNav) {
+//                    Intent intent = new Intent(LocationActivity.this, MapsActivity.class);
+//
+//                    // Pass the user to next page
+//                    intent.putExtra("USER_ID_EXTRA", userId);
+//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+//                    intent.putExtra("USER_NAME_EXTRA", userName);
+//
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    startActivity(intent);
+//                    finish();
+//
+//                } else if (id == R.id.focusNav) {
+//                    Intent intent = new Intent(LocationActivity.this, StudyZoneActivity.class);
+//
+//                    // Pass the user to next page
+//                    intent.putExtra("USER_ID_EXTRA", userId);
+//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+//                    intent.putExtra("USER_NAME_EXTRA", userName);
+//                    startActivity(intent);
+//                    finish();
+//
+//                } else {
+//                    Intent intent = new Intent(LocationActivity.this, AccountActivity.class);
+//
+//                    // Pass the user to next page
+//                    intent.putExtra("USER_ID_EXTRA", userId);
+//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+//                    intent.putExtra("USER_NAME_EXTRA", userName);
+//                    startActivity(intent);
+//                }
+//
+//                return false;
+//            }
+//        });
 
         new Thread() {
             @Override
             public void run() {
                 try {
 
-                    if (locationType.equals("LIBRARY")){
-                        location = (Library) new LocationServiceImpl().findLibraryById(locationId);
-
-                    } else if (locationType.equals("STUDY_SPACE")){
-                        location = (StudySpace) new LocationServiceImpl().findStudySpaceById(locationId);
-                    } else {
-                        location = (Restaurant) new LocationServiceImpl().findRestaurantById(locationId);
-                    }
+//                    if (locationType.equals("LIBRARY")){
+//                        location = (Library) new LocationServiceImpl().findLibraryById(locationId);
+//
+//                    } else if (locationType.equals("STUDY_SPACE")){
+//
+//                        location = (StudySpace) new LocationServiceImpl().findStudySpaceById(locationId);
+//                    } else {
+//                        location = (Restaurant) new LocationServiceImpl().findRestaurantById(locationId);
+//                    }
 
                     List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(locationId, ReviewType.valueOf(location.getType()));
 
@@ -127,6 +195,8 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                         }
 
                     }
+
+                    Log.d("AAAAAAAAAAAAAAAAAAA", String.valueOf(location.isOpeningNow()));
                     LinearLayout reviewsLayout = findViewById(R.id.reviews);
                     TextView locationName = findViewById(R.id.textView5);
                     ProgressBar progress = findViewById(R.id.progressBar);
@@ -354,7 +424,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
             }
         }.start();
 
-        gpsService = new GPSServiceImpl( this, this);
+        gpsService = new GPSServiceImpl( this, this, GPSServiceImpl.getGPSHistory());
 //
         bananaFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.banana);
