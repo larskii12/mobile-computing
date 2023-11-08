@@ -78,6 +78,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPreferences;
     public boolean neverShowAgain;
+    public ArrayList<StudySpace> topRatedStudySpaces = new ArrayList<>();
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -145,7 +146,7 @@ public class HomeActivity extends AppCompatActivity {
                         finish();
 
                     } else if (id == R.id.focusNav) {
-                        Intent intent = new Intent(HomeActivity.this, StudyZoneActivity.class);
+                        Intent intent = new Intent(HomeActivity.this, FocusModeSplashActivity.class);
 
                         // Pass the user to next page
                         intent.putExtra("USER_ID_EXTRA", userId);
@@ -171,7 +172,7 @@ public class HomeActivity extends AppCompatActivity {
             new Thread() {
 
                 ArrayList<StudySpace> closestStudySpaces = new ArrayList<>();
-                ArrayList<StudySpace> topRatedStudySpaces = new ArrayList<>();
+//                ArrayList<StudySpace> topRatedStudySpaces = new ArrayList<>();
 
                 @Override
                 public void run() {
@@ -235,9 +236,7 @@ public class HomeActivity extends AppCompatActivity {
                 LinearLayout nearbyLayout = findViewById(R.id.nearbyLayout);
                 LinearLayout topRatedLayout = findViewById(R.id.topRatedLayout);
                 LinearLayout favoritesLayout = findViewById(R.id.favoritesLayout);
-                randomRange = topRatedStudySpaces.size();
-                int rand = (int)(Math.random() * randomRange);
-                randomSpace = topRatedStudySpaces.get(rand);
+
 //                    int i=0; i<5; i++)
 
                     runOnUiThread(new Runnable() {
@@ -472,8 +471,12 @@ public class HomeActivity extends AppCompatActivity {
             currentAcceleration = (float) Math.sqrt((double) (x * x + y * y + z * z));
             float delta = currentAcceleration - lastAcceleration;
             acceleration = acceleration * 0.9f + delta;
-            if (acceleration > 12) {
+            if (acceleration > 20) {
+                sensorManager.unregisterListener(sensorListener);
                 Toast.makeText(getApplicationContext(), "Opening a random Space", Toast.LENGTH_SHORT).show();
+                randomRange = topRatedStudySpaces.size();
+                int rand = (int)(Math.random() * randomRange);
+                randomSpace = topRatedStudySpaces.get(rand);
                 new Thread() {
                         public void run() {
                             Intent intent = new Intent(HomeActivity.this, LocationActivity.class);

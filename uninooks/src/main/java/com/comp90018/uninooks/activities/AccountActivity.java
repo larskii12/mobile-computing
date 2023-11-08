@@ -140,8 +140,7 @@ public class AccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Start the Personal Information Activity
-                Intent intent = new Intent(AccountActivity.this, PersonalInformationActivity.class); // Assume the name of your next activity is PersonalInformationActivity
-
+                Intent intent = new Intent(AccountActivity.this, PersonalInformationActivity.class);
                 // Pass the user to next page
                 intent.putExtra("userId", userId);
 
