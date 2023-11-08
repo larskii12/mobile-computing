@@ -17,7 +17,7 @@ public class FocusModeSplashActivity extends AppCompatActivity {
 
     private ProgressBar loading;
 
-    private static final int LOADING_DELAY_MS = 5000; // loading bar for the focus mode
+    private static final int LOADING_DELAY_MS = 1000 * 3; // loading bar for the focus mode
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

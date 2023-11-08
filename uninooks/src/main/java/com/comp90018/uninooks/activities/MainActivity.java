@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                             gpsService.stopGPSUpdates();
-                            Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                            Intent intent = new Intent(MainActivity.this, NavigationActivity.class);
                             startActivity(intent);
                         }
 
