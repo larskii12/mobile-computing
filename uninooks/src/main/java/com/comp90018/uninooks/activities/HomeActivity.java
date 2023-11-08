@@ -69,6 +69,9 @@ public class HomeActivity extends AppCompatActivity {
     private String userEmail;
     private String userName;
 
+    private int randomRange;
+    private StudySpace randomSpace;
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,6 +224,9 @@ public class HomeActivity extends AppCompatActivity {
                 LinearLayout nearbyLayout = findViewById(R.id.nearbyLayout);
                 LinearLayout topRatedLayout = findViewById(R.id.topRatedLayout);
                 LinearLayout favoritesLayout = findViewById(R.id.favoritesLayout);
+                randomRange = topRatedStudySpaces.size();
+                int rand = (int)(Math.random() * randomRange);
+                randomSpace = topRatedStudySpaces.get(rand);
 //                    int i=0; i<5; i++)
 
                     runOnUiThread(new Runnable() {
@@ -392,7 +398,7 @@ public class HomeActivity extends AppCompatActivity {
                 distanceLabel.setText("N/A");
             }
             else{
-                distanceLabel.setText(space.getDistanceFromCurrentPosition() + "m");
+                distanceLabel.setText(space.getDistanceFromCurrentPosition() + " m");
             }
         }
 
@@ -429,7 +435,18 @@ public class HomeActivity extends AppCompatActivity {
             float delta = currentAcceleration - lastAcceleration;
             acceleration = acceleration * 0.9f + delta;
             if (acceleration > 12) {
-                Toast.makeText(getApplicationContext(), "Shake event detected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Opening a random Space", Toast.LENGTH_SHORT).show();
+                new Thread() {
+                        public void run() {
+                            Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
+                            intent.putExtra("USER_ID_EXTRA", userId);
+                            intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                            intent.putExtra("USER_NAME_EXTRA", userName);
+                            intent.putExtra("LOCATION_ID", randomSpace.getId());
+                            intent.putExtra("LOCATION_TYPE", randomSpace.getType());
+                            startActivity(intent);
+                        }
+                }.start();
             }
         }
         @Override
