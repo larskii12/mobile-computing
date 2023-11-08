@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
-import com.comp90018.uninooks.service.mail.mailServiceImpl;
+import com.comp90018.uninooks.service.mail.MailServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
 
 public class ResetPasswordActivity extends AppCompatActivity {
@@ -249,7 +249,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         // // Verify user old password and change password
         if (new UserServiceImpl().hasUser(editTextResetPasswordEmail.getText().toString())) {
 
-            return String.valueOf(new mailServiceImpl().sendOTP(editTextResetPasswordEmail.getText().toString().trim()));
+            return String.valueOf(new MailServiceImpl().sendOTP(editTextResetPasswordEmail.getText().toString().trim()));
         }
 
         return "";

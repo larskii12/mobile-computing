@@ -36,7 +36,7 @@
 
     <!-- Sign up strings-->
     <string name="Sign_Up">Sign Up</string>
-    <string name="UniNook">UniNook</string>
+    <string name="UniNook">UniNooks</string>
     <string name="Name">Name</string>
     <string name="Email">Email</string>
     <string name="Username">Username</string>
@@ -90,4 +90,10 @@
     <string name="auto_pomodoro">Pomodoro Sequence</string>
     <string name="dialogMessage">Note: navigating away from this page will restart all timers and sequence </string>
     <string name="neverShowMessage">Never show this message again</string>
+
+    <!-- Review Strings -->
+    <string name="add_review">Add Review</string>
+    <string name="how_was_your_experience">How was your experience?</string>
+    <string name="submit">Submit</string>
+    <string name="write_your_review_here">Write your review here</string>
 </resources>

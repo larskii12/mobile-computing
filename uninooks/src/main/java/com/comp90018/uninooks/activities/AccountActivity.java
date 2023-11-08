@@ -25,9 +25,11 @@ public class AccountActivity extends AppCompatActivity {
 
     private TextView textViewAccountGreetingUserName;
 
+    private int userId;
+    private String userEmail;
     private String userName;
 
-    private int userId;
+
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -57,7 +59,9 @@ public class AccountActivity extends AppCompatActivity {
 
         // Initialize user
         Intent intent = getIntent();
-        userId = intent.getIntExtra("USERID_EXTRA", 6);
+        userId = intent.getIntExtra("USER_ID_EXTRA", 0);
+        userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
+        userName = intent.getStringExtra("USER_NAME_EXTRA");
 
         // Get reference to the Personal Information LinearLayout
         LinearLayout personalInfoLayout = findViewById(R.id.Account_Personal_Info_Layout); // Set an ID for your LinearLayout in XML and use it here

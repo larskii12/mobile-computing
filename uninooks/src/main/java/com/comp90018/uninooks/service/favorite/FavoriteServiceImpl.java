@@ -25,8 +25,6 @@ public class FavoriteServiceImpl implements FavoriteService {
      */
     public Favorite addFavorite(Integer userId, Integer entityId, ReviewType type) throws Exception {
 
-        java.sql.Time sqlTime = new java.sql.Time(System.currentTimeMillis());
-
         try {
             String query;
 
@@ -59,17 +57,87 @@ public class FavoriteServiceImpl implements FavoriteService {
             if (rs.next()) {
                 generatedKey = rs.getInt(1);
             }
-
             return getFavorite(generatedKey, type);
         }
 
         // If exception happens
         catch (Exception e) {
-            
+
             // Unknown exceptions happens.
-            throw new Exception("Favorite added failed, please contact the IT administrator to report the issue.");
+            throw new Exception("Favorite add failed, please contact the IT administrator to report the issue.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
     }
+
+
+    /**
+     * Remove favorite
+     * @param userId as user id
+     * @param entityId as entity id
+     * @param type as type
+     * @return true if success, otherwise false
+     * @throws Exception if any exception
+     */
+    public boolean removeFavorite(Integer userId, Integer entityId, ReviewType type) throws Exception {
+
+        try {
+            String query;
+
+            switch (type) {
+
+                case GYM: // Add new gym favourite to the database
+                    query = "DELETE FROM mobilecomputing.favourite WHERE favourite_user_id = ? and favourite_gym_id = ?;";
+                    break;
+                case LIBRARY: // Add new library favourite to the database
+                    query = "DELETE FROM mobilecomputing.favourite WHERE favourite_user_id = ? and favourite_library_id = ?;";
+                    break;
+                case RESTAURANT: // Add new restaurant favourite to the database
+                    query = "DELETE FROM mobilecomputing.favourite WHERE favourite_user_id = ? and favourite_restaurant_id = ?;";
+                    break;
+                case STUDY_SPACE: // Add new study space favourite to the database
+                    query = "DELETE FROM mobilecomputing.favourite WHERE favourite_user_id = ? and favourite_study_space_id = ?;";
+                    break;
+                default:
+                    throw new Exception("Invalid favourite type. Review not created.");
+            }
+            PreparedStatement preparedStatement = connector.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, entityId);
+
+            // Execute query
+            preparedStatement.executeUpdate();
+
+            return true;
+        }
+
+        // If exception happens
+        catch (Exception e) {
+            e.printStackTrace();
+
+            // Unknown exceptions happens.
+            throw new Exception("Favorite remove failed, please contact the IT administrator to report the issue.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
+    }
+
 
     /**
      * Get a user with specified email address
@@ -79,9 +147,8 @@ public class FavoriteServiceImpl implements FavoriteService {
      */
     public Favorite getFavorite(int favouriteId, ReviewType type) throws Exception {
 
-        Favorite favorite = new Favorite();
-
         try {
+            Favorite favorite = new Favorite();
 
             String query = "SELECT * FROM mobilecomputing.\"favourite\" WHERE \"favourite_id\" = ?";
 
@@ -114,13 +181,23 @@ public class FavoriteServiceImpl implements FavoriteService {
                 }
                 return favorite;
             }
-
         }
 
         // If exception happens when querying user
         catch (Exception e) {
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
+
         // Return user information
         return null;
     }
@@ -134,9 +211,9 @@ public class FavoriteServiceImpl implements FavoriteService {
      */
     public List<Favorite> getFavoritesByUser(int userId, ReviewType type) throws Exception {
 
-        List<Favorite> favoriteList = new ArrayList<>();
-
         try {
+
+            List<Favorite> favoriteList = new ArrayList<>();
 
             String query;
 
@@ -189,12 +266,23 @@ public class FavoriteServiceImpl implements FavoriteService {
 
                 favoriteList.add(favorite);
             }
+
             return favoriteList;
         }
 
         // If exception happens when querying user
         catch (Exception e) {
             throw new Exception("Some error happened, please contact the IT administrator.");
+        }
+
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
         }
     }
 
@@ -206,8 +294,6 @@ public class FavoriteServiceImpl implements FavoriteService {
      * @return Review
      */
     public Boolean isFavoriteByUser(int userId, int entityId, ReviewType type) throws Exception {
-
-        Favorite favorite = new Favorite();
 
         try {
             String query;
@@ -248,6 +334,15 @@ public class FavoriteServiceImpl implements FavoriteService {
         catch (Exception e) {
             throw new Exception("Some error happened, please contact the IT administrator.");
         }
-    }
 
+        finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
+    }
 }

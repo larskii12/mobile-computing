@@ -34,6 +34,10 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
 
     private GPSServiceImpl gpsService;
 
+    int userId;
+
+    String userName;
+
     String userEmail;
 
     @SuppressLint("HandlerLeak")
@@ -69,15 +73,39 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
         buttonLogInGoToSignup = findViewById(R.id.ButtonLogInGoToSignup);
         buttonLogInForgetPassword = findViewById(R.id.ButtonLogInForgetPassword);
 
+        userId = -1;
+        userEmail = "";
+        userName = "";
+
         buttonLoginLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Thread() {
                     public void run() {
                         try {
-                            loginUser();
+
+                            User user = loginUser();
+
+                            if (user != null){
+
+                                userId = user.getUserId();
+                                userEmail = user.getUserEmail();
+                                userName = user.getUserName();
+
+                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+
+                                // Pass the user to next page
+                                intent.putExtra("USER_ID_EXTRA", userId);
+                                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                intent.putExtra("USER_NAME_EXTRA", userName);
+
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                finish();
+                            }
+
                         } catch (Exception e) {
-                            throw new RuntimeException(e);
+                            showTextMessage("An error happened, please contract the IT administrator.");
                         }
                     }
                 }.start();
@@ -87,26 +115,27 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
         buttonLogInGoToSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Thread() {
+                try {
+                    Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+                    startActivity(intent);
 
-                    public void run() {
-                        Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
-                        startActivity(intent);
-                    }
-                }.start();
+                } catch (Exception e) {
+                    showTextMessage("An error happened, please contract the IT administrator.");
+                }
             }
         });
 
         buttonLogInForgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Thread() {
-                    public void run() {
-                        Intent intent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
-                        intent.putExtra("USER_EMAIL_EXTRA", editTextLoginEmail.getText().toString());
-                        startActivity(intent);
-                    }
-                }.start();
+                try {
+                    Intent intent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
+                    intent.putExtra("USER_EMAIL_EXTRA", editTextLoginEmail.getText().toString());
+                    startActivity(intent);
+                }
+                catch (Exception e){
+                    showTextMessage("An error happened, please contract the IT administrator.");
+                }
             }
         });
     }
@@ -147,15 +176,14 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
     }
 
 
-
-    private int loginUser() throws Exception {
+    private User loginUser() throws Exception {
         String email = editTextLoginEmail.getText().toString().trim();
         String password = editTextLoginPassword.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
 
             showTextMessage("Please fill all fields.");
-            return -1;
+            return null;
         }
 
         // @TODO: Here, you can integrate your backend logic to authenticate the user and validate inputs.
@@ -163,39 +191,12 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
         List<Location> results = new LocationServiceImpl().findAllLocations("STUDY", "ERC", false);
         System.out.println(results.get(0).getName());
 
-        if (logInUser == null){
-
+        if (logInUser == null) {
             showTextMessage("Your input does not match our records, please try again.");
+            return null;
         }
-
-        else{
-
-            System.out.println("User login successful");
-            System.out.println("User ID: " + logInUser.getUserId());
-            System.out.println("User Name: " + logInUser.getUserName());
-            System.out.println("User Email: " + logInUser.getUserEmail());
-            System.out.println("User Faculty: " + logInUser.getUserFaculty());
-            System.out.println("User AQF level: " + logInUser.getUserAQFLevel());
-
-            // Show login successful message
-            showTextMessage("Login successfully.");
-
-//            Intent intent = new Intent(LoginActivity.this, AccountActivity.class);
-            Intent intent = new Intent(LoginActivity.this, AccountActivity.class);
-            // Pass the user to next page
-            intent.putExtra("USERNAME_EXTRA", logInUser.getUserName());
-            intent.putExtra("USERID_EXTRA", String.valueOf(logInUser.getUserId()));
-            System.out.println("Opening the page");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-
-            startActivity(intent);
-            finish();
-
-        }
-
-        return 0;
+      
+        return logInUser;
     }
 
     /**
