@@ -1,21 +1,18 @@
 package com.comp90018.uninooks.activities;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.VibrationEffect;
-import android.view.LayoutInflater;
-import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Handler;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Message;
+import android.os.Vibrator;
 
 import android.view.View;
 import android.widget.Button;
@@ -30,9 +27,6 @@ import com.comp90018.uninooks.service.background_app.BackgroundAppService;
 import com.comp90018.uninooks.views.TimerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import android.os.Vibrator;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class FocusModeTimerActivity extends AppCompatActivity {
@@ -45,7 +39,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
 
     private boolean isInBackground = false;
 
-    private int timer_length = 30;
+//    private int timer_length = 30;
 
     private int seconds;
     private Vibrator v;
@@ -87,14 +81,18 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private boolean onAutoSequence = false;
     private boolean inSequence = false;
 
+    public boolean neverShowAgain;
+
     private int pomodoroTime = 1500;
     private int shortPauseTime = 300;
     private int longPauseTime = 900;
+
     private int overallDefaultTime = 1500;
 
     private int pomodoroSequenceNum = 0;
-    private int pomodoroSequenceMax = 4;
+    private final int MAX_LOOP = 4;
 
+    private SharedPreferences sharedPreferences;
 
 
 
@@ -123,8 +121,10 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_focus_mode);
+        System.out.println("on create");
 
-//        SharedPreferences sharedPreferences = getSharedPreferences("MySettings", Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
+        showDialog();
 
         v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -157,7 +157,6 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 shortPauseButtonActions();
-
             }
         });
 
@@ -230,13 +229,11 @@ public class FocusModeTimerActivity extends AppCompatActivity {
 
         clickPomodoroButton();
 
-
         // Initialize unwantedApps list
 //        SharedPreferences preferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 //        String unwantedAppsList = preferences.getString("unwanted_apps", "");
 //        unwantedApps = new ArrayList<>(Arrays.asList(unwantedAppsList.split(",")));
     }
-
 
 
     public void onStart(){
@@ -271,14 +268,24 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             retrieveSettings();
             settingsClicked = false;
 
+            // if settings change, then do this -- have to compare before and after
             if (onAutoSequence) {
+                // if settings change (even if its only the duration, everything will reset to the start of the sequence)
                 resetTimer();
                 seconds = pomodoroTime;
                 isPomodoro = true;
                 isShortPause = false;
                 isLongPause = false;
-//                updateTimerText();
+                updateTimerText();
+                pomodoroSequenceNum = 0;
             }
+//            else {
+//                // they didn't turn on auto sequence/switched it off (do as normal)
+//                // set num back to 0, and callback everything so no running thread
+//                pomodoroSequenceNum = 0;
+//            }
+
+            // if settings didn't change, continue from where it left off (artificial pause)
         } else {
             isInBackground = false;
             Intent serviceIntent = new Intent(this, BackgroundAppService.class);
@@ -470,7 +477,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             handler.removeCallbacks(timerRunnable);
 //            handler.removeCallbacksAndMessages(pomodoroRunnable);
             handler.removeCallbacksAndMessages(null);
-            timer_length = seconds;
+//            timer_length = seconds;
             timerStartButton.setVisibility(View.VISIBLE);
             timerPauseButton.setVisibility(View.GONE);
         }
@@ -538,7 +545,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
      * Retrieve settings from the setting page
      */
     private void retrieveSettings() {
-        SharedPreferences sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
+//        SharedPreferences sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
         pomodoroTime = sharedPreferences.getInt(getString(R.string.pomodoro_setting), pomodoroTime);
         shortPauseTime = sharedPreferences.getInt(getString(R.string.short_break_setting), shortPauseTime);
         longPauseTime = sharedPreferences.getInt(getString(R.string.long_break_setting), longPauseTime);
@@ -558,7 +565,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
      * To set the default/current values on the next settings page
      */
     private void saveCurrentSettings() {
-        SharedPreferences sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
+//        SharedPreferences sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putInt(getString(R.string.pomodoro_setting), pomodoroTime);
@@ -592,6 +599,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         public void run() {
             displaySequenceIndicator();
             switchModes();
+            System.out.println("num: " + pomodoroSequenceNum);
 
             if (inSequence && (isPomodoro || isShortPause || isLongPause) && wasPaused) {
                 // if timer was paused in the middle of the sequence
@@ -603,7 +611,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                     pomodoroSequenceNum--;
                 }
                 continueTimerAfterReset();
-            } else if (pomodoroSequenceNum < pomodoroSequenceMax) {
+            } else if (pomodoroSequenceNum < MAX_LOOP) {
                 // pomodoro-short pause pair
                 // if current mode is pomodoro, it will run focus then short break
                 // else, it is in short break mode, and it will run short break only
@@ -613,7 +621,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 } else {
                     runShortBreak();
                 }
-            } else if (pomodoroSequenceNum == pomodoroSequenceMax) {
+            } else if (pomodoroSequenceNum == MAX_LOOP) {
                 // pomodoro-long pause pair
                 inSequence = true;
                 if (isPomodoro) {
@@ -621,12 +629,11 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 } else {
                     runLongBreak();
                 }
-            } else if (pomodoroSequenceNum == (pomodoroSequenceMax + 1)) {
+            } else if (pomodoroSequenceNum == (MAX_LOOP + 1)) {
                 // last pomodoro run
                 runPomodoro();
                 System.out.println("Sequence is done!");
                 pomodoroSequenceNum++;
-                System.out.println("num: " + pomodoroSequenceNum);
             }
         }
     };
@@ -647,7 +654,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private void continueTimerAfterReset() {
         wasReset = false;
         if (isPomodoro) {
-            if (pomodoroSequenceNum == pomodoroSequenceMax) {
+            if (pomodoroSequenceNum == MAX_LOOP) {
                 pomodoroLongBreak();
             } else {
                 pomodoroShortBreak();
@@ -664,7 +671,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
      * Displays sequence indicator after each focus-break pair is done
      */
     private void displaySequenceIndicator() {
-        if (pomodoroSequenceNum > 0 && pomodoroSequenceNum <= pomodoroSequenceMax+1 && !wasPaused) {
+        if (pomodoroSequenceNum > 0 && pomodoroSequenceNum <= MAX_LOOP+1 && !wasPaused) {
             sequenceIndicators[pomodoroSequenceNum-1].setVisibility(View.VISIBLE);
         }
     }
@@ -707,7 +714,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
         seconds = shortPauseTime;
         clickShortPauseButton();
-        mTimerView.start(shortPauseTime, isPaused);
+        mTimerView.start(shortPauseTime+1, isPaused);
 
         startTimer();
         System.out.println("ShortPause timer started");
@@ -728,7 +735,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
 
         seconds = longPauseTime;
-        mTimerView.start(longPauseTime, isPaused);
+        mTimerView.start(longPauseTime+1, isPaused);
         startTimer();
         System.out.println("Long pause timer started");
 
@@ -746,7 +753,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private void runPomodoro() {
         seconds = pomodoroTime;
         clickPomodoroButton();
-        mTimerView.start(pomodoroTime, isPaused);
+        mTimerView.start(pomodoroTime+1, isPaused);
         startTimer();
         System.out.println("Pomodoro");
         isPomodoro = true;
@@ -760,7 +767,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private void switchModes() {
         if (seconds <= 2) {
             System.out.println("mode switched");
-            if (pomodoroSequenceNum < pomodoroSequenceMax) {
+            if (pomodoroSequenceNum < MAX_LOOP) {
                 if (isPomodoro) {
                     isPomodoro = false;
                     isShortPause = true;
@@ -774,16 +781,16 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 }
             } else {
                 if (isPomodoro) {
-                    System.out.println("num < max: " + (pomodoroSequenceNum < pomodoroSequenceMax));
+                    System.out.println("num < max: " + (pomodoroSequenceNum < MAX_LOOP));
                     System.out.println("num: " + pomodoroSequenceNum);
-                    System.out.println("max: " + pomodoroSequenceMax);
+                    System.out.println("max: " + MAX_LOOP);
                     isPomodoro = false;
                     isShortPause = false;
                     isLongPause = true;
                 } else {
-                    System.out.println("num < max: " + (pomodoroSequenceNum < pomodoroSequenceMax));
+                    System.out.println("num < max: " + (pomodoroSequenceNum < MAX_LOOP));
                     System.out.println("num: " + pomodoroSequenceNum);
-                    System.out.println("max: " + pomodoroSequenceMax);
+                    System.out.println("max: " +MAX_LOOP);
                     isPomodoro = true;
                     isShortPause = false;
                     isLongPause = false;
@@ -803,23 +810,66 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     /**
      * Disable all buttons except for settings
      */
-    private void disableAllButtons() {
+    private void disableModeChangingButtons() {
         pomodoroButton.setClickable(false);
         shortPauseButton.setClickable(false);
         longPauseButton.setClickable(false);
-        timerResetButton.setClickable(false);
     }
 
-    private void enableAllButtons() {
+    private void enableModeChangingButtons() {
         pomodoroButton.setClickable(true);
         shortPauseButton.setClickable(true);
         longPauseButton.setClickable(true);
-        timerResetButton.setClickable(true);
     }
 
+    private void showDialog() {
+        neverShowAgain = sharedPreferences.getBoolean(getString(R.string.never_show_again_setting), false);
+        if (!neverShowAgain) {
+            Dialog dialog = createDialog();
+            dialog.show();
+        }
+    }
+    private Dialog createDialog() {
+        String[] choices = {"Never show this message again"};
+        final boolean[] neverShowAgainDialog = {false};
 
+        // Use the Builder class for convenient dialog construction.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.dialogMessage)
+                .setSingleChoiceItems(choices, -1,  new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        neverShowAgainDialog[0] = true;
+                    }
+                })
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean(getString(R.string.never_show_again_setting), neverShowAgainDialog[0]);
+                        editor.apply();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancels the dialog.
+                        // Stay on current page, don't do anything
+                        // Settings are not changed
+                    }
+                });
+        // Create the AlertDialog object and return it.
+        return builder.create();
+    }
+
+//    public void onClick(DialogInterface dialog, int id) {
+//
+//    }
+//})
 
     public void openSettings(View view) {
 
     }
+
 }
