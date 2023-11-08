@@ -1,8 +1,12 @@
 package com.comp90018.uninooks.activities;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -72,12 +76,19 @@ public class HomeActivity extends AppCompatActivity {
     private int randomRange;
     private StudySpace randomSpace;
 
+    private SharedPreferences sharedPreferences;
+    public boolean neverShowAgain;
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         context = getApplicationContext();
+        sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
+        showDialog();
+
+
 
         Intent intent = getIntent();
         userId = intent.getIntExtra("USER_ID_EXTRA", 0);
@@ -233,95 +244,121 @@ public class HomeActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             // Nearby Section
-                            for (StudySpace space : closestStudySpaces.subList(0, 10)){
-                                CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, nearbyLayout, false);
-                                CardView newCard = createNewSmallCard(card,space, "distance");
+                            if (closingStudySpaces.size()== 0){
+                                ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
+                                loadingGIF.setVisibility(View.VISIBLE);
+                                loadingGIF.setVisibility(View.GONE);
+                            } else {
+                                for (StudySpace space : closestStudySpaces.subList(0, 10)) {
+                                    CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, nearbyLayout, false);
+                                    ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
+                                    loadingGIF.setVisibility(View.VISIBLE);
+                                    CardView newCard = createNewSmallCard(card, space, "distance");
 //                                    System.out.println(space.getId());
-                                String spaceID = String.valueOf(space.getId());
-                                for (StudySpace favorite: favorites) {
-                                    if (favorite.getName().equals(space.getName())) {
-                                        ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
-                                        favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
-                                        favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                                    String spaceID = String.valueOf(space.getId());
+                                    for (StudySpace favorite : favorites) {
+                                        if (favorite.getName().equals(space.getName())) {
+                                            ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
+                                            favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
+                                            favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                                        }
                                     }
+                                    loadingGIF.setVisibility(View.GONE);
+                                    nearbyLayout.addView(newCard);
+                                    newCard.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            new Thread() {
+                                                public void run() {
+                                                    Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
+                                                    intent.putExtra("USER_ID_EXTRA", userId);
+                                                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                                    intent.putExtra("USER_NAME_EXTRA", userName);
+                                                    intent.putExtra("LOCATION_ID", space.getId());
+                                                    intent.putExtra("LOCATION_TYPE", space.getType());
+                                                    startActivity(intent);
+                                                }
+                                            }.start();
+                                        }
+                                    });
                                 }
-
-                                nearbyLayout.addView(newCard);
-                                newCard.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        new Thread() {
-                                            public void run() {
-                                                Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                                                intent.putExtra("USER_ID_EXTRA", userId);
-                                                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                                                intent.putExtra("USER_NAME_EXTRA", userName);
-                                                intent.putExtra("LOCATION_ID", space.getId());
-                                                intent.putExtra("LOCATION_TYPE", space.getType());
-                                                startActivity(intent);
-                                            }
-                                        }.start();
-                                    }
-                                });
                             }
                             // Top Rated Section
-                            for (StudySpace space : topRatedStudySpaces.subList(0, 10)){
+                            if (topRatedStudySpaces.size()== 0){
+                                ProgressBar loadingGIF2 = findViewById(R.id.loadingGIF_2);
+                                loadingGIF2.setVisibility(View.VISIBLE);
+                                loadingGIF2.setVisibility(View.GONE);
+                            } else {
+                                for (StudySpace space : topRatedStudySpaces.subList(0, 10)) {
 //                        Location space = studySpacesNearby.get(i);
-                                CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, topRatedLayout, false);
-                                CardView newCard = createNewSmallCard(card,space,"rating");
-                                String spaceID = String.valueOf(space.getId());
-                                for (StudySpace favorite: favorites) {
-                                    if (favorite.getName().equals(space.getName())) {
-                                        ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
-                                        favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
-                                        favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                                    CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, topRatedLayout, false);
+                                    ProgressBar loadingGIF2 = findViewById(R.id.loadingGIF_2);
+                                    loadingGIF2.setVisibility(View.VISIBLE);
+                                    CardView newCard = createNewSmallCard(card, space, "rating");
+                                    String spaceID = String.valueOf(space.getId());
+                                    for (StudySpace favorite : favorites) {
+                                        if (favorite.getName().equals(space.getName())) {
+                                            ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
+                                            favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
+                                            favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                                        }
                                     }
-                                }
-                                topRatedLayout.addView(newCard);
+                                    loadingGIF2.setVisibility(View.GONE);
+                                    topRatedLayout.addView(newCard);
 
-                                card.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        new Thread() {
-                                            public void run() {
-                                                Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                                                intent.putExtra("USER_ID_EXTRA", userId);
-                                                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                                                intent.putExtra("USER_NAME_EXTRA", userName);
-                                                intent.putExtra("LOCATION_ID", space.getId());
-                                                intent.putExtra("LOCATION_TYPE", space.getType());
-                                                startActivity(intent);
-                                            }
-                                        }.start();
-                                    }
-                                });
+                                    card.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            new Thread() {
+                                                public void run() {
+                                                    Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
+                                                    intent.putExtra("USER_ID_EXTRA", userId);
+                                                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                                    intent.putExtra("USER_NAME_EXTRA", userName);
+                                                    intent.putExtra("LOCATION_ID", space.getId());
+                                                    intent.putExtra("LOCATION_TYPE", space.getType());
+                                                    startActivity(intent);
+                                                }
+                                            }.start();
+                                        }
+                                    });
+                                }
                             }
                             // Favorites Section
-                            for (StudySpace space : favorites){
+                            if (favorites.size()== 0){
+                                ProgressBar loadingGIF3 = findViewById(R.id.loadingGIF_3);
+                                loadingGIF3.setVisibility(View.VISIBLE);
+                                loadingGIF3.setVisibility(View.GONE);
+                            } else {
+                                for (StudySpace space : favorites) {
 //                        Location space = studySpacesNearby.get(i);
-                                CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, favoritesLayout, false);
-                                CardView newCard = createNewSmallCard(card,space,"favorite");
-                                String spaceID = String.valueOf(space.getId());
-                                ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
-                                favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
-                                favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
-                                favoritesLayout.addView(newCard);
-                                card.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        new Thread() {
-                                            public void run() {
-                                                Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                                                intent.putExtra("USER_ID_EXTRA", userId);
-                                                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                                                intent.putExtra("USER_NAME_EXTRA", userName);
-                                                intent.putExtra("LOCATION_ID", space.getId());
-                                                intent.putExtra("LOCATION_TYPE", space.getType());
-                                                startActivity(intent);
-                                            }
-                                        }.start();
-                                    }
-                                });
+                                    CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, favoritesLayout, false);
+                                    ProgressBar loadingGIF3 = findViewById(R.id.loadingGIF_3);
+                                    loadingGIF3.setVisibility(View.VISIBLE);
+                                    CardView newCard = createNewSmallCard(card, space, "favorite");
+                                    String spaceID = String.valueOf(space.getId());
+                                    ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
+                                    favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
+                                    favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                                    loadingGIF3.setVisibility(View.GONE);
+                                    favoritesLayout.addView(newCard);
+                                    card.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            new Thread() {
+                                                public void run() {
+                                                    Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
+                                                    intent.putExtra("USER_ID_EXTRA", userId);
+                                                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                                    intent.putExtra("USER_NAME_EXTRA", userName);
+                                                    intent.putExtra("LOCATION_ID", space.getId());
+                                                    intent.putExtra("LOCATION_TYPE", space.getType());
+                                                    startActivity(intent);
+                                                }
+                                            }.start();
+                                        }
+                                    });
+                                }
                             }
                         }
                     });
@@ -408,6 +445,7 @@ public class HomeActivity extends AppCompatActivity {
         favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
 //        favouriteIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));
         //check if the favourites list includes this user and favourite
+
         return card;
     }
 
@@ -470,6 +508,68 @@ public class HomeActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         finish();
         startActivity(intent);
+    }
+
+    private void showDialog() {
+        neverShowAgain = sharedPreferences.getBoolean(getString(R.string.never_show_welcome), false);
+        if (!neverShowAgain) {
+            Dialog dialog = createDialog();
+            dialog.show();
+        }
+    }
+    private Dialog createDialog() {
+        String[] choices = {"I understand, don't show this again"};
+        final boolean[] neverShowAgainDialog = {false};
+
+        // Use the Builder class for convenient dialog construction.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.activity_onboarding, null))
+                // Add action buttons
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        neverShowAgainDialog[0] = true;
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean(getString(R.string.never_show_welcome), neverShowAgainDialog[0]);
+                        editor.apply();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancels the dialog.
+//                      // Stay on current page, don't do anything
+//                      // Settings are not changed
+                    }
+                });
+        return builder.create();
+
+//        builder.setTitle(R.string.dialogMessage)
+//                .setSingleChoiceItems(choices, -1, new DialogInterface.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        neverShowAgainDialog[0] = true;
+//                    }
+//                })
+//                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        SharedPreferences.Editor editor = sharedPreferences.edit();
+//                        editor.putBoolean(getString(R.string.never_show_again_setting), neverShowAgainDialog[0]);
+//                        editor.apply();
+//                    }
+//                })
+//                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        // User cancels the dialog.
+//                        // Stay on current page, don't do anything
+//                        // Settings are not changed
+//                    }
+//                });
+        // Create the AlertDialog object and return it.
+//        return builder.create();
     }
 
 }

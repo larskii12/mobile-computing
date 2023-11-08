@@ -93,63 +93,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         locationId = intent.getIntExtra("LOCATION_ID", 0);
         locationType = intent.getStringExtra("LOCATION_TYPE");
 
-//        bottomNav = findViewById(R.id.bottom_navigation);
-//        bottomNav.setSelectedItemId(R.id.homeNav);
-
-//        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-//            @SuppressLint("NonConstantResourceId")
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                int id = item.getItemId();
-//
-//                if (id == R.id.homeNav){
-//                    Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
-//
-//                    // Pass the user to next page
-//                    intent.putExtra("USER_ID_EXTRA", userId);
-//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-//                    intent.putExtra("USER_NAME_EXTRA", userName);
-//
-//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    startActivity(intent);
-//                    finish();
-//                }
-//
-//                else if (id == R.id.searchNav) {
-//                    Intent intent = new Intent(LocationActivity.this, MapsActivity.class);
-//
-//                    // Pass the user to next page
-//                    intent.putExtra("USER_ID_EXTRA", userId);
-//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-//                    intent.putExtra("USER_NAME_EXTRA", userName);
-//
-//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    startActivity(intent);
-//                    finish();
-//
-//                } else if (id == R.id.focusNav) {
-//                    Intent intent = new Intent(LocationActivity.this, StudyZoneActivity.class);
-//
-//                    // Pass the user to next page
-//                    intent.putExtra("USER_ID_EXTRA", userId);
-//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-//                    intent.putExtra("USER_NAME_EXTRA", userName);
-//                    startActivity(intent);
-//                    finish();
-//
-//                } else {
-//                    Intent intent = new Intent(LocationActivity.this, AccountActivity.class);
-//
-//                    // Pass the user to next page
-//                    intent.putExtra("USER_ID_EXTRA", userId);
-//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-//                    intent.putExtra("USER_NAME_EXTRA", userName);
-//                    startActivity(intent);
-//                }
-//
-//                return false;
-//            }
-//        });
 
 
         new Thread() {
@@ -196,6 +139,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
                     ImageButton backButton = findViewById(R.id.imageButton);
                     ImageButton favouriteButton = findViewById(R.id.favoriteButton);
+                    ImageButton locationButton = findViewById(R.id.locate_my_location);
 
                     Button addReview = findViewById(R.id.add_review);
 //                    User user = null;
@@ -210,6 +154,12 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     //System.out.println("Building id: " + space.getBuildingId());
 
                     List<Resource> resources = new ResourceServiceImpl().getResourceFromBuilding(location.getBuildingId());
+                    locationButton.setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v) {
+                            //navigate to the navigation part
+                        }
+                    });
                     backButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -290,6 +240,8 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                         @Override
                         public void run() {
                             backButton.setBackgroundResource(R.drawable.arrow_back_fill);
+                            locationButton.setBackgroundResource(R.drawable.my_location_pin);
+                            locationButton.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.rounded_circle_button) );
                             locationName.setText(location.getName());
                             listTitle.setText("Facilities");
                             progress.setProgress(busyScore);

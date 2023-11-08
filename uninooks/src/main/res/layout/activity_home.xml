@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTintMode="add"
+    android:background="@color/white"
     tools:context=".activities.HomeActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,6 +30,7 @@
             android:gravity="left"
             android:text="Good morning"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="24sp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -40,133 +41,24 @@
             tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
-    <!--    <LinearLayout-->
-    <!--        android:id="@+id/linearLayout"-->
-    <!--        android:layout_width="409dp"-->
-    <!--        android:layout_height="93dp"-->
-    <!--        android:orientation="horizontal"-->
-    <!--        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">-->
-
-    <!--        <View-->
-    <!--            android:layout_width="0dp"-->
-    <!--            android:layout_height="50dp"-->
-    <!--            android:layout_weight="1" />-->
-
-    <!--        <LinearLayout-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:orientation="vertical">-->
-
-    <!--            <ImageButton-->
-    <!--                android:id="@+id/studyButton"-->
-    <!--                style="@android:style/Widget.Material.Light.ImageButton"-->
-    <!--                android:layout_width="80dp"-->
-    <!--                android:layout_height="73dp"-->
-    <!--                android:background="@drawable/study_space_button"-->
-    <!--                android:contentDescription="menu book icon"-->
-    <!--                android:drawableTop="@drawable/baseline_menu_book_32"-->
-    <!--                app:srcCompat="@drawable/baseline_menu_book_32"-->
-    <!--                tools:layout_editor_absoluteX="234dp"-->
-    <!--                tools:layout_editor_absoluteY="81dp" />-->
-
-    <!--            <TextView-->
-    <!--                android:id="@+id/textView2"-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="match_parent"-->
-    <!--                android:layout_weight="1"-->
-    <!--                android:gravity="center"-->
-    <!--                android:text="Study" />-->
-    <!--        </LinearLayout>-->
-
-    <!--        <View-->
-    <!--            android:layout_width="0dp"-->
-    <!--            android:layout_height="50dp"-->
-    <!--            android:layout_weight="1" />-->
-
-    <!--        <LinearLayout-->
-    <!--            android:layout_width="75dp"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:orientation="vertical">-->
-
-    <!--            <ImageButton-->
-    <!--                android:id="@+id/foodButton"-->
-    <!--                style="@android:style/Widget.Material.Light.ImageButton"-->
-    <!--                android:layout_width="75dp"-->
-    <!--                android:layout_height="74dp"-->
-    <!--                android:background="@drawable/study_space_button"-->
-    <!--                android:contentDescription="food icon"-->
-    <!--                android:drawableTop="@drawable/baseline_fastfood_32"-->
-    <!--                app:circularflow_defaultAngle="20"-->
-    <!--                app:srcCompat="@drawable/baseline_fastfood_32"-->
-    <!--                tools:layout_editor_absoluteX="32dp"-->
-    <!--                tools:layout_editor_absoluteY="80dp" />-->
-
-    <!--            <TextView-->
-    <!--                android:id="@+id/textView3"-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="match_parent"-->
-    <!--                android:layout_weight="1"-->
-    <!--                android:gravity="center"-->
-    <!--                android:text="Food" />-->
-    <!--        </LinearLayout>-->
-
-    <!--        <View-->
-    <!--            android:layout_width="0dp"-->
-    <!--            android:layout_height="50dp"-->
-    <!--            android:layout_weight="1" />-->
-
-    <!--        <LinearLayout-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:orientation="vertical">-->
-
-    <!--            <ImageButton-->
-    <!--                android:id="@+id/favouritesButton"-->
-    <!--                style="@android:style/Widget.Material.Light.ImageButton"-->
-    <!--                android:layout_width="76dp"-->
-    <!--                android:layout_height="72dp"-->
-    <!--                android:background="@drawable/study_space_button"-->
-    <!--                android:contentDescription="favourites icon"-->
-    <!--                android:drawableTop="@drawable/baseline_favorite_32"-->
-    <!--                app:circularflow_defaultAngle="20"-->
-    <!--                app:srcCompat="@drawable/baseline_favorite_32"-->
-    <!--                tools:layout_editor_absoluteX="134dp"-->
-    <!--                tools:layout_editor_absoluteY="80dp" />-->
-
-    <!--            <TextView-->
-    <!--                android:id="@+id/textView4"-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="match_parent"-->
-    <!--                android:layout_weight="1"-->
-    <!--                android:gravity="center"-->
-    <!--                android:text="Favourites" />-->
-    <!--        </LinearLayout>-->
-
-    <!--        <View-->
-    <!--            android:layout_width="0dp"-->
-    <!--            android:layout_height="50dp"-->
-    <!--            android:layout_weight="1" />-->
-    <!--    </LinearLayout>-->
-
     <ScrollView
         android:id="@+id/verticalScroll"
         android:layout_width="match_parent"
         android:layout_height="720dp"
+        android:backgroundTint="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="240dp"
+                android:backgroundTint="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.666"
                 app:layout_constraintStart_toStartOf="parent"
@@ -203,11 +95,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView6">
 
+
                     <LinearLayout
                         android:id="@+id/nearbyLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
+                        <ProgressBar
+                            android:id="@+id/loadingGIF"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="400dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            app:layout_constraintStart_toStartOf="parent" />
 
                     </LinearLayout>
                 </HorizontalScrollView>
@@ -219,6 +119,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="235dp"
                 android:layout_marginTop="4dp"
+                android:backgroundTint="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
@@ -241,7 +142,15 @@
                         android:id="@+id/topRatedLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal"></LinearLayout>
+                        android:orientation="horizontal">
+                        <ProgressBar
+                            android:id="@+id/loadingGIF_2"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="400dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            app:layout_constraintStart_toStartOf="parent" />
+                    </LinearLayout>
                 </HorizontalScrollView>
 
                 <TextView
@@ -266,6 +175,7 @@
                 android:id="@+id/constraintLayout4"
                 android:layout_width="match_parent"
                 android:layout_height="240dp"
+                android:backgroundTint="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.666"
                 app:layout_constraintStart_toStartOf="parent"
@@ -307,7 +217,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
-
+                        <ProgressBar
+                            android:id="@+id/loadingGIF_3"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="400dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            app:layout_constraintStart_toStartOf="parent" />
                     </LinearLayout>
                 </HorizontalScrollView>
 

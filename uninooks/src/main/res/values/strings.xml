@@ -67,4 +67,7 @@
     <string name="how_was_your_experience">How was your experience?</string>
     <string name="submit">Submit</string>
     <string name="write_your_review_here">Write your review here</string>
+
+    <!--Home strings -->
+    <string name="never_show_welcome">Dont show again</string>
 </resources>
