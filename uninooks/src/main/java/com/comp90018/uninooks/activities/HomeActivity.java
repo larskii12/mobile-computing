@@ -239,6 +239,8 @@ public class HomeActivity extends AppCompatActivity {
                             // Nearby Section
                             for (StudySpace space : closestStudySpaces.subList(0, 10)){
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, nearbyLayout, false);
+                                ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
+                                loadingGIF.setVisibility(View.VISIBLE);
                                 CardView newCard = createNewSmallCard(card,space, "distance");
 //                                    System.out.println(space.getId());
                                 String spaceID = String.valueOf(space.getId());
@@ -249,7 +251,7 @@ public class HomeActivity extends AppCompatActivity {
                                         favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
                                     }
                                 }
-
+                                loadingGIF.setVisibility(View.GONE);
                                 nearbyLayout.addView(newCard);
                                 newCard.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -272,6 +274,8 @@ public class HomeActivity extends AppCompatActivity {
                             for (StudySpace space : topRatedStudySpaces.subList(0, 10)){
 //                        Location space = studySpacesNearby.get(i);
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, topRatedLayout, false);
+                                ProgressBar loadingGIF2 = findViewById(R.id.loadingGIF_2);
+                                loadingGIF2.setVisibility(View.VISIBLE);
                                 CardView newCard = createNewSmallCard(card,space,"rating");
                                 String spaceID = String.valueOf(space.getId());
                                 for (StudySpace favorite: favorites) {
@@ -281,6 +285,7 @@ public class HomeActivity extends AppCompatActivity {
                                         favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
                                     }
                                 }
+                                loadingGIF2.setVisibility(View.GONE);
                                 topRatedLayout.addView(newCard);
 
                                 card.setOnClickListener(new View.OnClickListener() {
@@ -304,11 +309,14 @@ public class HomeActivity extends AppCompatActivity {
                             for (StudySpace space : favorites){
 //                        Location space = studySpacesNearby.get(i);
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, favoritesLayout, false);
+                                ProgressBar loadingGIF3 = findViewById(R.id.loadingGIF_3);
+                                loadingGIF3.setVisibility(View.VISIBLE);
                                 CardView newCard = createNewSmallCard(card,space,"favorite");
                                 String spaceID = String.valueOf(space.getId());
                                 ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
                                 favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
                                 favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                                loadingGIF3.setVisibility(View.GONE);
                                 favoritesLayout.addView(newCard);
                                 card.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -412,6 +420,7 @@ public class HomeActivity extends AppCompatActivity {
         favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
 //        favouriteIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));
         //check if the favourites list includes this user and favourite
+
         return card;
     }
 

@@ -203,11 +203,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView6">
 
+
                     <LinearLayout
                         android:id="@+id/nearbyLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
+                        <ProgressBar
+                            android:id="@+id/loadingGIF"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="400dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            app:layout_constraintStart_toStartOf="parent" />
 
                     </LinearLayout>
                 </HorizontalScrollView>
@@ -241,7 +249,15 @@
                         android:id="@+id/topRatedLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal"></LinearLayout>
+                        android:orientation="horizontal">
+                        <ProgressBar
+                            android:id="@+id/loadingGIF_2"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="400dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            app:layout_constraintStart_toStartOf="parent" />
+                    </LinearLayout>
                 </HorizontalScrollView>
 
                 <TextView
@@ -307,7 +323,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
-
+                        <ProgressBar
+                            android:id="@+id/loadingGIF_3"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="400dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            app:layout_constraintStart_toStartOf="parent" />
                     </LinearLayout>
                 </HorizontalScrollView>
 
