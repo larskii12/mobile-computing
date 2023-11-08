@@ -317,8 +317,9 @@ public class HomeActivity extends AppCompatActivity {
                                                     intent.putExtra("USER_ID_EXTRA", userId);
                                                     intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                                                     intent.putExtra("USER_NAME_EXTRA", userName);
-                                                    intent.putExtra("LOCATION_ID", space.getId());
+                                                    //intent.putExtra("LOCATION_ID", space.getId());
                                                     intent.putExtra("LOCATION_TYPE", space.getType());
+                                                    intent.putExtra("LOCATION", space);
                                                     startActivity(intent);
                                                 }
                                             }.start();
@@ -355,8 +356,9 @@ public class HomeActivity extends AppCompatActivity {
                                                     intent.putExtra("USER_ID_EXTRA", userId);
                                                     intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                                                     intent.putExtra("USER_NAME_EXTRA", userName);
-                                                    intent.putExtra("LOCATION_ID", space.getId());
+                                                    //intent.putExtra("LOCATION_ID", space.getId());
                                                     intent.putExtra("LOCATION_TYPE", space.getType());
+                                                    intent.putExtra("LOCATION", space);
                                                     startActivity(intent);
                                                 }
                                             }.start();
