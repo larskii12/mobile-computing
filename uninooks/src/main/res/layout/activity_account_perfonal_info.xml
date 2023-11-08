@@ -10,7 +10,8 @@
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
 
 
     <RelativeLayout
@@ -21,14 +22,17 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/User_Photo"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginTop="84dp"
+            android:layout_marginLeft="52dp"
+            android:layout_marginStart="20dp"
             android:layout_marginEnd="12dp"
-            android:padding="5dp"
-            android:src="@drawable/user_photodefault_user"
+            android:padding="8dp"
+            android:src="@drawable/account_fill"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:tint="@color/deepBlue"
+            android:background="@color/white"
             app:shapeAppearanceOverlay="@style/Circular" />
 
 

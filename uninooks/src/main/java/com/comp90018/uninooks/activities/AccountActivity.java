@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,12 +15,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.user.User;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 public class AccountActivity extends AppCompatActivity {
 
@@ -28,6 +32,7 @@ public class AccountActivity extends AppCompatActivity {
     private int userId;
     private String userEmail;
     private String userName;
+    private BottomNavigationView bottomNav;
 
 
 
@@ -52,6 +57,7 @@ public class AccountActivity extends AppCompatActivity {
     };
 
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +76,64 @@ public class AccountActivity extends AppCompatActivity {
 
         // Get username
         textViewAccountGreetingUserName = findViewById(R.id.Account_Greeting_Username);
+
+        bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setSelectedItemId(R.id.accountNav);
+
+        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @SuppressLint("NonConstantResourceId")
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+
+                if (id == R.id.homeNav){
+                    Intent intent = new Intent(AccountActivity.this, HomeActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+
+                else if (id == R.id.searchNav) {
+                    Intent intent = new Intent(AccountActivity.this, MapsActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+
+                } else if (id == R.id.focusNav) {
+                    Intent intent = new Intent(AccountActivity.this, StudyZoneActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+                    startActivity(intent);
+                    finish();
+
+                } else {
+                    Intent intent = new Intent(AccountActivity.this, AccountActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+                    startActivity(intent);
+                }
+
+                return false;
+            }
+        });
 
         // Set an OnClickListener
         personalInfoLayout.setOnClickListener(new View.OnClickListener() {
