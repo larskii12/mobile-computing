@@ -54,7 +54,6 @@ import java.util.HashMap;
 import java.util.List;
 
 
-
 public class SearchResults extends AppCompatActivity {
     private int userID;
     LinearLayout resultCardArea;
@@ -600,6 +599,9 @@ public class SearchResults extends AppCompatActivity {
 
             try {
                 List<Resource> availResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
+                for (Resource r : availResources) {
+                    System.out.println(r.getName());
+                }
                 resourcesByLocation.put(locationName, availResources);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -928,7 +930,6 @@ public class SearchResults extends AppCompatActivity {
             } else if (facility.equals("atm")) {
                 keepLoc = haveFacility(resources, ResourceType.ATM);
             } else if (facility.equals("accessible")) {
-                // accessibility from building
                 Building building = buildingsByLocation.get(location.getId());
                 if (!building.isHasAccessibility()) {
                     keepLoc = false;

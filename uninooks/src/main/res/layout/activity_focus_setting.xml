@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:foregroundTint="@color/deepBlue"
+    tools:context=".activities.FilterAdjustmentActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:background="@color/white"
+        android:minHeight="90dp"
+        android:elevation="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <ImageButton
+            android:id="@+id/returnButton"
+            android:contentDescription="@android:string/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginEnd="18dp"
+            android:adjustViewBounds="true"
+            android:backgroundTint="#00FFFFFF"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+            app:layout_constraintEnd_toEndOf="@+id/toolbar"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/toolbar"
+            app:layout_constraintTop_toTopOf="@id/toolbar"
+            app:layout_constraintVertical_bias="1.0"
+            app:srcCompat="?attr/actionModeCloseDrawable"
+            app:tint="@color/deepBlue" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/source_sans_pro"
+            android:text="Timer Settings"
+            android:textColor="@color/deepBlue"
+            android:textSize="28sp" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="88dp"
+        android:layout_marginBottom="70dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="32dp"
+        app:layout_constraintWidth="320dp">
+
+
+        <LinearLayout
+            android:id="@+id/LinearLayoutFocusSettingPomodoro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp">
+
+            <ImageView
+                android:id="@+id/pomTimeIcon"
+                style="@style/IconStyle"
+                android:src="@drawable/ic_arrow_down"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                style="@style/TextSubHeading"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
+                android:text="Pomodoro Timer" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/RelativeLayoutFocusSettingPomodoro"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+
+                <EditText
+                    android:id="@+id/EditTextFocusSettingMins"
+                    style="@style/TextInputStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="minutes"
+                    android:imeOptions="actionDone"
+                    android:inputType="number" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextSubHeading"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginVertical="8dp"
+                    android:inputType="number"
+                    android:text="minutes" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+
+        <LinearLayout
+            android:id="@+id/LinearLayoutFocusSettingShortBreak"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp">
+
+            <ImageView
+                android:id="@+id/shortTimeIcon"
+                style="@style/IconStyle"
+                android:src="@drawable/ic_arrow_down"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextSubHeading"
+                android:layout_gravity="center"
+                android:paddingHorizontal="20dp"
+                android:layout_marginStart="5dp"
+                android:text="Short Break"
+                android:textSize="20sp"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/RelativeLayoutFocusSettingShortBreak"
+            android:layout_width="match_parent"
+            android:layout_marginTop="24dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal">
+
+                <EditText
+                    android:id="@+id/EditTextFocusShortBreakSetting"
+                    style="@style/TextInputStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="minutes"
+                    android:imeOptions="actionDone"
+                    android:inputType="number" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextSubHeading"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginVertical="8dp"
+                    android:inputType="number"
+                    android:text="minutes" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/LinearLayoutFocusSettingLongBreak"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp">
+
+            <ImageView
+                android:id="@+id/longTimeIcon"
+                style="@style/IconStyle"
+                android:src="@drawable/ic_arrow_down"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextSubHeading"
+                android:layout_gravity="center"
+                android:paddingHorizontal="22dp"
+                android:layout_marginStart="2dp"
+                android:text="Long Break"
+                android:textSize="20sp"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/RelativeLayoutFocusSettingLongBreak"
+            android:layout_width="match_parent"
+            android:layout_marginTop="24dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                >
+
+                <EditText
+                    android:id="@+id/EditTextFocusLongBreakSetting"
+                    style="@style/TextInputStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="minutes"
+                    android:imeOptions="actionDone"
+                    android:inputType="number" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextSubHeading"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginVertical="8dp"
+                    android:inputType="number"
+                    android:text="minutes" />
+
+            </LinearLayout>
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="64dp"-->
+<!--                android:gravity="center_horizontal">-->
+
+<!--                <Button-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    style="@style/Button.Primary"-->
+<!--                    android:text="Save" />-->
+<!--            </LinearLayout>-->
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="50dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
+
+            <Switch
+                android:id="@+id/toggleSwitch"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:clickable="true"
+                android:thumbTint="@drawable/toggle_switch"
+                android:trackTint="@color/deepBlue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="78dp"
+                android:text="Use the Pomodoro sequence: Pomodoro → short break, repeat 4x, then one long break"
+                android:fontFamily="@font/source_sans_pro"
+                android:textSize="18sp"
+                android:layout_marginStart="16dp"
+                android:textColor="@color/deepBlue"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Number of Pomodoros completed is indicated with dots under 'Pomodoro'"
+            android:fontFamily="@font/source_sans_pro"
+            android:textSize="16sp"
+            android:textColor="@color/grey"
+            android:paddingTop="6dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
+            android:layout_marginStart="62dp" />
+
+
+    </LinearLayout>
+    </ScrollView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@drawable/rectangle_border"
+        android:foregroundGravity="bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/resetSettingsButton"
+            android:layout_width="160dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/white"
+            app:strokeColor="@color/black"
+            app:strokeWidth="2dp"
+            android:layout_marginStart="30dp"
+            android:text="Reset"
+            android:textColor="@color/deepBlue"
+            android:fontFamily="@font/source_sans_pro"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/saveSettingsButton"
+            android:layout_width="160dp"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/deepBlue"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="224dp"
+            android:text="Save"
+            android:fontFamily="@font/source_sans_pro"
+            android:textSize="20sp"/>
+
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

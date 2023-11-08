@@ -7,6 +7,12 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -58,7 +64,12 @@
         <activity android:name=".activities.ResetPasswordActivity" />
         <activity android:name=".activities.ReportIssue" />
         <activity android:name=".activities.PersonalInformationActivity" />
-        <activity android:name=".activities.StudyZoneActivity" />
+        <activity android:name=".activities.FocusModeSplashActivity" />
+        <activity android:name=".activities.FocusModeMainActivity" />
+        <activity android:name=".activities.FocusModeTimerActivity" />
+        <activity
+            android:name=".activities.FocusModeSettingsActivity"
+            android:windowSoftInputMode="adjustPan"/>
 
         <activity
             android:name=".activities.SearchResults"
@@ -76,7 +87,17 @@
             android:label="LocationActivity"
             android:exported="true"/>
 
+        <service
+            android:name=".service.background_app.BackgroundAppService"
+            android:enabled="true"
+            android:exported="false">
+        </service>
+
+        <receiver
+            android:name=".receiver.FocusModeReceiver"
+            android:enabled="true"
+            android:exported="false">
+        </receiver>
 
     </application>
-
 </manifest>
