@@ -1,101 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white">
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="208dp"
-        android:background="@drawable/account_hero_banner">
-
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/User_Photo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="84dp"
-            android:layout_marginLeft="52dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="12dp"
-            android:padding="8dp"
-            android:src="@drawable/account_fill"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:tint="@color/deepBlue"
-            android:background="@color/white"
-            app:shapeAppearanceOverlay="@style/Circular" />
-
-
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/Account_Back_to_Home_Arrow_Left"
-                style="@style/IconWhite"
-                android:layout_width="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:src="@drawable/ic_arrow_left" />
-
-            <TextView
-                android:id="@+id/Account_Greeting"
-                style="@style/WhiteTextHeading"
-                android:layout_width="wrap_content"
-                android:paddingStart="16dp"
-                android:text="@string/Account_Pi_Personal_Info"
-                android:textAlignment="textStart" />
-
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
 
-    </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="208dp"
+                    android:background="@drawable/account_hero_banner">
 
-    <!-- Name Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:layout_marginBottom="4dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        tools:ignore="UseCompoundDrawables">
 
-        <!-- Label "Name" -->
-        <TextView
-            android:id="@+id/tv_name_label"
-            style="@style/TextSubHeading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="48dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/Username" />
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/User_Photo"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="84dp"
+                    android:layout_marginLeft="52dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="12dp"
+                    android:padding="8dp"
+                    android:src="@drawable/account_fill"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:tint="@color/deepBlue"
+                    android:background="@color/white"
+                    app:shapeAppearanceOverlay="@style/Circular" />
 
-        <ImageView
-            android:id="@+id/Account_Pi_Ic_Edit_Name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="72dp"
-            android:clickable="true"
-            android:scaleX="0.8"
-            android:scaleY="0.8"
-            android:src="@drawable/ic_edit" />
 
-    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:id="@+id/Account_Back_to_Home_Arrow_Left"
+                        style="@style/IconWhite"
+                        android:layout_width="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:src="@drawable/ic_arrow_left" />
+
+                    <TextView
+                        android:id="@+id/Account_Greeting"
+                        style="@style/WhiteTextHeading"
+                        android:layout_width="wrap_content"
+                        android:paddingStart="16dp"
+                        android:text="@string/Account_Pi_Personal_Info"
+                        android:textAlignment="textStart" />
+
+                </LinearLayout>
+
+        </RelativeLayout>
+
+            <!-- Name Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:layout_marginBottom="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                tools:ignore="UseCompoundDrawables">
+
+                <!-- Label "Name" -->
+                <TextView
+                    android:id="@+id/tv_name_label"
+                    style="@style/TextSubHeading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="48dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/Username" />
+
+                <ImageView
+                    android:id="@+id/Account_Pi_Ic_Edit_Name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="72dp"
+                    android:clickable="true"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:src="@drawable/ic_edit" />
+
+            </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -123,6 +124,7 @@
             android:inputType="text"
             android:paddingHorizontal="96dp"
             android:visibility="gone"
+            android:imeOptions="actionDone"
              />
 
         <Button
@@ -208,6 +210,7 @@
         <EditText
             android:id="@+id/EditTextConfirmNewEmail"
             style="@style/TextInputStyle"
+            android:layout_width="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_marginStart="48dp"
             android:layout_marginEnd="48dp"
@@ -215,7 +218,9 @@
             android:inputType="textEmailAddress"
             android:paddingHorizontal="96dp"
             android:autofillHints="emailAddress"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:imeOptions="actionDone"
+            />
 
         <Button
             android:id="@+id/Pi_ButtonConfirmNewEmail"
@@ -230,10 +235,12 @@
         <EditText
             android:id="@+id/Pi_EditTextEmailOTP"
             style="@style/TextInputStyle"
+            android:layout_width="match_parent"
             android:layout_marginTop="116dp"
             android:layout_marginStart="48dp"
             android:layout_marginEnd="48dp"
             android:hint="Enter OTP"
+            android:imeOptions="actionDone"
             android:inputType="textEmailAddress"
             android:paddingHorizontal="96dp"
             android:autofillHints="number"
@@ -306,6 +313,7 @@
             android:autofillHints="password"
             android:hint="Enter Current Password"
             android:inputType="text"
+            android:imeOptions="actionDone"
             android:paddingHorizontal="96dp"
             android:visibility="gone"
             />
@@ -317,6 +325,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints="password"
+            android:imeOptions="actionDone"
             android:hint="@string/enter_new_password"
             android:inputType="text"
             android:paddingEnd="32dp"
@@ -332,6 +341,7 @@
             android:autofillHints="password"
             android:hint="@string/confirm_new_password"
             android:inputType="text"
+            android:imeOptions="actionDone"
             android:paddingEnd="12dp"
             android:visibility="gone"
              />
@@ -490,6 +500,21 @@
 
 
     </RelativeLayout>
+            </LinearLayout>
+    </ScrollView>
 
 
-</LinearLayout> </ScrollView>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        app:itemBackground="@color/white"
+        app:itemIconSize="32dp"
+        app:itemIconTint="@color/deepBlue"
+        app:itemTextColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_menu" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

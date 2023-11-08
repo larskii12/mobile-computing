@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -22,6 +24,10 @@ import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.user.User;
 import com.comp90018.uninooks.service.mail.MailServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
+import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+
 
 public class PersonalInformationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -82,6 +88,8 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     private String otp;
 
     private String newUserEmail;
+
+    private BottomNavigationView bottomNav;
 
 
 
@@ -161,6 +169,65 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         buttonNewFaculty = findViewById(R.id.Pi_ButtonConfirmNewFaculty);
         buttonNewDegree = findViewById(R.id.Pi_ButtonConfirmNewDegree);
         otp = "";
+
+        bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setSelectedItemId(R.id.accountNav);
+
+        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @SuppressLint("NonConstantResourceId")
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+
+                if (id == R.id.homeNav){
+                    Intent intent = new Intent(PersonalInformationActivity.this, HomeActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+
+                else if (id == R.id.searchNav) {
+                    Intent intent = new Intent(PersonalInformationActivity.this, MapsActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+
+                } else if (id == R.id.focusNav) {
+                    Intent intent = new Intent(PersonalInformationActivity.this, StudyZoneActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+                    startActivity(intent);
+                    finish();
+
+                } else {
+                    Intent intent = new Intent(PersonalInformationActivity.this, AccountActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+                    startActivity(intent);
+                }
+
+                return false;
+            }
+        });
+
 
         buttonNewUserName.setOnClickListener(new View.OnClickListener() {
             @Override
