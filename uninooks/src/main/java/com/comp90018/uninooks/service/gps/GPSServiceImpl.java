@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.os.Looper;
+import android.util.Log;
 
 import com.comp90018.uninooks.service.emulator.EmulatorServiceImpl;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -23,7 +24,7 @@ public class GPSServiceImpl {
 
     private final LocationRequest locationRequestConfig;
 
-    private static ArrayList<Location> locationsHistory;
+    public static ArrayList<Location> locationsHistory;
     private final GPSService gpsService;
 
     private static boolean GPSPermissionStatus;
@@ -31,6 +32,24 @@ public class GPSServiceImpl {
     public GPSServiceImpl(Context context, GPSService gpsService){
 
         locationsHistory = new ArrayList<>();
+
+        this.gpsService = gpsService;
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+
+        // location request configuration default
+        locationRequestConfig = new LocationRequest();
+        locationRequestConfig.setInterval(3 * 1000);
+        locationRequestConfig.setFastestInterval(3 * 1000);
+        locationRequestConfig.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        reportGPSUpdateLoopBack();
+
+    }
+
+    public GPSServiceImpl(Context context, GPSService gpsService, ArrayList<Location> locationsHistory){
+
+        GPSServiceImpl.locationsHistory = locationsHistory;
 
         this.gpsService = gpsService;
 
@@ -69,12 +88,13 @@ public class GPSServiceImpl {
      */
     public static LatLng getCurrentLocation(){
         if (EmulatorServiceImpl.isEmulator() || locationsHistory.size() == 0){
-
+            Log.d("AAAAAAAAAAAAAAAAA", "Default loc,");
             // Return a default location - Melbourne Connect
 //            LatLng melbourneConnect = new LatLng(38.17277920371164, -81.33774147106061);
             LatLng melbourneConnect = new LatLng(-37.8000, 144.9643);
             return melbourneConnect;
         }
+        Log.d("AAAAAAAAAAAAAAAAA", "GPS used,");
 
         return new LatLng(locationsHistory.get(locationsHistory.size() - 1).getLatitude(), locationsHistory.get(locationsHistory.size() - 1).getLongitude());
     }

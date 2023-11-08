@@ -67,6 +67,8 @@ public class HomeActivity extends AppCompatActivity {
     private float lastAcceleration = 0f;
     private BottomNavigationView bottomNav;
 
+    private TextView noFavorites;
+
     HashMap<String, Double> busyRatingsByLocation;
 
     private int userId;
@@ -89,7 +91,8 @@ public class HomeActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
         showDialog();
 
-
+        noFavorites = findViewById(R.id.textView4);
+        noFavorites.setVisibility(View.GONE);
 
         Intent intent = getIntent();
         userId = intent.getIntExtra("USER_ID_EXTRA", 0);
@@ -121,7 +124,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
             TextView greetingMessage = (TextView) findViewById(R.id.textView);
-            greetingMessage.setText("Good morning " + userName);
+            greetingMessage.setText("Welcome back, " + userName + "!");
 
             bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
                 @SuppressLint("NonConstantResourceId")
@@ -248,7 +251,7 @@ public class HomeActivity extends AppCompatActivity {
                                 loadingGIF.setVisibility(View.VISIBLE);
                                 loadingGIF.setVisibility(View.GONE);
                             } else {
-                                for (StudySpace space : closestStudySpaces.subList(0, 10)) {
+                                for (StudySpace space : closestStudySpaces.subList(0, 5)) {
                                     CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, nearbyLayout, false);
                                     ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
                                     loadingGIF.setVisibility(View.VISIBLE);
@@ -273,8 +276,8 @@ public class HomeActivity extends AppCompatActivity {
                                                     intent.putExtra("USER_ID_EXTRA", userId);
                                                     intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                                                     intent.putExtra("USER_NAME_EXTRA", userName);
-                                                    intent.putExtra("LOCATION_ID", space.getId());
                                                     intent.putExtra("LOCATION_TYPE", space.getType());
+                                                    intent.putExtra("LOCATION", space);
                                                     startActivity(intent);
                                                 }
                                             }.start();
@@ -288,20 +291,20 @@ public class HomeActivity extends AppCompatActivity {
                                 loadingGIF2.setVisibility(View.VISIBLE);
                                 loadingGIF2.setVisibility(View.GONE);
                             } else {
-                                for (StudySpace space : topRatedStudySpaces.subList(0, 10)) {
+                                for (StudySpace space : topRatedStudySpaces.subList(0, 5)) {
 //                        Location space = studySpacesNearby.get(i);
-                                    CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, topRatedLayout, false);
+                                    CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_card_layout, topRatedLayout, false);
                                     ProgressBar loadingGIF2 = findViewById(R.id.loadingGIF_2);
                                     loadingGIF2.setVisibility(View.VISIBLE);
                                     CardView newCard = createNewSmallCard(card, space, "rating");
                                     String spaceID = String.valueOf(space.getId());
-                                    for (StudySpace favorite : favorites) {
-                                        if (favorite.getName().equals(space.getName())) {
-                                            ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
-                                            favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
-                                            favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
-                                        }
-                                    }
+//                                    for (StudySpace favorite : favorites) {
+//                                        if (favorite.getName().equals(space.getName())) {
+//                                            ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
+//                                            favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
+//                                            favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+//                                        }
+//                                    }
                                     loadingGIF2.setVisibility(View.GONE);
                                     topRatedLayout.addView(newCard);
 
@@ -314,8 +317,9 @@ public class HomeActivity extends AppCompatActivity {
                                                     intent.putExtra("USER_ID_EXTRA", userId);
                                                     intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                                                     intent.putExtra("USER_NAME_EXTRA", userName);
-                                                    intent.putExtra("LOCATION_ID", space.getId());
+                                                    //intent.putExtra("LOCATION_ID", space.getId());
                                                     intent.putExtra("LOCATION_TYPE", space.getType());
+                                                    intent.putExtra("LOCATION", space);
                                                     startActivity(intent);
                                                 }
                                             }.start();
@@ -328,6 +332,8 @@ public class HomeActivity extends AppCompatActivity {
                                 ProgressBar loadingGIF3 = findViewById(R.id.loadingGIF_3);
                                 loadingGIF3.setVisibility(View.VISIBLE);
                                 loadingGIF3.setVisibility(View.GONE);
+
+                                noFavorites.setVisibility(View.VISIBLE);
                             } else {
                                 for (StudySpace space : favorites) {
 //                        Location space = studySpacesNearby.get(i);
@@ -350,8 +356,9 @@ public class HomeActivity extends AppCompatActivity {
                                                     intent.putExtra("USER_ID_EXTRA", userId);
                                                     intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                                                     intent.putExtra("USER_NAME_EXTRA", userName);
-                                                    intent.putExtra("LOCATION_ID", space.getId());
+                                                    //intent.putExtra("LOCATION_ID", space.getId());
                                                     intent.putExtra("LOCATION_TYPE", space.getType());
+                                                    intent.putExtra("LOCATION", space);
                                                     startActivity(intent);
                                                 }
                                             }.start();
@@ -438,12 +445,17 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
 
-        ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);
+        if (!type.equals("rating")) {
+            ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);
 
-        favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_border_24);
-        favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+            favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_border_24);
+            favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
 //        favouriteIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));
-        //check if the favourites list includes this user and favourite
+            //check if the favourites list includes this user and favourite
+        } else {
+            ImageView ratingIcon = card.findViewById(R.id.starRating);
+            ratingIcon.setBackgroundResource(R.drawable.star_solid);
+        }
 
         return card;
     }

@@ -46,6 +46,11 @@
             android:label="@string/title_activity_maps" />
 
         <activity
+            android:name=".activities.NavigationActivity"
+            android:exported="true"
+            android:label="NavigationActivity" />
+
+        <activity
             android:name=".activities.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
@@ -81,7 +86,8 @@
             android:name=".activities.FilterAdjustmentActivity"
             android:exported="false"
             android:parentActivityName=".activities.MapsActivity"/>
-      
+
+
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.LocationActivity"
             android:label="LocationActivity"
