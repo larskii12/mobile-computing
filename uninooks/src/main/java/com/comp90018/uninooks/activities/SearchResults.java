@@ -499,7 +499,6 @@ public class SearchResults extends AppCompatActivity {
      * @param ratings
      */
     private void setRatingsText(Library library, TextView ratings) {
-//        String rating = ratingsByLocation.get(library.getAverage_rating());
         ratings.setText(String.valueOf(library.getAverage_rating()));
     }
 

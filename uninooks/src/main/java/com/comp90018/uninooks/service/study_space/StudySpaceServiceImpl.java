@@ -19,199 +19,199 @@ import java.util.concurrent.TimeUnit;
 public class StudySpaceServiceImpl implements StudySpaceService {
 
     Connection connector = new DatabaseHelper().getConnector();
-
-    /**
-     * Get ten closest study spaces and return to the Main UI to show
-     *
-     * @param location as the current location
-     * @return ten sorted closest study spaces by walking distance
-     * @throws Exception if any exception happens
-     */
-    @Override
-    public ArrayList<StudySpace> getClosestStudySpaces(LatLng location, int size) throws Exception {
-
-        try {
-            String query = "SELECT study_space_id, study_space_building_id FROM mobilecomputing.\"study_space\"";
-
-            PreparedStatement preparedStatement = connector.prepareStatement(query);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            List<StudySpace> allStudySpaces = Collections.synchronizedList(new ArrayList<>());
-            ArrayList<StudySpace> openingStudySpaces = new ArrayList<>();
-            ArrayList<StudySpace> closingStudySpaces = new ArrayList<>();
-
-
-            ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
-            ArrayList<Integer> studySpacedIds = new ArrayList<>();
-
-            while (resultSet.next()){
-                studySpacedIds.add(Integer.parseInt(resultSet.getString("study_space_id")));
-            }
-
-            for (Integer studySpaceId: studySpacedIds) {
-                executorService.submit(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        StudySpace studySpace = null;
-                        try {
-                            studySpace = new LocationServiceImpl().findStudySpaceById(studySpaceId);
-                            if (studySpace != null) {
-                                allStudySpaces.add(studySpace);
-                            }
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                });
-            }
-
-            executorService.shutdown();
-            try {
-                if (!executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)) {
-                    executorService.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                executorService.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
-
-            synchronized (allStudySpaces){
-                allStudySpaces.sort(Comparator.comparingDouble(StudySpace::getDistanceFromCurrentPosition));
-            }
-
-            // Show the opening study space first
-            for (StudySpace studySpace : allStudySpaces) {
-
-                if (studySpace.isOpeningNow()) {
-                    openingStudySpaces.add(studySpace);
-                } else {
-                    closingStudySpaces.add(studySpace);
-                }
-            }
-
-            openingStudySpaces.addAll(closingStudySpaces);
-
-            if (openingStudySpaces.size() <= size) {
-
-                return openingStudySpaces;
-            }
-
-            return new ArrayList<>(openingStudySpaces.subList(0, size));
-        }
-
-        catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception();
-        }
-
-        finally {
-            if (connector != null) {
-                try {
-                    connector.close();
-                } catch (Exception e) {
-                    System.out.println("Database Connection close failed.");
-                }
-            }
-        }
-    }
-
-    /**
-     * Get top rated study spaces
-     * @param location as current location
-     * @param size as wanted size
-     * @return top rated study spaces
-     * @throws Exception if any exception happens
-     */
-    @Override
-    public ArrayList<StudySpace> getTopRatedStudySpaces(LatLng location, int size) throws Exception {
-
-        try{
-            String query = "SELECT review_study_space_id, ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
-                    "FROM mobilecomputing.\"review\" " +
-                    "WHERE review_study_space_id IS NOT NULL " +
-                    "GROUP BY review_study_space_id " +
-                    "ORDER BY average_rating DESC;";
-
-            PreparedStatement preparedStatement = connector.prepareStatement(query);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            List<StudySpace> allStudySpaces = Collections.synchronizedList(new ArrayList<>());
-            ArrayList<StudySpace> openingStudySpaces = new ArrayList<>();
-            ArrayList<StudySpace> closingStudySpaces = new ArrayList<>();
-
-
-            ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
-            ArrayList<Integer> studySpacedIds = new ArrayList<>();
-
-            while (resultSet.next()){
-                studySpacedIds.add(Integer.parseInt(resultSet.getString("review_study_space_id")));
-            }
-
-            for (Integer studySpaceId: studySpacedIds) {
-                executorService.submit(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        StudySpace studySpace = null;
-                        try {
-                            studySpace = new LocationServiceImpl().findStudySpaceById(studySpaceId);
-                            if (studySpace != null) {
-                                allStudySpaces.add(studySpace);
-                            }
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                });
-            }
-
-            executorService.shutdown();
-            try {
-                if (!executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)) {
-                    executorService.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                executorService.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
-
-            for (StudySpace studySpace : allStudySpaces) {
-
-                if (studySpace.isOpeningNow()) {
-                    openingStudySpaces.add(studySpace);
-                } else {
-                    closingStudySpaces.add(studySpace);
-                }
-            }
-
-            openingStudySpaces.addAll(closingStudySpaces);
-
-            if (openingStudySpaces.size() <= size) {
-
-                return openingStudySpaces;
-            }
-
-            return new ArrayList<>(openingStudySpaces.subList(0, size));
-        }
-
-        catch (Exception e){
-            e.printStackTrace();
-            throw new Exception();
-        }
-
-        finally {
-            if (connector != null) {
-                try {
-                    connector.close();
-                } catch (Exception e) {
-                    System.out.println("Database Connection close failed.");
-                }
-            }
-        }
-    }
+//
+//    /**
+//     * Get ten closest study spaces and return to the Main UI to show
+//     *
+//     * @param location as the current location
+//     * @return ten sorted closest study spaces by walking distance
+//     * @throws Exception if any exception happens
+//     */
+//    @Override
+//    public ArrayList<StudySpace> getClosestStudySpaces(LatLng location, int size) throws Exception {
+//
+//        try {
+//            String query = "SELECT study_space_id, study_space_building_id FROM mobilecomputing.\"study_space\"";
+//
+//            PreparedStatement preparedStatement = connector.prepareStatement(query);
+//            ResultSet resultSet = preparedStatement.executeQuery();
+//
+//            List<StudySpace> allStudySpaces = Collections.synchronizedList(new ArrayList<>());
+//            ArrayList<StudySpace> openingStudySpaces = new ArrayList<>();
+//            ArrayList<StudySpace> closingStudySpaces = new ArrayList<>();
+//
+//
+//            ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+//
+//            ArrayList<Integer> studySpacedIds = new ArrayList<>();
+//
+//            while (resultSet.next()){
+//                studySpacedIds.add(Integer.parseInt(resultSet.getString("study_space_id")));
+//            }
+//
+//            for (Integer studySpaceId: studySpacedIds) {
+//                executorService.submit(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+//                        StudySpace studySpace = null;
+//                        try {
+//                            studySpace = new LocationServiceImpl().findStudySpaceById(studySpaceId);
+//                            if (studySpace != null) {
+//                                allStudySpaces.add(studySpace);
+//                            }
+//                        } catch (Exception e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
+//                });
+//            }
+//
+//            executorService.shutdown();
+//            try {
+//                if (!executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)) {
+//                    executorService.shutdownNow();
+//                }
+//            } catch (InterruptedException e) {
+//                executorService.shutdownNow();
+//                Thread.currentThread().interrupt();
+//            }
+//
+//            synchronized (allStudySpaces){
+//                allStudySpaces.sort(Comparator.comparingDouble(StudySpace::getDistanceFromCurrentPosition));
+//            }
+//
+//            // Show the opening study space first
+//            for (StudySpace studySpace : allStudySpaces) {
+//
+//                if (studySpace.isOpeningNow()) {
+//                    openingStudySpaces.add(studySpace);
+//                } else {
+//                    closingStudySpaces.add(studySpace);
+//                }
+//            }
+//
+//            openingStudySpaces.addAll(closingStudySpaces);
+//
+//            if (openingStudySpaces.size() <= size) {
+//
+//                return openingStudySpaces;
+//            }
+//
+//            return new ArrayList<>(openingStudySpaces.subList(0, size));
+//        }
+//
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            throw new Exception();
+//        }
+//
+//        finally {
+//            if (connector != null) {
+//                try {
+//                    connector.close();
+//                } catch (Exception e) {
+//                    System.out.println("Database Connection close failed.");
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Get top rated study spaces
+//     * @param location as current location
+//     * @param size as wanted size
+//     * @return top rated study spaces
+//     * @throws Exception if any exception happens
+//     */
+//    @Override
+//    public ArrayList<StudySpace> getTopRatedStudySpaces(LatLng location, int size) throws Exception {
+//
+//        try{
+//            String query = "SELECT review_study_space_id, ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
+//                    "FROM mobilecomputing.\"review\" " +
+//                    "WHERE review_study_space_id IS NOT NULL " +
+//                    "GROUP BY review_study_space_id " +
+//                    "ORDER BY average_rating DESC;";
+//
+//            PreparedStatement preparedStatement = connector.prepareStatement(query);
+//            ResultSet resultSet = preparedStatement.executeQuery();
+//
+//            List<StudySpace> allStudySpaces = Collections.synchronizedList(new ArrayList<>());
+//            ArrayList<StudySpace> openingStudySpaces = new ArrayList<>();
+//            ArrayList<StudySpace> closingStudySpaces = new ArrayList<>();
+//
+//
+//            ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+//
+//            ArrayList<Integer> studySpacedIds = new ArrayList<>();
+//
+//            while (resultSet.next()){
+//                studySpacedIds.add(Integer.parseInt(resultSet.getString("review_study_space_id")));
+//            }
+//
+//            for (Integer studySpaceId: studySpacedIds) {
+//                executorService.submit(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+//                        StudySpace studySpace = null;
+//                        try {
+//                            studySpace = new LocationServiceImpl().findStudySpaceById(studySpaceId);
+//                            if (studySpace != null) {
+//                                allStudySpaces.add(studySpace);
+//                            }
+//                        } catch (Exception e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
+//                });
+//            }
+//
+//            executorService.shutdown();
+//            try {
+//                if (!executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)) {
+//                    executorService.shutdownNow();
+//                }
+//            } catch (InterruptedException e) {
+//                executorService.shutdownNow();
+//                Thread.currentThread().interrupt();
+//            }
+//
+//            for (StudySpace studySpace : allStudySpaces) {
+//
+//                if (studySpace.isOpeningNow()) {
+//                    openingStudySpaces.add(studySpace);
+//                } else {
+//                    closingStudySpaces.add(studySpace);
+//                }
+//            }
+//
+//            openingStudySpaces.addAll(closingStudySpaces);
+//
+//            if (openingStudySpaces.size() <= size) {
+//
+//                return openingStudySpaces;
+//            }
+//
+//            return new ArrayList<>(openingStudySpaces.subList(0, size));
+//        }
+//
+//        catch (Exception e){
+//            e.printStackTrace();
+//            throw new Exception();
+//        }
+//
+//        finally {
+//            if (connector != null) {
+//                try {
+//                    connector.close();
+//                } catch (Exception e) {
+//                    System.out.println("Database Connection close failed.");
+//                }
+//            }
+//        }
+//    }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -373,4 +373,75 @@ public class StudySpaceServiceImpl implements StudySpaceService {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+
+
+    /**
+     * Get ten closest study spaces and return to the Main UI to show
+     *
+     * @return ten sorted closest study spaces by walking distance
+     * @throws Exception if any exception happens
+     */
+    public ArrayList<StudySpace> getAllStudySpaces() throws Exception {
+
+        try {
+            String query = "SELECT study_space_id, study_space_building_id FROM mobilecomputing.\"study_space\"";
+
+            PreparedStatement preparedStatement = connector.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            List<StudySpace> allStudySpaces = Collections.synchronizedList(new ArrayList<>());
+            ArrayList<StudySpace> openingStudySpaces = new ArrayList<>();
+            ArrayList<StudySpace> closingStudySpaces = new ArrayList<>();
+
+
+            ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+            ArrayList<Integer> studySpacedIds = new ArrayList<>();
+
+            while (resultSet.next()) {
+                studySpacedIds.add(Integer.parseInt(resultSet.getString("study_space_id")));
+            }
+
+            for (Integer studySpaceId : studySpacedIds) {
+                executorService.submit(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        StudySpace studySpace = null;
+                        try {
+                            studySpace = new LocationServiceImpl().findStudySpaceById(studySpaceId);
+                            if (studySpace != null) {
+                                allStudySpaces.add(studySpace);
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+            }
+
+            executorService.shutdown();
+            try {
+                if (!executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)) {
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executorService.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+
+            return new ArrayList<>(allStudySpaces);
+
+        } finally {
+            if (connector != null) {
+                try {
+                    connector.close();
+                } catch (Exception e) {
+                    System.out.println("Database Connection close failed.");
+                }
+            }
+        }
+    }
 }
