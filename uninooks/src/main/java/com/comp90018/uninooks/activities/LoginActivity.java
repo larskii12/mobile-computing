@@ -34,6 +34,8 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
 
     private GPSServiceImpl gpsService;
 
+    String userEmail;
+
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @SuppressLint("SetTextI18n")
@@ -44,6 +46,8 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
                     Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
                     break;
 
+                case 1:
+                    editTextLoginEmail.setText(userEmail);
             }
         }
     };
@@ -52,6 +56,10 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        Intent intent = getIntent();
+        userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
+        handler.sendEmptyMessage(1);
 
         gpsService = new GPSServiceImpl(this, this);
 
@@ -95,6 +103,7 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
                 new Thread() {
                     public void run() {
                         Intent intent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
+                        intent.putExtra("USER_EMAIL_EXTRA", editTextLoginEmail.getText().toString());
                         startActivity(intent);
                     }
                 }.start();
@@ -169,18 +178,17 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
             System.out.println("User AQF level: " + logInUser.getUserAQFLevel());
 
             // Show login successful message
-            String message = logInUser.getUserId() + " " + logInUser.getUserName()
-                    + " " + logInUser.getUserEmail()
-                    + " " + logInUser.getUserFaculty()
-                    + " " + logInUser.getUserAQFLevel();
-            showTextMessage("Login successfully!\n" + message);
+            showTextMessage("Login successfully.");
 
 //            Intent intent = new Intent(LoginActivity.this, AccountActivity.class);
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            Intent intent = new Intent(LoginActivity.this, AccountActivity.class);
             // Pass the user to next page
             intent.putExtra("USERNAME_EXTRA", logInUser.getUserName());
-            intent.putExtra("USERID_EXTRA", logInUser.getUserId());
+            intent.putExtra("USERID_EXTRA", String.valueOf(logInUser.getUserId()));
             System.out.println("Opening the page");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
 
             startActivity(intent);
             finish();

@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -15,11 +16,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.comp90018.uninooks.R;
+import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.review.ReviewService;
+import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
+import com.comp90018.uninooks.service.time.TimeServiceImpl;
 import com.comp90018.uninooks.service.user.UserService;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements GPSService {
 
@@ -171,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 
 //                             How to get closest study spaces
 //                            ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(-1, -1), 50);
+//                            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Time   " + new TimeServiceImpl().getAEDTTime());
 //                            for (StudySpace studySpace : closestStudySpaces){
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Name   " + studySpace.getName());
 //                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space ID   " + studySpace.getId());

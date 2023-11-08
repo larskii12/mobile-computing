@@ -65,6 +65,7 @@ public class Location {
      */
     private String type;
 
+
     public LatLng getLocation() {
         return location;
     }
@@ -164,4 +165,6 @@ public class Location {
     public String getType() {return type;}
 
     public void setType(String type) {this.type = type;}
+
+
 }

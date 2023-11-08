@@ -119,12 +119,6 @@ public class TimerView extends View {
     public void pause() {
         if (mTimerAnimator != null && mTimerAnimator.isRunning()) {
             mTimerAnimator.pause();
-//            mTimerAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//                @Override
-//                public void onAnimationUpdate(ValueAnimator animation) {
-//                    drawProgress((float) animation.getAnimatedValue());
-//                }
-//            });
         }
     }
 
@@ -135,7 +129,7 @@ public class TimerView extends View {
     }
 
     public void stop() {
-        if (mTimerAnimator != null && mTimerAnimator.isRunning()) {
+        if (mTimerAnimator != null && !mTimerAnimator.isRunning()) {
             mTimerAnimator.cancel();
             mTimerAnimator = null;
 

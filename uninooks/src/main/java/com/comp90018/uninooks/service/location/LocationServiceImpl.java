@@ -11,6 +11,7 @@ import com.comp90018.uninooks.service.busy_rating.BusyRatingService;
 import com.comp90018.uninooks.service.time.TimeServiceImpl;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -181,6 +182,7 @@ public class LocationServiceImpl implements LocationService {
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             preparedStatement.setInt(1, locationId);
+//            preparedStatement.setInt(2, currentDayOfWeek);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -192,6 +194,8 @@ public class LocationServiceImpl implements LocationService {
 
                 studySpace.setOpenTime(resultSet.getTime("opening_time"));
                 studySpace.setCloseTime(resultSet.getTime("closing_time"));
+
+                studySpace.setType("STUDY_SPACE");
 
                 studySpace.setIsOpenToday(studySpace.getOpenTime() != null);
 
@@ -210,6 +214,8 @@ public class LocationServiceImpl implements LocationService {
 //                studySpace.setBusyHours(busyHours);
 
                 studySpace.setLibraryId(resultSet.getInt("study_space_library_id"));
+ //               studySpace.setCapacity(resultSet.getInt("study_space_capacity"));
+//                studySpace.setFloorLevel(resultSet.getInt(0));
                 studySpace.setMinimumAccessAQFLevel(resultSet.getInt("study_space_minimum_access_AQF_level"));
                 studySpace.setTalkAllowed(resultSet.getBoolean("study_space_talk_allowed"));
 
@@ -269,6 +275,8 @@ public class LocationServiceImpl implements LocationService {
                     ((Library) location).setHasQuietZones(resultSet.getBoolean("library_has_quiet_zones"));
                     location.setType("LIBRARY");
 
+                    location.setType("LIBRARY");
+
 //                    Array daysDb = resultSet.getArray("library_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();
 //                    location.setOpeningDays(days);
@@ -310,6 +318,8 @@ public class LocationServiceImpl implements LocationService {
                     ((StudySpace) location).setMinimumAccessAQFLevel(resultSet.getInt("study_space_minimum_access_AQF_level"));
                     ((StudySpace) location).setTalkAllowed(resultSet.getBoolean("study_space_talk_allowed"));
 
+
+                    location.setType("STUDY_SPACE");
 
 //                    Array daysDb = resultSet.getArray("study_space_opening_days");
 //                    Integer[] days = (Integer[]) daysDb.getArray();

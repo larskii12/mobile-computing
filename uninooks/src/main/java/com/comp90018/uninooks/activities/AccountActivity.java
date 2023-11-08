@@ -2,7 +2,6 @@ package com.comp90018.uninooks.activities;
 
 
 import android.annotation.SuppressLint;
-import androidx.appcompat.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,10 +9,12 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.comp90018.uninooks.R;
@@ -56,7 +57,7 @@ public class AccountActivity extends AppCompatActivity {
 
         // Initialize user
         Intent intent = getIntent();
-        userId = intent.getIntExtra("userId", 6);
+        userId = intent.getIntExtra("USERID_EXTRA", 6);
 
         // Get reference to the Personal Information LinearLayout
         LinearLayout personalInfoLayout = findViewById(R.id.Account_Personal_Info_Layout); // Set an ID for your LinearLayout in XML and use it here
@@ -123,17 +124,33 @@ public class AccountActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
 
-        Button positiveButton = dialogView.findViewById(R.id.dialog_positive_btn);
-        positiveButton.setOnClickListener(new View.OnClickListener() {
+        Button buttonLogOutConfirm = dialogView.findViewById(R.id.dialog_positive_btn);
+
+        buttonLogOutConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Handle logout logic here
-                dialog.dismiss();
+
+                // Pass the user email to login page
+                new Thread(){
+                    public void run(){
+                        Intent intent = new Intent(AccountActivity.this, LoginActivity.class);
+                        try {
+                            intent.putExtra("USER_EMAIL_EXTRA",  new UserServiceImpl().getUser(userId).getUserEmail());
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                }.start();
             }
         });
 
-        Button negativeButton = dialogView.findViewById(R.id.dialog_negative_btn);
-        negativeButton.setOnClickListener(new View.OnClickListener() {
+        Button buttonLogOutCancel = dialogView.findViewById(R.id.dialog_negative_btn);
+        buttonLogOutCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
@@ -151,22 +168,91 @@ public class AccountActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
 
-        Button positiveButton = dialogView.findViewById(R.id.account_Delete_Confirm_Button);
-        positiveButton.setOnClickListener(new View.OnClickListener() {
+        Button buttonDeleteConfirm = dialogView.findViewById(R.id.account_Delete_Confirm_Button);
+
+        buttonDeleteConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle logout logic here
-                dialog.dismiss();
+                // Handle delete logic here
+
+                EditText editTextDeleteUserEmail = dialogView.findViewById(R.id.EditTextDeleteEmail);
+                String deleteEmail = editTextDeleteUserEmail.getText().toString();
+                EditText editTextDeleteUserPassword = dialogView.findViewById(R.id.EditTextDeletePassword);
+                String deleteUserPassword = editTextDeleteUserPassword.getText().toString();
+                new Thread(){
+                    public void run(){
+                        try {
+
+                            if (new UserServiceImpl().getUser(userId).getUserEmail().equals(deleteEmail)) {
+
+                                if (new UserServiceImpl().logIn(deleteEmail, deleteUserPassword) != null)
+                                {
+                                    // Delete Account
+                                    new UserServiceImpl().deleteUser(userId);
+                                    showTextMessage("Your account has been deleted successfully");
+
+                                    Intent intent = new Intent(AccountActivity.this, LoginActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                    finish();
+                                }
+
+                                else{
+                                    showTextMessage("Your password is incorrect");
+                                }
+                            }
+
+                            else{
+                                showTextMessage("This email does not matches your account.");
+                            }
+                        }
+                        catch (Exception e) {
+                            showTextMessage("An error occurred, please contact the IT Administrator.");
+                        }
+                    }
+                }.start();
+
             }
         });
 
-        Button negativeButton = dialogView.findViewById(R.id.account_delete_Cancel_Button);
-        negativeButton.setOnClickListener(new View.OnClickListener() {
+        Button buttonDeleteCancel = dialogView.findViewById(R.id.account_delete_Cancel_Button);
+        buttonDeleteCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
             }
         });
+    }
+
+    public void onRestart(){
+        super.onRestart();
+        handler.sendEmptyMessage(1);
+    }
+
+    public void onResume() {
+        super.onResume();
+        new Thread(){
+            public void run(){
+                try {
+                    userName = new UserServiceImpl().getUser(userId).getUserName();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                handler.sendEmptyMessage(1);
+            }
+        }.start();
+    }
+
+    /**
+     * Show message text
+     *
+     * @param text as the showing message
+     */
+    private void showTextMessage(String text) {
+        Message msg = new Message();
+        msg.what = 0;
+        msg.obj = text;
+        handler.sendMessage(msg);
     }
 }
 
