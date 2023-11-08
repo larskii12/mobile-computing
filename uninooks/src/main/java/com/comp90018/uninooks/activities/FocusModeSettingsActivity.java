@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -28,6 +29,9 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
     EditText pomodoroTime;
     EditText shortBreakTime;
     EditText longBreakTime;
+    ImageView pomTimeIcon;
+    ImageView shortTimeIcon;
+    ImageView longTimeIcon;
     int pomodoroTimeValue;
     int shortBreakTimeValue;
     int longBreakTimeValue;
@@ -56,6 +60,10 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
         shortBreakTime = findViewById(R.id.EditTextFocusShortBreakSetting);
         longBreakTime = findViewById(R.id.EditTextFocusLongBreakSetting);
 
+        pomTimeIcon = findViewById(R.id.pomTimeIcon);
+        shortTimeIcon = findViewById(R.id.shortTimeIcon);
+        longTimeIcon = findViewById(R.id.longTimeIcon);
+
         // retrieve settings, and place those in the editTexts + toggle enabled or not
         retrieveSettings();
 
@@ -71,11 +79,21 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
                 // Begin delayed transition
                 TransitionManager.beginDelayedTransition((ViewGroup) v.getParent(), transition);
 
+                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) pomTimeIcon.getLayoutParams();
+
                 // Toggle the visibility of the RelativeLayout
                 if (pomodoroInputsLayout.getVisibility() == View.GONE) {
                     pomodoroInputsLayout.setVisibility(View.VISIBLE);
+                    pomTimeIcon.setImageResource(R.drawable.ic_arrow_right);
+                    layoutParams.leftMargin = 128;
+                    layoutParams.rightMargin = 40;
+                    pomTimeIcon.setLayoutParams(layoutParams);
                 } else {
                     pomodoroInputsLayout.setVisibility(View.GONE);
+                    pomTimeIcon.setImageResource(R.drawable.ic_arrow_down);
+                    layoutParams.leftMargin = 118;
+                    layoutParams.rightMargin = 22;
+                    pomTimeIcon.setLayoutParams(layoutParams);
                 }
             }
         });
@@ -93,11 +111,21 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
                 // Begin delayed transition
                 TransitionManager.beginDelayedTransition((ViewGroup) v.getParent(), transition);
 
+                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) shortTimeIcon.getLayoutParams();
+
                 // Toggle the visibility of the RelativeLayout
                 if (shortBreakInputsLayout.getVisibility() == View.GONE) {
                     shortBreakInputsLayout.setVisibility(View.VISIBLE);
+                    shortTimeIcon.setImageResource(R.drawable.ic_arrow_right);
+                    layoutParams.leftMargin = 128;
+                    layoutParams.rightMargin = 40;
+                    shortTimeIcon.setLayoutParams(layoutParams);
                 } else {
                     shortBreakInputsLayout.setVisibility(View.GONE);
+                    shortTimeIcon.setImageResource(R.drawable.ic_arrow_down);
+                    layoutParams.leftMargin = 118;
+                    layoutParams.rightMargin = 22;
+                    shortTimeIcon.setLayoutParams(layoutParams);
                 }
             }
         });
@@ -115,11 +143,21 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
                 // Begin delayed transition
                 TransitionManager.beginDelayedTransition((ViewGroup) v.getParent(), transition);
 
+                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) longTimeIcon.getLayoutParams();
+
                 // Toggle the visibility of the RelativeLayout
                 if (longBreakInputsLayout.getVisibility() == View.GONE) {
                     longBreakInputsLayout.setVisibility(View.VISIBLE);
+                    longTimeIcon.setImageResource(R.drawable.ic_arrow_right);
+                    layoutParams.leftMargin = 128;
+                    layoutParams.rightMargin = 40;
+                    longTimeIcon.setLayoutParams(layoutParams);
                 } else {
                     longBreakInputsLayout.setVisibility(View.GONE);
+                    longTimeIcon.setImageResource(R.drawable.ic_arrow_down);
+                    layoutParams.leftMargin = 118;
+                    layoutParams.rightMargin = 22;
+                    longTimeIcon.setLayoutParams(layoutParams);
                 }
             }
         });
