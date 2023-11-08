@@ -11,7 +11,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -33,6 +32,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -72,6 +72,10 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
     private List<Navigation> navigationList;
 
+    private LatLng location;
+
+    private String locationName;
+
     @SuppressLint("HandlerLeak")
     private final Handler handler = new Handler() {
         @SuppressLint({"SetTextI18n", "HandlerLeak"})
@@ -96,8 +100,10 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         userId = intent.getIntExtra("USER_ID_EXTRA", 0);
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
         userName = intent.getStringExtra("USER_NAME_EXTRA");
+        location = new LatLng(intent.getDoubleExtra("LATITUDE", 0), intent.getDoubleExtra("LONGITUDE", 0));
+        locationName = intent.getStringExtra("LOCATION_NAME");
 
-        gpsService = new GPSServiceImpl(this, this);
+        gpsService = new GPSServiceImpl(this, this, GPSServiceImpl.getGPSHistory());
 
         locateMyLocation = (ImageButton) findViewById(R.id.locate_my_location);
 
@@ -188,7 +194,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         mMap = googleMap;
 
         LatLng original = GPSServiceImpl.getCurrentLocation();
-        LatLng goal = new LatLng(-37.79883886358844, 144.95884598570515);
+        LatLng goal = location;
 
         new Thread() {
             public void run() {
@@ -207,7 +213,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                                 Polyline line = mMap.addPolyline(new PolylineOptions()
                                         .add(pointA, pointB)
                                         .width(10)
-                                        .color(Color.RED));
+                                        .color(Color.BLUE));
                             }
 
                             int maxCameraZoom = 30;
@@ -215,6 +221,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                             int minCameraZoom = 15;
                             mMap.setMinZoomPreference(minCameraZoom);
                             mMap.moveCamera(CameraUpdateFactory.zoomTo(standardCameraZoom));
+                            mMap.addMarker(new MarkerOptions().position(location).title(locationName));
                         }
                     });
 
@@ -224,12 +231,11 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
             }
         }.start();
 
+
         // Show the user location
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
-
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
         // Get the latest current position
         fusedLocationClient.getLastLocation()
@@ -343,7 +349,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     public void onGPSUpdate(Location location) {
-
+        gpsService.stopGPSUpdates();
     }
 
 }

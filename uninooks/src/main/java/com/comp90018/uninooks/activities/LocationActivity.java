@@ -8,7 +8,6 @@ import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -41,8 +40,6 @@ import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
-import com.comp90018.uninooks.service.library.LibraryServiceImpl;
-import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
 import com.comp90018.uninooks.service.review.ReviewServiceImpl;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -55,7 +52,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 public class LocationActivity extends FragmentActivity implements OnMapReadyCallback, GPSService{
@@ -102,6 +98,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         } else {
             location = (Restaurant) intent.getParcelableExtra("LOCATION");
         }
+        locationId = location.getId();
 
 
 //        bottomNav = findViewById(R.id.bottom_navigation);
@@ -167,16 +164,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
             public void run() {
                 try {
 
-//                    if (locationType.equals("LIBRARY")){
-//                        location = (Library) new LocationServiceImpl().findLibraryById(locationId);
-//
-//                    } else if (locationType.equals("STUDY_SPACE")){
-//
-//                        location = (StudySpace) new LocationServiceImpl().findStudySpaceById(locationId);
-//                    } else {
-//                        location = (Restaurant) new LocationServiceImpl().findRestaurantById(locationId);
-//                    }
-
                     List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(locationId, ReviewType.valueOf(location.getType()));
 
                     //System.out.println("Building id:" + space.getBuildingId());
@@ -196,7 +183,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
                     }
 
-                    Log.d("AAAAAAAAAAAAAAAAAAA", String.valueOf(location.isOpeningNow()));
                     LinearLayout reviewsLayout = findViewById(R.id.reviews);
                     TextView locationName = findViewById(R.id.textView5);
                     ProgressBar progress = findViewById(R.id.progressBar);
@@ -227,7 +213,19 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     locationButton.setOnClickListener(new View.OnClickListener(){
                         @Override
                         public void onClick(View v) {
-                            //navigate to the navigation part
+
+                            Intent intent = new Intent(LocationActivity.this, NavigationActivity.class);
+
+                            // Pass the user to next page
+                            intent.putExtra("USER_ID_EXTRA", userId);
+                            intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                            intent.putExtra("USER_NAME_EXTRA", userName);
+                            intent.putExtra("LATITUDE", location.getLocation().latitude);
+                            intent.putExtra("LONGITUDE", location.getLocation().longitude);
+                            intent.putExtra("LOCATION_NAME", location.getName());
+
+                            startActivity(intent);
+
                         }
                     });
                     backButton.setOnClickListener(new View.OnClickListener() {
