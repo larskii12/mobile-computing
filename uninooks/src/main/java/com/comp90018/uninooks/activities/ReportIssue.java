@@ -17,14 +17,16 @@ import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.mail.MailServiceImpl;
 
+
+/**
+ * Report issue activity
+ */
 public class ReportIssue extends AppCompatActivity {
 
     private EditText editTextRaiseIssue;
-
     private Button buttonRaiseIssue;
-
     @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
+    private final Handler handler = new Handler() {
         @SuppressLint({"SetTextI18n", "HandlerLeak"})
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -47,6 +49,11 @@ public class ReportIssue extends AppCompatActivity {
         }
     };
 
+    /**
+     * on create method
+     *
+     * @param savedInstanceState as savedInstanceState
+     */
     protected void onCreate(Bundle savedInstanceState) {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -64,9 +71,7 @@ public class ReportIssue extends AppCompatActivity {
 
                 if (editTextRaiseIssue.getText().toString().trim().isEmpty()) {
                     showTextMessage("Please write more details about the issue.");
-                }
-
-                else{
+                } else {
                     new Thread() {
                         public void run() {
                             try {
@@ -87,39 +92,12 @@ public class ReportIssue extends AppCompatActivity {
         });
     }
 
-    public void onStart(){
-        super.onStart();
-    }
-
-    public void onRestart(){
-        super.onRestart();;
-    }
-
-    // When back button pressed
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-    public void onPause() {
-        super.onPause();
-    }
-    public void onResume() {
-        super.onResume();
-    }
-
-    public void onStop(){
-        super.onStop();
-    }
-
-    public void onDestroy(){
-        super.onDestroy();
-    }
-
     /**
      * Show message text
+     *
      * @param text as the showing message
      */
-    private void showTextMessage(String text){
+    private void showTextMessage(String text) {
         Message msg = new Message();
         msg.what = 0;
         msg.obj = text;

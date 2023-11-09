@@ -24,8 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
@@ -33,130 +33,92 @@ import com.comp90018.uninooks.models.user.User;
 import com.comp90018.uninooks.service.mail.MailServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
 
-
-
+/**
+ * Personal information activity
+ */
 public class PersonalInformationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private Spinner spinnerChangeFacultyList;
-
-    private ArrayAdapter<CharSequence> facultyChangeAdapter;
-
-    private Spinner spinnerChangeDegreeList;
-
-    private ArrayAdapter<CharSequence> degreeChangeAdapter;
-
-    private int userId;
-
-    private String userName;
-
-    private String userEmail;
-
-    private String userFaculty;
-
-    private String userDegree;
-
-    private TextView userNameTextView;
-
-    private TextView emailTextView;
-
-    private TextView degreeTextView;
-
-    private TextView facultyTextView;
-
-    private EditText editUsernameEditText;
-
-    private Button buttonNewUserName;
-
-    private EditText editTextNewEmail;
-
-    private Button buttonNewEmailGetOTP;
-
-    private EditText editTextEmailOTP;
-
-    private Button buttonNewEmailVerifyOTP;
-
-    private TextView passwordTextView;
-
-    private EditText editCurrentPassword;
-
-    private EditText editNewPassword;
-
-    private EditText editConfirmPassword;
-
-    private Button buttonConfirmNewPassword;
-
-    private Button buttonNewFaculty;
-
-    private Button buttonNewDegree;
-
-
     private final int OTP_TIMER = 20;
-
+    private final int APP_LOCATION_SETTINGS_REQUEST = 1234;
+    private final int REQUEST_USAGE_ACCESS = 1001;
+    private final int APP_NOTIFICATION_PUSH = 1002;
+    /**
+     * Detects whether the notification toggle was checked or not
+     */
+    private final View.OnClickListener notificationToggleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            updateNotificationPermission();
+        }
+    };
+    /**
+     * Detects whether the usage access toggle was checked or not
+     */
+    private final View.OnClickListener usageAccessToggleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            updateUsagePermission();
+        }
+    };
+    /**
+     * Detects whether the precise location toggle was checked or not
+     */
+    private final View.OnClickListener locationToggleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            updatePreciseLocationPermission();
+        }
+    };
+    private Spinner spinnerChangeFacultyList;
+    private ArrayAdapter<CharSequence> facultyChangeAdapter;
+    private Spinner spinnerChangeDegreeList;
+    private ArrayAdapter<CharSequence> degreeChangeAdapter;
+    private int userId;
+    private String userName;
+    private String userEmail;
+    private String userFaculty;
+    private String userDegree;
+    private TextView userNameTextView;
+    private TextView emailTextView;
+    private TextView degreeTextView;
+    private TextView facultyTextView;
+    private EditText editUsernameEditText;
+    private Button buttonNewUserName;
+    private EditText editTextNewEmail;
+    private Button buttonNewEmailGetOTP;
+    private EditText editTextEmailOTP;
+    private Button buttonNewEmailVerifyOTP;
+    private TextView passwordTextView;
+    private EditText editCurrentPassword;
+    private EditText editNewPassword;
+    private EditText editConfirmPassword;
+    private Button buttonConfirmNewPassword;
+    private Button buttonNewFaculty;
+    private Button buttonNewDegree;
     private String otp;
-
     private String newUserEmail;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-
     private Switch shakeToggle;
+    /**
+     * Detects whether the shake function toggle was checked or not
+     */
+    private final View.OnClickListener shakeToggleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            editor.putBoolean(getString(R.string.shaking_enabled), shakeToggle.isChecked());
+            editor.apply();
+        }
+    };
     private Switch notificationToggle;
     private Switch usageAccessToggle;
     private Switch preciseLocationToggle;
 
-    private final int APP_LOCATION_SETTINGS_REQUEST = 1234;
-
-    private final int REQUEST_USAGE_ACCESS = 1001;
-
-    private final int APP_NOTIFICATION_PUSH = 1002;
-
-
-
-    @SuppressLint("HandlerLeak")
-    private final Handler handler = new Handler() {
-        @SuppressLint({"SetTextI18n", "HandlerLeak"})
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-
-                case 0:
-                    String info = (String) msg.obj;
-                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
-                    break;
-
-                case 1:
-                    userNameTextView.setText(userName);
-                    emailTextView.setText(userEmail);
-                    degreeTextView.setText(userDegree);
-                    facultyTextView.setText(userFaculty);
-                    setAllToggles();
-                    break;
-
-                case 2:
-                    int time = (int) msg.obj;
-
-                    if (time > 0) {
-                        buttonNewEmailGetOTP.setEnabled(false);
-                        buttonNewEmailGetOTP.setText(time + "s");
-                        buttonNewEmailGetOTP.setTextColor(ContextCompat.getColor(PersonalInformationActivity.this, R.color.black));
-                        buttonNewEmailGetOTP.setBackgroundColor(ContextCompat.getColor(PersonalInformationActivity.this, R.color.grey));
-
-                        Message message = new Message();
-                        message.what = 2;
-                        message.obj = time - 1;
-                        handler.sendMessageDelayed(message, 1000);
-                    }
-
-                    else {
-                        buttonNewEmailGetOTP.setEnabled(true);
-                        buttonNewEmailGetOTP.setText("Verify Email");
-                        buttonNewEmailGetOTP.setTextColor(ContextCompat.getColor(PersonalInformationActivity.this, R.color.white));
-                        buttonNewEmailGetOTP.setBackgroundColor(ContextCompat.getColor(PersonalInformationActivity.this, R.color.primary));
-                    }
-
-                    break;
-            }
-        }
-    };
-
+    /**
+     * On create method
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -217,6 +179,8 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
             public void onClick(View v) {
                 if (editUsernameEditText.getText().toString().trim().isEmpty()) {
                     showTextMessage("User Name cannot be empty");
+                } else if (!editUsernameEditText.getText().toString().matches("\\w{1,10}")) {
+                    showTextMessage("User name can only contain letters, numbers, and underscores, less than 10 characters");
                 } else {
                     new Thread() {
                         public void run() {
@@ -232,7 +196,6 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                 }
             }
         });
-
 
         ImageView editNameIcon = findViewById(R.id.Account_Pi_Ic_Edit_Name);
         editNameIcon.setOnClickListener(new View.OnClickListener() {
@@ -251,14 +214,12 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         });
 
         emailTextView = findViewById(R.id.Account_Pi_Edit_Email);
-//        editEmailEditText = findViewById(R.id.EditTextNewEmail);
         ImageView editEmailIcon = findViewById(R.id.Account_Pi_Ic_Edit_Email);
 
         editEmailIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (editTextNewEmail.getVisibility() == View.GONE) {
-//                    editEmailEditText.setVisibility(View.VISIBLE);
 
                     editTextNewEmail.setVisibility(View.VISIBLE);
                     buttonNewEmailGetOTP.setVisibility(View.VISIBLE);
@@ -360,9 +321,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
             }
         });
 
-        /**
-         * Change password button
-         */
+        // Change password button
         buttonConfirmNewPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -370,10 +329,6 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                 String oldPassWord = editCurrentPassword.getText().toString();
                 String newPassword = editNewPassword.getText().toString();
                 String newPassWordConfirm = editConfirmPassword.getText().toString();
-
-//                System.out.println(oldPassWord);
-//                System.out.println(newPassword);
-//                System.out.println(newPassWordConfirm);
 
                 if (oldPassWord.trim().isEmpty()) {
                     showTextMessage("Your old password is incorrect.");
@@ -432,6 +387,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
             }
         });
 
+        // Degree chooser
         buttonNewDegree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -516,11 +472,11 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         buttonNewFaculty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(){
-                    public void run(){
+                new Thread() {
+                    public void run() {
                         try {
                             String faculty = spinnerChangeFacultyList.getSelectedItem().toString();
-                            if (faculty.equals("Please select your faculty (optional)")){
+                            if (faculty.equals("Please select your faculty (optional)")) {
                                 faculty = "Not Provided";
                             }
 
@@ -536,7 +492,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         });
         setAllToggles();
         new Thread() {
-            public void run(){
+            public void run() {
                 initUserInfo();
             }
         }.start();
@@ -548,110 +504,61 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
      */
     private void initUserInfo() {
 
-            try {
+        try {
 
-                User user = new UserServiceImpl().getUser(userId);
+            User user = new UserServiceImpl().getUser(userId);
 
-                userName = user.getUserName();
-                userEmail = user.getUserEmail();
-                userFaculty = user.getUserFaculty();
+            userName = user.getUserName();
+            userEmail = user.getUserEmail();
+            userFaculty = user.getUserFaculty();
 
-                switch (user.getUserAQFLevel()) {
-                    case 1:
-                        userDegree = "Certificate I";
-                        break;
-                    case 2:
-                        userDegree = "Certificate II";
-                        break;
-                    case 3:
-                        userDegree = "Certificate III";
-                        break;
-                    case 4:
-                        userDegree = "Certificate IV";
-                        break;
-                    case 5:
-                        userDegree = "Diploma";
-                        break;
-                    case 6:
-                        userDegree = "Advanced Diploma, Associate Degree";
-                        break;
-                    case 7:
-                        userDegree = "Bachelor Degree";
-                        break;
-                    case 8:
-                        userDegree = "Bachelor Honours Degree";
-                        break;
-                    case 9:
-                        userDegree = "Masters Degree";
-                        break;
-                    case 10:
-                        userDegree = "Doctoral Degree";
-                        break;
-                    default:
-                        userDegree = "Not Provided";
-                }
-
-
-
-                handler.sendEmptyMessage(1);
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            switch (user.getUserAQFLevel()) {
+                case 1:
+                    userDegree = "Certificate I";
+                    break;
+                case 2:
+                    userDegree = "Certificate II";
+                    break;
+                case 3:
+                    userDegree = "Certificate III";
+                    break;
+                case 4:
+                    userDegree = "Certificate IV";
+                    break;
+                case 5:
+                    userDegree = "Diploma";
+                    break;
+                case 6:
+                    userDegree = "Advanced Diploma, Associate Degree";
+                    break;
+                case 7:
+                    userDegree = "Bachelor Degree";
+                    break;
+                case 8:
+                    userDegree = "Bachelor Honours Degree";
+                    break;
+                case 9:
+                    userDegree = "Masters Degree";
+                    break;
+                case 10:
+                    userDegree = "Doctoral Degree";
+                    break;
+                default:
+                    userDegree = "Not Provided";
             }
+
+
+            handler.sendEmptyMessage(1);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void onResume() {
         super.onResume();
         handler.sendEmptyMessage(1);
     }
-    /**
-     * Detects whether the shake function toggle was checked or not
-     */
-    private View.OnClickListener shakeToggleListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (shakeToggle.isChecked()) {
-                editor.putBoolean(getString(R.string.shaking_enabled), true);
-            } else {
-                editor.putBoolean(getString(R.string.shaking_enabled), false);
-            }
-            editor.apply();
-        }
-    };
-
-    /**
-     * Detects whether the notification toggle was checked or not
-     */
-    private View.OnClickListener notificationToggleListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            updateNotificationPermission();
-        }
-    };
-
-    /**
-     * Detects whether the usage access toggle was checked or not
-     */
-    private View.OnClickListener usageAccessToggleListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            updateUsagePermission();
-        }
-    };
-
-
-    /**
-     * Detects whether the precise location toggle was checked or not
-     */
-    private View.OnClickListener locationToggleListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            updatePreciseLocationPermission();
-        }
-    };
-
-
-
 
     /**
      * get OTP for registration
@@ -688,7 +595,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     /**
      * Reload current activity
      */
-    private void reloadActivity(){
+    private void reloadActivity() {
         Intent intent = getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         finish();
@@ -705,17 +612,16 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
 
     }
 
-
     /**
-     * Usage Access Permission settings
+     * Usage Access Permission check method
      *
-     * @return
+     * @return true if granted, else false
      */
     private boolean hasUsageAccessPermission() {
         try {
             PackageManager packageManager = getPackageManager();
             ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
-            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(MainActivity.getAppContext().APP_OPS_SERVICE);
+            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(APP_OPS_SERVICE);
             int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
             return (mode == AppOpsManager.MODE_ALLOWED);
         } catch (PackageManager.NameNotFoundException e) {
@@ -724,33 +630,87 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     }
 
     /**
-     * Notification Permission Check
+     * Notification permission check method
      *
-     * @return
+     * @return true if granted, else false
      */
     private boolean hasNotificationPermission() {
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(MainActivity.getAppContext());
         return notificationManagerCompat.areNotificationsEnabled();
-    }
+    }    @SuppressLint("HandlerLeak")
+    private final Handler handler = new Handler() {
+        @SuppressLint({"SetTextI18n", "HandlerLeak"})
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
 
-    private boolean hasPrecisionLocationPermission(){
+                case 0:
+                    String info = (String) msg.obj;
+                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
+                    break;
+
+                case 1:
+                    userNameTextView.setText(userName);
+                    emailTextView.setText(userEmail);
+                    degreeTextView.setText(userDegree);
+                    facultyTextView.setText(userFaculty);
+                    setAllToggles();
+                    break;
+
+                case 2:
+                    int time = (int) msg.obj;
+
+                    if (time > 0) {
+                        buttonNewEmailGetOTP.setEnabled(false);
+                        buttonNewEmailGetOTP.setText(time + "s");
+                        buttonNewEmailGetOTP.setTextColor(ContextCompat.getColor(PersonalInformationActivity.this, R.color.black));
+                        buttonNewEmailGetOTP.setBackgroundColor(ContextCompat.getColor(PersonalInformationActivity.this, R.color.grey));
+
+                        Message message = new Message();
+                        message.what = 2;
+                        message.obj = time - 1;
+                        handler.sendMessageDelayed(message, 1000);
+                    } else {
+                        buttonNewEmailGetOTP.setEnabled(true);
+                        buttonNewEmailGetOTP.setText("Verify Email");
+                        buttonNewEmailGetOTP.setTextColor(ContextCompat.getColor(PersonalInformationActivity.this, R.color.white));
+                        buttonNewEmailGetOTP.setBackgroundColor(ContextCompat.getColor(PersonalInformationActivity.this, R.color.primary));
+                    }
+
+                    break;
+            }
+        }
+    };
+
+    /**
+     * Precision location permission check method
+     *
+     * @return true if granted, else false
+     */
+    private boolean hasPrecisionLocationPermission() {
         return ContextCompat.checkSelfPermission(PersonalInformationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void updatePreciseLocationPermission(){
+    /**
+     * update precise location permission method
+     */
+    private void updatePreciseLocationPermission() {
         Intent intentLocationSourceSettings = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         startActivityForResult(intentLocationSourceSettings, APP_LOCATION_SETTINGS_REQUEST);
     }
 
-
+    /**
+     * update usage permission method
+     */
     private void updateUsagePermission() {
         Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
         startActivityForResult(intent, REQUEST_USAGE_ACCESS);
     }
 
+    /**
+     * update notification permission method
+     */
     private void updateNotificationPermission() {
-        Intent intentNotification = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+        Intent intentNotification = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
         startActivityForResult(intentNotification, APP_NOTIFICATION_PUSH);
     }
 
@@ -761,29 +721,16 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         // add saved preferences for shake mode
         boolean shakingEnabled = sharedPreferences.getBoolean(getString(R.string.shaking_enabled), false);
 
-        if (shakingEnabled) {
-            shakeToggle.setChecked(true);
-        } else {
-            shakeToggle.setChecked(false);
-        }
+        shakeToggle.setChecked(shakingEnabled);
 
-        if (hasNotificationPermission()) {
-            notificationToggle.setChecked(true);
-        } else {
-            notificationToggle.setChecked(false);
-        }
+        notificationToggle.setChecked(hasNotificationPermission());
 
-        if (hasUsageAccessPermission()) {
-            usageAccessToggle.setChecked(true);
-        } else {
-            usageAccessToggle.setChecked(false);
-        }
+        usageAccessToggle.setChecked(hasUsageAccessPermission());
 
-        if (hasPrecisionLocationPermission()) {
-            preciseLocationToggle.setChecked(true);
-        } else {
-            preciseLocationToggle.setChecked(false);
-        }
+        preciseLocationToggle.setChecked(hasPrecisionLocationPermission());
     }
+
+
+
 
 }

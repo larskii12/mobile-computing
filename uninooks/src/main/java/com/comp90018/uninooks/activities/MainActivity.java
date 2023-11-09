@@ -11,7 +11,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,31 +23,36 @@ import com.comp90018.uninooks.service.emulator.EmulatorServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 
+/**
+ * Main Activity
+ */
 @SuppressLint("CustomSplashScreen")
 public class MainActivity extends AppCompatActivity implements GPSService {
 
     private static final int REQUEST_LOCATION_PERMISSION = 1234;
-
-    private SharedPreferences.Editor editor;
-
-    private GPSServiceImpl gpsService;
-
+    @SuppressLint("StaticFieldLeak")
     private static Context context;
-
     @SuppressLint("HandlerLeak")
     private final Handler handler = new Handler() {
         @SuppressLint({"SetTextI18n", "HandlerLeak"})
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    String info = (String) msg.obj;
-                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
-                    break;
+            if (msg.what == 0) {
+                String info = (String) msg.obj;
+                Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
             }
         }
     };
+    private GPSServiceImpl gpsService;
 
+    public static Context getAppContext() {
+        return context;
+    }
 
+    /**
+     * on create method
+     *
+     * @param savedInstanceState as savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -61,18 +65,14 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 
         SharedPreferences sharedPreferences = getSharedPreferences("uninooks", MODE_PRIVATE);
         boolean isFirstTimeLaunch = sharedPreferences.getBoolean("isFirstTimeLaunch", true);
-        editor = sharedPreferences.edit();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         gpsService = new GPSServiceImpl(this, this);
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         // Ask for permission
-        ActivityCompat.requestPermissions(
-                MainActivity.this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                REQUEST_LOCATION_PERMISSION
-        );
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
 
         /**
          * Emulator Testing Mode Detection
@@ -82,12 +82,12 @@ public class MainActivity extends AppCompatActivity implements GPSService {
         }
     }
 
-    public void onStart(){
+    public void onStart() {
         super.onStart();
     }
 
-    public void onRestart(){
-        super.onRestart();;
+    public void onRestart() {
+        super.onRestart();
     }
 
     // When back button pressed
@@ -98,26 +98,23 @@ public class MainActivity extends AppCompatActivity implements GPSService {
     public void onPause() {
         super.onPause();
     }
+
     public void onResume() {
         super.onResume();
     }
 
-    public void onStop(){
+    public void onStop() {
         super.onStop();
     }
 
-    public void onDestroy(){
-        super.onDestroy();;
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         // Update first launch is done and start Main Activity
-//        Log.d("AAAAAAAAAAAAAAAAAAA", "First time launch");
-//        editor.putBoolean("isFirstTimeLaunch", false);
-//        editor.apply();
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
@@ -125,43 +122,16 @@ public class MainActivity extends AppCompatActivity implements GPSService {
                 GPSServiceImpl.setGPSPermissionStatus(true);
                 gpsService.startGPSUpdates();
 
-            }
-
-            else {
+            } else {
                 GPSServiceImpl.setGPSPermissionStatus(false);
-                Log.d("AAAAAAAAAAAAAAAAAAA", "gps NOT fetched and go to log in");
                 startLoginActivity();
             }
         }
     }
 
-//    /**
-//     * Show the permission dialogue, only shows the first time app launch
-//     */
-//    private void showPermissionDialogueAndStartMainActivity(){
-//
-//        new AlertDialog.Builder(this)
-//                .setTitle("Permissions Required")
-//                .setMessage("To optimize your experience, Uninooks requires the following permissions: \n\n1. Access to location and accelerometer to enhance recommendations. \n\n2. Access to notification and usage data to facilitate study mode monitoring. \n\nPlease be assured that your data will be stored locally on your device and will not be shared with any third parties.")
-//                .setPositiveButton("I understand", (dialog, which) -> {
-//                    ActivityCompat.requestPermissions(
-//                            MainActivity.this,
-//                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                            REQUEST_LOCATION_PERMISSION
-//                    );
-//                })
-//                .setCancelable(false)
-//                .show();
-//    }
-
-    private void showDialogue(String message){
-        new AlertDialog.Builder(this)
-                .setTitle("Permissions Required")
-                .setMessage(message)
-                .setPositiveButton("I understand", (dialog, which) -> {
-                })
-                .setCancelable(false)
-                .show();
+    private void showDialogue(String message) {
+        new AlertDialog.Builder(this).setTitle("Permissions Required").setMessage(message).setPositiveButton("I understand", (dialog, which) -> {
+        }).setCancelable(false).show();
     }
 
     /**
@@ -189,11 +159,6 @@ public class MainActivity extends AppCompatActivity implements GPSService {
     @Override
     public void onGPSUpdate(Location location) {
         gpsService.stopGPSUpdates();
-        Log.d("AAAAAAAAAAAAAAAAAAA", "gps fetched and go to log in");
         startLoginActivity();
-    }
-
-    public static Context getAppContext () {
-        return context;
     }
 }

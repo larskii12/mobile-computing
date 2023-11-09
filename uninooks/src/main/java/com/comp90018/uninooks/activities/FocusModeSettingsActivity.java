@@ -21,8 +21,22 @@ import androidx.transition.TransitionManager;
 
 import com.comp90018.uninooks.R;
 
-
+/**
+ * Focus Mode setting activity
+ */
 public class FocusModeSettingsActivity extends AppCompatActivity {
+    private static final int POMODORO_TIME_DEFAULT = 25;
+    private static final int SHORT_PAUSE_TIME_DEFAULT = 5;
+    private static final int LONG_PAUSE_TIME_DEFAULT = 15;
+    /**
+     * Goes back to the previous page, no settings are applied/saved
+     */
+    private final View.OnClickListener returnListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            finish();
+        }
+    };
     ImageButton returnButton;
     Button resetButton;
     Button saveButton;
@@ -30,6 +44,32 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
     EditText pomodoroTime;
     EditText shortBreakTime;
     EditText longBreakTime;
+    /**
+     * Resets all settings to default settings, stays on current page
+     */
+    private final View.OnClickListener resetListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            pomodoroTime.setText(String.valueOf(POMODORO_TIME_DEFAULT));
+            shortBreakTime.setText(String.valueOf(SHORT_PAUSE_TIME_DEFAULT));
+            longBreakTime.setText(String.valueOf(LONG_PAUSE_TIME_DEFAULT));
+            toggleSwitch.setChecked(false);
+        }
+    };
+    /**
+     * Goes back to previous page with settings applied
+     */
+    private final View.OnClickListener saveListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String pomodoro = pomodoroTime.getText().toString();
+            String shortBreak = shortBreakTime.getText().toString();
+            String longBreak = longBreakTime.getText().toString();
+            Boolean onAutoPomodoro = toggleSwitch.isChecked();
+            confirmSettings(pomodoro, shortBreak, longBreak, onAutoPomodoro);
+            finish();
+        }
+    };
     ImageView pomTimeIcon;
     ImageView shortTimeIcon;
     ImageView longTimeIcon;
@@ -38,10 +78,11 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
     int longBreakTimeValue;
     Boolean onAutoSequence;
 
-    private static final int POMODORO_TIME_DEFAULT = 25;
-    private static final int SHORT_PAUSE_TIME_DEFAULT = 5;
-    private static final int LONG_PAUSE_TIME_DEFAULT = 15;
-
+    /**
+     * On create method
+     *
+     * @param savedInstanceState as savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -102,6 +143,8 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
 
         LinearLayout shortBreakLayout = findViewById(R.id.LinearLayoutFocusSettingShortBreak);
         final RelativeLayout shortBreakInputsLayout = findViewById(R.id.RelativeLayoutFocusSettingShortBreak);
+
+        // breakout button
         shortBreakLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,6 +177,8 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
 
         LinearLayout longBreakLayout = findViewById(R.id.LinearLayoutFocusSettingLongBreak);
         final RelativeLayout longBreakInputsLayout = findViewById(R.id.RelativeLayoutFocusSettingLongBreak);
+
+        // long break out button
         longBreakLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,43 +215,13 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
     }
 
     /**
-     * Goes back to the previous page, no settings are applied/saved
+     * save the focus mode settings to shared preference
+     *
+     * @param pomodoro       as pomodoro time
+     * @param shortBreak     as short break time
+     * @param longBreak      as long break time
+     * @param onAutoPomodoro as on auto pomodoro
      */
-    private final View.OnClickListener returnListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            finish();
-        }
-    };
-
-    /**
-     * Resets all settings to default settings, stays on current page
-     */
-    private final View.OnClickListener resetListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            pomodoroTime.setText(String.valueOf(POMODORO_TIME_DEFAULT));
-            shortBreakTime.setText(String.valueOf(SHORT_PAUSE_TIME_DEFAULT));
-            longBreakTime.setText(String.valueOf(LONG_PAUSE_TIME_DEFAULT));
-            toggleSwitch.setChecked(false);
-        }
-    };
-
-    /**
-     * Goes back to previous page with settings applied
-     */
-    private final View.OnClickListener saveListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            String pomodoro = pomodoroTime.getText().toString();
-            String shortBreak = shortBreakTime.getText().toString();
-            String longBreak = longBreakTime.getText().toString();
-            Boolean onAutoPomodoro = toggleSwitch.isChecked();
-            confirmSettings(pomodoro, shortBreak, longBreak, onAutoPomodoro);
-            finish();
-        }
-    };
-
     private void confirmSettings(String pomodoro, String shortBreak, String longBreak, Boolean onAutoPomodoro) {
         SharedPreferences sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -221,9 +236,9 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
             longBreak = String.valueOf(LONG_PAUSE_TIME_DEFAULT);
         }
 
-        editor.putInt(getString(R.string.pomodoro_setting), Integer.parseInt(pomodoro)*60);
-        editor.putInt(getString(R.string.short_break_setting), Integer.parseInt(shortBreak)*60);
-        editor.putInt(getString(R.string.long_break_setting), Integer.parseInt(longBreak)*60);
+        editor.putInt(getString(R.string.pomodoro_setting), Integer.parseInt(pomodoro) * 60);
+        editor.putInt(getString(R.string.short_break_setting), Integer.parseInt(shortBreak) * 60);
+        editor.putInt(getString(R.string.long_break_setting), Integer.parseInt(longBreak) * 60);
         editor.putBoolean(getString(R.string.auto_pomodoro), onAutoPomodoro);
         editor.apply();
     }
@@ -238,10 +253,9 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
         longBreakTimeValue = sharedPreferences.getInt(getString(R.string.long_break_setting), LONG_PAUSE_TIME_DEFAULT);
         onAutoSequence = sharedPreferences.getBoolean(getString(R.string.auto_pomodoro), false);
 
-        pomodoroTime.setText(String.valueOf(pomodoroTimeValue/60));
-        shortBreakTime.setText(String.valueOf(shortBreakTimeValue/60));
-        longBreakTime.setText(String.valueOf(longBreakTimeValue/60));
+        pomodoroTime.setText(String.valueOf(pomodoroTimeValue / 60));
+        shortBreakTime.setText(String.valueOf(shortBreakTimeValue / 60));
+        longBreakTime.setText(String.valueOf(longBreakTimeValue / 60));
         toggleSwitch.setChecked(onAutoSequence);
-
     }
 }

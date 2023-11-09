@@ -17,11 +17,15 @@ import com.comp90018.uninooks.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+/**
+ * Focus mode main activity
+ */
 public class FocusModeMainActivity extends AppCompatActivity {
 
     ImageView studyGif;
 
     Button startFocusButton;
+
     BottomNavigationView bottomNav;
 
     private int userId;
@@ -30,6 +34,11 @@ public class FocusModeMainActivity extends AppCompatActivity {
 
     private String userName;
 
+    /**
+     * On create method
+     *
+     * @param savedInstanceState as savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -50,6 +59,7 @@ public class FocusModeMainActivity extends AppCompatActivity {
 
         Glide.with(this).load(R.drawable.study).into(studyGif);
 
+        // Start focus study mode button
         startFocusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,13 +72,14 @@ public class FocusModeMainActivity extends AppCompatActivity {
             }
         });
 
+        // Navigation bar buttons
         bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @SuppressLint("NonConstantResourceId")
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
 
-                if (id == R.id.homeNav){
+                if (id == R.id.homeNav) {
                     Intent intent = new Intent(FocusModeMainActivity.this, HomeActivity.class);
 
                     // Pass the user to next page
@@ -79,9 +90,7 @@ public class FocusModeMainActivity extends AppCompatActivity {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
-                }
-
-                else if (id == R.id.searchNav) {
+                } else if (id == R.id.searchNav) {
                     Intent intent = new Intent(FocusModeMainActivity.this, MapsActivity.class);
 
                     // Pass the user to next page
@@ -94,7 +103,6 @@ public class FocusModeMainActivity extends AppCompatActivity {
                     finish();
 
                 } else if (id == R.id.focusNav) {
-                    ;
                 } else {
                     Intent intent = new Intent(FocusModeMainActivity.this, AccountActivity.class);
                     // Pass the user to next page

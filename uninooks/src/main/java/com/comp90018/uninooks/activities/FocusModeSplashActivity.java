@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -28,53 +27,73 @@ import androidx.core.app.NotificationManagerCompat;
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.service.background_app.BackgroundAppService;
 
-
+/**
+ * Focus mode splash screen activity
+ */
 public class FocusModeSplashActivity extends AppCompatActivity {
 
+    private static final int LOADING_DELAY_MS = 1000; // loading bar for the focus mode
+    private static final int REQUEST_USAGE_ACCESS = 1001;
+    private static final int APP_NOTIFICATION_PUSH = 1002;
+    SharedPreferences.Editor editor;
     private int userId;
     private String userEmail;
     private String userName;
-
     private ProgressBar loading;
-
-    private static final int LOADING_DELAY_MS = 1000 * 1; // loading bar for the focus mode
-
-    SharedPreferences.Editor editor;
-
-    private static final int REQUEST_USAGE_ACCESS = 1001;
-
-    private static final int APP_NOTIFICATION_PUSH = 1002;
-
+    /**
+     * Handler to handle the UI thread change
+     */
     @SuppressLint("HandlerLeak")
     private final Handler handler = new Handler() {
         @SuppressLint({"SetTextI18n", "HandlerLeak"})
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    // This code will run after the specified delay (5 seconds)
-                    // You can perform your loading or any other task here
-                    loading.setVisibility(View.GONE);
-                    //focusButton.setVisibility(View.VISIBLE);
-                    try {
-                        Intent intent = new Intent(FocusModeSplashActivity.this, FocusModeTimerActivity.class);
-                        // Pass the user to next page
-                        intent.putExtra("USER_ID_EXTRA", userId);
-                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                        intent.putExtra("USER_NAME_EXTRA", userName);
+            if (msg.what == 0) {//focusButton.setVisibility(View.VISIBLE);
+                loading.setVisibility(View.GONE);
 
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                try {
+                    Intent intent = new Intent(FocusModeSplashActivity.this, FocusModeTimerActivity.class);
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
 
-                        startActivity(intent);
-                        finish();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        throw new RuntimeException(e);
-                    }
-                    break;
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
             }
         }
     };
+    /**
+     * To do after notification is granted on Android 13+ (API 33+)
+     */
+    private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+        if (isGranted) {
+            BackgroundAppService.NOTIFICATION_STATUS = true;
 
+            // Disable the second time permission query
+            editor.putBoolean("isFocusModeFirstTimeLaunch", false);
+            editor.apply();
+        } else {
+            BackgroundAppService.NOTIFICATION_STATUS = false;
+
+            // Disable the second time permission query
+            editor.putBoolean("isFocusModeFirstTimeLaunch", false);
+            editor.apply();
+        }
+
+        handler.sendEmptyMessageDelayed(0, LOADING_DELAY_MS);
+    });
+
+    /**
+     * on create method
+     *
+     * @param savedInstanceState as savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -91,6 +110,7 @@ public class FocusModeSplashActivity extends AppCompatActivity {
 
         loading = findViewById(R.id.progressBar);
 
+        // Log whether is first time launch, ask for permission only if first time launch
         SharedPreferences sharedPreferences = getSharedPreferences("uninooks", MODE_PRIVATE);
         boolean isFocusModeFirstTimeLaunch = sharedPreferences.getBoolean("isFocusModeFirstTimeLaunch", true);
 
@@ -100,79 +120,46 @@ public class FocusModeSplashActivity extends AppCompatActivity {
         // Need to change to check whether the app is first time launch
         if (isFocusModeFirstTimeLaunch) {
 
-            // first time launch focus mode
+            // first time launch focus mode, inside method has Android Version Check
             firstTimeLaunchFocusMode();
         }
 
         // If not first time launch
-        else{
+        else {
 
             BackgroundAppService.USAGE_STATUS = hasUsageAccessPermission();
             BackgroundAppService.NOTIFICATION_STATUS = hasNotificationPermission();
-
-            Log.d("XXXXXXXXXXXXXXXXXXXXXXXXX", String.valueOf(BackgroundAppService.USAGE_STATUS));
-            Log.d("XXXXXXXXXXXXXXXXXXXXXXXXX", String.valueOf(BackgroundAppService.NOTIFICATION_STATUS));
 
             handler.sendEmptyMessageDelayed(0, LOADING_DELAY_MS);
         }
     }
 
-    public void onStart(){
-        super.onStart();
-    }
-
-    public void onRestart(){
-        super.onRestart();
-    }
-
-    // When back button pressed
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    public void onStop(){
-        super.onStop();
-    }
-
-    public void onDestroy(){
-        super.onDestroy();
-    }
-
+    /**
+     * First time to launch the focus mode, asking for permissions
+     */
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     private void firstTimeLaunchFocusMode() {
 
-        new AlertDialog.Builder(this)
-                .setTitle("Permissions Required")
-                .setMessage(Html.fromHtml("For Focus Mode to function optimally, it requires the following permissions:<br><br>"
-                        + "1. <b><font color='red'>Usage Access</font></b>: To monitor your study activity.<br><br>"
-                        + "2. <b><font color='red'>Notification Access</font></b>: To notify your study activity.<br><br>"
-                        + "Your personal information will remain private and will not be collected or shared with any third-party entities."))
-                .setPositiveButton("I understand", (dialog, which) -> {
+        // Show user what permission needed
+        new AlertDialog.Builder(this).setTitle("Permissions Required").setMessage(Html.fromHtml("For Focus Mode to function optimally, it requires the following permissions:<br><br>" + "1. <b><font color='red'>Usage Access</font></b>: To monitor your study activity.<br><br>" + "2. <b><font color='red'>Notification Access</font></b>: To notify your study activity.<br><br>" + "Your personal information will remain private and will not be collected or shared with any third-party entities.")).setPositiveButton("I understand", (dialog, which) -> {
 
-                    // Ask for usage permission
-                    Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-                    startActivityForResult(intent, REQUEST_USAGE_ACCESS);
+            // Ask for usage permission
+            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+            startActivityForResult(intent, REQUEST_USAGE_ACCESS);
 
-                })
-                .setCancelable(false)
-                .show();
+        }).setCancelable(false).show();
     }
 
+    /**
+     * Check whether usage permission has been granted
+     *
+     * @return true if yes, otherwise false
+     */
     private boolean hasUsageAccessPermission() {
         try {
             PackageManager packageManager = getPackageManager();
             ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
-            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(MainActivity.getAppContext().APP_OPS_SERVICE);
+            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(APP_OPS_SERVICE);
             int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
             return (mode == AppOpsManager.MODE_ALLOWED);
         } catch (PackageManager.NameNotFoundException e) {
@@ -180,71 +167,80 @@ public class FocusModeSplashActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Check whether notification permission has been granted
+     *
+     * @return true if yes, otherwise false
+     */
     private boolean hasNotificationPermission() {
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(MainActivity.getAppContext());
         return notificationManagerCompat.areNotificationsEnabled();
     }
 
+    /**
+     * When usage or notification permission query end, processing the notification permission
+     *
+     * @param requestCode as the permission code
+     * @param resultCode  as the permission query result code
+     * @param data        as the intent data
+     */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
 
+        // If request is usage access
         if (requestCode == REQUEST_USAGE_ACCESS) {
+
+            // If usage permission granted
             if (hasUsageAccessPermission()) {
                 BackgroundAppService.USAGE_STATUS = true;
 
-
+                // If version is higher or equal than Android 13, request notification permission with pop up box
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
-                }
-
-                else {
-
-                    // Ask for notification for old android
-                    Intent intentNotification = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                            .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                } else {
+                    // If version is lower than Android 13, request notification by bring user to the app notification permission page
+                    Intent intentNotification = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
                     startActivityForResult(intentNotification, APP_NOTIFICATION_PUSH);
                 }
             }
 
+            // If usage permission NOT granted
             else {
                 BackgroundAppService.USAGE_STATUS = false;
 
+                // If version is higher or equal than Android 13, request notification permission with pop up box
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
-                }
-
-                else {
-
-                    Intent intentNotification = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                            .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                } else {
+                    // If version is lower than Android 13, request notification by bring user to the app notification permission page
+                    Intent intentNotification = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
                     startActivityForResult(intentNotification, APP_NOTIFICATION_PUSH);
 
                 }
             }
         }
 
+        // If request is notification, to do after notification is granted on Android 12 or lower version (API 31-)
+        if (requestCode == APP_NOTIFICATION_PUSH) {
 
-        if (requestCode == APP_NOTIFICATION_PUSH){
-            if (hasNotificationPermission()){
+            // If notification permission granted
+            if (hasNotificationPermission()) {
 
                 BackgroundAppService.NOTIFICATION_STATUS = true;
 
-                Log.d("XXXXXXXXXXXXXXXXXXXXXXXXX", String.valueOf(BackgroundAppService.USAGE_STATUS));
-                Log.d("XXXXXXXXXXXXXXXXXXXXXXXXX", String.valueOf(BackgroundAppService.NOTIFICATION_STATUS));
-
+                // Disable the second time permission query
                 editor.putBoolean("isFocusModeFirstTimeLaunch", false);
                 editor.apply();
                 handler.sendEmptyMessageDelayed(0, LOADING_DELAY_MS);
 
             }
 
-            else{
+            // If notification permission NOT granted
+            else {
                 BackgroundAppService.NOTIFICATION_STATUS = false;
 
-                Log.d("XXXXXXXXXXXXXXXXXXXXXXXXX", String.valueOf(BackgroundAppService.USAGE_STATUS));
-                Log.d("XXXXXXXXXXXXXXXXXXXXXXXXX", String.valueOf(BackgroundAppService.NOTIFICATION_STATUS));
-
+                // Disable the second time permission query
                 editor.putBoolean("isFocusModeFirstTimeLaunch", false);
                 editor.apply();
                 handler.sendEmptyMessageDelayed(0, LOADING_DELAY_MS);
@@ -252,28 +248,4 @@ public class FocusModeSplashActivity extends AppCompatActivity {
         }
 
     }
-
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-        registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-            if (isGranted) {
-                BackgroundAppService.NOTIFICATION_STATUS = true;
-
-                Log.d("XXXXXXXXXXXXXXXXXXXXXXXXX", String.valueOf(BackgroundAppService.USAGE_STATUS));
-                Log.d("XXXXXXXXXXXXXXXXXXXXXXXXX", String.valueOf(BackgroundAppService.NOTIFICATION_STATUS));
-
-
-                editor.putBoolean("isFocusModeFirstTimeLaunch", false);
-                editor.apply();
-            } else {
-                BackgroundAppService.NOTIFICATION_STATUS = false;
-
-                Log.d("XXXXXXXXXXXXXXXXXXXXXXXXX", String.valueOf(BackgroundAppService.USAGE_STATUS));
-                Log.d("XXXXXXXXXXXXXXXXXXXXXXXXX", String.valueOf(BackgroundAppService.NOTIFICATION_STATUS));
-
-                editor.putBoolean("isFocusModeFirstTimeLaunch", false);
-                editor.apply();
-            }
-
-            handler.sendEmptyMessageDelayed(0, LOADING_DELAY_MS);
-        });
 }

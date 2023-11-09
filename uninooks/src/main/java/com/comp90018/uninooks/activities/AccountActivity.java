@@ -1,6 +1,5 @@
 package com.comp90018.uninooks.activities;
 
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -28,21 +27,20 @@ import com.comp90018.uninooks.service.user.UserServiceImpl;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+/**
+ * Account Activity for user account management
+ */
 public class AccountActivity extends AppCompatActivity {
 
     private TextView textViewAccountGreetingUserName;
-
     private int userId;
     private String userEmail;
     private String userName;
-    private BottomNavigationView bottomNav;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
-
-
-
+    /**
+     * Handler for Account Activity
+     */
     @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
+    private final Handler handler = new Handler() {
         @SuppressLint("SetTextI18n")
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -59,7 +57,15 @@ public class AccountActivity extends AppCompatActivity {
             }
         }
     };
+    private BottomNavigationView bottomNav;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
+    /**
+     * On create method
+     *
+     * @param savedInstanceState as savedInstanceState
+     */
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -78,10 +84,6 @@ public class AccountActivity extends AppCompatActivity {
         userId = intent.getIntExtra("USER_ID_EXTRA", 0);
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
         userName = intent.getStringExtra("USER_NAME_EXTRA");
-        System.out.println(userId);
-        System.out.println("userName" + userName);
-        System.out.println("This is Account activity class");
-
         // Get reference to the Personal Information LinearLayout
         LinearLayout personalInfoLayout = findViewById(R.id.Account_Personal_Info_Layout); // Set an ID for your LinearLayout in XML and use it here
         LinearLayout logoutLayout = findViewById(R.id.Account_Logout_Layout);
@@ -93,13 +95,14 @@ public class AccountActivity extends AppCompatActivity {
         bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setSelectedItemId(R.id.accountNav);
 
+        // Navigation buttons
         bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @SuppressLint("NonConstantResourceId")
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
 
-                if (id == R.id.homeNav){
+                if (id == R.id.homeNav) {
                     Intent intent = new Intent(AccountActivity.this, HomeActivity.class);
 
                     // Pass the user to next page
@@ -110,9 +113,7 @@ public class AccountActivity extends AppCompatActivity {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
-                }
-
-                else if (id == R.id.searchNav) {
+                } else if (id == R.id.searchNav) {
                     Intent intent = new Intent(AccountActivity.this, MapsActivity.class);
 
                     // Pass the user to next page
@@ -135,7 +136,6 @@ public class AccountActivity extends AppCompatActivity {
                     finish();
 
                 } else {
-                    ;
                 }
 
                 return false;
@@ -155,6 +155,7 @@ public class AccountActivity extends AppCompatActivity {
             }
         });
 
+        // Log out button
         logoutLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,6 +163,7 @@ public class AccountActivity extends AppCompatActivity {
             }
         });
 
+        // Delete Account button
         deleteAccountLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -170,8 +172,8 @@ public class AccountActivity extends AppCompatActivity {
         });
 
         // Show account greeting name
-        new Thread(){
-            public void run(){
+        new Thread() {
+            public void run() {
                 try {
                     showAccountGreetingUsername();
                 } catch (Exception e) {
@@ -181,6 +183,12 @@ public class AccountActivity extends AppCompatActivity {
         }.start();
     }
 
+    /**
+     * Method to show the account greeting name
+     *
+     * @throws Exception
+     */
+
     private void showAccountGreetingUsername() throws Exception {
 
         User user = new UserServiceImpl().getUser(userId);
@@ -189,6 +197,9 @@ public class AccountActivity extends AppCompatActivity {
         handler.sendEmptyMessage(1);
     }
 
+    /**
+     * Method to show log out dialog
+     */
     private void showLogoutDialog() {
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.logout_confirmation_dialog, null);
@@ -206,19 +217,17 @@ public class AccountActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 // Pass the user email to login page
-                new Thread(){
-                    public void run(){
+                new Thread() {
+                    public void run() {
                         SharedPreferences sharedPreferences = getSharedPreferences("uninooks", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
 
                         editor.putBoolean(getString(R.string.LogOut), true);
                         editor.apply(); // Commit the changes
-                        System.out.println(sharedPreferences.getAll());
-
 
                         Intent intent = new Intent(AccountActivity.this, LoginActivity.class);
                         try {
-                            intent.putExtra("USER_EMAIL_EXTRA",  new UserServiceImpl().getUser(userId).getUserEmail());
+                            intent.putExtra("USER_EMAIL_EXTRA", new UserServiceImpl().getUser(userId).getUserEmail());
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -231,6 +240,7 @@ public class AccountActivity extends AppCompatActivity {
             }
         });
 
+        // Cancel log out button
         Button buttonLogOutCancel = dialogView.findViewById(R.id.dialog_negative_btn);
         buttonLogOutCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -240,6 +250,9 @@ public class AccountActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Method to show the delete account dialog
+     */
     private void showDeleteAccountDialog() {
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.delete_account_confirmation_dialog, null);
@@ -259,12 +272,11 @@ public class AccountActivity extends AppCompatActivity {
                 String deleteEmail = editTextDeleteUserEmail.getText().toString();
                 EditText editTextDeleteUserPassword = dialogView.findViewById(R.id.EditTextDeletePassword);
                 String deleteUserPassword = editTextDeleteUserPassword.getText().toString();
-                new Thread(){
-                    public void run(){
+                new Thread() {
+                    public void run() {
                         try {
                             if (new UserServiceImpl().getUser(userId).getUserEmail().equals(deleteEmail)) {
-                                if (new UserServiceImpl().logIn(deleteEmail, deleteUserPassword) != null)
-                                {
+                                if (new UserServiceImpl().logIn(deleteEmail, deleteUserPassword) != null) {
                                     // Delete Account
                                     new UserServiceImpl().deleteUser(userId);
                                     showTextMessage("Your account has been deleted successfully");
@@ -282,19 +294,13 @@ public class AccountActivity extends AppCompatActivity {
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
                                     finish();
-                                }
-
-                                else{
+                                } else {
                                     showTextMessage("Your password is incorrect");
                                 }
-                            }
-
-                            else{
-                                System.out.println("=======13");
+                            } else {
                                 showTextMessage("This email does not matches your account.");
                             }
-                        }
-                        catch (Exception e) {
+                        } catch (Exception e) {
                             showTextMessage("An error occurred, please contact the IT Administrator.");
                         }
                     }
@@ -302,6 +308,8 @@ public class AccountActivity extends AppCompatActivity {
 
             }
         });
+
+        // Button for delete account
 
         Button buttonDeleteCancel = dialogView.findViewById(R.id.account_delete_Cancel_Button);
         buttonDeleteCancel.setOnClickListener(new View.OnClickListener() {
@@ -312,20 +320,23 @@ public class AccountActivity extends AppCompatActivity {
         });
     }
 
-    public void onRestart(){
+    /**
+     * Restart activity will refresh account activity username
+     */
+    public void onRestart() {
         super.onRestart();
         handler.sendEmptyMessage(1);
     }
 
+    /**
+     * Resume activity will refresh account activity username
+     */
     public void onResume() {
         super.onResume();
-        new Thread(){
-            public void run(){
+        new Thread() {
+            public void run() {
                 try {
                     userName = new UserServiceImpl().getUser(userId).getUserName();
-                    System.out.println(userId);
-                    System.out.println("userName" + userName);
-                    System.out.println("This is Account activity classbottom");
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
