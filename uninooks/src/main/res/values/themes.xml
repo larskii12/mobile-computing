@@ -2,7 +2,6 @@
 
     <style name="Base.Theme.MainActivity" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
-        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="Theme.MainActivity" parent="Base.Theme.MainActivity" />

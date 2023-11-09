@@ -79,6 +79,38 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
         userEmail = "";
         userName = "";
 
+        buttonLoginLogIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread() {
+                    public void run() {
+                        try {
+                            User user = loginUser();
+
+                            if (user != null){
+                                userId = user.getUserId();
+                                userEmail = user.getUserEmail();
+                                userName = user.getUserName();
+
+                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+
+                                // Pass the user to next page
+                                intent.putExtra("USER_ID_EXTRA", userId);
+                                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                intent.putExtra("USER_NAME_EXTRA", userName);
+
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                finish();
+                            }
+
+                        } catch (Exception e) {
+                            showTextMessage("An error happened, please contract the IT administrator.");
+                        }
+                    }
+                }.start();
+            }
+        });
         editTextLoginPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -115,6 +147,7 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
                 return false;
             }
         });
+
 
 
         buttonLogInGoToSignup.setOnClickListener(new View.OnClickListener() {
