@@ -2,7 +2,7 @@
     <string name="app_name">Uninooks</string>
     <string name="title_main_activity">MainActivity</string>
     <string name="title_activity_maps">MapsActivity</string>
-    <string name="forget_password">Forget Password</string>
+    <string name="forget_password"><u>Forgot Password?</u></string>
     <string-array name="faculty_list">
         <item>Please select your faculty (optional)</item>
         <item>Architecture, Building and Planning</item>
@@ -33,6 +33,7 @@
     <!-- Login strings-->
     <string name="login">Login</string>
     <string name="login_email_or_username">Email or username</string>
+    <string name="new_user">First time here? <u>Join us!</u></string>
 
     <!-- Sign up strings-->
     <string name="Sign_Up">Sign Up</string>
@@ -78,7 +79,7 @@
     <string name="focus_subheading">Let\'s get to know Focus Mode!</string>
     <string name="focus_subheading1">What is Focus Mode? </string>
 <!--    <string name="focus_paragraph1">Derived from its name, focus mode will help you concentrate on your studies for the set amount of time. This mode includes a Do Not Disturb feature, Pomodoro Timer, and a Background App Sensor.</string>-->
-    <string name="focus_paragraph1">This mode utilises the Pomodoro technique to aid in your concentration while studying for the set amount of time. \n\nThis will turn on the Do Not Disturb feature on your device, temporarily disabling notifications.</string>
+    <string name="focus_paragraph1">This mode utilises the Pomodoro technique to aid in your concentration while studying for the set amount of time.</string>
     <string name="focus_subheading2">What does Do Not Disturb do? </string>
     <string name="focus_paragraph2">This will disable notifications all social media and messaging applications</string>
     <string name="focus_last">Good luck students!</string>
