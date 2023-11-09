@@ -92,15 +92,11 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    private ImageView editStudySuggestionIcon;
+    private Switch shakeToggle;
+    private Switch notificationToggle;
+    private Switch usageAccessToggle;
+    private Switch preciseLocationToggle;
 
-    private TextView textViewStudySuggestionOff;
-
-    private TextView textViewStudySuggestionOn;
-
-    private Switch switchStudySuggestion;
-
-    private TextView textViewStudyModeStatus;
 
 
     @SuppressLint("HandlerLeak")
@@ -170,17 +166,33 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         userNameTextView = findViewById(R.id.Account_Pi_Edit_Name);
         buttonNewUserName = findViewById(R.id.Pi_ButtonConfirmNewUserName);
         editUsernameEditText = findViewById(R.id.EditTextNewUsername);
+
         editTextNewEmail = findViewById(R.id.EditTextConfirmNewEmail);
         buttonNewEmailGetOTP = findViewById(R.id.Pi_ButtonConfirmNewEmail);
         editTextEmailOTP = findViewById(R.id.Pi_EditTextEmailOTP);
         buttonNewEmailVerifyOTP = findViewById(R.id.Pi_ButtonOTPVerify);
+
         passwordTextView = findViewById(R.id.Account_Pi_Edit_Password);
         editCurrentPassword = findViewById(R.id.Pi_EditTextCurrentPassword);
         editNewPassword = findViewById(R.id.Pi_EditTextNewPassword);
         editConfirmPassword = findViewById(R.id.Pi_EditTextConfirmNewPassword);
         buttonConfirmNewPassword = findViewById(R.id.Pi_ButtonConfirmNewPassword);
+
         buttonNewFaculty = findViewById(R.id.Pi_ButtonConfirmNewFaculty);
         buttonNewDegree = findViewById(R.id.Pi_ButtonConfirmNewDegree);
+
+        shakeToggle = findViewById(R.id.shakeFunctionToggle);
+        notificationToggle = findViewById(R.id.notificationToggle);
+        usageAccessToggle = findViewById(R.id.usageAccessToggle);
+        preciseLocationToggle = findViewById(R.id.locationToggle);
+
+        shakeToggle.setOnClickListener(shakeToggleListener);
+        notificationToggle.setOnClickListener(notificationToggleListener);
+        usageAccessToggle.setOnClickListener(usageAccessToggleListener);
+        preciseLocationToggle.setOnClickListener(locationToggleListener);
+
+        // retrieve the current permissions from the user, and set whether it has been checked or not
+        // pass string, activity (this) --> to get the boolean
 
         otp = "";
 
@@ -569,6 +581,50 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
             }
     }
 
+    /**
+     * Detects whether the shake function toggle was checked or not
+     */
+    private View.OnClickListener shakeToggleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            System.out.println("HELLOOOOO");
+            System.out.println(shakeToggle.isChecked());
+        }
+    };
+
+    /**
+     * Detects whether the notification toggle was checked or not
+     */
+    private View.OnClickListener notificationToggleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            System.out.println("HELLOOOOO");
+            System.out.println(notificationToggle.isChecked());
+        }
+    };
+
+    /**
+     * Detects whether the usage access toggle was checked or not
+     */
+    private View.OnClickListener usageAccessToggleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            System.out.println("HELLOOOOO");
+            System.out.println(usageAccessToggle.isChecked());
+        }
+    };
+
+
+    /**
+     * Detects whether the precise location toggle was checked or not
+     */
+    private View.OnClickListener locationToggleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            System.out.println("HELLOOOOO");
+            System.out.println(preciseLocationToggle.isChecked());
+        }
+    };
 
 
 
