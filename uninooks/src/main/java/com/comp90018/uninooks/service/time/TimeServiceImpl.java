@@ -16,18 +16,12 @@ public class TimeServiceImpl implements TimeService{
         String currentTimeStr = hour + ":" + minute + ":" + second;
 
         return Time.valueOf(currentTimeStr);
-
-        // Fake time for nigh testing
-//        return Time.valueOf("03:00:00");
     }
 
     @Override
     public int getWeekDate() {
         LocalDate currentDate = LocalDate.now(ZoneId.of("Australia/Melbourne"));
         return currentDate.getDayOfWeek().getValue();
-
-        // Fake date for weekend testing
-//        return 6;
     }
 
     @Override

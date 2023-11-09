@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -223,6 +222,7 @@ public class ReviewServiceImpl implements ReviewService {
                 }
                 review.setScore(resultSet.getInt("review_score"));
                 review.setTime(resultSet.getTimestamp("review_time"));
+                review.setDate(review.getTime());
 
                 reviewList.add(review);
             }

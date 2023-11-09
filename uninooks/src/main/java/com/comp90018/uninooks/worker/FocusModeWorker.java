@@ -27,10 +27,8 @@ public class FocusModeWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d(TAG, "doWork called for: " + this.getId());
         Log.d(TAG, "Service Running: " + BackgroundAppService.isServiceRunning);
         if (!BackgroundAppService.isServiceRunning && !isCurrentlyOnApp) {
-            Log.d(TAG, "starting service from doWork");
             Intent intent = new Intent(this.context, BackgroundAppService.class);
             ContextCompat.startForegroundService(context, intent);
         }
@@ -39,7 +37,6 @@ public class FocusModeWorker extends Worker {
 
     @Override
     public void onStopped() {
-        Log.d(TAG, "onStopped called for: " + this.getId());
         super.onStopped();
     }
 }

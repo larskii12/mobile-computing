@@ -3,6 +3,10 @@ package com.comp90018.uninooks.service.emulator;
 import android.os.Build;
 
 public class EmulatorServiceImpl implements EmulatorService {
+
+    /**
+     * Returns a boolean if it is running an emulator.
+     */
     public static boolean isEmulator() {
 
         if ((Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
