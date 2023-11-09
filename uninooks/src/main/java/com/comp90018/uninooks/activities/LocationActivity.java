@@ -98,11 +98,11 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         locationType = intent.getStringExtra("LOCATION_TYPE");
 
         if (locationType.equals("LIBRARY")) {
-            location = (Library) intent.getParcelableExtra("LOCATION");
+            location = intent.getParcelableExtra("LOCATION");
         } else if (locationType.equals("STUDY_SPACE")) {
-            location = (StudySpace) intent.getParcelableExtra("LOCATION");
+            location = intent.getParcelableExtra("LOCATION");
         } else {
-            location = (Restaurant) intent.getParcelableExtra("LOCATION");
+            location = intent.getParcelableExtra("LOCATION");
         }
         locationId = location.getId();
 
@@ -159,7 +159,19 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                         @Override
                         public void onClick(View v) {
 
-                            if (location.getDistanceFromCurrentPosition() >= maxWalkDistance) {
+                            if (!GPSServiceImpl.getGPSPermission()) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(LocationActivity.this);
+                                builder.setTitle("Notice");
+                                builder.setMessage("To utilize the navigation function, you must grant permission for Precision Location Access.\n\nPlease navigate to the application settings to activate this feature.");
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                });
+                                builder.show();
+                            }
+
+                            else if (location.getDistanceFromCurrentPosition() >= maxWalkDistance) {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(LocationActivity.this);
                                 builder.setTitle("Notice");
                                 builder.setMessage("Apologies, we are unable to provide walking directions for distances exceeding 20 kilometers. For such distances, we recommend considering public transportation options.");
@@ -182,7 +194,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
                                 startActivity(intent);
                             }
-
                         }
                     });
                     //goes back to the home page
@@ -320,7 +331,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             }
                             for (Resource resource : resources) {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
-                                TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                TextView resourceDef = card.findViewById(R.id.expandedListItem);
                                 ImageView resourceIcon = card.findViewById(R.id.icon);
                                 resourceDef.setText(resource.getName());
                                 String resourceType = resource.getName();
@@ -338,7 +349,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             }
                             if (location instanceof StudySpace && ((StudySpace) location).isTalkAllowed()) {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
-                                TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                TextView resourceDef = card.findViewById(R.id.expandedListItem);
                                 ImageView resourceIcon = card.findViewById(R.id.icon);
                                 resourceDef.setText("Discussion allowed");
                                 resourceIcon.setBackgroundResource(R.drawable.volume_outline);
@@ -346,7 +357,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             }
                             if (location instanceof StudySpace && ((StudySpace) location).getMinimumAccessAQFLevel() > 7) {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
-                                TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                TextView resourceDef = card.findViewById(R.id.expandedListItem);
                                 ImageView resourceIcon = card.findViewById(R.id.icon);
                                 resourceDef.setText("Graduate student space");
                                 resourceIcon.setBackgroundResource(R.drawable.gradspace_outline);
@@ -356,7 +367,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 boolean openLate = getTimeToClose(location.getCloseTime());
                                 if (openLate) {
                                     CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
-                                    TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                    TextView resourceDef = card.findViewById(R.id.expandedListItem);
                                     ImageView resourceIcon = card.findViewById(R.id.icon);
                                     resourceDef.setText("After hours access");
                                     resourceIcon.setBackgroundResource(R.drawable.lateaccess_outline);
@@ -366,7 +377,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             //check if the building is accessible and add that too
                             if (building.isHasAccessibility()) {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
-                                TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                TextView resourceDef = card.findViewById(R.id.expandedListItem);
                                 ImageView resourceIcon = card.findViewById(R.id.icon);
                                 resourceDef.setText("Accessible Building");
                                 resourceIcon.setBackgroundResource(R.drawable.accessible_outline);
@@ -415,15 +426,15 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
     //creates a new comment card
     private CardView createNewSmallCard(CardView card, Review review) {
-        TextView userComment = (TextView) card.findViewById(R.id.textView);
+        TextView userComment = card.findViewById(R.id.textView);
         TextView datePosted = card.findViewById(R.id.date_posted);
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         String date = dateFormat.format(review.getDate());
         datePosted.setText(date);
         userComment.setText(review.getComment());
-        RatingBar rating = (RatingBar) card.findViewById(R.id.ratingBar);
+        RatingBar rating = card.findViewById(R.id.ratingBar);
         rating.setRating(review.getScore());
-        ImageView userImage = (ImageView) card.findViewById(R.id.imageView2);
+        ImageView userImage = card.findViewById(R.id.imageView2);
 
         return card;
     }

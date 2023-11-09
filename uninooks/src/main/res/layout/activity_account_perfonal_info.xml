@@ -543,7 +543,7 @@
             android:id="@+id/notificationToggle"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="32dp"
             android:clickable="true"
             android:thumbTint="@drawable/toggle_switch"
             android:trackTint="@color/deepBlue"

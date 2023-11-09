@@ -112,10 +112,6 @@ public class HomeActivity extends AppCompatActivity {
         currentAcceleration = SensorManager.GRAVITY_EARTH;
         lastAcceleration = SensorManager.GRAVITY_EARTH;
 
-        if (!GPSServiceImpl.getGPSPermission()) {
-            showDialog("Precise Location Permission Needed: Without access to your precise location, certain features may not operate as intended. Please enable precise location permissions for the best experience.");
-        }
-
         ImageView infoButton = (ImageView) findViewById(R.id.infoButton);
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -540,16 +536,6 @@ public class HomeActivity extends AppCompatActivity {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Show dialog
-     *
-     * @param message as message to display
-     */
-    private void showDialog(String message) {
-        new AlertDialog.Builder(this).setTitle("Permissions Required").setMessage(message).setPositiveButton("OK", (dialog, which) -> {
-        }).setCancelable(false).show();
     }
 
     /**

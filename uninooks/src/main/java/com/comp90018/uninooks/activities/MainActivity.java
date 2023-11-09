@@ -63,10 +63,6 @@ public class MainActivity extends AppCompatActivity implements GPSService {
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
 
-        SharedPreferences sharedPreferences = getSharedPreferences("uninooks", MODE_PRIVATE);
-        boolean isFirstTimeLaunch = sharedPreferences.getBoolean("isFirstTimeLaunch", true);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
         gpsService = new GPSServiceImpl(this, this);
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -127,11 +123,6 @@ public class MainActivity extends AppCompatActivity implements GPSService {
                 startLoginActivity();
             }
         }
-    }
-
-    private void showDialogue(String message) {
-        new AlertDialog.Builder(this).setTitle("Permissions Required").setMessage(message).setPositiveButton("I understand", (dialog, which) -> {
-        }).setCancelable(false).show();
     }
 
     /**

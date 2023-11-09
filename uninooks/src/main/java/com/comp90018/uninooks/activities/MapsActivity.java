@@ -2,6 +2,8 @@ package com.comp90018.uninooks.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -196,7 +198,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onStart();
         // Check GPS permission
         if (!GPSServiceImpl.getGPSPermission()) {
-            showTextMessage("Location error, please enable location permission to use this function.");
+            AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+            builder.setTitle("Notice");
+            builder.setMessage("To utilize the map function, you must grant permission for Precision Location Access.\n\nPlease navigate to the application settings to activate this feature.");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            builder.show();
         }
 
         // Start GPS continuously updating

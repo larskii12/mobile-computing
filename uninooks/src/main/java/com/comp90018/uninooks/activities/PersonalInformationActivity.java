@@ -30,6 +30,8 @@ import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.user.User;
+import com.comp90018.uninooks.service.background_app.BackgroundAppService;
+import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.mail.MailServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
 
@@ -723,14 +725,16 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
 
         shakeToggle.setChecked(shakingEnabled);
 
+        BackgroundAppService.NOTIFICATION_STATUS = hasNotificationPermission();
+
         notificationToggle.setChecked(hasNotificationPermission());
+
+        BackgroundAppService.USAGE_STATUS = hasUsageAccessPermission();
 
         usageAccessToggle.setChecked(hasUsageAccessPermission());
 
+        GPSServiceImpl.setGPSPermissionStatus(hasPrecisionLocationPermission());
+
         preciseLocationToggle.setChecked(hasPrecisionLocationPermission());
     }
-
-
-
-
 }
