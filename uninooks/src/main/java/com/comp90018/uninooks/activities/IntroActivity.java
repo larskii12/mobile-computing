@@ -1,8 +1,5 @@
 package com.comp90018.uninooks.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,30 +9,34 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
 import com.comp90018.uninooks.R;
-import com.comp90018.uninooks.activities.HomeActivity;
-import com.comp90018.uninooks.activities.IntroViewPagerAdapter;
-import com.comp90018.uninooks.activities.ScreenItem;
-import com.comp90018.uninooks.activities.SignUpActivity;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Intro Activity
+ */
 public class IntroActivity extends AppCompatActivity {
-    private ViewPager screenPager;
     IntroViewPagerAdapter introViewPagerAdapter;
     TabLayout tabIndicator;
     Button btnNext, btnGetStarted;
     LinearLayout linearLayoutNext, linearLayoutGetStarted;
-
     int userId;
     String userEmail;
     String userName;
-
     boolean isIntroActivityOpened;
+    private ViewPager screenPager;
 
-
+    /**
+     * on create method
+     *
+     * @param savedInstanceState as savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,15 +73,14 @@ public class IntroActivity extends AppCompatActivity {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                screenPager.setCurrentItem(screenPager.getCurrentItem()+1, true);
+                screenPager.setCurrentItem(screenPager.getCurrentItem() + 1, true);
             }
         });
-        System.out.println("still alive 1");
 
         tabIndicator.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition()==mList.size()-1){
+                if (tab.getPosition() == mList.size() - 1) {
                     loadLastScreen();
                 }
             }
@@ -95,7 +95,6 @@ public class IntroActivity extends AppCompatActivity {
 
             }
         });
-        System.out.println("still alive 2");
 
         //Button Get Started
         btnGetStarted.setOnClickListener(new View.OnClickListener() {
@@ -106,34 +105,28 @@ public class IntroActivity extends AppCompatActivity {
                 intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                 intent.putExtra("USER_NAME_EXTRA", userName);
 
-                System.out.println(userId);
-                System.out.println("userName" + userName);
-                System.out.println(isIntroActivityOpened);
-                System.out.println("This is introactivity class");
                 savePrefsData();
                 startActivity(intent);
                 finish();
             }
         });
-        System.out.println("still alive 3");
     }
 
-    private boolean restorePreData(){
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("uninooks", MODE_PRIVATE);
-        Boolean isIntroActivityOpenedBefore = preferences.getBoolean("isIntroOpened", false);
-        return isIntroActivityOpenedBefore;
-    }
-
-    private void savePrefsData(){
+    /**
+     * Save user shared preference data
+     */
+    private void savePrefsData() {
         SharedPreferences preferences = getApplicationContext().getSharedPreferences("uninooks", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         isIntroActivityOpened = preferences.getBoolean("isIntroOpened", true);
-        System.out.println("this is in savePref" + isIntroActivityOpened);
         editor.putBoolean("isIntroOpened", true);
         editor.apply();
     }
 
-    private void loadLastScreen(){
+    /**
+     * Load last screen
+     */
+    private void loadLastScreen() {
         linearLayoutNext.setVisibility(View.INVISIBLE);
         linearLayoutGetStarted.setVisibility(View.VISIBLE);
     }

@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -32,10 +31,8 @@ import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.favorite.Favorite;
-import com.comp90018.uninooks.models.location.Location;
 import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.comp90018.uninooks.models.review.ReviewType;
-import com.comp90018.uninooks.service.busy_rating.BusyRatingService;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
@@ -43,6 +40,7 @@ import com.comp90018.uninooks.service.image.ImageServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
+import com.comp90018.uninooks.service.time.TimeServiceImpl;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -56,37 +54,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-
+/**
+ * Home activity
+ */
 public class HomeActivity extends AppCompatActivity {
+    public boolean neverShowAgain;
+    public ArrayList<StudySpace> topRatedStudySpaces = new ArrayList<>();
+    HashMap<String, Double> busyRatingsByLocation;
     private LocationService locationAPI;
-
-    private BusyRatingService busyRatings;
-
-    // Declaring sensorManager
-    // and acceleration constants
     private Context context;
     private SensorManager sensorManager;
     private float acceleration = 0f;
     private float currentAcceleration = 0f;
     private float lastAcceleration = 0f;
-    private BottomNavigationView bottomNav;
-
     private TextView noFavorites;
-
-    HashMap<String, Double> busyRatingsByLocation;
-
     private int userId;
     private String userEmail;
     private String userName;
-
-    private int randomRange;
     private StudySpace randomSpace;
-
     private SharedPreferences sharedPreferences;
-    public boolean neverShowAgain;
-    public ArrayList<StudySpace> topRatedStudySpaces = new ArrayList<>();
     private HashMap<String, Integer> imagesByLocation;
 
+    /**
+     * on create method
+     *
+     * @param savedInstanceState as savedInstanceState
+     */
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,11 +99,7 @@ public class HomeActivity extends AppCompatActivity {
         userId = intent.getIntExtra("USER_ID_EXTRA", 0);
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
         userName = intent.getStringExtra("USER_NAME_EXTRA");
-        System.out.println(userId);
-        System.out.println("userName" + userName);
-        System.out.println("This is Home activity class");
-
-        bottomNav = findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setSelectedItemId(R.id.homeNav);
 
         busyRatingsByLocation = new HashMap<>();
@@ -122,10 +111,6 @@ public class HomeActivity extends AppCompatActivity {
         acceleration = 10f;
         currentAcceleration = SensorManager.GRAVITY_EARTH;
         lastAcceleration = SensorManager.GRAVITY_EARTH;
-
-        if (!GPSServiceImpl.getGPSPermission()){
-            showDialog("Precise Location Permission Needed: Without access to your precise location, certain features may not operate as intended. Please enable precise location permissions for the best experience.");
-        }
 
         ImageView infoButton = (ImageView) findViewById(R.id.infoButton);
         infoButton.setOnClickListener(new View.OnClickListener() {
@@ -142,7 +127,7 @@ public class HomeActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
 
-                if (id == R.id.homeNav){
+                if (id == R.id.homeNav) {
                     reloadActivity();
                 } else if (id == R.id.searchNav) {
                     Intent intent = new Intent(HomeActivity.this, MapsActivity.class);
@@ -192,25 +177,22 @@ public class HomeActivity extends AppCompatActivity {
                     ArrayList<StudySpace> openingStudySpaces = new ArrayList<>();
                     ArrayList<StudySpace> closingStudySpaces = new ArrayList<>();
 
-                    for (StudySpace studySpace : allStudySpaces){
-                        if (studySpace.isOpeningNow()){
+                    for (StudySpace studySpace : allStudySpaces) {
+                        if (studySpace.isOpeningNow()) {
                             openingStudySpaces.add(studySpace);
-                        }
-                        else{
+                        } else {
                             closingStudySpaces.add(studySpace);
                         }
                     }
 
-                    if (openingStudySpaces.size() >= 5){
+                    if (openingStudySpaces.size() >= 5) {
 
                         closestStudySpaces = new ArrayList<>(openingStudySpaces);
                         topRatedStudySpaces = new ArrayList<>(openingStudySpaces);
                         closestStudySpaces.sort(Comparator.comparingDouble(StudySpace::getDistanceFromCurrentPosition));
                         topRatedStudySpaces.sort(Comparator.comparingDouble(StudySpace::getAverage_rating));
                         Collections.reverse(topRatedStudySpaces);
-                    }
-
-                    else{
+                    } else {
                         closestStudySpaces = new ArrayList<>(openingStudySpaces);
                         topRatedStudySpaces = new ArrayList<>(openingStudySpaces);
                         closestStudySpaces.sort(Comparator.comparingDouble(StudySpace::getDistanceFromCurrentPosition));
@@ -230,8 +212,8 @@ public class HomeActivity extends AppCompatActivity {
 
                     List<Favorite> favouriteSpaces = new FavoriteServiceImpl().getFavoritesByUser(userId, ReviewType.valueOf("STUDY_SPACE"));
 
-                    ArrayList <StudySpace> favorites = new ArrayList<StudySpace>();
-                    for (Favorite favorite: favouriteSpaces) {
+                    ArrayList<StudySpace> favorites = new ArrayList<StudySpace>();
+                    for (Favorite favorite : favouriteSpaces) {
                         StudySpace space = new LocationServiceImpl().findStudySpaceById(favorite.getStudySpaceId());
                         favorites.add(space);
                     }
@@ -249,7 +231,7 @@ public class HomeActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             // Nearby Section
-                            if (closestStudySpaces.size()== 0){
+                            if (closestStudySpaces.size() == 0) {
                                 ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
                                 loadingGIF.setVisibility(View.VISIBLE);
                                 loadingGIF.setVisibility(View.GONE);
@@ -288,7 +270,7 @@ public class HomeActivity extends AppCompatActivity {
                                 }
                             }
                             // Top Rated Section
-                            if (topRatedStudySpaces.size()== 0){
+                            if (topRatedStudySpaces.size() == 0) {
                                 ProgressBar loadingGIF2 = findViewById(R.id.loadingGIF_2);
                                 loadingGIF2.setVisibility(View.VISIBLE);
                                 loadingGIF2.setVisibility(View.GONE);
@@ -328,7 +310,7 @@ public class HomeActivity extends AppCompatActivity {
                                 }
                             }
                             // Favorites Section
-                            if (favorites.size()== 0){
+                            if (favorites.size() == 0) {
                                 ProgressBar loadingGIF3 = findViewById(R.id.loadingGIF_3);
                                 loadingGIF3.setVisibility(View.VISIBLE);
                                 loadingGIF3.setVisibility(View.GONE);
@@ -367,7 +349,6 @@ public class HomeActivity extends AppCompatActivity {
                             }
                         }
                     });
-
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -376,6 +357,11 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Get all busy ratings
+     *
+     * @param spaces as the study spaces need to query
+     */
     private void getAllBusyRatings(ArrayList<StudySpace> spaces) {
         for (StudySpace space : spaces) {
             String spaceName = space.getName();
@@ -389,9 +375,17 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
     }
-    //This creates a new card for the location
+
+    /**
+     * This creates a new card for the location
+     *
+     * @param card  as card
+     * @param space as locations
+     * @param type  as location type
+     * @return
+     */
     @SuppressLint("SetTextI18n")
-    private CardView createNewSmallCard(CardView card, StudySpace space, String type){
+    private CardView createNewSmallCard(CardView card, StudySpace space, String type) {
         ImageView banner = (ImageView) card.findViewById(R.id.banner);
         banner.setBackgroundResource(imagesByLocation.get(space.getName()));
         ProgressBar progress = (ProgressBar) card.findViewById(R.id.progressBar);
@@ -413,32 +407,27 @@ public class HomeActivity extends AppCompatActivity {
         hoursIcon.setBackgroundResource(R.drawable.baseline_access_time_24);
         if (!space.isOpenToday()) {
             locationHours.setText("Close Today");
-            hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
-        }
-
-        else {
+            hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+        } else {
             double hoursToClose = getTimeToClose(space.getCloseTime());
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
             locationHours.setText(sdf.format(space.getOpenTime()) + " - " + ("23:59".equals(sdf.format(space.getCloseTime())) ? "00:00" : sdf.format(space.getCloseTime())));
-            hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
+            hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
 
-            if (hoursToClose < 1 || !space.isOpeningNow()){
-                hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+            if (hoursToClose < 1 || !space.isOpeningNow()) {
+                hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
             } else {
-                hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
+                hoursIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.deepBlue), android.graphics.PorterDuff.Mode.SRC_IN);
             }
         }
 
-        if (type.equals("rating")){
+        if (type.equals("rating")) {
             distanceLabel.setText(String.valueOf(space.getAverage_rating()));
-        }
-
-        else{
-            if (space.getDistanceFromCurrentPosition() == -1 || !GPSServiceImpl.getGPSPermission()){
+        } else {
+            if (space.getDistanceFromCurrentPosition() == -1 || !GPSServiceImpl.getGPSPermission()) {
                 distanceLabel.setText("N/A");
-            }
-            else{
+            } else {
                 distanceLabel.setText(space.getDistanceFromCurrentPosition() + " m");
             }
         }
@@ -446,9 +435,9 @@ public class HomeActivity extends AppCompatActivity {
         ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);
 
         favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_border_24);
-        favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+        favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
         //check if the favourites list includes this user and favourite
-        if(type.equals("rating")) {
+        if (type.equals("rating")) {
             ImageView ratingIcon = card.findViewById(R.id.starRating);
             ratingIcon.setBackgroundResource(R.drawable.star_solid);
         }
@@ -456,81 +445,55 @@ public class HomeActivity extends AppCompatActivity {
         return card;
     }
 
-    //calculates the time to the closing of a location
-    private double getTimeToClose(Time closeTime){
+    /**
+     * Calculates the time to the closing of a location
+     *
+     * @param closeTime as close hours
+     * @return as the hours to close
+     */
+    private double getTimeToClose(Time closeTime) {
         Date today = new Date();
-        Time currentTime = new Time(today.getTime());
+        Time currentTime = new TimeServiceImpl().getAEDTTime();
         int closeHour = closeTime.getHours();
         if (closeHour == 0) {
             closeHour = 24;
         }
-        long timeDifference = (closeHour -currentTime.getHours()) * 3600
-                + (closeTime.getMinutes() - currentTime.getMinutes()) * 60
-                + (closeTime.getSeconds() - currentTime.getSeconds());
+        long timeDifference = (closeHour - currentTime.getHours()) * 3600L + (closeTime.getMinutes() - currentTime.getMinutes()) * 60L + (closeTime.getSeconds() - currentTime.getSeconds());
         double hours = (double) timeDifference / 3600;
         return hours;
     }
-    private final SensorEventListener sensorListener = new SensorEventListener() {
-        //this opens a new suggested study space
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            boolean shakeEnabled = sharedPreferences.getBoolean(getString(R.string.shaking_enabled), true);
 
-            if (shakeEnabled) {
-                float x = event.values[0];
-                float y = event.values[1];
-                float z = event.values[2];
-                lastAcceleration = currentAcceleration;
-                currentAcceleration = (float) Math.sqrt((double) (x * x + y * y + z * z));
-                float delta = currentAcceleration - lastAcceleration;
-                acceleration = acceleration * 0.9f + delta;
-                if (acceleration > 12) {
-                    sensorManager.unregisterListener(sensorListener);
-                    Toast.makeText(getApplicationContext(), "Opening a random Space", Toast.LENGTH_SHORT).show();
-                    randomRange = topRatedStudySpaces.size();
-                    int rand = (int)(Math.random() * randomRange);
-                    randomSpace = topRatedStudySpaces.get(rand);
-                    new Thread() {
-                        public void run() {
-                            Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                            intent.putExtra("USER_ID_EXTRA", userId);
-                            intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                            intent.putExtra("USER_NAME_EXTRA", userName);
-                            intent.putExtra("LOCATION_TYPE", randomSpace.getType());
-                            intent.putExtra("LOCATION", randomSpace);
-                            startActivity(intent);
-                        }
-                    }.start();
-                }
-            }
-        }
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
-    };
-    //This restarts the accelerometer sensor
+    /**
+     * This restarts the accelerometer sensor
+     */
     @Override
     protected void onResume() {
-        sensorManager.registerListener(sensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(sensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
         super.onResume();
     }
-    //This disables the accelerometer sensor
+
+    /**
+     * This disables the accelerometer sensor
+     */
     @Override
     protected void onPause() {
         sensorManager.unregisterListener(sensorListener);
         super.onPause();
     }
 
-    //This reloads the activity
-    private void reloadActivity(){
+    /**
+     * This reloads the activity
+     */
+    private void reloadActivity() {
         Intent intent = getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         finish();
         startActivity(intent);
     }
 
-    //This opens the dialog informing the user of the shake suggestions feature
+    /**
+     * This opens the dialog informing the user of the shake suggestions feature
+     */
     private void showDialog() {
         neverShowAgain = sharedPreferences.getBoolean(getString(R.string.never_show_welcome), false);
         if (!neverShowAgain) {
@@ -538,7 +501,12 @@ public class HomeActivity extends AppCompatActivity {
             dialog.show();
         }
     }
-    //This opens a dialog informing the user of the shake suggestions feature
+
+    /**
+     * This opens a dialog informing the user of the shake suggestions feature
+     *
+     * @return builder
+     */
     private Dialog createDialog() {
         final boolean[] neverShowAgainDialog = {false};
 
@@ -570,17 +538,9 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-
-    private void showDialog(String message){
-        new AlertDialog.Builder(this)
-                .setTitle("Permissions Required")
-                .setMessage(message)
-                .setPositiveButton("OK", (dialog, which) -> {
-                })
-                .setCancelable(false)
-                .show();
-    }
-
+    /**
+     * Show info dialog
+     */
     private void showInfoDialog() {
 
         final Dialog dialog = new Dialog(this);
@@ -593,6 +553,47 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
         dialog.show();
-    }
+    }    private final SensorEventListener sensorListener = new SensorEventListener() {
+        //this opens a new suggested study space
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            boolean shakeEnabled = sharedPreferences.getBoolean(getString(R.string.shaking_enabled), true);
+
+            if (shakeEnabled) {
+                float x = event.values[0];
+                float y = event.values[1];
+                float z = event.values[2];
+                lastAcceleration = currentAcceleration;
+                currentAcceleration = (float) Math.sqrt((double) (x * x + y * y + z * z));
+                float delta = currentAcceleration - lastAcceleration;
+                acceleration = acceleration * 0.9f + delta;
+                if (acceleration > 12) {
+                    sensorManager.unregisterListener(sensorListener);
+                    Toast.makeText(getApplicationContext(), "Opening a random Space", Toast.LENGTH_SHORT).show();
+                    int randomRange = topRatedStudySpaces.size();
+                    int rand = (int) (Math.random() * randomRange);
+                    randomSpace = topRatedStudySpaces.get(rand);
+                    new Thread() {
+                        public void run() {
+                            Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
+                            intent.putExtra("USER_ID_EXTRA", userId);
+                            intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                            intent.putExtra("USER_NAME_EXTRA", userName);
+                            intent.putExtra("LOCATION_TYPE", randomSpace.getType());
+                            intent.putExtra("LOCATION", randomSpace);
+                            startActivity(intent);
+                        }
+                    }.start();
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+    };
+
+
+
 
 }

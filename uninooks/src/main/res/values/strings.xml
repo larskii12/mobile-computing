@@ -74,7 +74,7 @@
     <string name="precise_loc">Allow precise location</string>
     <string name="notification">Allow notifications</string>
     <string name="shaking_enabled">Shaking Enabled </string>
-    <string name="warning_msg">(app will restart if turned off)</string>
+    <string name="warning_msg">(APP Restart Required)</string>
 
     <!-- Focus Mode Strings -->
     <string name="back_to_home">Back to Home</string>

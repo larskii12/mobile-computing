@@ -26,28 +26,19 @@ import com.comp90018.uninooks.service.user.UserServiceImpl;
 
 import java.util.List;
 
+/**
+ * Log in activity
+ */
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText editTextLoginEmail;
-    private EditText editTextLoginPassword;
-    private Button buttonLoginLogIn;
-    private TextView buttonLogInGoToSignup;
-
-    private TextView buttonLogInForgetPassword;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
-
     int userId;
-
     String userName;
-
     String userEmail;
     boolean ifPasswordChanged;
     boolean ifLogout;
-
-
+    private EditText editTextLoginEmail;
     @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
+    private final Handler handler = new Handler() {
         @SuppressLint("SetTextI18n")
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -61,7 +52,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     };
+    private EditText editTextLoginPassword;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
+    /**
+     * on create method
+     *
+     * @param savedInstanceState as savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -80,9 +79,9 @@ public class LoginActivity extends AppCompatActivity {
 
         editTextLoginEmail = findViewById(R.id.EditTextLoginEmail);
         editTextLoginPassword = findViewById(R.id.EditTextLoginPassword);
-        buttonLoginLogIn = findViewById(R.id.ButtonLoginLogIn);
-        buttonLogInGoToSignup = findViewById(R.id.ButtonLogInGoToSignup);
-        buttonLogInForgetPassword = findViewById(R.id.ButtonLogInForgetPassword);
+        Button buttonLoginLogIn = findViewById(R.id.ButtonLoginLogIn);
+        TextView buttonLogInGoToSignup = findViewById(R.id.ButtonLogInGoToSignup);
+        TextView buttonLogInForgetPassword = findViewById(R.id.ButtonLogInForgetPassword);
 
         userId = -1;
         userEmail = "";
@@ -90,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
 
         retrieveLoginDetails();
 
+        // log in button
         buttonLoginLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                         try {
                             User user = loginUser();
 
-                            if (user != null){
+                            if (user != null) {
                                 userId = user.getUserId();
                                 userEmail = user.getUserEmail();
                                 userName = user.getUserName();
@@ -130,6 +130,8 @@ public class LoginActivity extends AppCompatActivity {
                 }.start();
             }
         });
+
+        // password text
         editTextLoginPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -139,7 +141,7 @@ public class LoginActivity extends AppCompatActivity {
                             try {
                                 User user = loginUser();
 
-                                if (user != null){
+                                if (user != null) {
                                     userId = user.getUserId();
                                     userEmail = user.getUserEmail();
                                     userName = user.getUserName();
@@ -169,8 +171,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
-
+        // sign up button
         buttonLogInGoToSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -184,6 +185,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // forget password button
         buttonLogInForgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -191,44 +193,24 @@ public class LoginActivity extends AppCompatActivity {
                     Intent intent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
                     intent.putExtra("USER_EMAIL_EXTRA", editTextLoginEmail.getText().toString());
                     startActivity(intent);
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     showTextMessage("An error happened, please contract the IT administrator.");
                 }
             }
         });
     }
 
-    public void onStart(){
-        super.onStart();
-    }
-
-    public void onRestart(){
-        super.onRestart();
-    }
-
-    // When back button pressed
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-    public void onPause() {
-        super.onPause();
-    }
     public void onResume() {
         super.onResume();
         retrieveLoginDetails();
     }
 
-    public void onStop(){
-        super.onStop();
-    }
-
-    public void onDestroy(){
-        super.onDestroy();
-    }
-
-
+    /**
+     * User log in
+     *
+     * @return user if log in successful, otherwise null
+     * @throws Exception if any exception
+     */
     private User loginUser() throws Exception {
         String email = editTextLoginEmail.getText().toString().trim();
         String password = editTextLoginPassword.getText().toString().trim();
@@ -241,22 +223,21 @@ public class LoginActivity extends AppCompatActivity {
 
         // @TODO: Here, you can integrate your backend logic to authenticate the user and validate inputs.
         User logInUser = new UserServiceImpl().logIn(email, password);
-        List<Location> results = new LocationServiceImpl().findAllLocations("STUDY", "ERC", false);
-        System.out.println(results.get(0).getName());
 
         if (logInUser == null) {
             showTextMessage("Your input does not match our records, please try again.");
             return null;
         }
-      
+
         return logInUser;
     }
 
     /**
      * Show message text
+     *
      * @param text as the showing message
      */
-    private void showTextMessage(String text){
+    private void showTextMessage(String text) {
         Message msg = new Message();
         msg.what = 0;
         msg.obj = text;
@@ -282,9 +263,10 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Saves users log in details if it is correct to automatically log in the next time
-     * @param userId
-     * @param email
-     * @param username
+     *
+     * @param userId   as user id
+     * @param email    as user email
+     * @param username as user username
      */
     private void saveLoginDetails(int userId, String email, String username) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -309,8 +291,7 @@ public class LoginActivity extends AppCompatActivity {
         ifPasswordChanged = sharedPreferences.getBoolean(getString(R.string.PasswordChanged), false);
         ifLogout = sharedPreferences.getBoolean(getString(R.string.LogOut), false);
 
-        if (!(userId == -1 || userEmail.equals("") || userName.equals("") || password.equals(""))
-                && (!ifPasswordChanged) && (!ifLogout)) {
+        if (!(userId == -1 || userEmail.equals("") || userName.equals("") || password.equals("")) && (!ifPasswordChanged) && (!ifLogout)) {
             launchHomeActivity();
         }
     }

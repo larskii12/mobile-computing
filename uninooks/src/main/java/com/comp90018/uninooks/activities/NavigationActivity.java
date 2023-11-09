@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -54,77 +53,65 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.net.ssl.HttpsURLConnection;
+
+/**
+ * Navigation activity
+ */
 public class NavigationActivity extends FragmentActivity implements OnMapReadyCallback, GPSService {
 
-    private GoogleMap mMap;
-    private @NonNull ActivityNavigationBinding binding;
-
-    private ImageButton locateMyLocation;
-
-    private FusedLocationProviderClient fusedLocationClient;
-
     private final int standardCameraZoom = 18;
-
-    GPSServiceImpl gpsService;
-
-    private int userId;
-
-    private String userEmail;
-
-    private String userName;
-
-    private List<Navigation> navigationList;
-
-    private LatLng location;
-
-    private String locationName;
-
     @SuppressLint("HandlerLeak")
     private final Handler handler = new Handler() {
         @SuppressLint({"SetTextI18n", "HandlerLeak"})
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    String info = (String) msg.obj;
-                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
-                    break;
+            if (msg.what == 0) {
+                String info = (String) msg.obj;
+                Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
             }
         }
     };
+    GPSServiceImpl gpsService;
+    private GoogleMap mMap;
+    private FusedLocationProviderClient fusedLocationClient;
+    private List<Navigation> navigationList;
+    private LatLng location;
+    private String locationName;
 
+    /**
+     * On create method
+     *
+     * @param savedInstanceState as savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         super.onCreate(savedInstanceState);
-        binding = ActivityNavigationBinding.inflate(getLayoutInflater());
+        com.comp90018.uninooks.databinding.ActivityNavigationBinding binding = ActivityNavigationBinding.inflate(getLayoutInflater());
 
         setContentView(binding.getRoot());
 
         Intent intent = getIntent();
-        userId = intent.getIntExtra("USER_ID_EXTRA", 0);
-        userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
-        userName = intent.getStringExtra("USER_NAME_EXTRA");
+        int userId = intent.getIntExtra("USER_ID_EXTRA", 0);
+        String userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
+        String userName = intent.getStringExtra("USER_NAME_EXTRA");
         location = new LatLng(intent.getDoubleExtra("LATITUDE", 0), intent.getDoubleExtra("LONGITUDE", 0));
         locationName = intent.getStringExtra("LOCATION_NAME");
 
         gpsService = new GPSServiceImpl(this, this, GPSServiceImpl.getGPSHistory());
 
-        locateMyLocation = (ImageButton) findViewById(R.id.locate_my_location);
+        ImageButton locateMyLocation = (ImageButton) findViewById(R.id.locate_my_location);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         ImageButton backButton = findViewById(R.id.imageButton);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(this);
 
-        /**
-         * Move camera to the current location
-         */
+        // Move camera to the current location
         locateMyLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,11 +119,10 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                     if (mMap != null && mMap.isMyLocationEnabled()) {
                         Location myLocation = mMap.getMyLocation();
 
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), standardCameraZoom)); // Adjust zoom level as needed
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), standardCameraZoom)); // Adjust zoom level as needed
                     }
                 } catch (Exception e) {
-                    System.out.println("Location update fails, please try again.");
+                    showTextMessage("Location update fails, please try again");
                 }
             }
         });
@@ -149,6 +135,9 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         });
     }
 
+    /**
+     * Things to do when start the activity
+     */
     public void onStart() {
         super.onStart();
         // Check GPS permission
@@ -162,35 +151,43 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
-    public void onRestart() {
-        super.onRestart();
-    }
-
-    // When back button pressed
+    /**
+     * Things to do when back pressed
+     */
     public void onBackPressed() {
         super.onBackPressed();
         gpsService.stopGPSUpdates();
     }
 
+    /**
+     * Things to do when leaving the activity
+     */
     public void onPause() {
         super.onPause();
         gpsService.stopGPSUpdates();
     }
 
+    /**
+     * Things to do when back the activity
+     */
     public void onResume() {
         super.onResume();
         gpsService.startGPSUpdates();
     }
 
+    /**
+     * Things to do when stop the activity
+     */
     public void onStop() {
         super.onStop();
-        ;
         gpsService.stopGPSUpdates();
     }
 
+    /**
+     * Things to do when destroy the activity
+     */
     public void onDestroy() {
         super.onDestroy();
-        ;
         gpsService.stopGPSUpdates();
     }
 
@@ -210,7 +207,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         LatLng original = GPSServiceImpl.getCurrentLocation();
         LatLng goal = location;
 
-        int minCameraZoom = 15;
+        int minCameraZoom = 10;
         mMap.setMinZoomPreference(minCameraZoom);
         mMap.moveCamera(CameraUpdateFactory.zoomTo(standardCameraZoom));
 
@@ -222,14 +219,12 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         }
 
         // Get the latest current position
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, location -> {
-                            if (location != null) {
-                                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, standardCameraZoom));
-                            }
-                        }
-                );
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            if (location != null) {
+                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, standardCameraZoom));
+            }
+        });
 
         new Thread() {
             public void run() {
@@ -251,6 +246,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                                 LatLng pointA = navigation.getStartLocation();
                                 LatLng pointB = navigation.getEndLocation();
 
+                                // Find the area that has all the points of the navigation path
                                 highestLatitude = Math.max(pointA.latitude, highestLatitude);
                                 lowestLatitude = Math.min(pointA.latitude, lowestLatitude);
                                 highestLongitude = Math.max(pointB.longitude, highestLongitude);
@@ -262,10 +258,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                                 lowestLongitude = Math.min(pointB.longitude, lowestLongitude);
 
 
-                                Polyline line = mMap.addPolyline(new PolylineOptions()
-                                        .add(pointA, pointB)
-                                        .width(10)
-                                        .color(Color.BLUE));
+                                Polyline line = mMap.addPolyline(new PolylineOptions().add(pointA, pointB).width(10).color(Color.BLUE));
                             }
 
                             LatLng southwest = new LatLng(lowestLatitude, lowestLongitude);
@@ -286,91 +279,91 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         }.start();
     }
 
+    /**
+     * Find the walk path to the location
+     *
+     * @param currentPosition as current location
+     * @param destination     as destination location
+     * @throws IOException if any happens
+     */
     private void findWalkingPath(LatLng currentPosition, LatLng destination) throws IOException {
 
-                try {
-                    String origin = currentPosition.latitude + "," + currentPosition.longitude;
-                    String goal = destination.latitude + "," + destination.longitude;
+        try {
+            String origin = currentPosition.latitude + "," + currentPosition.longitude;
+            String goal = destination.latitude + "," + destination.longitude;
 
-                    InputStream inputStream = MainActivity.getAppContext().getResources().openRawResource(R.raw.config);
-                    Properties properties = new Properties();
-                    properties.load(inputStream);
+            InputStream inputStream = MainActivity.getAppContext().getResources().openRawResource(R.raw.config);
+            Properties properties = new Properties();
+            properties.load(inputStream);
 
-                    String requestURL = "https://maps.googleapis.com/maps/api/directions/json?" +
-                            "origin=" + origin + "&" +
-                            "destination=" + goal + "&" +
-                            "mode=" + "walking" + "&" +
-                            "key=" + properties.getProperty("API_KEY");
+            // Query URL for walking path
+            String requestURL = "https://maps.googleapis.com/maps/api/directions/json?" + "origin=" + origin + "&" + "destination=" + goal + "&" + "mode=" + "walking" + "&" + "key=" + properties.getProperty("API_KEY");
 
 
-                    URL url = new URL(requestURL);
-                    HttpURLConnection connection = (HttpsURLConnection) url.openConnection();
-                    connection.setRequestMethod("GET");
+            URL url = new URL(requestURL);
+            HttpURLConnection connection = (HttpsURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
 
-                    StringBuffer response = null;
-                    int responseCode = connection.getResponseCode();
+            StringBuffer response = null;
+            int responseCode = connection.getResponseCode();
 
-                    if (responseCode == HttpURLConnection.HTTP_OK) {
-                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                        String inputLine;
-                        response = new StringBuffer();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                response = new StringBuffer();
 
-                        while ((inputLine = in.readLine()) != null) {
-                            response.append(inputLine);
-                        }
-
-                        in.close();
-                    }
-
-                    ObjectMapper mapper = new ObjectMapper();
-
-                    navigationList = new ArrayList<>();
-                    System.out.println(response.toString());
-
-                    if (nonNull(response)) {
-                        JSONObject directionsResponse = new JSONObject(response.toString());
-
-                        JSONObject routesResponse = directionsResponse.getJSONArray("routes").getJSONObject(0);
-
-                        JSONObject legsResponse = routesResponse.getJSONArray("legs").getJSONObject(0);
-
-                        JSONArray stepsResponse = legsResponse.getJSONArray("steps");
-
-
-                        for (int i = 0; i < stepsResponse.length(); i++) {
-                            JSONObject step = stepsResponse.getJSONObject(i);
-                            Navigation navigation = new Navigation();
-
-                            JSONObject startLocationResponse = step.getJSONObject("start_location");
-
-                            double startLat = startLocationResponse.getDouble("lat");
-                            double startLng = startLocationResponse.getDouble("lng");
-
-                            LatLng startLocation = new LatLng(startLat, startLng);
-                            navigation.setStartLocation(startLocation);
-
-                            JSONObject endLocationResponse = step.getJSONObject("end_location");
-
-                            double endLat = endLocationResponse.getDouble("lat");
-                            double endLng = endLocationResponse.getDouble("lng");
-
-                            LatLng endLocation = new LatLng(endLat, endLng);
-                            navigation.setEndLocation(endLocation);
-
-                            System.out.println("Start Location: " + startLat + " " + startLng);
-                            System.out.println("End Location: " + endLat + " " + endLng);
-
-                            navigationList.add(navigation);
-                        }
-                    }
-
-
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
                 }
+
+                in.close();
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            navigationList = new ArrayList<>();
+
+            // Extract points from the JSON file
+            if (nonNull(response)) {
+                JSONObject directionsResponse = new JSONObject(response.toString());
+
+                JSONObject routesResponse = directionsResponse.getJSONArray("routes").getJSONObject(0);
+
+                JSONObject legsResponse = routesResponse.getJSONArray("legs").getJSONObject(0);
+
+                JSONArray stepsResponse = legsResponse.getJSONArray("steps");
+
+
+                for (int i = 0; i < stepsResponse.length(); i++) {
+                    JSONObject step = stepsResponse.getJSONObject(i);
+                    Navigation navigation = new Navigation();
+
+                    JSONObject startLocationResponse = step.getJSONObject("start_location");
+
+                    double startLat = startLocationResponse.getDouble("lat");
+                    double startLng = startLocationResponse.getDouble("lng");
+
+                    LatLng startLocation = new LatLng(startLat, startLng);
+                    navigation.setStartLocation(startLocation);
+
+                    JSONObject endLocationResponse = step.getJSONObject("end_location");
+
+                    double endLat = endLocationResponse.getDouble("lat");
+                    double endLng = endLocationResponse.getDouble("lng");
+
+                    LatLng endLocation = new LatLng(endLat, endLng);
+                    navigation.setEndLocation(endLocation);
+
+                    navigationList.add(navigation);
+                }
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -386,8 +379,14 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         handler.sendMessage(msg);
     }
 
+    /**
+     * Things to do when GPS is updated
+     *
+     * @param location as location
+     */
     @Override
     public void onGPSUpdate(Location location) {
+        GPSServiceImpl.locationsHistory.add(location);
     }
 
 }

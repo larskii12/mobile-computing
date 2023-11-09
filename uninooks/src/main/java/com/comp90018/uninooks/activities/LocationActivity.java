@@ -1,8 +1,10 @@
 package com.comp90018.uninooks.activities;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Paint;
@@ -57,20 +59,17 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class LocationActivity extends FragmentActivity implements OnMapReadyCallback, GPSService{
-    private Context context;
-
-    private ActivityLocationBinding binding;
+public class LocationActivity extends FragmentActivity implements OnMapReadyCallback, GPSService {
+    private final int standardCameraZoom = 18;
+    private final int maxWalkDistance = 1000 * 20;
     GPSServiceImpl gpsService;
-    private GoogleMap mMap;
-    private FusedLocationProviderClient fusedLocationClient;
     SupportMapFragment bananaFragment;
     com.comp90018.uninooks.models.location.Location location;
     boolean isFavorite;
-
-    private final int standardCameraZoom = 18;
-
-
+    private Context context;
+    private ActivityLocationBinding binding;
+    private GoogleMap mMap;
+    private FusedLocationProviderClient fusedLocationClient;
     private int userId;
     private String userEmail;
     private String userName;
@@ -98,12 +97,12 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         userName = intent.getStringExtra("USER_NAME_EXTRA");
         locationType = intent.getStringExtra("LOCATION_TYPE");
 
-        if (locationType.equals("LIBRARY")){
-            location = (Library) intent.getParcelableExtra("LOCATION");
-        } else if (locationType.equals("STUDY_SPACE")){
-            location = (StudySpace) intent.getParcelableExtra("LOCATION");
+        if (locationType.equals("LIBRARY")) {
+            location = intent.getParcelableExtra("LOCATION");
+        } else if (locationType.equals("STUDY_SPACE")) {
+            location = intent.getParcelableExtra("LOCATION");
         } else {
-            location = (Restaurant) intent.getParcelableExtra("LOCATION");
+            location = intent.getParcelableExtra("LOCATION");
         }
         locationId = location.getId();
 
@@ -115,17 +114,15 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(locationId, ReviewType.valueOf(location.getType()));
 
                     Building building = new BuildingServiceImpl().getBuilding(location.getBuildingId(), ReviewType.valueOf(location.getType()));
-                    List<Favorite> favorites = new FavoriteServiceImpl().getFavoritesByUser(userId,ReviewType.valueOf(location.getType()));
+                    List<Favorite> favorites = new FavoriteServiceImpl().getFavoritesByUser(userId, ReviewType.valueOf(location.getType()));
                     isFavorite = false;
                     favouriteChanged = false;
-                    for (Favorite favorite: favorites) {
+                    for (Favorite favorite : favorites) {
                         if (location.getType().equals("LIBRARY") && favorite.getLibraryId() == location.getId()) {
                             isFavorite = true;
-                        }
-                        else if (location.getType().equals("STUDY_SPACE") && favorite.getStudySpaceId() == location.getId()) {
+                        } else if (location.getType().equals("STUDY_SPACE") && favorite.getStudySpaceId() == location.getId()) {
                             isFavorite = true;
-                        }
-                        else if (location.getType().equals("RESTAURANT") && favorite.getRestaurantId() == location.getId()) {
+                        } else if (location.getType().equals("RESTAURANT") && favorite.getRestaurantId() == location.getId()) {
                             isFavorite = true;
                         }
 
@@ -135,7 +132,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     TextView locationName = findViewById(R.id.textView5);
                     ProgressBar progress = findViewById(R.id.progressBar);
                     Double business = new BusyRatingServiceImpl().getAverageScoreFromEntity(locationId, ReviewType.valueOf(location.getType()));
-                    Integer busyScore = location.isOpeningNow() ? (int) (business *20) : 0;
+                    Integer busyScore = location.isOpeningNow() ? (int) (business * 20) : 0;
                     TextView progressValue = findViewById(R.id.textView7);
                     TextView distance = findViewById(R.id.distance);
                     TextView openHours = findViewById(R.id.openHours);
@@ -158,35 +155,57 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     LinearLayout amenitiesList = findViewById(R.id.amenities);
 
                     List<Resource> resources = new ResourceServiceImpl().getResourceFromBuilding(location.getBuildingId());
-                    locationButton.setOnClickListener(new View.OnClickListener(){
+                    locationButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
-                            Intent intent = new Intent(LocationActivity.this, NavigationActivity.class);
+                            if (!GPSServiceImpl.getGPSPermission()) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(LocationActivity.this);
+                                builder.setTitle("Notice");
+                                builder.setMessage("To utilize the navigation function, you must grant permission for Precision Location Access.\n\nPlease navigate to the application settings to activate this feature.");
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                });
+                                builder.show();
+                            }
 
-                            // Pass the user to next page
-                            intent.putExtra("USER_ID_EXTRA", userId);
-                            intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                            intent.putExtra("USER_NAME_EXTRA", userName);
-                            intent.putExtra("LATITUDE", location.getLocation().latitude);
-                            intent.putExtra("LONGITUDE", location.getLocation().longitude);
-                            intent.putExtra("LOCATION_NAME", location.getName());
+                            else if (location.getDistanceFromCurrentPosition() >= maxWalkDistance) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(LocationActivity.this);
+                                builder.setTitle("Notice");
+                                builder.setMessage("Apologies, we are unable to provide walking directions for distances exceeding 20 kilometers. For such distances, we recommend considering public transportation options.");
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                });
+                                builder.show();
+                            } else {
+                                Intent intent = new Intent(LocationActivity.this, NavigationActivity.class);
 
-                            startActivity(intent);
+                                // Pass the user to next page
+                                intent.putExtra("USER_ID_EXTRA", userId);
+                                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                intent.putExtra("USER_NAME_EXTRA", userName);
+                                intent.putExtra("LATITUDE", location.getLocation().latitude);
+                                intent.putExtra("LONGITUDE", location.getLocation().longitude);
+                                intent.putExtra("LOCATION_NAME", location.getName());
 
+                                startActivity(intent);
+                            }
                         }
                     });
                     //goes back to the home page
                     backButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            System.out.println(favouriteChanged);
                             if (favouriteChanged) {
                                 Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
                                 intent.putExtra("USER_ID_EXTRA", userId);
                                 intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                                 intent.putExtra("USER_NAME_EXTRA", userName);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                             }
                             finish();
@@ -202,32 +221,23 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                         if (!isFavorite) {
                                             new FavoriteServiceImpl().addFavorite(userId, locationId, ReviewType.valueOf(location.getType()));
                                             isFavorite = true;
-                                            if (favouriteChanged) {
-                                                favouriteChanged = false;
-                                            } else {
-                                                favouriteChanged = true;
-                                            }
+                                            favouriteChanged = !favouriteChanged;
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     favouriteButton.setBackgroundResource(R.drawable.baseline_favorite_32);
-                                                    favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), PorterDuff.Mode.SRC_IN);
+                                                    favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), PorterDuff.Mode.SRC_IN);
                                                 }
                                             });
-                                        }
-                                        else{
+                                        } else {
                                             new FavoriteServiceImpl().removeFavorite(userId, locationId, ReviewType.valueOf(location.getType()));
                                             isFavorite = false;
-                                            if (favouriteChanged) {
-                                                favouriteChanged = false;
-                                            } else {
-                                                favouriteChanged = true;
-                                            }
+                                            favouriteChanged = !favouriteChanged;
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     favouriteButton.setBackgroundResource(R.drawable.baseline_favorite_border_32);
-                                                    favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), PorterDuff.Mode.SRC_IN);
+                                                    favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.deepBlue), PorterDuff.Mode.SRC_IN);
                                                 }
                                             });
                                         }
@@ -239,7 +249,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                         }
                     });
                     //shows and hides all the reviews
-                   showReviews.setOnClickListener(new View.OnClickListener() {
+                    showReviews.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             runOnUiThread(new Runnable() {
@@ -259,14 +269,14 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                         }
                     });
 
-                   //open the add review dialog
+                    //open the add review dialog
                     addReviewButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
-                                showAddReviewDialog();
+                            showAddReviewDialog();
 
-                    }
+                        }
                     });
 
                     runOnUiThread(new Runnable() {
@@ -276,7 +286,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                         public void run() {
                             backButton.setBackgroundResource(R.drawable.arrow_back_fill);
                             locationButton.setBackgroundResource(R.drawable.my_location_pin);
-                            locationButton.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.rounded_circle_button) );
+                            locationButton.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.rounded_circle_button));
                             locationName.setText(location.getName());
                             listTitle.setText("Facilities");
                             progress.setProgress(busyScore);
@@ -287,14 +297,14 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             showReviews.setPaintFlags(showReviews.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                             if (isFavorite) {
                                 favouriteButton.setBackgroundResource(R.drawable.baseline_favorite_32);
-                                favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), PorterDuff.Mode.SRC_IN);
+                                favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), PorterDuff.Mode.SRC_IN);
                             } else {
                                 favouriteButton.setBackgroundResource(R.drawable.baseline_favorite_border_32);
-                                favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.deepBlue), PorterDuff.Mode.SRC_IN);
+                                favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.deepBlue), PorterDuff.Mode.SRC_IN);
                             }
                             if (location.getCloseTime() == null) {
                                 openHours.setText("Close today");
-                            } else if(location.getCloseTime() != null && location.isOpeningNow()){
+                            } else if (location.getCloseTime() != null && location.isOpeningNow()) {
                                 @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                                 openHours.setText("Open hours: " + sdf.format(location.getOpenTime()) + " - " + ("23:59".equals(sdf.format(location.getCloseTime())) ? "00:00" : sdf.format(location.getCloseTime())));
                             } else if (location.getCloseTime() != null && !location.isOpeningNow()) {
@@ -309,20 +319,19 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 progress.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red)));
                             }
 
-                            if (location.getDistanceFromCurrentPosition() == -1 || !GPSServiceImpl.getGPSPermission()){
+                            if (location.getDistanceFromCurrentPosition() == -1 || !GPSServiceImpl.getGPSPermission()) {
                                 distance.setText("N/A");
-                            }
-                            else{
+                            } else {
                                 distance.setText(location.getDistanceFromCurrentPosition() + "m");
                             }
-                            for(Review review : reviews) {
+                            for (Review review : reviews) {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.review_layout, reviewsLayout, false);
-                                CardView newCard = createNewSmallCard(card,review);
+                                CardView newCard = createNewSmallCard(card, review);
                                 reviewsLayout.addView(newCard);
                             }
-                            for (Resource resource: resources) {
+                            for (Resource resource : resources) {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
-                                TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                TextView resourceDef = card.findViewById(R.id.expandedListItem);
                                 ImageView resourceIcon = card.findViewById(R.id.icon);
                                 resourceDef.setText(resource.getName());
                                 String resourceType = resource.getName();
@@ -338,27 +347,27 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 amenitiesList.addView(card);
 
                             }
-                            if (location instanceof StudySpace && ((StudySpace)location).isTalkAllowed()) {
+                            if (location instanceof StudySpace && ((StudySpace) location).isTalkAllowed()) {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
-                                TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                TextView resourceDef = card.findViewById(R.id.expandedListItem);
                                 ImageView resourceIcon = card.findViewById(R.id.icon);
                                 resourceDef.setText("Discussion allowed");
                                 resourceIcon.setBackgroundResource(R.drawable.volume_outline);
                                 amenitiesList.addView(card);
                             }
-                            if (location instanceof StudySpace && ((StudySpace)location).getMinimumAccessAQFLevel() > 7) {
+                            if (location instanceof StudySpace && ((StudySpace) location).getMinimumAccessAQFLevel() > 7) {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
-                                TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                TextView resourceDef = card.findViewById(R.id.expandedListItem);
                                 ImageView resourceIcon = card.findViewById(R.id.icon);
                                 resourceDef.setText("Graduate student space");
                                 resourceIcon.setBackgroundResource(R.drawable.gradspace_outline);
                                 amenitiesList.addView(card);
                             }
-                            if (location.getCloseTime()!= null) {
+                            if (location.getCloseTime() != null) {
                                 boolean openLate = getTimeToClose(location.getCloseTime());
-                                if (openLate ) {
+                                if (openLate) {
                                     CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
-                                    TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                    TextView resourceDef = card.findViewById(R.id.expandedListItem);
                                     ImageView resourceIcon = card.findViewById(R.id.icon);
                                     resourceDef.setText("After hours access");
                                     resourceIcon.setBackgroundResource(R.drawable.lateaccess_outline);
@@ -368,7 +377,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             //check if the building is accessible and add that too
                             if (building.isHasAccessibility()) {
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
-                                TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
+                                TextView resourceDef = card.findViewById(R.id.expandedListItem);
                                 ImageView resourceIcon = card.findViewById(R.id.icon);
                                 resourceDef.setText("Accessible Building");
                                 resourceIcon.setBackgroundResource(R.drawable.accessible_outline);
@@ -376,47 +385,56 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             }
                         }
                     });
-                } catch(
-                        Exception e)
-
-                {
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
 
             }
         }.start();
 
-        gpsService = new GPSServiceImpl( this, this, GPSServiceImpl.getGPSHistory());
+        gpsService = new GPSServiceImpl(this, this, GPSServiceImpl.getGPSHistory());
 //
-        bananaFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.banana);
+        bananaFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.banana);
 
-        bananaFragment.getMapAsync( this);
+        bananaFragment.getMapAsync(this);
+    }
+
+    /**
+     * When back button pressed
+     */
+    public void onBackPressed() {
+        if (favouriteChanged) {
+            Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
+            intent.putExtra("USER_ID_EXTRA", userId);
+            intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+            intent.putExtra("USER_NAME_EXTRA", userName);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
+        finish();
     }
 
     //calculates the time to closing
-    private boolean getTimeToClose(Time closeTime){
+    private boolean getTimeToClose(Time closeTime) {
         Time currentTime = Time.valueOf("18:00:00");
         int closeHour = closeTime.getHours();
         if (closeHour == 0) {
             closeHour = 24;
         }
-        if (closeHour - currentTime.getHours() > 0) {
-            return true;
-        }
-        return false;
+        return closeHour - currentTime.getHours() > 0;
     }
+
     //creates a new comment card
-    private CardView createNewSmallCard(CardView card, Review review){
-        TextView userComment = (TextView) card.findViewById(R.id.textView);
+    private CardView createNewSmallCard(CardView card, Review review) {
+        TextView userComment = card.findViewById(R.id.textView);
         TextView datePosted = card.findViewById(R.id.date_posted);
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         String date = dateFormat.format(review.getDate());
         datePosted.setText(date);
         userComment.setText(review.getComment());
-        RatingBar rating = (RatingBar) card.findViewById(R.id.ratingBar);
+        RatingBar rating = card.findViewById(R.id.ratingBar);
         rating.setRating(review.getScore());
-        ImageView userImage = (ImageView) card.findViewById(R.id.imageView2);
+        ImageView userImage = card.findViewById(R.id.imageView2);
 
         return card;
     }
@@ -440,9 +458,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
         if (location != null) {
             LatLng currentLocation = location.getLocation();
-            mMap.addMarker(new MarkerOptions()
-                    .position(currentLocation)
-                    .title(location.getName()));
+            mMap.addMarker(new MarkerOptions().position(currentLocation).title(location.getName()));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, standardCameraZoom));
         } else {
             mMap.moveCamera(CameraUpdateFactory.zoomTo(standardCameraZoom));
@@ -480,10 +496,10 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     return;
                 }
                 //TODO: add review star rating (int rating) to database
-                new Thread(){
+                new Thread() {
                     public void run() {
                         try {
-                            Review addedReview = new ReviewServiceImpl().addReview(userId,locationId,ReviewType.valueOf(location.getType()),rating,review);
+                            Review addedReview = new ReviewServiceImpl().addReview(userId, locationId, ReviewType.valueOf(location.getType()), rating, review);
                             reloadActivity();
                         } catch (Exception e) {
                             throw new RuntimeException(e);
@@ -498,8 +514,9 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
         dialog.show();
     }
+
     //Reloads the page activity
-    private void reloadActivity(){
+    private void reloadActivity() {
         Intent intent = getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.putExtra("USER_ID_EXTRA", userId);

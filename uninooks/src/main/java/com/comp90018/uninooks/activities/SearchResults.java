@@ -54,12 +54,31 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-
+/**
+ * Search results
+ */
 public class SearchResults extends AppCompatActivity {
-    private int userID;
+    @SuppressLint("HandlerLeak")
+    private final Handler handler = new Handler() {
+        @SuppressLint("SetTextI18n")
+        public void handleMessage(Message msg) {
+            if (msg.what == 0) {
+                String info = (String) msg.obj;
+                Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+    /**
+     * This activity finishes, returns back to the previous page (search page)
+     */
+    private final View.OnClickListener returnListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            finish();
+        }
+    };
     LinearLayout resultCardArea;
     List<Location> results;
-
     CardView cardView;
     ImageButton returnButton;
     HashMap<Integer, List<Object>> locationToUI;
@@ -73,27 +92,16 @@ public class SearchResults extends AppCompatActivity {
     Comparator<Location> distanceComparator;
     Comparator<Location> ratingComparator;
     ProgressBar loadingGIF;
-
+    private int userID;
     private int userId;
     private String userEmail;
     private String userName;
 
-
-
-    @SuppressLint("HandlerLeak")
-    private final Handler handler = new Handler() {
-        @SuppressLint("SetTextI18n")
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    String info = (String) msg.obj;
-                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }
-    };
-
-
+    /**
+     * on create method
+     *
+     * @param savedInstanceState as savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -178,15 +186,10 @@ public class SearchResults extends AppCompatActivity {
     }
 
     /**
-     * This activity finishes, returns back to the previous page (search page)
+     * Add results to the page
+     *
+     * @param results as result
      */
-    private View.OnClickListener returnListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            finish();
-        }
-    };
-
     private void addResultsToPage(List<Location> results) {
         loadingGIF.setVisibility(View.VISIBLE);
 
@@ -195,12 +198,9 @@ public class SearchResults extends AppCompatActivity {
         ArrayList<Location> closingLocations = new ArrayList<>();
 
         for (Location location : results) {
-            System.out.println("!!!! LOCATION NAME: " + location.getName());
-            if (location.isOpeningNow()){
+            if (location.isOpeningNow()) {
                 openingLocations.add(location);
-            }
-
-            else{
+            } else {
                 closingLocations.add(location);
             }
         }
@@ -212,7 +212,6 @@ public class SearchResults extends AppCompatActivity {
         for (Location location : results) {
 
             String type = location.getType();
-            System.out.println(type);
             if (type.equals("LIBRARY")) {
                 cardView = createLibraryLocationCard((Library) location);
             } else if (type.equals("STUDY_SPACE")) {
@@ -243,6 +242,12 @@ public class SearchResults extends AppCompatActivity {
     }
 
 
+    /**
+     * Create location card in search page
+     *
+     * @param location as location
+     * @return location card
+     */
     private CardView createStudyLocationCard(StudySpace location) {
         List<Object> interactables = new ArrayList<>();
         int buildingID = location.getBuildingId();
@@ -272,10 +277,9 @@ public class SearchResults extends AppCompatActivity {
 
         // set the distance away
         int dist = location.getDistanceFromCurrentPosition();
-        if(dist == -1 || !GPSServiceImpl.getGPSPermission()){
+        if (dist == -1 || !GPSServiceImpl.getGPSPermission()) {
             distanceAway.setText(" N/A");
-        }
-        else{
+        } else {
             distanceAway.setText(dist + "m");
         }
 
@@ -305,6 +309,12 @@ public class SearchResults extends AppCompatActivity {
     }
 
 
+    /**
+     * Card View
+     *
+     * @param location as location
+     * @return location card
+     */
     private CardView createLibraryLocationCard(Library location) {
         List<Object> interactables = new ArrayList<>();
         int buildingID = location.getBuildingId();
@@ -334,10 +344,9 @@ public class SearchResults extends AppCompatActivity {
         // set the distance away!!!!!!
         int dist = location.getDistanceFromCurrentPosition();
 //        int distInt = (int) Math.round(dist);
-        if(dist == -1 || !GPSServiceImpl.getGPSPermission()){
+        if (dist == -1 || !GPSServiceImpl.getGPSPermission()) {
             distanceAway.setText(" N/A");
-        }
-        else{
+        } else {
             distanceAway.setText(dist + "m");
         }
 
@@ -370,8 +379,8 @@ public class SearchResults extends AppCompatActivity {
     /**
      * Each location put in hash map from locationID --> [capacity, closingIcon]
      *
-     * @param location
-     * @return
+     * @param location as location
+     * @return location card
      */
     private CardView createRestaurantLocationCard(Restaurant location) {
         List<Object> interactables = new ArrayList<>();
@@ -389,8 +398,7 @@ public class SearchResults extends AppCompatActivity {
         ImageButton favButton = findViewById(R.id.favButton);
         TextView ratingText = findViewById(R.id.ratingText);
 
-        CardView locationCard = (CardView) LayoutInflater.from(this).
-                inflate(R.layout.large_location_card, resultCardArea, true);
+        CardView locationCard = (CardView) LayoutInflater.from(this).inflate(R.layout.large_location_card, resultCardArea, true);
 
         interactables.add(capacity);
         interactables.add(closingIcon);
@@ -402,10 +410,9 @@ public class SearchResults extends AppCompatActivity {
         // set the distance away!!!!
         int dist = location.getDistanceFromCurrentPosition();
 //        int distInt = (int) Math.round(dist);
-        if(dist == -1 || !GPSServiceImpl.getGPSPermission()){
+        if (dist == -1 || !GPSServiceImpl.getGPSPermission()) {
             distanceAway.setText(" N/A");
-        }
-        else{
+        } else {
             distanceAway.setText(dist + "m");
         }
 
@@ -437,11 +444,23 @@ public class SearchResults extends AppCompatActivity {
         return locationCard;
     }
 
+    /**
+     * Set card title
+     *
+     * @param location  as location
+     * @param cardTitle as card title
+     */
     private void setTitle(Location location, TextView cardTitle) {
         String title = location.getName();
         cardTitle.setText(title);
     }
 
+    /**
+     * Set opening hours
+     *
+     * @param location     as location
+     * @param openingHours as opening hours
+     */
     private void setOpeningHoursText(Location location, TextView openingHours) {
         String text;
         Time openingTime = location.getOpenTime();
@@ -449,9 +468,7 @@ public class SearchResults extends AppCompatActivity {
 
         if (closingTime == null) {
             text = "Close Today";
-        }
-
-        else {
+        } else {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
             String openingTimeText = sdf.format(openingTime);
             String closingTimeText = (sdf.format(closingTime)).equals("23:59") ? "00:00" : sdf.format(closingTime);
@@ -479,26 +496,22 @@ public class SearchResults extends AppCompatActivity {
     /**
      * Checks whether the current time is within the range of opening time and closing time
      *
-     * @param openingTime
-     * @param closingTime
-     * @param currTime
-     * @return
+     * @param openingTime as opening time
+     * @param closingTime as closing time
+     * @param currTime    as current time
+     * @return whether it is in range
      */
     private boolean withinRange(Time openingTime, Time closingTime, Time currTime) {
         int closingHours = closingTime.getHours();
         if (closingHours == 0) {
             closingHours = 24;
         }
-        long openingTimeMillis = openingTime.getHours() * 3600 * 1000 + openingTime.getMinutes() * 60 * 1000;
-        long closingTimeMillis = closingHours * 3600 * 1000 + closingTime.getMinutes() * 60 * 1000;
+        long openingTimeMillis = (long) openingTime.getHours() * 3600 * 1000 + (long) openingTime.getMinutes() * 60 * 1000;
+        long closingTimeMillis = (long) closingHours * 3600 * 1000 + (long) closingTime.getMinutes() * 60 * 1000;
 
-        long currTimeMillis = currTime.getHours() * 3600 * 1000 + currTime.getMinutes() * 60 * 1000;
+        long currTimeMillis = (long) currTime.getHours() * 3600 * 1000 + (long) currTime.getMinutes() * 60 * 1000;
 
-        if (currTimeMillis >= openingTimeMillis && currTimeMillis <= closingTimeMillis) {
-            return true;
-        } else {
-            return false;
-        }
+        return currTimeMillis >= openingTimeMillis && currTimeMillis <= closingTimeMillis;
     }
 
     /**
@@ -615,9 +628,6 @@ public class SearchResults extends AppCompatActivity {
 
             try {
                 List<Resource> availResources = new ResourceServiceImpl().getResourceFromBuilding(buildingID);
-                for (Resource r : availResources) {
-                    System.out.println(r.getName());
-                }
                 resourcesByLocation.put(locationName, availResources);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -764,9 +774,7 @@ public class SearchResults extends AppCompatActivity {
             closeHour = 24;
         }
 
-        long timeDiffInSeconds = (closeHour - currTime.getHours()) * 3600
-                + (closingTime.getMinutes() - currTime.getMinutes()) * 60
-                + (closingTime.getSeconds() - currTime.getSeconds());
+        long timeDiffInSeconds = (closeHour - currTime.getHours()) * 3600L + (closingTime.getMinutes() - currTime.getMinutes()) * 60L + (closingTime.getSeconds() - currTime.getSeconds());
 
         double timeDiffInHours = (double) timeDiffInSeconds / 3600;
 
@@ -964,8 +972,6 @@ public class SearchResults extends AppCompatActivity {
     }
 
     private boolean haveFacility(List<Resource> resources, ResourceType name) {
-
-        System.out.println(resources == null);
 
         if (resources != null) {
             for (Resource resource : resources) {

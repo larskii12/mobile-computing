@@ -22,6 +22,9 @@ import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.service.mail.MailServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
 
+/**
+ * Sign up activity
+ */
 public class SignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private final int OTP_TIMER = 60;
@@ -34,102 +37,24 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
     private Spinner spinnerSignUpDegreeList;
 
-    private ArrayAdapter<CharSequence> facultyAdapter;
-
-    private ArrayAdapter<CharSequence> degreeAdapter;
-
     private Button buttonSignUpGetOTP;
-    private Button buttonSignUpJoinNow;
-
-    private TextView buttonSignUpReportIssue;
 
     private String otp;
 
-//    private String name;
+    //    private String name;
     private String username;
     private String email;
     private String password;
-    private String passwordConfirmation;
 
     private String faculty;
 
     private int aqfLevel;
 
-    @SuppressLint("HandlerLeak")
-    private final Handler handler = new Handler() {
-        @SuppressLint("SetTextI18n")
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    String info = (String) msg.obj;
-                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
-                    break;
-
-                case 1:
-
-                    int time = (int) msg.obj;
-
-                    if (time > 0) {
-                        buttonSignUpGetOTP.setEnabled(false);
-                        buttonSignUpGetOTP.setText(time + "s");
-                        buttonSignUpGetOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.black));
-                        buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.grey));
-
-                        Message message = new Message();
-                        message.what = 1;
-                        message.obj = time - 1;
-                        handler.sendMessageDelayed(message, 1000);
-                    }
-
-                    else {
-//                        ediTextSignUpName.setEnabled(true);
-                        editTextSignUpEmail.setEnabled(true);
-                        editTextSignUpUserName.setEnabled(true);
-                        editTextSignUpPassword.setEnabled(true);
-                        editTextSignUpConfirmPassword.setEnabled(true);
-                        spinnerSignUpFacultyList.setEnabled(true);
-                        spinnerSignUpDegreeList.setEnabled(true);
-                        buttonSignUpGetOTP.setEnabled(true);
-                        buttonSignUpGetOTP.setText("Get OTP");
-                        buttonSignUpGetOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
-                        buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.primary));
-                    }
-
-                    break;
-
-                case 2:
-//                    ediTextSignUpName.setEnabled(true);
-                    editTextSignUpEmail.setEnabled(true);
-                    editTextSignUpUserName.setEnabled(true);
-                    editTextSignUpPassword.setEnabled(true);
-                    editTextSignUpConfirmPassword.setEnabled(true);
-                    spinnerSignUpFacultyList.setEnabled(true);
-                    spinnerSignUpDegreeList.setEnabled(true);
-                    buttonSignUpGetOTP.setEnabled(true);
-                    buttonSignUpGetOTP.setText("Get OTP");
-                    buttonSignUpGetOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
-                    buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.primary));
-
-                    break;
-
-//                case 3:
-//                    ediTextSignUpName.setEnabled(false);
-//                    editTextSignUpEmail.setEnabled(false);
-//                    editTextSignUpUserName.setEnabled(false);
-//                    editTextSignUpPassword.setEnabled(false);
-//                    editTextSignUpConfirmPassword.setEnabled(false);
-//                    spinnerSignUpFacultyList.setEnabled(false);
-//                    spinnerSignUpDegreeList.setEnabled(false);
-//                    buttonSignUpGetOTP.setEnabled(false);
-//                    buttonSignUpGetOTP.setText("Sending");
-//                    buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.grey));
-//                    buttonSignUpGetOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.black));
-//
-//                    break;
-            }
-        }
-    };
-
+    /**
+     * on create method
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -138,7 +63,6 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-//        ediTextSignUpName = findViewById(R.id.EdiTextSignUpName);
         editTextSignUpUserName = findViewById(R.id.EditTextSignUpUserName);
         editTextSignUpEmail = findViewById(R.id.EditTextSignUpEmail);
         editTextSignUpPassword = findViewById(R.id.EditTextSignUpPassword);
@@ -148,20 +72,20 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         spinnerSignUpDegreeList = findViewById(R.id.SpinnerSignUpDegreeList);
 
         // Set the faculty drop down list
-        facultyAdapter = ArrayAdapter.createFromResource(this, R.array.faculty_list, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> facultyAdapter = ArrayAdapter.createFromResource(this, R.array.faculty_list, android.R.layout.simple_spinner_item);
         facultyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         spinnerSignUpFacultyList.setAdapter(facultyAdapter);
         spinnerSignUpFacultyList.setOnItemSelectedListener(this);
 
         // Set the degree drop down list
-        degreeAdapter = ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> degreeAdapter = ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
         degreeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         spinnerSignUpDegreeList.setAdapter(degreeAdapter);
         spinnerSignUpDegreeList.setOnItemSelectedListener(this);
 
         buttonSignUpGetOTP = findViewById(R.id.ButtonSignUpGetOTP);
-        buttonSignUpJoinNow = findViewById(R.id.ButtonSignUpJoinNow);
-        buttonSignUpReportIssue = findViewById(R.id.ButtonSignUpReportIssue);
+        Button buttonSignUpJoinNow = findViewById(R.id.ButtonSignUpJoinNow);
+        TextView buttonSignUpReportIssue = findViewById(R.id.ButtonSignUpReportIssue);
 
         this.otp = "";
 
@@ -193,26 +117,16 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
                             if (!inputCheck()) {
                                 handler.sendEmptyMessage(2);
-                            }
-
-                            else if (new UserServiceImpl().hasUser(editTextSignUpEmail.getText().toString())){
+                            } else if (new UserServiceImpl().hasUser(editTextSignUpEmail.getText().toString())) {
                                 showTextMessage("This email has been registered with us, please try another one.");
-                            }
-
-                            else if (!editTextSignUpEmail.getText().toString().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")){
+                            } else if (!editTextSignUpEmail.getText().toString().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
                                 showTextMessage("This is not a valid email address format.");
 
-                            }
-
-                            else if (!username.matches("\\w{1,10}")) {
+                            } else if (!username.matches("\\w{1,10}")) {
                                 showTextMessage("User name can only contain letters, numbers, and underscores, less than 10 characters");
-                            }
-
-                            else if (new UserServiceImpl().hasUser(editTextSignUpUserName.getText().toString())){
+                            } else if (new UserServiceImpl().hasUser(editTextSignUpUserName.getText().toString())) {
                                 showTextMessage("This user name has been registered with us, please try another one.");
-                            }
-
-                            else{
+                            } else {
                                 otp = getOTP();
                             }
 
@@ -238,34 +152,6 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
             }
         });
 
-    }
-
-    public void onStart(){
-        super.onStart();
-    }
-
-    public void onRestart(){
-        super.onRestart();;
-    }
-
-    // When back button pressed
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-    public void onPause() {
-        super.onPause();
-    }
-    public void onResume() {
-        super.onResume();
-    }
-
-    public void onStop(){
-        super.onStop();
-    }
-
-    public void onDestroy(){
-        super.onDestroy();
     }
 
     /**
@@ -311,11 +197,9 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         // @TODO: BACKEND: Here, you can integrate your backend logic to store the user details.
         try {
 
-            System.out.println(faculty);
 
             // Add user to database
             new UserServiceImpl().addUser(username, email, password, faculty, aqfLevel);
-            System.out.println("Signed up successfully!");
             otp = "";
 
             showTextMessage("Signed up successfully!");
@@ -329,8 +213,6 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
             finish();
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-
             showTextMessage(e.getMessage());
         }
 
@@ -349,31 +231,21 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         username = editTextSignUpUserName.getText().toString().trim();
         email = editTextSignUpEmail.getText().toString().trim();
         password = editTextSignUpPassword.getText().toString().trim();
-        passwordConfirmation = editTextSignUpConfirmPassword.getText().toString().trim();
-
-//        if (name.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty() || passwordConfirmation.isEmpty()) {
-//            System.out.println("Please fill all fields");
-//            showTextMessage("Please fill all fields");
-//
-//            return false;
-//        }
+        String passwordConfirmation = editTextSignUpConfirmPassword.getText().toString().trim();
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty() || passwordConfirmation.isEmpty()) {
-            System.out.println("Please fill all fields");
             showTextMessage("Please fill all fields");
 
             return false;
         }
 
         if (!password.equals(passwordConfirmation)) {
-            System.out.println("Passwords do not match");
             showTextMessage("Passwords do not match");
 
             return false;
         }
 
         if (password.length() < 8) {
-            System.out.println("Password must be at least 8 characters");
             showTextMessage("Password must be at least 8 characters");
 
             return false;
@@ -391,7 +263,6 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         String degree = degreeSpinner.getSelectedItem().toString();
 
         // Convert degree to AQF level
-        System.out.println(degree);
         switch (degree) {
             case "Certificate I":
                 aqfLevel = 1;
@@ -429,7 +300,63 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
 
         return true;
-    }
+    }    @SuppressLint("HandlerLeak")
+    private final Handler handler = new Handler() {
+        @SuppressLint("SetTextI18n")
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    String info = (String) msg.obj;
+                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
+                    break;
+
+                case 1:
+
+                    int time = (int) msg.obj;
+
+                    if (time > 0) {
+                        buttonSignUpGetOTP.setEnabled(false);
+                        buttonSignUpGetOTP.setText(time + "s");
+                        buttonSignUpGetOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.black));
+                        buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.grey));
+
+                        Message message = new Message();
+                        message.what = 1;
+                        message.obj = time - 1;
+                        handler.sendMessageDelayed(message, 1000);
+                    } else {
+//                        ediTextSignUpName.setEnabled(true);
+                        editTextSignUpEmail.setEnabled(true);
+                        editTextSignUpUserName.setEnabled(true);
+                        editTextSignUpPassword.setEnabled(true);
+                        editTextSignUpConfirmPassword.setEnabled(true);
+                        spinnerSignUpFacultyList.setEnabled(true);
+                        spinnerSignUpDegreeList.setEnabled(true);
+                        buttonSignUpGetOTP.setEnabled(true);
+                        buttonSignUpGetOTP.setText("Get OTP");
+                        buttonSignUpGetOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
+                        buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.primary));
+                    }
+
+                    break;
+
+                case 2:
+//                    ediTextSignUpName.setEnabled(true);
+                    editTextSignUpEmail.setEnabled(true);
+                    editTextSignUpUserName.setEnabled(true);
+                    editTextSignUpPassword.setEnabled(true);
+                    editTextSignUpConfirmPassword.setEnabled(true);
+                    spinnerSignUpFacultyList.setEnabled(true);
+                    spinnerSignUpDegreeList.setEnabled(true);
+                    buttonSignUpGetOTP.setEnabled(true);
+                    buttonSignUpGetOTP.setText("Get OTP");
+                    buttonSignUpGetOTP.setTextColor(ContextCompat.getColor(SignUpActivity.this, R.color.white));
+                    buttonSignUpGetOTP.setBackgroundColor(ContextCompat.getColor(SignUpActivity.this, R.color.primary));
+
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long l) {
@@ -452,4 +379,8 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         msg.obj = text;
         handler.sendMessage(msg);
     }
+
+
+
+
 }
