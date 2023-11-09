@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -27,11 +28,13 @@ import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -91,6 +94,9 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
         super.onCreate(savedInstanceState);
         binding = ActivityNavigationBinding.inflate(getLayoutInflater());
 
@@ -106,8 +112,9 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         gpsService = new GPSServiceImpl(this, this, GPSServiceImpl.getGPSHistory());
 
         locateMyLocation = (ImageButton) findViewById(R.id.locate_my_location);
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        ImageButton backButton = findViewById(R.id.imageButton);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -131,6 +138,13 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                 } catch (Exception e) {
                     System.out.println("Location update fails, please try again.");
                 }
+            }
+        });
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
@@ -196,41 +210,11 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         LatLng original = GPSServiceImpl.getCurrentLocation();
         LatLng goal = location;
 
-        new Thread() {
-            public void run() {
+        int minCameraZoom = 15;
+        mMap.setMinZoomPreference(minCameraZoom);
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(standardCameraZoom));
 
-                try {
-
-                    findWalkingPath(original, goal);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (Navigation navigation : navigationList) {
-                                LatLng pointA = navigation.getStartLocation();
-                                LatLng pointB = navigation.getEndLocation();
-
-                                Polyline line = mMap.addPolyline(new PolylineOptions()
-                                        .add(pointA, pointB)
-                                        .width(10)
-                                        .color(Color.BLUE));
-                            }
-
-                            int maxCameraZoom = 30;
-                            mMap.setMaxZoomPreference(maxCameraZoom);
-                            int minCameraZoom = 15;
-                            mMap.setMinZoomPreference(minCameraZoom);
-                            mMap.moveCamera(CameraUpdateFactory.zoomTo(standardCameraZoom));
-                            mMap.addMarker(new MarkerOptions().position(location).title(locationName));
-                        }
-                    });
-
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }.start();
-
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         // Show the user location
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -246,7 +230,81 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                             }
                         }
                 );
+
+        new Thread() {
+            public void run() {
+
+                try {
+
+                    findWalkingPath(original, goal);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            double highestLatitude = -99999;
+                            double lowestLatitude = 99999;
+                            double highestLongitude = -99999;
+                            double lowestLongitude = 99999;
+
+                            for (Navigation navigation : navigationList) {
+                                LatLng pointA = navigation.getStartLocation();
+                                LatLng pointB = navigation.getEndLocation();
+
+                                highestLatitude = Math.max(pointA.latitude, highestLatitude);
+                                lowestLatitude = Math.min(pointA.latitude, lowestLatitude);
+                                highestLongitude = Math.max(pointB.longitude, highestLongitude);
+                                lowestLongitude = Math.min(pointB.longitude, lowestLongitude);
+
+                                highestLatitude = Math.max(pointA.latitude, highestLatitude);
+                                lowestLatitude = Math.min(pointA.latitude, lowestLatitude);
+                                highestLongitude = Math.max(pointB.longitude, highestLongitude);
+                                lowestLongitude = Math.min(pointB.longitude, lowestLongitude);
+
+
+                                Polyline line = mMap.addPolyline(new PolylineOptions()
+                                        .add(pointA, pointB)
+                                        .width(10)
+                                        .color(Color.BLUE));
+                            }
+
+                            LatLng southwest = new LatLng(lowestLatitude, lowestLongitude);
+                            LatLng northeast = new LatLng(highestLatitude, highestLongitude);
+                            LatLngBounds bounds = new LatLngBounds(southwest, northeast);
+
+                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 120);
+                            mMap.addMarker(new MarkerOptions().position(location).title(locationName));
+                            mMap.animateCamera(cameraUpdate);
+                        }
+
+                    });
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }.start();
     }
+
+    public void showFullRoute(LatLng pointA, LatLng pointB){
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+        if (pointA != null && pointB != null){
+            builder.include(pointA);
+            builder.include(pointB);
+            LatLngBounds bounds = builder.build();
+
+            int padding = 50;
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+            mMap.animateCamera(cameraUpdate);
+        }
+    }
+
+    private void navigationRouteAnimation(){
+
+    }
+
     private void findWalkingPath(LatLng currentPosition, LatLng destination) throws IOException {
 
                 try {
@@ -349,7 +407,6 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     public void onGPSUpdate(Location location) {
-        gpsService.stopGPSUpdates();
     }
 
 }

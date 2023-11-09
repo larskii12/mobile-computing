@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -82,6 +83,9 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
         super.onCreate(savedInstanceState);
         binding = ActivityLocationBinding.inflate(getLayoutInflater());
 
@@ -425,12 +429,14 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     //opens map with the location
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        mMap = googleMap;
 
-        int maxCameraZoom = 50;
-        mMap.setMaxZoomPreference(maxCameraZoom);
-        int minCameraZoom = 15;
-        mMap.setMinZoomPreference(minCameraZoom);
+        mMap = googleMap;
+        mMap.setMaxZoomPreference(18);
+        mMap.setMinZoomPreference(18);
+        mMap.getUiSettings().setZoomGesturesEnabled(false);
+        mMap.getUiSettings().setTiltGesturesEnabled(false);
+        mMap.getUiSettings().setRotateGesturesEnabled(false);
+        mMap.getUiSettings().setScrollGesturesEnabled(false);
 
         if (location != null) {
             LatLng currentLocation = location.getLocation();
