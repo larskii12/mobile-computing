@@ -36,6 +36,7 @@ import com.comp90018.uninooks.service.busy_rating.BusyRatingService;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
+import com.comp90018.uninooks.service.image.ImageServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
@@ -82,6 +83,8 @@ public class HomeActivity extends AppCompatActivity {
     public boolean neverShowAgain;
     public ArrayList<StudySpace> topRatedStudySpaces = new ArrayList<>();
 
+    private HashMap<String, Integer> imagesByLocation;
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,16 +102,11 @@ public class HomeActivity extends AppCompatActivity {
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
         userName = intent.getStringExtra("USER_NAME_EXTRA");
 
-//        List<Location> studySpacesNearby = new ArrayList<>();
-//        List<Location> studySpacesTop = new ArrayList<>();
-
         bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setSelectedItemId(R.id.homeNav);
 
         busyRatingsByLocation = new HashMap<>();
 
-        // Getting the Sensor Manager instance
-//        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         Objects.requireNonNull(sensorManager).registerListener(sensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
@@ -177,7 +175,6 @@ public class HomeActivity extends AppCompatActivity {
 
 
             new Thread() {
-
                 ArrayList<StudySpace> closestStudySpaces = new ArrayList<>();
 //                ArrayList<StudySpace> topRatedStudySpaces = new ArrayList<>();
 
@@ -237,12 +234,13 @@ public class HomeActivity extends AppCompatActivity {
 
 //                        new StudySpaceServiceImpl().calculateSpaceByWalkingDistance(GPSServiceImpl.getCurrentLocation(), favorites);
 
-                getAllBusyRatings(closestStudySpaces);
-//                        List<Favorite> userFavorites = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACES"));
-                System.out.println(studySpacesNearby.get(2).getName());
-                LinearLayout nearbyLayout = findViewById(R.id.nearbyLayout);
-                LinearLayout topRatedLayout = findViewById(R.id.topRatedLayout);
-                LinearLayout favoritesLayout = findViewById(R.id.favoritesLayout);
+                    getAllBusyRatings(closestStudySpaces);
+                    getAllImages();
+    //                        List<Favorite> userFavorites = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACES"));
+                    System.out.println(studySpacesNearby.get(2).getName());
+                    LinearLayout nearbyLayout = findViewById(R.id.nearbyLayout);
+                    LinearLayout topRatedLayout = findViewById(R.id.topRatedLayout);
+                    LinearLayout favoritesLayout = findViewById(R.id.favoritesLayout);
 
 //                    int i=0; i<5; i++)
 
@@ -399,7 +397,8 @@ public class HomeActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private CardView createNewSmallCard(CardView card, StudySpace space, String type){
         ImageView banner = (ImageView) card.findViewById(R.id.banner);
-        banner.setBackgroundResource(R.drawable.old_engineering);
+//        banner.setBackgroundResource(R.drawable.old_engineering);
+        banner.setBackgroundResource(imagesByLocation.get(space.getName()));
         ProgressBar progress = (ProgressBar) card.findViewById(R.id.progressBar);
         Double score = busyRatingsByLocation.get(space.getName());
         Integer busyScore = score != null && space.isOpeningNow() ? (int) (score * 20) : 0;
@@ -591,6 +590,18 @@ public class HomeActivity extends AppCompatActivity {
         // Create the AlertDialog object and return it.
 //        return builder.create();
     }
+
+    /**
+     * Gets all the images for each location
+     */
+    private void getAllImages() {
+        try {
+            imagesByLocation = new ImageServiceImpl().fetchAllImages();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private void showDialog(String message){
         new AlertDialog.Builder(this)
