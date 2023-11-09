@@ -583,7 +583,7 @@
             android:id="@+id/locationToggle"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="10dp"
             android:clickable="true"
             android:thumbTint="@drawable/toggle_switch"
             android:trackTint="@color/deepBlue"
