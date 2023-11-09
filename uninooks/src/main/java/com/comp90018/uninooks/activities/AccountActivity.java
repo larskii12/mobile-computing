@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.user.User;
@@ -51,7 +52,6 @@ public class AccountActivity extends AppCompatActivity {
                 // Show greeting user name
                 case 1:
                     textViewAccountGreetingUserName.setText(userName);
-
             }
         }
     };
@@ -60,6 +60,9 @@ public class AccountActivity extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
 
