@@ -278,6 +278,11 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 int id = item.getItemId();
 
                 if (id == R.id.homeNav){
+                    handler.removeCallbacksAndMessages(null);
+                    inSequence = false;
+                    isCurrentlyOnApp = false;
+                    stopService();
+
                     Intent intent = new Intent(FocusModeTimerActivity.this, HomeActivity.class);
 
                     // Pass the user to next page
@@ -291,6 +296,11 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 }
 
                 else if (id == R.id.searchNav) {
+                    handler.removeCallbacksAndMessages(null);
+                    inSequence = false;
+                    isCurrentlyOnApp = false;
+                    stopService();
+
                     Intent intent = new Intent(FocusModeTimerActivity.this, MapsActivity.class);
 
                     // Pass the user to next page
@@ -305,6 +315,11 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 } else if (id == R.id.focusNav) {
                     ;
                 } else {
+                    handler.removeCallbacksAndMessages(null);
+                    inSequence = false;
+                    isCurrentlyOnApp = false;
+                    stopService();
+
                     Intent intent = new Intent(FocusModeTimerActivity.this, AccountActivity.class);
 
                     // Pass the user to next page
@@ -348,8 +363,9 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        retrieveSettings();
+
         if (settingsClicked) {
-            retrieveSettings();
             settingsClicked = false;
 
             // if settings change, then do this -- have to compare before and after
