@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="8dp"
-                android:text=":     Closing soon" />
+                android:text=":     Closing soon / Closed" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
