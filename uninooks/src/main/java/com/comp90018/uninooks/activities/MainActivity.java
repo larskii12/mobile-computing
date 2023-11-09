@@ -72,57 +72,6 @@ public class MainActivity extends AppCompatActivity implements GPSService {
                 REQUEST_LOCATION_PERMISSION
         );
 
-//        GPSServiceImpl.setGPSPermissionStatus(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
-//
-//        if (GPSServiceImpl.getGPSPermission()){
-//            gpsService.startGPSUpdates();
-//        }
-//
-//        else{
-//            Log.d("AAAAAAAAAAAAAAAAAAA", "gps NOT fetched and go to log in");
-//            startMainActivity();
-//        }
-
-        // Check permission is given or not, if not given, pop up permission needed box
-        // Need to change to check whether the app is first time launch
-//        if (true) {
-//
-//            // Ask for permission
-//            ActivityCompat.requestPermissions(
-//                    MainActivity.this,
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                    REQUEST_LOCATION_PERMISSION
-//            );
-//
-//
-//            GPSServiceImpl.setGPSPermissionStatus(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
-//
-//            if (GPSServiceImpl.getGPSPermission()){
-//                gpsService.startGPSUpdates();
-//            }
-//
-//            else{
-//                Log.d("AAAAAAAAAAAAAAAAAAA", "gps NOT fetched and go to log in");
-//                startMainActivity();
-//            }
-//
-//        }
-//        // If all permission already granted, go to main activities directly
-//        else {
-//
-//            // Set GPS status
-//            GPSServiceImpl.setGPSPermissionStatus(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
-//
-//            if (GPSServiceImpl.getGPSPermission()){
-//                gpsService.startGPSUpdates();
-//            }
-//
-//            else{
-//                Log.d("AAAAAAAAAAAAAAAAAAA", "gps NOT fetched and go to log in");
-//                startMainActivity();
-//            }
-//        }
-
         /**
          * Emulator Testing Mode Detection
          */

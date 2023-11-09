@@ -209,13 +209,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     Button addReview = findViewById(R.id.add_review);
                     Button showReviews = findViewById(R.id.show_reviews);
                     showingReviews = false;
-//                    Button hideReviews = findViewById(R.id.hide_reviews);
-//                    User user = null;
-//
-//                    //System.out.println(userID);
-//                    user = new UserServiceImpl().getUser(userId);
-//
-//                    userName = user.getUserName();
 
                     TextView listTitle = findViewById(R.id.listTitle);
                     LinearLayout amenitiesList = findViewById(R.id.amenities);
@@ -500,12 +493,14 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        mMap = googleMap;
 
-        int maxCameraZoom = 50;
-        mMap.setMaxZoomPreference(maxCameraZoom);
-        int minCameraZoom = 15;
-        mMap.setMinZoomPreference(minCameraZoom);
+        mMap = googleMap;
+        mMap.setMaxZoomPreference(18);
+        mMap.setMinZoomPreference(18);
+        mMap.getUiSettings().setZoomGesturesEnabled(false);
+        mMap.getUiSettings().setTiltGesturesEnabled(false);
+        mMap.getUiSettings().setRotateGesturesEnabled(false);
+        mMap.getUiSettings().setScrollGesturesEnabled(false);
 
         if (location != null) {
             LatLng currentLocation = location.getLocation();

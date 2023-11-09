@@ -19,7 +19,7 @@ import com.comp90018.uninooks.service.user.UserServiceImpl;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 
-    private final int OTP_TIMER = 20;
+    private final int OTP_TIMER = 60;
     private String otp;
     private Button buttonGetResetPasswordOTP;
     private Button buttonResetPasswordOTPVerify;

@@ -23,7 +23,7 @@ import com.comp90018.uninooks.service.user.UserServiceImpl;
 
 public class SignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private final int OTP_TIMER = 20;
+    private final int OTP_TIMER = 60;
     private EditText editTextSignUpUserName;
     private EditText editTextSignUpEmail;
     private EditText editTextSignUpPassword;
