@@ -98,7 +98,7 @@
             <ImageView
                 android:id="@+id/Account_Personal_Info_Icon"
                 style="@style/IconStyle"
-                android:src="@drawable/ic_personal_acount" />
+                android:src="@drawable/ic_settings" />
 
             <TextView
                 android:id="@+id/Account_Personal_Info_Text"
@@ -107,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_weight="1"
-                android:text="Personal information" />
+                android:text="@string/Account_Settings" />
 
             <ImageView
                 android:id="@+id/Account_Personal_Info_Arrow_Right"

@@ -50,14 +50,14 @@
                 android:layout_width="wrap_content"
                 android:clickable="true"
                 android:focusable="true"
-                android:src="@drawable/ic_arrow_left" />
+                android:src="@drawable/arrow_back_fill" />
 
             <TextView
                 android:id="@+id/Account_Greeting"
                 style="@style/WhiteTextHeading"
                 android:layout_width="wrap_content"
                 android:paddingStart="16dp"
-                android:text="@string/Account_Pi_Personal_Info"
+                android:text="@string/Account_Settings"
                 android:textAlignment="textStart" />
 
         </LinearLayout>
