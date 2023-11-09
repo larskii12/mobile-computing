@@ -325,32 +325,14 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_gravity="bottom"
-        android:background="@color/white"
         app:itemBackground="@color/white"
+        android:background="@color/white"
         app:itemIconSize="32dp"
         app:itemIconTint="@color/deepBlue"
         app:itemTextColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_menu" />
-
-    <!--    <FrameLayout-->
-    <!--        android:id="@+id/fragment_container"-->
-    <!--        android:layout_width="412dp"-->
-    <!--        android:layout_height="58dp"-->
-    <!--        android:layout_above="@id/bottom_navigation"-->
-    <!--        tools:ignore="NotSibling"-->
-    <!--        tools:layout_editor_absoluteY="673dp">-->
-
-    <!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
-    <!--            android:id="@+id/bottom_navigation"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="55dp"-->
-    <!--            android:layout_marginTop="676dp"-->
-    <!--            app:itemBackground="@color/white"-->
-    <!--            app:itemIconSize="33dp"-->
-    <!--            app:menu="@menu/bottom_menu" />-->
-
-
-    <!--    </FrameLayout>-->
+        app:menu="@menu/bottom_menu"
+        android:elevation="300dp"
+        tools:layout_editor_absoluteX="0dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
