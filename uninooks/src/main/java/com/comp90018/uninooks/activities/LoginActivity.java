@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -77,40 +79,43 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
         userEmail = "";
         userName = "";
 
-        buttonLoginLogIn.setOnClickListener(new View.OnClickListener() {
+        editTextLoginPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View v) {
-                new Thread() {
-                    public void run() {
-                        try {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    new Thread() {
+                        public void run() {
+                            try {
+                                User user = loginUser();
 
-                            User user = loginUser();
+                                if (user != null){
+                                    userId = user.getUserId();
+                                    userEmail = user.getUserEmail();
+                                    userName = user.getUserName();
 
-                            if (user != null){
+                                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
 
-                                userId = user.getUserId();
-                                userEmail = user.getUserEmail();
-                                userName = user.getUserName();
+                                    // Pass the user to next page
+                                    intent.putExtra("USER_ID_EXTRA", userId);
+                                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                    intent.putExtra("USER_NAME_EXTRA", userName);
 
-                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                    finish();
+                                }
 
-                                // Pass the user to next page
-                                intent.putExtra("USER_ID_EXTRA", userId);
-                                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                                intent.putExtra("USER_NAME_EXTRA", userName);
-
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                                finish();
+                            } catch (Exception e) {
+                                showTextMessage("An error happened, please contract the IT administrator.");
                             }
-
-                        } catch (Exception e) {
-                            showTextMessage("An error happened, please contract the IT administrator.");
                         }
-                    }
-                }.start();
+                    }.start();
+                    return true;
+                }
+                return false;
             }
         });
+
 
         buttonLogInGoToSignup.setOnClickListener(new View.OnClickListener() {
             @Override
