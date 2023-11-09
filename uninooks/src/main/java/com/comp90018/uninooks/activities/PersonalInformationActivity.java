@@ -1,25 +1,30 @@
 package com.comp90018.uninooks.activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
@@ -97,6 +102,12 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     private Switch usageAccessToggle;
     private Switch preciseLocationToggle;
 
+    private final int APP_LOCATION_SETTINGS_REQUEST = 1234;
+
+    private final int REQUEST_USAGE_ACCESS = 1001;
+
+    private final int APP_NOTIFICATION_PUSH = 1002;
+
 
 
     @SuppressLint("HandlerLeak")
@@ -146,6 +157,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_perfonal_info);
 
@@ -574,6 +586,8 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                         userDegree = "Not Provided";
                 }
 
+
+
                 handler.sendEmptyMessage(1);
 
             } catch (Exception e) {
@@ -598,8 +612,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     private View.OnClickListener notificationToggleListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            System.out.println("HELLOOOOO");
-            System.out.println(notificationToggle.isChecked());
+            updateUsagePermission();
         }
     };
 
@@ -609,8 +622,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     private View.OnClickListener usageAccessToggleListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            System.out.println("HELLOOOOO");
-            System.out.println(usageAccessToggle.isChecked());
+            updateUsagePermission();
         }
     };
 
@@ -621,8 +633,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     private View.OnClickListener locationToggleListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            System.out.println("HELLOOOOO");
-            System.out.println(preciseLocationToggle.isChecked());
+            updateUsagePermission();
         }
     };
 
@@ -680,4 +691,54 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
+
+
+    /**
+     * Usage Access Permission settings
+     *
+     * @return
+     */
+    private boolean hasUsageAccessPermission() {
+        try {
+            PackageManager packageManager = getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
+            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(MainActivity.getAppContext().APP_OPS_SERVICE);
+            int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
+            return (mode == AppOpsManager.MODE_ALLOWED);
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Notification Permission Check
+     *
+     * @return
+     */
+    private boolean hasNotificationPermission() {
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(MainActivity.getAppContext());
+        return notificationManagerCompat.areNotificationsEnabled();
+    }
+
+    private boolean hasPrecisionLocationPermission(){
+        return ContextCompat.checkSelfPermission(PersonalInformationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void updatePreciseLocationPermission(){
+        Intent intentLocationSourceSettings = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivityForResult(intentLocationSourceSettings, APP_LOCATION_SETTINGS_REQUEST);
+    }
+
+
+    private void updateUsagePermission() {
+        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+        startActivityForResult(intent, REQUEST_USAGE_ACCESS);
+    }
+
+    private void updateNotificationPermission() {
+        Intent intentNotification = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+        startActivityForResult(intentNotification, APP_NOTIFICATION_PUSH);
+    }
+
 }
