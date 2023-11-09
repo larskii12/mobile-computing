@@ -131,8 +131,6 @@ public class SearchResults extends AppCompatActivity {
 
                     } else if (intent.hasExtra("filters")) {
                         results = new LocationServiceImpl().findAllLocations("STUDY", null, true);
-
-
                         HashMap<String, String> filters = (HashMap<String, String>) getIntent().getSerializableExtra("filters");
                         getAllBuildingsOfLocs(results);
                         getAllRatings(results);

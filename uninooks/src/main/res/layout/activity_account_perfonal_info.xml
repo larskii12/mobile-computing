@@ -89,7 +89,7 @@
             android:id="@+id/Account_Pi_Ic_Edit_Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="72dp"
+            android:layout_marginStart="38dp"
             android:clickable="true"
             android:scaleX="0.8"
             android:scaleY="0.8"
@@ -123,17 +123,17 @@
             android:inputType="text"
             android:paddingHorizontal="96dp"
             android:visibility="gone"
-             />
+            android:imeOptions="actionDone"/>
 
         <Button
             android:id="@+id/Pi_ButtonConfirmNewUserName"
             style="@style/Button.Primary.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="180dp"
+            android:layout_alignStart="@+id/EditTextNewUsername"
+            android:layout_marginTop="52dp"
             android:text="@string/confirm"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
     </RelativeLayout>
 
@@ -170,6 +170,7 @@
 
     </LinearLayout>
 
+    <!-- Password Section -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -185,72 +186,63 @@
             android:text="@string/Email"
             android:textColor="@color/primary_60_percent_opacity" />
 
-
-<!--        <EditText-->
-<!--            android:id="@+id/EditTextNewEmail"-->
-<!--            style="@style/TextInputStyle"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:autofillHints="password"-->
-<!--            android:hint="@string/Account_Pi_Edit_Email"-->
-<!--            android:inputType="textEmailAddress"-->
-<!--            android:paddingHorizontal="96dp"-->
-<!--            android:visibility="gone" />-->
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp">
-
         <EditText
             android:id="@+id/EditTextConfirmNewEmail"
             style="@style/TextInputStyle"
-            android:layout_marginTop="12dp"
-            android:layout_marginStart="48dp"
-            android:layout_marginEnd="48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="emailAddress"
             android:hint="@string/Account_Pi_Edit_Email"
             android:inputType="textEmailAddress"
             android:paddingHorizontal="96dp"
-            android:autofillHints="emailAddress"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/Pi_ButtonConfirmNewEmail"
             style="@style/Button.Primary.Small"
-            android:text="Verify Email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="64dp"
-            android:layout_marginStart="48dp"
-            android:visibility="gone"/>
+            android:layout_marginTop="52dp"
+            android:text="Verify Email"
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/Pi_EditTextEmailOTP"
             style="@style/TextInputStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="116dp"
-            android:layout_marginStart="48dp"
             android:layout_marginEnd="48dp"
+            android:autofillHints="number"
             android:hint="Enter OTP"
             android:inputType="textEmailAddress"
             android:paddingHorizontal="96dp"
-            android:autofillHints="number"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:imeOptions="actionDone"/>
 
         <Button
             android:id="@+id/Pi_ButtonOTPVerify"
             style="@style/Button.Primary.Small"
-            android:text="Change Email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="168dp"
-            android:layout_marginStart="48dp"
-            android:visibility="gone"/>
+            android:text="Change Email"
+            android:visibility="gone" />
+
+
+        <!--        <EditText-->
+        <!--            android:id="@+id/EditTextNewEmail"-->
+        <!--            style="@style/TextInputStyle"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:autofillHints="password"-->
+        <!--            android:hint="@string/Account_Pi_Edit_Email"-->
+        <!--            android:inputType="textEmailAddress"-->
+        <!--            android:paddingHorizontal="96dp"-->
+        <!--            android:visibility="gone" />-->
+
     </RelativeLayout>
 
-    <!-- Password Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -274,7 +266,7 @@
             android:id="@+id/Account_Pi_Ic_Edit_Password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="64dp"
+            android:layout_marginStart="42dp"
             android:clickable="true"
             android:scaleX="0.8"
             android:scaleY="0.8"
@@ -295,8 +287,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/Account_Settings_Current_Password"
-            android:textColor="@color/primary_60_percent_opacity"
-            />
+            android:textColor="@color/primary_60_percent_opacity"/>
 
         <EditText
             android:id="@+id/Pi_EditTextCurrentPassword"
@@ -305,48 +296,44 @@
             android:layout_height="wrap_content"
             android:autofillHints="password"
             android:hint="Enter Current Password"
-            android:inputType="text"
+            android:inputType="textPassword"
             android:paddingHorizontal="96dp"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/Pi_EditTextNewPassword"
             style="@style/TextInputStyle"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="60dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints="password"
             android:hint="@string/enter_new_password"
-            android:inputType="text"
+            android:inputType="textPassword"
             android:paddingEnd="32dp"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/Pi_EditTextConfirmNewPassword"
             style="@style/TextInputStyle"
-            android:layout_marginTop="124dp"
+            android:layout_marginTop="120dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints="password"
             android:hint="@string/confirm_new_password"
-            android:inputType="text"
+            android:inputType="textPassword"
             android:paddingEnd="12dp"
             android:visibility="gone"
-             />
+            android:imeOptions="actionDone"/>
 
         <Button
             android:id="@+id/Pi_ButtonConfirmNewPassword"
             style="@style/Button.Primary.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="204dp"
-            android:layout_marginTop="124dp"
+            android:layout_marginTop="176dp"
             android:text="@string/confirm"
-            android:visibility="gone"
-            />
-
+            android:layout_alignStart="@+id/Pi_EditTextConfirmNewPassword"
+            android:visibility="gone"/>
     </RelativeLayout>
 
 
@@ -405,16 +392,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:spinnerMode="dropdown"
-            android:visibility="gone"
-             />
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/Pi_ButtonConfirmNewFaculty"
             style="@style/Button.Primary.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_alignEnd="@id/SpinnerPiFacultyList"
+            android:layout_marginTop="36dp"
+            android:layout_alignStart="@id/SpinnerPiFacultyList"
             android:text="@string/confirm"
             android:visibility="gone" />
 
@@ -425,7 +411,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="50dp"
         android:layout_marginBottom="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -457,8 +443,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
-        android:layout_marginTop="4dp"
-        >
+        android:layout_marginTop="4dp">
 
 
         <TextView
@@ -467,7 +452,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Degree"
-            android:textColor="@color/primary_60_percent_opacity" />
+            android:textColor="@color/primary_60_percent_opacity"
+            android:layout_marginBottom="30dp"/>
 
 
         <Spinner
@@ -482,8 +468,9 @@
             style="@style/Button.Primary.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_alignEnd="@id/SpinnerPiDegreeList"
+            android:layout_marginTop="36dp"
+            android:layout_marginBottom="30dp"
+            android:layout_alignStart="@id/SpinnerPiDegreeList"
             android:text="@string/confirm"
             android:visibility="gone" />
 
