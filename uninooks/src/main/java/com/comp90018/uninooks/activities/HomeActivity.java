@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -127,6 +129,15 @@ public class HomeActivity extends AppCompatActivity {
 
 //            TextView greetingMessage = (TextView) findViewById(R.id.textView);
 //            greetingMessage.setText("Welcome back, " + userName + "!");
+        ImageView infoButton = (ImageView) findViewById(R.id.infoButton);
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                showInfoDialog();
+
+            }
+        });
 
             bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
                 @SuppressLint("NonConstantResourceId")
@@ -611,6 +622,20 @@ public class HomeActivity extends AppCompatActivity {
                 })
                 .setCancelable(false)
                 .show();
+    }
+
+    private void showInfoDialog() {
+
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.information_dialog);
+        Button closeButton = dialog.findViewById(R.id.closeButton);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss(); // Close the dialog
+            }
+        });
+        dialog.show();
     }
 
 }
