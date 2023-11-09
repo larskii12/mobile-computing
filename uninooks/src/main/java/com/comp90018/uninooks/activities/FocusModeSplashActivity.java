@@ -37,7 +37,7 @@ public class FocusModeSplashActivity extends AppCompatActivity {
 
     private ProgressBar loading;
 
-    private static final int LOADING_DELAY_MS = 1000 * 3; // loading bar for the focus mode
+    private static final int LOADING_DELAY_MS = 1000 * 1; // loading bar for the focus mode
 
     SharedPreferences.Editor editor;
 
@@ -56,7 +56,14 @@ public class FocusModeSplashActivity extends AppCompatActivity {
                     loading.setVisibility(View.GONE);
                     //focusButton.setVisibility(View.VISIBLE);
                     try {
-                        Intent intent = new Intent(FocusModeSplashActivity.this, FocusModeMainActivity.class);
+                        Intent intent = new Intent(FocusModeSplashActivity.this, FocusModeTimerActivity.class);
+                        // Pass the user to next page
+                        intent.putExtra("USER_ID_EXTRA", userId);
+                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                        intent.putExtra("USER_NAME_EXTRA", userName);
+
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
                         startActivity(intent);
                         finish();
                     } catch (Exception e) {
