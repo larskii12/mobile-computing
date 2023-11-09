@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Bundle;
@@ -75,6 +76,9 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     private int locationId;
 
     private String locationType;
+    private boolean showingReviews;
+    private double averageRating;
+    private int ratingAsInt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,13 +195,21 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     TextView progressValue = findViewById(R.id.textView7);
                     TextView distance = findViewById(R.id.distance);
                     TextView openHours = findViewById(R.id.openHours);
+                    TextView reviewTitle = findViewById(R.id.reviewTitle);
                     Button addReviewButton = findViewById(R.id.add_review);
+                    TextView ratingText = findViewById(R.id.rating_Text);
+                    RatingBar aveRatingBar = findViewById(R.id.averageRatingBar);
+                    averageRating = new ReviewServiceImpl().getAverageRating(locationId, ReviewType.valueOf(location.getType()));
+                    ratingAsInt = (int) averageRating;
 
                     ImageButton backButton = findViewById(R.id.imageButton);
                     ImageButton favouriteButton = findViewById(R.id.favoriteButton);
                     ImageButton locationButton = findViewById(R.id.locate_my_location);
 
                     Button addReview = findViewById(R.id.add_review);
+                    Button showReviews = findViewById(R.id.show_reviews);
+                    showingReviews = false;
+//                    Button hideReviews = findViewById(R.id.hide_reviews);
 //                    User user = null;
 //
 //                    //System.out.println(userID);
@@ -282,16 +294,39 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             }.start();
                         }
                     });
-                   addReview.setOnClickListener(new View.OnClickListener() {
+                   showReviews.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            new Thread() {
+                            runOnUiThread(new Runnable() {
+                                @SuppressLint("StringFormatInvalid")
                                 public void run() {
-//                                    add code to add a new review and open pop up
+                                    if (!showingReviews) {
+                                        reviewsLayout.setVisibility(View.VISIBLE);
+                                        showReviews.setText(getString(R.string.hide_reviews, "Hide Reviews"));
+//                                        showReviews.setText("Hide Reviews");
+                                        showingReviews = true;
+                                    } else {
+                                        reviewsLayout.setVisibility(View.INVISIBLE);
+                                        showReviews.setText(getString(R.string.show_reviews, "Show Reviews"));
+//                                        showReviews.setText("Show Reviews");
+                                        showingReviews = false;
+                                    }
                                 }
-                            }.start();
+                            });
                         }
                     });
+//                    hideReviews.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            runOnUiThread(new Runnable() {
+//                                public void run() {
+//                                    reviewsLayout.setVisibility(View.INVISIBLE);
+//                                    showReviews.setVisibility(View.VISIBLE);
+//                                    hideReviews.setVisibility(View.INVISIBLE);
+//                                }
+//                            });
+//                        }
+//                    });
 
                     addReviewButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -314,6 +349,10 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             listTitle.setText("Facilities");
                             progress.setProgress(busyScore);
                             progressValue.setText(busyScore + "%");
+                            reviewTitle.setText("Reviews (" + reviews.size() + ")");
+                            ratingText.setText("" + averageRating);
+                            aveRatingBar.setRating((float) averageRating);
+                            showReviews.setPaintFlags(showReviews.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                             if (isFavorite) {
                                 favouriteButton.setBackgroundResource(R.drawable.baseline_favorite_32);
                                 favouriteButton.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), PorterDuff.Mode.SRC_IN);
@@ -443,6 +482,8 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     }
     private CardView createNewSmallCard(CardView card, Review review){
         TextView userComment = (TextView) card.findViewById(R.id.textView);
+        TextView datePosted = card.findViewById(R.id.date_posted);
+        datePosted.setText("09/11/2023");
         userComment.setText(review.getComment());
         RatingBar rating = (RatingBar) card.findViewById(R.id.ratingBar);
         rating.setRating(review.getScore());

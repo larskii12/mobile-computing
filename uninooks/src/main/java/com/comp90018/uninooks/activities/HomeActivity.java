@@ -543,7 +543,7 @@ public class HomeActivity extends AppCompatActivity {
         // Use the Builder class for convenient dialog construction.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.activity_onboarding, null))
+        builder.setView(inflater.inflate(R.layout.shake_dialog, null))
                 // Add action buttons
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override

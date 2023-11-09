@@ -55,6 +55,14 @@
             android:justificationMode="inter_word"
             android:padding="5dp"
             android:text="Shake your device for a suggestion" />
+        <TextView
+            style="@style/TextSubHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:justificationMode="inter_word"
+            android:padding="5dp"
+            android:text="This feature can be disabled in settings" />
 <!--        <Button-->
 <!--            android:id="@+id/add_review_submit_Button"-->
 <!--            style="@style/Button.Primary"-->

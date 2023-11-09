@@ -30,7 +30,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
             <RatingBar
                 android:id="@+id/ratingBar"
                 style="?android:attr/ratingBarStyleIndicator"
@@ -45,6 +47,16 @@
                 android:scaleY=".75"
                 android:transformPivotX="0dp"
                 android:transformPivotY="0dp" />
+                <TextView
+                    android:id="@+id/date_posted"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="09/11/2023"
+                    android:textSize="20sp"
+                    android:textAlignment="viewEnd"
+                    android:paddingRight="2dp"
+                    ></TextView>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/textView"
