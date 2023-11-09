@@ -122,13 +122,7 @@ public class AccountActivity extends AppCompatActivity {
                     finish();
 
                 } else {
-                    Intent intent = new Intent(AccountActivity.this, AccountActivity.class);
-
-                    // Pass the user to next page
-                    intent.putExtra("USER_ID_EXTRA", userId);
-                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                    intent.putExtra("USER_NAME_EXTRA", userName);
-                    startActivity(intent);
+                    ;
                 }
 
                 return false;
