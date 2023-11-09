@@ -72,6 +72,7 @@
     <string name="usage_access">Allow usage access</string>
     <string name="precise_loc">Allow precise location</string>
     <string name="notification">Allow notifications</string>
+    <string name="shaking_enabled">Shaking Enabled </string>
 
     <!-- Focus Mode Strings -->
     <string name="back_to_home">Back to Home</string>

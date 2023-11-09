@@ -607,10 +607,12 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     private View.OnClickListener shakeToggleListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            System.out.println("HELLOOOOO");
-            System.out.println(shakeToggle.isChecked());
-            // do shared preferences
-
+            if (shakeToggle.isChecked()) {
+                editor.putBoolean(getString(R.string.shaking_enabled), true);
+            } else {
+                editor.putBoolean(getString(R.string.shaking_enabled), false);
+            }
+            editor.apply();
         }
     };
 
@@ -754,17 +756,30 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
      */
     private void setAllToggles() {
         // add saved preferences for shake mode
+        boolean shakingEnabled = sharedPreferences.getBoolean(getString(R.string.shaking_enabled), false);
+
+        if (shakingEnabled) {
+            shakeToggle.setChecked(true);
+        } else {
+            shakeToggle.setChecked(false);
+        }
 
         if (hasNotificationPermission()) {
             notificationToggle.setChecked(true);
+        } else {
+            notificationToggle.setChecked(false);
         }
 
         if (hasUsageAccessPermission()) {
             usageAccessToggle.setChecked(true);
+        } else {
+            usageAccessToggle.setChecked(false);
         }
 
         if (hasPrecisionLocationPermission()) {
             preciseLocationToggle.setChecked(true);
+        } else {
+            preciseLocationToggle.setChecked(false);
         }
     }
 

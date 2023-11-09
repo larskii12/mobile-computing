@@ -470,30 +470,34 @@ public class HomeActivity extends AppCompatActivity {
         //this opens a new suggested study space
         @Override
         public void onSensorChanged(SensorEvent event) {
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
-            lastAcceleration = currentAcceleration;
-            currentAcceleration = (float) Math.sqrt((double) (x * x + y * y + z * z));
-            float delta = currentAcceleration - lastAcceleration;
-            acceleration = acceleration * 0.9f + delta;
-            if (acceleration > 12) {
-                sensorManager.unregisterListener(sensorListener);
-                Toast.makeText(getApplicationContext(), "Opening a random Space", Toast.LENGTH_SHORT).show();
-                randomRange = topRatedStudySpaces.size();
-                int rand = (int)(Math.random() * randomRange);
-                randomSpace = topRatedStudySpaces.get(rand);
-                new Thread() {
-                    public void run() {
-                        Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                        intent.putExtra("USER_ID_EXTRA", userId);
-                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                        intent.putExtra("USER_NAME_EXTRA", userName);
-                        intent.putExtra("LOCATION_TYPE", randomSpace.getType());
-                        intent.putExtra("LOCATION", randomSpace);
-                        startActivity(intent);
-                    }
-                }.start();
+            boolean shakeEnabled = sharedPreferences.getBoolean(getString(R.string.shaking_enabled), true);
+
+            if (shakeEnabled) {
+                float x = event.values[0];
+                float y = event.values[1];
+                float z = event.values[2];
+                lastAcceleration = currentAcceleration;
+                currentAcceleration = (float) Math.sqrt((double) (x * x + y * y + z * z));
+                float delta = currentAcceleration - lastAcceleration;
+                acceleration = acceleration * 0.9f + delta;
+                if (acceleration > 12) {
+                    sensorManager.unregisterListener(sensorListener);
+                    Toast.makeText(getApplicationContext(), "Opening a random Space", Toast.LENGTH_SHORT).show();
+                    randomRange = topRatedStudySpaces.size();
+                    int rand = (int)(Math.random() * randomRange);
+                    randomSpace = topRatedStudySpaces.get(rand);
+                    new Thread() {
+                        public void run() {
+                            Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
+                            intent.putExtra("USER_ID_EXTRA", userId);
+                            intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                            intent.putExtra("USER_NAME_EXTRA", userName);
+                            intent.putExtra("LOCATION_TYPE", randomSpace.getType());
+                            intent.putExtra("LOCATION", randomSpace);
+                            startActivity(intent);
+                        }
+                    }.start();
+                }
             }
         }
         @Override
