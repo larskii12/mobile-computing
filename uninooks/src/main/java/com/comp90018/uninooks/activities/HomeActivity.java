@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
@@ -90,6 +91,9 @@ public class HomeActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         context = getApplicationContext();
@@ -197,7 +201,7 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
 
-                    if (openingStudySpaces.size() >= 10){
+                    if (openingStudySpaces.size() >= 5){
 
                         closestStudySpaces = new ArrayList<>(openingStudySpaces);
                         topRatedStudySpaces = new ArrayList<>(openingStudySpaces);
@@ -214,13 +218,13 @@ public class HomeActivity extends AppCompatActivity {
                         Collections.reverse(topRatedStudySpaces);
 
                         // closest closed study spaces
-                        ArrayList<StudySpace> closedCloestStudySpaces = new ArrayList<>(closingStudySpaces);
+                        ArrayList<StudySpace> closedClosetStudySpaces = new ArrayList<>(closingStudySpaces);
                         ArrayList<StudySpace> closedTopRatedSpaces = new ArrayList<>(closingStudySpaces);
-                        closedCloestStudySpaces.sort(Comparator.comparingDouble(StudySpace::getDistanceFromCurrentPosition));
+                        closedClosetStudySpaces.sort(Comparator.comparingDouble(StudySpace::getDistanceFromCurrentPosition));
                         closedTopRatedSpaces.sort(Comparator.comparingDouble(StudySpace::getAverage_rating));
                         Collections.reverse(closedTopRatedSpaces);
 
-                        closestStudySpaces.addAll(closedCloestStudySpaces);
+                        closestStudySpaces.addAll(closedClosetStudySpaces);
                         topRatedStudySpaces.addAll(closedTopRatedSpaces);
                     }
 
