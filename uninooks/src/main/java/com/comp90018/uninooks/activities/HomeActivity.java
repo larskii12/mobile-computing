@@ -117,6 +117,10 @@ public class HomeActivity extends AppCompatActivity {
         currentAcceleration = SensorManager.GRAVITY_EARTH;
         lastAcceleration = SensorManager.GRAVITY_EARTH;
 
+        if (!GPSServiceImpl.getGPSPermission()){
+            showDialog("Location Permission Needed: Without access to your location, certain features may not operate as intended. Please enable location permissions for the best experience.");
+        }
+
         //Filter buttons at the top - These need on click functions
 //            ImageButton studyButton = (ImageButton) findViewById(R.id.studyButton);
 //            ImageButton foodButton = (ImageButton) findViewById(R.id.foodButton);
@@ -586,6 +590,16 @@ public class HomeActivity extends AppCompatActivity {
 //                });
         // Create the AlertDialog object and return it.
 //        return builder.create();
+    }
+
+    private void showDialog(String message){
+        new AlertDialog.Builder(this)
+                .setTitle("Permissions Required")
+                .setMessage(message)
+                .setPositiveButton("OK", (dialog, which) -> {
+                })
+                .setCancelable(false)
+                .show();
     }
 
 }
