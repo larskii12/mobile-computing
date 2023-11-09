@@ -236,7 +236,6 @@ public class AccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Handle delete logic here
-
                 EditText editTextDeleteUserEmail = dialogView.findViewById(R.id.EditTextDeleteEmail);
                 String deleteEmail = editTextDeleteUserEmail.getText().toString();
                 EditText editTextDeleteUserPassword = dialogView.findViewById(R.id.EditTextDeletePassword);

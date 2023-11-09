@@ -10,7 +10,7 @@ public interface FavoriteService {
 
     Favorite getFavorite(int favouriteId, ReviewType type) throws Exception;
 
-    List<Favorite> getFavoritesByUser(int userId, ReviewType type) throws Exception;
+    boolean removeFavorite(Integer userId, Integer entityId, ReviewType type) throws Exception;
 
-    Boolean isFavoriteByUser(int userId, int entityId, ReviewType type) throws Exception;
+    List<Favorite> getFavoritesByUser(int userId, ReviewType type) throws Exception;
 }

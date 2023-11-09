@@ -140,10 +140,10 @@ public class FavoriteServiceImpl implements FavoriteService {
 
 
     /**
-     * Get a user with specified email address
+     * Get a favorite with specified email address
      *
      * @param favouriteId, as the favourite id
-     * @return Review
+     * @return Favorite
      */
     public Favorite getFavorite(int favouriteId, ReviewType type) throws Exception {
 
@@ -268,66 +268,6 @@ public class FavoriteServiceImpl implements FavoriteService {
             }
 
             return favoriteList;
-        }
-
-        // If exception happens when querying user
-        catch (Exception e) {
-            throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
-            if (connector != null) {
-                try {
-                    connector.close();
-                } catch (Exception e) {
-                    System.out.println("Database Connection close failed.");
-                }
-            }
-        }
-    }
-
-    /**
-     * Get a boolean if the place is a favorite of the user
-     * @param userId as the user id
-     * @param entityId as the entity id
-     * @param type as type
-     * @return Review
-     */
-    public Boolean isFavoriteByUser(int userId, int entityId, ReviewType type) throws Exception {
-
-        try {
-            String query;
-            switch (type) {
-
-                case GYM: // Get gym favourite to the database
-                    query = "SELECT * FROM mobilecomputing.\"favourite\" WHERE \"favourite_user_id\" = ? and \"favourite_gym_id\" = ?";
-                    break;
-                case LIBRARY: // Get gym favourite to the database
-                    query = "SELECT * FROM mobilecomputing.\"favourite\" WHERE \"favourite_user_id\" = ? and \"favourite_library_id\" = ?";
-                    break;
-                case RESTAURANT: // Get gym favourite to the database
-                    query = "SELECT * FROM mobilecomputing.\"favourite\" WHERE \"favourite_user_id\" = ? and \"favourite_restaurant_id\" = ?";
-                    break;
-                case STUDY_SPACE: // Get gym favourite to the database
-                    query = "SELECT * FROM mobilecomputing.\"favourite\" WHERE \"favourite_user_id\" = ? and \"favourite_study_space_id\" = ?";
-                    break;
-                default:
-                    throw new Exception("Invalid favourite type. Cannot retrieve favourite list.");
-            }
-
-            PreparedStatement preparedStatement = connector.prepareStatement(query);
-            preparedStatement.setInt(1, userId);
-            preparedStatement.setInt(2, entityId);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            // Set user information
-            if (resultSet.next()) { // Ensure there's a row in the result set
-                return true;
-            } else {
-                return false;
-            }
-
         }
 
         // If exception happens when querying user
