@@ -54,6 +54,7 @@
     <string name="Account_Pi_Edit_Email">Enter new Email address</string>
     <string name="Account_Pi_Edit_Faculty">Edit Faculty</string>
     <string name="PasswordChanged">Password Changed</string>
+    <string name="LogOut">Logged Out</string>
 
     <!-- Account Setting strings-->
     <string name="Account_Settings">Settings</string>

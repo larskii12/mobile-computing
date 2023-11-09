@@ -40,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
     String userEmail;
     boolean ifPasswordChanged;
+    boolean ifLogout;
 
 
     @SuppressLint("HandlerLeak")
@@ -99,6 +100,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                 saveLoginDetails(userId, userEmail, userName);
                                 editor.putBoolean(getString(R.string.PasswordChanged), false);
+                                editor.putBoolean(getString(R.string.LogOut), false);
                                 editor.apply();
 
                                 launchHomeActivity();
@@ -159,6 +161,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     public void onResume() {
         super.onResume();
+        retrieveLoginDetails();
     }
 
     public void onStop(){
@@ -247,8 +250,13 @@ public class LoginActivity extends AppCompatActivity {
         String password = sharedPreferences.getString(getString(R.string.Password), "");
 
         ifPasswordChanged = sharedPreferences.getBoolean(getString(R.string.PasswordChanged), false);
+        ifLogout = sharedPreferences.getBoolean(getString(R.string.LogOut), false);
 
-        if (!(userId == -1 || userEmail.equals("") || userName.equals("") || password.equals("")) && !ifPasswordChanged) {
+        System.out.println("ENTIRE IF: " + (!(userId == -1 || userEmail.equals("") || userName.equals("") || password.equals(""))
+                && (!ifPasswordChanged) && (!ifLogout)));
+
+        if (!(userId == -1 || userEmail.equals("") || userName.equals("") || password.equals(""))
+                && (!ifPasswordChanged) && (!ifLogout)) {
             launchHomeActivity();
         }
     }

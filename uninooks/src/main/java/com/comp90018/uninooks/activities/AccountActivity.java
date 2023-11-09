@@ -2,7 +2,9 @@ package com.comp90018.uninooks.activities;
 
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,6 +35,8 @@ public class AccountActivity extends AppCompatActivity {
     private String userEmail;
     private String userName;
     private BottomNavigationView bottomNav;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
 
 
@@ -62,6 +66,9 @@ public class AccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
+
+        sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
         // Initialize user
         Intent intent = getIntent();
@@ -202,6 +209,8 @@ public class AccountActivity extends AppCompatActivity {
                 // Pass the user email to login page
                 new Thread(){
                     public void run(){
+                        editor.putBoolean(getString(R.string.LogOut), true);
+                        editor.apply();
                         Intent intent = new Intent(AccountActivity.this, LoginActivity.class);
                         try {
                             intent.putExtra("USER_EMAIL_EXTRA",  new UserServiceImpl().getUser(userId).getUserEmail());
@@ -241,8 +250,6 @@ public class AccountActivity extends AppCompatActivity {
         buttonDeleteConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle delete logic here
-
                 EditText editTextDeleteUserEmail = dialogView.findViewById(R.id.EditTextDeleteEmail);
                 String deleteEmail = editTextDeleteUserEmail.getText().toString();
                 EditText editTextDeleteUserPassword = dialogView.findViewById(R.id.EditTextDeletePassword);
@@ -250,14 +257,18 @@ public class AccountActivity extends AppCompatActivity {
                 new Thread(){
                     public void run(){
                         try {
-
                             if (new UserServiceImpl().getUser(userId).getUserEmail().equals(deleteEmail)) {
-
                                 if (new UserServiceImpl().logIn(deleteEmail, deleteUserPassword) != null)
                                 {
                                     // Delete Account
                                     new UserServiceImpl().deleteUser(userId);
                                     showTextMessage("Your account has been deleted successfully");
+
+                                    // Handle delete logic here
+                                    editor.putInt(getString(R.string.UserId), -1);
+                                    editor.putString(getString(R.string.Email), "");
+                                    editor.putString(getString(R.string.Username), "");
+                                    editor.putString(getString(R.string.Password), "");
 
                                     Intent intent = new Intent(AccountActivity.this, LoginActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -271,6 +282,7 @@ public class AccountActivity extends AppCompatActivity {
                             }
 
                             else{
+                                System.out.println("=======13");
                                 showTextMessage("This email does not matches your account.");
                             }
                         }
