@@ -45,6 +45,8 @@ public class BackgroundAppService extends Service {
 
     public static boolean NOTIFICATION_STATUS = false;
 
+    public static boolean USAGE_STATUS = false;
+
     public static boolean getNotificationPermission(){
         return NOTIFICATION_STATUS;
     }
