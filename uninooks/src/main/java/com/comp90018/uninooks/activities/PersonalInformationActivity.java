@@ -126,6 +126,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                     emailTextView.setText(userEmail);
                     degreeTextView.setText(userDegree);
                     facultyTextView.setText(userFaculty);
+                    setAllToggles();
                     break;
 
                 case 2:
@@ -530,12 +531,13 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                 }.start();
             }
         });
-
+        setAllToggles();
         new Thread() {
             public void run(){
                 initUserInfo();
             }
         }.start();
+
     }
 
     /**
@@ -595,6 +597,10 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
             }
     }
 
+    public void onResume() {
+        super.onResume();
+        handler.sendEmptyMessage(1);
+    }
     /**
      * Detects whether the shake function toggle was checked or not
      */
@@ -603,6 +609,8 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         public void onClick(View v) {
             System.out.println("HELLOOOOO");
             System.out.println(shakeToggle.isChecked());
+            // do shared preferences
+
         }
     };
 
@@ -612,7 +620,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     private View.OnClickListener notificationToggleListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            updateUsagePermission();
+            updateNotificationPermission();
         }
     };
 
@@ -633,7 +641,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     private View.OnClickListener locationToggleListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            updateUsagePermission();
+            updatePreciseLocationPermission();
         }
     };
 
@@ -739,6 +747,25 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         Intent intentNotification = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
                 .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
         startActivityForResult(intentNotification, APP_NOTIFICATION_PUSH);
+    }
+
+    /**
+     * Set each toggle appropriately depending on the current state
+     */
+    private void setAllToggles() {
+        // add saved preferences for shake mode
+
+        if (hasNotificationPermission()) {
+            notificationToggle.setChecked(true);
+        }
+
+        if (hasUsageAccessPermission()) {
+            usageAccessToggle.setChecked(true);
+        }
+
+        if (hasPrecisionLocationPermission()) {
+            preciseLocationToggle.setChecked(true);
+        }
     }
 
 }
