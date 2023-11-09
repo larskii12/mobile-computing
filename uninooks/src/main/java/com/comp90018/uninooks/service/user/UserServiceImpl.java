@@ -253,19 +253,14 @@ public class UserServiceImpl implements UserService {
             ps.executeUpdate();
             return true;
         }
-
-        //
         catch (Exception e) {
 
             // If user name has been used.
             if (e.getMessage().contains("unique_user_username")) {
-
                 throw new Exception("This user name has been used, please try another one.");
             }
-
             // unknown exception happens when update user name
             else {
-
                 throw new Exception("Errors happened when update user information, please contact the IT administrator.");
             }
         }

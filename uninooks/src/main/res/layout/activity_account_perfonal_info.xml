@@ -432,7 +432,6 @@
         android:layout_marginStart="48dp"
         android:layout_marginTop="4dp">
 
-
         <TextView
             android:id="@+id/Account_Pi_Edit_Degree"
             style="@style/TextSubHeading"
@@ -461,9 +460,111 @@
             android:text="@string/confirm"
             android:visibility="gone" />
 
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+        <!-- Label "Degree" -->
+        <TextView
+            android:id="@+id/Account_Pi_Surprise_Suggestion_label"
+            style="@style/TextSubHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/study_space_surprise_suggestion_settings" />
+
+        <ImageView
+            android:id="@+id/Account_Pi_Ic_Edit_study_space"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:clickable="true"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:src="@drawable/ic_edit" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="4dp"
+        >
+
+        <TextView
+            android:id="@+id/textViewStudyModeStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="On"
+            style="@style/TextSubHeading"
+            android:checked="true"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <TextView
+                android:id="@+id/study_space_textOff"
+                android:text="Off"
+                style="@style/TextSubHeading"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="2dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
+
+            <Switch
+                android:id="@+id/study_space_switch"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="8dp"
+                android:clickable="true"
+                android:thumbTint="@drawable/toggle_switch"
+                android:trackTint="@color/deepBlue"
+                android:visibility="gone"
+                />
+
+            <TextView
+                android:id="@+id/study_space_textOn"
+                android:text="On"
+                style="@style/TextSubHeading"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                />
+
+
+            <Button
+                android:id="@+id/Pi_ButtonConfirmStudySpaceSetting"
+                style="@style/Button.Primary.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="48dp"
+                android:layout_alignEnd="@id/study_space_switch"
+                android:text="@string/confirm"
+                android:visibility="gone"
+                />
+
+        </LinearLayout>
 
 
     </RelativeLayout>
+
 
 
 </LinearLayout> </ScrollView>

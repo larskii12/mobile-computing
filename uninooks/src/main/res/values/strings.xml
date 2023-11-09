@@ -91,7 +91,7 @@
     <string name="long_break_setting">Long Break Time</string>
     <string name="never_show_again_setting">Never Show Again</string>
     <string name="auto_pomodoro">Pomodoro Sequence</string>
-    <string name="dialogMessage">Note: navigating away from this page will restart all timers and sequence </string>
+    <string name="dialogMessage">Note: navigating away from this page will restart all timers. </string>
     <string name="neverShowMessage">Never show this message again</string>
 
     <!-- Review Strings -->
@@ -108,4 +108,8 @@
     <string name="onboarding_page_2">Search study space suits you! \nYou can search by location, capacity, and more</string>
     <string name="onboarding_page_3_title">Focus on your study</string>
     <string name="onboarding_page_3">Focus on your study \nUse Focus Mode to block distractions and stay focused</string>
+
+    <string name="show_reviews"><u>Show Reviews</u></string>
+    <string name="hide_reviews"><u>Hide Reviews</u></string>
+    <string name="study_space_surprise_suggestion_settings">Enable shake function</string>\
 </resources>

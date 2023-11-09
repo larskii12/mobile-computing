@@ -1,6 +1,7 @@
 package com.comp90018.uninooks.service.background_app;
 
 import static com.comp90018.uninooks.activities.FocusModeTimerActivity.isCurrentlyOnApp;
+import static com.comp90018.uninooks.activities.FocusModeTimerActivity.isRunning;
 
 import static java.util.Objects.nonNull;
 
@@ -33,13 +34,9 @@ import java.util.List;
 
 public class BackgroundAppService extends Service {
 
-    private String TAG = "MyService";
-
     public static boolean isServiceRunning = false;
 
     private String currentPackageName = null;
-
-    ArrayList<BackgroundApp> backgroundApps = new ArrayList<>();
 
     private Handler handler;
 
@@ -48,6 +45,8 @@ public class BackgroundAppService extends Service {
     private static final int CHECK_INTERVAL = 30000;
 
     public static boolean NOTIFICATION_STATUS = false;
+
+    public static boolean USAGE_STATUS = false;
 
     public static boolean getNotificationPermission(){
         return NOTIFICATION_STATUS;
@@ -70,7 +69,6 @@ public class BackgroundAppService extends Service {
         startForeground(1, notification);
 
         handler = new Handler();
-        Log.d("BackgroundAppService", "I'm here!!");
         startCheckingInBackgroundTime();
 
         return START_STICKY;
@@ -87,7 +85,7 @@ public class BackgroundAppService extends Service {
 
 
     private void startCheckingInBackgroundTime() {
-        // 1 second
+        // 30 seconds
         handler.postDelayed(appRunnable, CHECK_INTERVAL);
     }
 
@@ -98,39 +96,7 @@ public class BackgroundAppService extends Service {
             long currentTime = System.currentTimeMillis();
             long thirtySecondAgo = currentTime - (1000 * 30);  // currently using now
 
-            backgroundApps = new ArrayList<>();
-
-//            List<UsageStats> HistoryUsedAppList = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, oneSecondAgo, currentTime);
-
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//                for (UsageStats historyApp : HistoryUsedAppList) {
-//
-//                    if (historyApp.getLastTimeVisible() > oneSecondAgo) {
-//
-//                        BackgroundApp newBackgroundApp = new BackgroundApp();
-//                        newBackgroundApp.setLastTimeUsed(historyApp.getTotalTimeVisible());
-//                        newBackgroundApp.setPackageName(historyApp.getPackageName());
-//
-//                        backgroundApps.add(newBackgroundApp);
-//                    }
-//                }
-//            }
-//
-//            else {
-//                for (UsageStats historyApp : HistoryUsedAppList) {
-//                    if (historyApp.getLastTimeUsed() > oneSecondAgo) {
-//
-//                        BackgroundApp newBackgroundApp = new BackgroundApp();
-//                        newBackgroundApp.setLastTimeUsed(historyApp.getLastTimeUsed());
-//                        newBackgroundApp.setPackageName(historyApp.getPackageName());
-//
-//                        backgroundApps.add(newBackgroundApp);
-//
-//                    }
-//                }
-//            }
             UsageEvents usageEvents = usageStatsManager.queryEvents(thirtySecondAgo, currentTime); // Check the last 30 seconds
-
             UsageEvents.Event event = new UsageEvents.Event();
             while (usageEvents.hasNextEvent()) {
                 usageEvents.getNextEvent(event);
@@ -139,38 +105,10 @@ public class BackgroundAppService extends Service {
                 }
             }
 
-            boolean isBreakFromLoop = false;
             isUsingEntertainmentApp = false;
-//            for (BackgroundApp backgroundApp : backgroundApps) {
-//
-//                String foregroundPackageName = backgroundApp.getPackageName();
-//                Log.d("BackgroundAppService", foregroundPackageName);
-//
-//                // Check if the foreground app is an "entertainment app."
-//                if (isEntertainmentApp(foregroundPackageName) ) {
-//                    // The foreground app is an entertainment app.
-//                    //backgroundStartTime = System.currentTimeMillis();
-//                    Log.d("BackgroundAppService", "Opened!");
-//
-//                    isUsingEntertainmentApp = true;
-//                    sendNotification();
-//                    handler.postDelayed(appRunnable, CHECK_INTERVAL);
-//                    isBreakFromLoop = true;
-//                    break;
-//                }
-//            }
             if (nonNull(currentPackageName) && isEntertainmentApp(currentPackageName) ) {
                 // The foreground app is an entertainment app.
-                //backgroundStartTime = System.currentTimeMillis();
-                Log.d("BackgroundAppService", "Opened!");
-
                 isUsingEntertainmentApp = true;
-                sendNotification();
-                handler.postDelayed(appRunnable, CHECK_INTERVAL);
-                isBreakFromLoop = true;
-            }
-            if (!isBreakFromLoop && isScreenOn()) {
-                Log.d("BackgroundAppService", "Not opened");
                 sendNotification();
                 handler.postDelayed(appRunnable, CHECK_INTERVAL);
             }
@@ -180,7 +118,7 @@ public class BackgroundAppService extends Service {
 
 
     private void sendNotification() {
-        Log.d("BackgroundAppService", "I'm notifying!!");
+        Log.d("BackgroundAppService", "Notification Sent.");
 
         if (isUsingEntertainmentApp) {
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
@@ -244,13 +182,12 @@ public class BackgroundAppService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d("BackgroundAppService", "Back to Foreground.");
         handler.removeCallbacks(appRunnable);
 
         isServiceRunning = false;
         stopForeground(true);
 
-        if (isCurrentlyOnApp) {
+        if (!isRunning) {
             // call MyReceiver which will restart this service via a worker
             Intent broadcastIntent = new Intent(this, FocusModeReceiver.class);
             sendBroadcast(broadcastIntent);

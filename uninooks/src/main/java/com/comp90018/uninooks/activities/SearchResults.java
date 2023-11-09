@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -36,11 +35,12 @@ import com.comp90018.uninooks.models.review.ReviewType;
 import com.comp90018.uninooks.service.building.BuildingServiceImpl;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
+import com.comp90018.uninooks.service.image.ImageServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.resource.ResourceServiceImpl;
-import com.comp90018.uninooks.service.sortingComparators.DistanceComparator;
-import com.comp90018.uninooks.service.sortingComparators.NameComparator;
-import com.comp90018.uninooks.service.sortingComparators.RatingComparator;
+import com.comp90018.uninooks.service.sorting_comparators.DistanceComparator;
+import com.comp90018.uninooks.service.sorting_comparators.NameComparator;
+import com.comp90018.uninooks.service.sorting_comparators.RatingComparator;
 import com.comp90018.uninooks.service.time.TimeServiceImpl;
 
 import java.sql.Time;
@@ -66,6 +66,7 @@ public class SearchResults extends AppCompatActivity {
     HashMap<String, String> ratingsByLocation;
     HashMap<String, List<Resource>> resourcesByLocation;
     HashMap<String, Double> busyRatingByLocation;
+    HashMap<String, Integer> imagesByLocation;
     ArrayList<Favorite> userFavs;
     Comparator<Location> nameComparator;
     Comparator<Location> distanceComparator;
@@ -116,6 +117,7 @@ public class SearchResults extends AppCompatActivity {
         ratingsByLocation = new HashMap<>();
         resourcesByLocation = new HashMap<>();
         busyRatingByLocation = new HashMap<>();
+        imagesByLocation = new HashMap<>();
 
         nameComparator = new NameComparator();
         distanceComparator = new DistanceComparator();
@@ -145,6 +147,7 @@ public class SearchResults extends AppCompatActivity {
                     getAllResources(results);
                     getAllBusyRatings(results);
                     getAllUserFavs();
+                    getAllImages();
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -188,6 +191,7 @@ public class SearchResults extends AppCompatActivity {
         ArrayList<Location> closingLocations = new ArrayList<>();
 
         for (Location location : results) {
+            System.out.println("!!!! LOCATION NAME: " + location.getName());
             if (location.isOpeningNow()){
                 openingLocations.add(location);
             }
@@ -258,11 +262,12 @@ public class SearchResults extends AppCompatActivity {
         // first set the title
         setTitle(location, cardTitle);
 
-        // set the image!!!
+        // set the image
+        locImage.setImageResource(imagesByLocation.get(location.getName()));
 
-        // set the distance away!!!!!
+
+        // set the distance away
         int dist = location.getDistanceFromCurrentPosition();
-//        int distInt = (int) Math.round(dist);
         if(dist == -1 || !GPSServiceImpl.getGPSPermission()){
             distanceAway.setText(" N/A");
         }
@@ -318,6 +323,9 @@ public class SearchResults extends AppCompatActivity {
 
         // first set the title
         setTitle(location, cardTitle);
+
+        // set the image
+        locImage.setImageResource(imagesByLocation.get(location.getName()));
 
         // set the distance away!!!!!!
         int dist = location.getDistanceFromCurrentPosition();
@@ -556,18 +564,24 @@ public class SearchResults extends AppCompatActivity {
     private void getAllRatings(List<Location> results) {
         for (Location location : results) {
             String locationName = location.getName();
+            String averageRating = String.valueOf(location.getAverage_rating());
+            ratingsByLocation.put(locationName, averageRating);
+//            try {
+//
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+        }
+    }
 
-            try {
-                int locationID = location.getId();
-//                String type = location.getType();
-//                ReviewType typeEnum = ReviewType.valueOf(type);
-//                List<Review> reviewList = new ReviewServiceImpl().getReviewsByEntity(locationID, typeEnum);
-//                String averageRating = getAverageRating(reviewList);
-                String averageRating = String.valueOf(location.getAverage_rating());
-                ratingsByLocation.put(locationName, averageRating);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+    /**
+     * Gets all the images for each location
+     */
+    private void getAllImages() {
+        try {
+            imagesByLocation = new ImageServiceImpl().fetchAllImages();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

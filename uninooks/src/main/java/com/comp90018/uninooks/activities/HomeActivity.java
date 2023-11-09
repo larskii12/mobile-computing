@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -36,6 +38,7 @@ import com.comp90018.uninooks.service.busy_rating.BusyRatingService;
 import com.comp90018.uninooks.service.busy_rating.BusyRatingServiceImpl;
 import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
+import com.comp90018.uninooks.service.image.ImageServiceImpl;
 import com.comp90018.uninooks.service.location.LocationService;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.study_space.StudySpaceServiceImpl;
@@ -81,6 +84,7 @@ public class HomeActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     public boolean neverShowAgain;
     public ArrayList<StudySpace> topRatedStudySpaces = new ArrayList<>();
+    private HashMap<String, Integer> imagesByLocation;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -102,16 +106,11 @@ public class HomeActivity extends AppCompatActivity {
         System.out.println("userName" + userName);
         System.out.println("This is Home activity class");
 
-//        List<Location> studySpacesNearby = new ArrayList<>();
-//        List<Location> studySpacesTop = new ArrayList<>();
-
         bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setSelectedItemId(R.id.homeNav);
 
         busyRatingsByLocation = new HashMap<>();
 
-        // Getting the Sensor Manager instance
-//        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         Objects.requireNonNull(sensorManager).registerListener(sensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
@@ -121,75 +120,68 @@ public class HomeActivity extends AppCompatActivity {
         lastAcceleration = SensorManager.GRAVITY_EARTH;
 
         if (!GPSServiceImpl.getGPSPermission()){
-            showDialog("Location Permission Needed: Without access to your location, certain features may not operate as intended. Please enable location permissions for the best experience.");
+            showDialog("Precise Location Permission Needed: Without access to your precise location, certain features may not operate as intended. Please enable precise location permissions for the best experience.");
         }
 
-        //Filter buttons at the top - These need on click functions
-//            ImageButton studyButton = (ImageButton) findViewById(R.id.studyButton);
-//            ImageButton foodButton = (ImageButton) findViewById(R.id.foodButton);
-//            ImageButton favouritesButton = (ImageButton) findViewById(R.id.favouritesButton);
+        ImageView infoButton = (ImageView) findViewById(R.id.infoButton);
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showInfoDialog();
+            }
+        });
 
+        //navigate to the different pages
+        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @SuppressLint("NonConstantResourceId")
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
 
-//            TextView greetingMessage = (TextView) findViewById(R.id.textView);
-//            greetingMessage.setText("Welcome back, " + userName + "!");
+                if (id == R.id.homeNav){
+                    reloadActivity();
+                } else if (id == R.id.searchNav) {
+                    Intent intent = new Intent(HomeActivity.this, MapsActivity.class);
 
-            bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-                @SuppressLint("NonConstantResourceId")
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    int id = item.getItemId();
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
 
-                    if (id == R.id.homeNav){
-                        reloadActivity();
-                    }
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
 
-                    else if (id == R.id.searchNav) {
-                        Intent intent = new Intent(HomeActivity.this, MapsActivity.class);
+                } else if (id == R.id.focusNav) {
+                    Intent intent = new Intent(HomeActivity.this, FocusModeSplashActivity.class);
 
-                        // Pass the user to next page
-                        intent.putExtra("USER_ID_EXTRA", userId);
-                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                        intent.putExtra("USER_NAME_EXTRA", userName);
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Intent intent = new Intent(HomeActivity.this, AccountActivity.class);
 
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        finish();
-
-                    } else if (id == R.id.focusNav) {
-                        Intent intent = new Intent(HomeActivity.this, FocusModeSplashActivity.class);
-
-                        // Pass the user to next page
-                        intent.putExtra("USER_ID_EXTRA", userId);
-                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                        intent.putExtra("USER_NAME_EXTRA", userName);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Intent intent = new Intent(HomeActivity.this, AccountActivity.class);
-                        System.out.println(userId);
-                        System.out.println("userName" + userName);
-                        System.out.println("This is where moving from home to account");
-                        // Pass the user to next page
-                        intent.putExtra("USER_ID_EXTRA", userId);
-                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                        intent.putExtra("USER_NAME_EXTRA", userName);
-                        startActivity(intent);
-                        finish();
-                    }
-
-                    return false;
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+                    startActivity(intent);
                 }
-            });
+
+                return false;
+            }
+        });
 
 
-            new Thread() {
+        new Thread() {
+            ArrayList<StudySpace> closestStudySpaces = new ArrayList<>();
 
-                ArrayList<StudySpace> closestStudySpaces = new ArrayList<>();
-//                ArrayList<StudySpace> topRatedStudySpaces = new ArrayList<>();
-
-                @Override
-                public void run() {
-                    try {
+            @Override
+            public void run() {
+                try {
                     locationAPI = new LocationServiceImpl();
 
                     ArrayList<StudySpace> allStudySpaces = new StudySpaceServiceImpl().getAllStudySpaces();
@@ -232,7 +224,6 @@ public class HomeActivity extends AppCompatActivity {
                         topRatedStudySpaces.addAll(closedTopRatedSpaces);
                     }
 
-                    List<Location> studySpacesNearby = locationAPI.findAllLocations("STUDY", "", true);
                     List<Favorite> favouriteSpaces = new FavoriteServiceImpl().getFavoritesByUser(userId, ReviewType.valueOf("STUDY_SPACE"));
 
                     ArrayList <StudySpace> favorites = new ArrayList<StudySpace>();
@@ -241,16 +232,14 @@ public class HomeActivity extends AppCompatActivity {
                         favorites.add(space);
                     }
 
-//                        new StudySpaceServiceImpl().calculateSpaceByWalkingDistance(GPSServiceImpl.getCurrentLocation(), favorites);
 
-                getAllBusyRatings(closestStudySpaces);
-//                        List<Favorite> userFavorites = new FavoriteServiceImpl().getFavoritesByUser(Integer.parseInt(userID), ReviewType.valueOf("STUDY_SPACES"));
-                System.out.println(studySpacesNearby.get(2).getName());
-                LinearLayout nearbyLayout = findViewById(R.id.nearbyLayout);
-                LinearLayout topRatedLayout = findViewById(R.id.topRatedLayout);
-                LinearLayout favoritesLayout = findViewById(R.id.favoritesLayout);
+                    getAllBusyRatings(closestStudySpaces);
+                    getAllImages();
 
-//                    int i=0; i<5; i++)
+                    LinearLayout nearbyLayout = findViewById(R.id.nearbyLayout);
+                    LinearLayout topRatedLayout = findViewById(R.id.topRatedLayout);
+                    LinearLayout favoritesLayout = findViewById(R.id.favoritesLayout);
+
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -261,14 +250,11 @@ public class HomeActivity extends AppCompatActivity {
                                 loadingGIF.setVisibility(View.VISIBLE);
                                 loadingGIF.setVisibility(View.GONE);
                             } else {
-                                System.out.println(closestStudySpaces.size());
                                 for (StudySpace space : closestStudySpaces.subList(0, 5)) {
                                     CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, nearbyLayout, false);
                                     ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
                                     loadingGIF.setVisibility(View.VISIBLE);
                                     CardView newCard = createNewSmallCard(card, space, "distance");
-//                                    System.out.println(space.getId());
-                                    String spaceID = String.valueOf(space.getId());
                                     for (StudySpace favorite : favorites) {
                                         if (favorite.getName().equals(space.getName())) {
                                             ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
@@ -278,6 +264,7 @@ public class HomeActivity extends AppCompatActivity {
                                     }
                                     loadingGIF.setVisibility(View.GONE);
                                     nearbyLayout.addView(newCard);
+                                    //opens the location page
                                     newCard.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
@@ -303,22 +290,21 @@ public class HomeActivity extends AppCompatActivity {
                                 loadingGIF2.setVisibility(View.GONE);
                             } else {
                                 for (StudySpace space : topRatedStudySpaces.subList(0, 5)) {
-//                        Location space = studySpacesNearby.get(i);
                                     CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.top_layout_card, topRatedLayout, false);
                                     ProgressBar loadingGIF2 = findViewById(R.id.loadingGIF_2);
                                     loadingGIF2.setVisibility(View.VISIBLE);
                                     CardView newCard = createNewSmallCard(card, space, "rating");
-                                    String spaceID = String.valueOf(space.getId());
-//                                    for (StudySpace favorite : favorites) {
-//                                        if (favorite.getName().equals(space.getName())) {
-//                                            ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
-//                                            favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
-//                                            favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
-//                                        }
-//                                    }
+                                    for (StudySpace favorite : favorites) {
+                                        if (favorite.getName().equals(space.getName())) {
+                                            ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
+                                            favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
+                                            favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+                                        }
+                                    }
                                     loadingGIF2.setVisibility(View.GONE);
                                     topRatedLayout.addView(newCard);
 
+                                    //opens the location page
                                     card.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
@@ -328,7 +314,6 @@ public class HomeActivity extends AppCompatActivity {
                                                     intent.putExtra("USER_ID_EXTRA", userId);
                                                     intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                                                     intent.putExtra("USER_NAME_EXTRA", userName);
-                                                    //intent.putExtra("LOCATION_ID", space.getId());
                                                     intent.putExtra("LOCATION_TYPE", space.getType());
                                                     intent.putExtra("LOCATION", space);
                                                     startActivity(intent);
@@ -347,17 +332,16 @@ public class HomeActivity extends AppCompatActivity {
                                 noFavorites.setVisibility(View.VISIBLE);
                             } else {
                                 for (StudySpace space : favorites) {
-//                        Location space = studySpacesNearby.get(i);
                                     CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, favoritesLayout, false);
                                     ProgressBar loadingGIF3 = findViewById(R.id.loadingGIF_3);
                                     loadingGIF3.setVisibility(View.VISIBLE);
                                     CardView newCard = createNewSmallCard(card, space, "favorite");
-                                    String spaceID = String.valueOf(space.getId());
                                     ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
                                     favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
                                     favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
                                     loadingGIF3.setVisibility(View.GONE);
                                     favoritesLayout.addView(newCard);
+                                    //opens the location page
                                     card.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
@@ -401,11 +385,11 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
     }
-
+    //This creates a new card for the location
     @SuppressLint("SetTextI18n")
     private CardView createNewSmallCard(CardView card, StudySpace space, String type){
         ImageView banner = (ImageView) card.findViewById(R.id.banner);
-        banner.setBackgroundResource(R.drawable.old_engineering);
+        banner.setBackgroundResource(imagesByLocation.get(space.getName()));
         ProgressBar progress = (ProgressBar) card.findViewById(R.id.progressBar);
         Double score = busyRatingsByLocation.get(space.getName());
         Integer busyScore = score != null && space.isOpeningNow() ? (int) (score * 20) : 0;
@@ -430,7 +414,6 @@ public class HomeActivity extends AppCompatActivity {
 
         else {
             double hoursToClose = getTimeToClose(space.getCloseTime());
-            System.out.println("Hours to close: " + hoursToClose);
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
             locationHours.setText(sdf.format(space.getOpenTime()) + " - " + ("23:59".equals(sdf.format(space.getCloseTime())) ? "00:00" : sdf.format(space.getCloseTime())));
@@ -456,13 +439,11 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
 
-//        if (!type.equals("rating")) {
-            ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);
+        ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);
 
-            favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_border_24);
-            favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
-//        favouriteIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));
-            //check if the favourites list includes this user and favourite
+        favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_border_24);
+        favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+        //check if the favourites list includes this user and favourite
         if(type.equals("rating")) {
             ImageView ratingIcon = card.findViewById(R.id.starRating);
             ratingIcon.setBackgroundResource(R.drawable.star_solid);
@@ -471,6 +452,7 @@ public class HomeActivity extends AppCompatActivity {
         return card;
     }
 
+    //calculates the time to the closing of a location
     private double getTimeToClose(Time closeTime){
         Date today = new Date();
         Time currentTime = new Time(today.getTime());
@@ -485,6 +467,7 @@ public class HomeActivity extends AppCompatActivity {
         return hours;
     }
     private final SensorEventListener sensorListener = new SensorEventListener() {
+        //this opens a new suggested study space
         @Override
         public void onSensorChanged(SensorEvent event) {
             float x = event.values[0];
@@ -494,22 +477,22 @@ public class HomeActivity extends AppCompatActivity {
             currentAcceleration = (float) Math.sqrt((double) (x * x + y * y + z * z));
             float delta = currentAcceleration - lastAcceleration;
             acceleration = acceleration * 0.9f + delta;
-            if (acceleration > 20) {
+            if (acceleration > 12) {
                 sensorManager.unregisterListener(sensorListener);
                 Toast.makeText(getApplicationContext(), "Opening a random Space", Toast.LENGTH_SHORT).show();
                 randomRange = topRatedStudySpaces.size();
                 int rand = (int)(Math.random() * randomRange);
                 randomSpace = topRatedStudySpaces.get(rand);
                 new Thread() {
-                        public void run() {
-                            Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                            intent.putExtra("USER_ID_EXTRA", userId);
-                            intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                            intent.putExtra("USER_NAME_EXTRA", userName);
-                            intent.putExtra("LOCATION_TYPE", randomSpace.getType());
-                            intent.putExtra("LOCATION", randomSpace);
-                            startActivity(intent);
-                        }
+                    public void run() {
+                        Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
+                        intent.putExtra("USER_ID_EXTRA", userId);
+                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                        intent.putExtra("USER_NAME_EXTRA", userName);
+                        intent.putExtra("LOCATION_TYPE", randomSpace.getType());
+                        intent.putExtra("LOCATION", randomSpace);
+                        startActivity(intent);
+                    }
                 }.start();
             }
         }
@@ -517,18 +500,21 @@ public class HomeActivity extends AppCompatActivity {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
     };
+    //This restarts the accelerometer sensor
     @Override
     protected void onResume() {
         sensorManager.registerListener(sensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL);
         super.onResume();
     }
+    //This disables the accelerometer sensor
     @Override
     protected void onPause() {
         sensorManager.unregisterListener(sensorListener);
         super.onPause();
     }
 
+    //This reloads the activity
     private void reloadActivity(){
         Intent intent = getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -536,6 +522,7 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //This opens the dialog informing the user of the shake suggestions feature
     private void showDialog() {
         neverShowAgain = sharedPreferences.getBoolean(getString(R.string.never_show_welcome), false);
         if (!neverShowAgain) {
@@ -543,15 +530,15 @@ public class HomeActivity extends AppCompatActivity {
             dialog.show();
         }
     }
+    //This opens a dialog informing the user of the shake suggestions feature
     private Dialog createDialog() {
-        String[] choices = {"I understand, don't show this again"};
         final boolean[] neverShowAgainDialog = {false};
 
         // Use the Builder class for convenient dialog construction.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.activity_onboarding, null))
-                // Add action buttons
+        builder.setView(inflater.inflate(R.layout.shake_dialog, null))
+                // This button confirms that the user understands and closes the dialog
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -560,43 +547,21 @@ public class HomeActivity extends AppCompatActivity {
                         editor.putBoolean(getString(R.string.never_show_welcome), neverShowAgainDialog[0]);
                         editor.apply();
                     }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancels the dialog.
-//                      // Stay on current page, don't do anything
-//                      // Settings are not changed
-                    }
                 });
         return builder.create();
-
-//        builder.setTitle(R.string.dialogMessage)
-//                .setSingleChoiceItems(choices, -1, new DialogInterface.OnClickListener() {
-//
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        neverShowAgainDialog[0] = true;
-//                    }
-//                })
-//                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        SharedPreferences.Editor editor = sharedPreferences.edit();
-//                        editor.putBoolean(getString(R.string.never_show_again_setting), neverShowAgainDialog[0]);
-//                        editor.apply();
-//                    }
-//                })
-//                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        // User cancels the dialog.
-//                        // Stay on current page, don't do anything
-//                        // Settings are not changed
-//                    }
-//                });
-        // Create the AlertDialog object and return it.
-//        return builder.create();
     }
+
+    /**
+     * Gets all the images for each location
+     */
+    private void getAllImages() {
+        try {
+            imagesByLocation = new ImageServiceImpl().fetchAllImages();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private void showDialog(String message){
         new AlertDialog.Builder(this)
@@ -608,5 +573,18 @@ public class HomeActivity extends AppCompatActivity {
                 .show();
     }
 
-}
+    private void showInfoDialog() {
 
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.information_dialog);
+        Button closeButton = dialog.findViewById(R.id.closeButton);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss(); // Close the dialog
+            }
+        });
+        dialog.show();
+    }
+
+}
