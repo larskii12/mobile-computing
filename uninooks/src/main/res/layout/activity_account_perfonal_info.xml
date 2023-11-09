@@ -514,20 +514,36 @@
         android:orientation="horizontal"
         tools:ignore="UseCompoundDrawables">
 
-        <TextView
-            android:id="@+id/notification"
-            style="@style/TextSubHeading"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="48dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/notification" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/notification"
+                style="@style/TextSubHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="48dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/notification" />
+
+            <TextView
+                android:id="@+id/notification_warning"
+                style="@style/TextSubHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="48dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="12dp"
+                android:text="@string/warning_msg" />
+        </LinearLayout>
 
         <Switch
             android:id="@+id/notificationToggle"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginStart="34dp"
+            android:layout_marginStart="30dp"
             android:clickable="true"
             android:thumbTint="@drawable/toggle_switch"
             android:trackTint="@color/deepBlue"
@@ -570,14 +586,31 @@
         android:orientation="horizontal"
         tools:ignore="UseCompoundDrawables">
 
-        <TextView
-            android:id="@+id/location"
-            style="@style/TextSubHeading"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="48dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/precise_loc" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/location"
+                style="@style/TextSubHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="48dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/precise_loc" />
+
+            <TextView
+                android:id="@+id/loc_warning"
+                style="@style/TextSubHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="48dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="12dp"
+                android:text="@string/warning_msg" />
+        </LinearLayout>
+
 
         <Switch
             android:id="@+id/locationToggle"
