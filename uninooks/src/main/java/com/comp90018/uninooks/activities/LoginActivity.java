@@ -104,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.putBoolean(getString(R.string.LogOut), false);
                                 editor.apply();
 
-                                if (!sharedPreferences.getBoolean("isFirstTime", false)) {
+                                if (!sharedPreferences.getBoolean("isIntroOpened", false)) {
                                     Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
                                     intent.putExtra("USER_ID_EXTRA", userId);
                                     intent.putExtra("USER_EMAIL_EXTRA", userEmail);

@@ -33,6 +33,8 @@ public class IntroActivity extends AppCompatActivity {
     String userEmail;
     String userName;
 
+    boolean isIntroActivityOpened;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,17 +107,17 @@ public class IntroActivity extends AppCompatActivity {
         btnGetStarted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent mainActivity = new Intent(IntroActivity.this, HomeActivity.class);
+                Intent intent = new Intent(IntroActivity.this, HomeActivity.class);
                 intent.putExtra("USER_ID_EXTRA", userId);
                 intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                 intent.putExtra("USER_NAME_EXTRA", userName);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
                 System.out.println(userId);
                 System.out.println("userName" + userName);
+                System.out.println(isIntroActivityOpened);
                 System.out.println("This is introactivity class");
                 savePrefsData();
-                startActivity(mainActivity);
+                startActivity(intent);
                 finish();
             }
         });
@@ -131,6 +133,8 @@ public class IntroActivity extends AppCompatActivity {
     private void savePrefsData(){
         SharedPreferences preferences = getApplicationContext().getSharedPreferences("uninooks", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
+        isIntroActivityOpened = preferences.getBoolean("isIntroOpened", true);
+        System.out.println("this is in savePref" + isIntroActivityOpened);
         editor.putBoolean("isIntroOpened", true);
         editor.apply();
     }

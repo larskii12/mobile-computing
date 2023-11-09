@@ -75,6 +75,9 @@ public class AccountActivity extends AppCompatActivity {
         userId = intent.getIntExtra("USER_ID_EXTRA", 0);
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
         userName = intent.getStringExtra("USER_NAME_EXTRA");
+        System.out.println(userId);
+        System.out.println("userName" + userName);
+        System.out.println("This is Account activity class");
 
         // Get reference to the Personal Information LinearLayout
         LinearLayout personalInfoLayout = findViewById(R.id.Account_Personal_Info_Layout); // Set an ID for your LinearLayout in XML and use it here
@@ -204,13 +207,15 @@ public class AccountActivity extends AppCompatActivity {
         buttonLogOutConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle logout logic here
 
                 // Pass the user email to login page
                 new Thread(){
                     public void run(){
+                        SharedPreferences sharedPreferences = getSharedPreferences("uninooks", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putBoolean(getString(R.string.LogOut), true);
-                        editor.apply();
+                        editor.apply(); // Commit the changes
+
                         Intent intent = new Intent(AccountActivity.this, LoginActivity.class);
                         try {
                             intent.putExtra("USER_EMAIL_EXTRA",  new UserServiceImpl().getUser(userId).getUserEmail());
@@ -269,6 +274,7 @@ public class AccountActivity extends AppCompatActivity {
                                     editor.putString(getString(R.string.Email), "");
                                     editor.putString(getString(R.string.Username), "");
                                     editor.putString(getString(R.string.Password), "");
+                                    editor.clear();
                                     editor.apply();
 
                                     Intent intent = new Intent(AccountActivity.this, LoginActivity.class);
@@ -316,6 +322,9 @@ public class AccountActivity extends AppCompatActivity {
             public void run(){
                 try {
                     userName = new UserServiceImpl().getUser(userId).getUserName();
+                    System.out.println(userId);
+                    System.out.println("userName" + userName);
+                    System.out.println("This is Account activity classbottom");
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
