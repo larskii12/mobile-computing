@@ -334,15 +334,6 @@ public class LocationServiceImpl implements LocationService {
                         location.setIsOpenToday(true);
                     }
 
-//                    Array daysDb = resultSet.getArray("library_opening_days");
-//                    Integer[] days = (Integer[]) daysDb.getArray();
-//                    location.setOpeningDays(days);
-//
-//                    Array busyDb = resultSet.getArray("library_busy_hours");
-//                    Time[] busyHours = (Time[]) busyDb.getArray();
-//                    location.setBusyHours(busyHours);
-
-
                     allLocations.add(location);
                 }
 
@@ -392,14 +383,6 @@ public class LocationServiceImpl implements LocationService {
 
                     location.setType("STUDY_SPACE");
 
-//                    Array daysDb = resultSet.getArray("study_space_opening_days");
-//                    Integer[] days = (Integer[]) daysDb.getArray();
-//                    location.setOpeningDays(days);
-//
-//                    Array busyDb = resultSet.getArray("study_space_busy_hours");
-//                    Time[] busyHours = (Time[]) busyDb.getArray();
-//                    location.setBusyHours(busyHours);
-
                     allLocations.add(location);
                 }
 
@@ -438,14 +421,6 @@ public class LocationServiceImpl implements LocationService {
                     }
 
                     location.setAverage_rating(new ReviewServiceImpl().getAverageRating(location.getId(), ReviewType.RESTAURANT));
-
-//                    Array daysDb = resultSet.getArray("restaurant_opening_days");
-//                    Integer[] days = (Integer[]) daysDb.getArray();
-//                    location.setOpeningDays(days);
-//
-//                    Array busyDb = resultSet.getArray("restaurant_busy_hours");
-//                    Time[] busyHours = (Time[]) busyDb.getArray();
-//                    location.setBusyHours(busyHours);
 
                     allLocations.add(location);
                 }
@@ -487,14 +462,6 @@ public class LocationServiceImpl implements LocationService {
                         location.setIsOpenToday(true);
                     }
 
-//                    Array daysDb = resultSet.getArray("library_opening_days");
-//                    Integer[] days = (Integer[]) daysDb.getArray();
-//                    location.setOpeningDays(days);
-//
-//                    Array busyDb = resultSet.getArray("library_busy_hours");
-//                    Time[] busyHours = (Time[]) busyDb.getArray();
-//                    location.setBusyHours(busyHours);
-
                     allLocations.add(location);
                 }
 
@@ -535,14 +502,6 @@ public class LocationServiceImpl implements LocationService {
 
                     location.setAverage_rating(new ReviewServiceImpl().getAverageRating(location.getId(), ReviewType.STUDY_SPACE));
 
-//                    Array daysDb = resultSet.getArray("study_space_opening_days");
-//                    Integer[] days = (Integer[]) daysDb.getArray();
-//                    location.setOpeningDays(days);
-//
-//                    Array busyDb = resultSet.getArray("study_space_busy_hours");
-//                    Time[] busyHours = (Time[]) busyDb.getArray();
-//                    location.setBusyHours(busyHours);
-
                     allLocations.add(location);
                 }
 
@@ -581,14 +540,6 @@ public class LocationServiceImpl implements LocationService {
                         location.setIsOpeningNow(true);
                         location.setIsOpenToday(true);
                     }
-
-//                    Array daysDb = resultSet.getArray("restaurant_opening_days");
-//                    Integer[] days = (Integer[]) daysDb.getArray();
-//                    location.setOpeningDays(days);
-//
-//                    Array busyDb = resultSet.getArray("restaurant_busy_hours");
-//                    Time[] busyHours = (Time[]) busyDb.getArray();
-//                    location.setBusyHours(busyHours);
 
                     allLocations.add(location);
                 }
