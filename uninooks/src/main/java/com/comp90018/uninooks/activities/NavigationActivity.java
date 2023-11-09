@@ -106,8 +106,9 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         gpsService = new GPSServiceImpl(this, this, GPSServiceImpl.getGPSHistory());
 
         locateMyLocation = (ImageButton) findViewById(R.id.locate_my_location);
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        ImageButton backButton = findViewById(R.id.imageButton);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -131,6 +132,24 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                 } catch (Exception e) {
                     System.out.println("Location update fails, please try again.");
                 }
+            }
+        });
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                finish();
+//                            new Thread() {
+//                                public void run() {
+//                                    Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
+//                                    intent.putExtra("USERID_EXTRA", userId);
+//                                    intent.putExtra("USERNAME_EXTRA", userName);
+//                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                                    startActivity(intent);
+//                                    finish();
+//                                }
+//                            }.start();
             }
         });
     }
