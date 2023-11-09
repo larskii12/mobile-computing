@@ -98,6 +98,9 @@ public class HomeActivity extends AppCompatActivity {
         userId = intent.getIntExtra("USER_ID_EXTRA", 0);
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
         userName = intent.getStringExtra("USER_NAME_EXTRA");
+        System.out.println(userId);
+        System.out.println("userName" + userName);
+        System.out.println("This is Home activity class");
 
 //        List<Location> studySpacesNearby = new ArrayList<>();
 //        List<Location> studySpacesTop = new ArrayList<>();
@@ -163,7 +166,9 @@ public class HomeActivity extends AppCompatActivity {
                         finish();
                     } else {
                         Intent intent = new Intent(HomeActivity.this, AccountActivity.class);
-
+                        System.out.println(userId);
+                        System.out.println("userName" + userName);
+                        System.out.println("This is where moving from home to account");
                         // Pass the user to next page
                         intent.putExtra("USER_ID_EXTRA", userId);
                         intent.putExtra("USER_EMAIL_EXTRA", userEmail);

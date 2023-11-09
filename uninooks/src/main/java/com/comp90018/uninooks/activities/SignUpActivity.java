@@ -317,8 +317,10 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
             showTextMessage("Signed up successfully!");
 
             // Destroy the sign up page and jump to log in
-            Intent intent = new Intent(this, IntroActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("USER_EMAIL_EXTRA", email);
+            intent.putExtra("USER_NAME_EXTRA", username);
             startActivity(intent);
             finish();
 

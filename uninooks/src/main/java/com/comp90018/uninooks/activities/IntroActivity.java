@@ -29,16 +29,24 @@ public class IntroActivity extends AppCompatActivity {
     Button btnNext, btnGetStarted;
     LinearLayout linearLayoutNext, linearLayoutGetStarted;
 
+    int userId;
+    String userEmail;
+    String userName;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("this page was opened");
+        Intent intent = getIntent();
+        userId = intent.getIntExtra("USER_ID_EXTRA", 0);
+        userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
+        userName = intent.getStringExtra("USER_NAME_EXTRA");
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         if (restorePreData()){
-            Intent mainActivity = new Intent(getApplicationContext(), SignUpActivity.class);
+            Intent mainActivity = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(mainActivity);
             finish();
         }
@@ -97,9 +105,17 @@ public class IntroActivity extends AppCompatActivity {
         btnGetStarted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent mainActivity = new Intent(getApplicationContext(), HomeActivity.class);
-                startActivity(mainActivity);
+                Intent mainActivity = new Intent(IntroActivity.this, HomeActivity.class);
+                intent.putExtra("USER_ID_EXTRA", userId);
+                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                intent.putExtra("USER_NAME_EXTRA", userName);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                System.out.println(userId);
+                System.out.println("userName" + userName);
+                System.out.println("This is introactivity class");
                 savePrefsData();
+                startActivity(mainActivity);
                 finish();
             }
         });
