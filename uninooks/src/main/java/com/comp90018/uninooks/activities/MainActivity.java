@@ -1,36 +1,44 @@
 package com.comp90018.uninooks.activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.View;
-import android.widget.Button;
+import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
-import com.comp90018.uninooks.models.review.ReviewType;
-import com.comp90018.uninooks.service.favorite.FavoriteServiceImpl;
+import com.comp90018.uninooks.service.emulator.EmulatorServiceImpl;
 import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
-import com.comp90018.uninooks.service.location.LocationService;
 
+@SuppressLint("CustomSplashScreen")
 public class MainActivity extends AppCompatActivity implements GPSService {
 
-    private LocationService locationService;
-    private static Context context;
+    private static final int REQUEST_LOCATION_PERMISSION = 1234;
 
-    GPSServiceImpl gpsService;
+    private SharedPreferences.Editor editor;
+
+    private GPSServiceImpl gpsService;
+
+    private static Context context;
 
     @SuppressLint("HandlerLeak")
     private final Handler handler = new Handler() {
-        @SuppressLint("SetTextI18n")
+        @SuppressLint({"SetTextI18n", "HandlerLeak"})
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
@@ -41,285 +49,148 @@ public class MainActivity extends AppCompatActivity implements GPSService {
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        context = getApplicationContext();
+
         setContentView(R.layout.activity_main);
+        context = getApplicationContext();
 
-        // Ask user to grant permission
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-//        }
-
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        SharedPreferences sharedPreferences = getSharedPreferences("firstLaunchCheckFile", MODE_PRIVATE);
+        boolean isFirstTimeLaunch = sharedPreferences.getBoolean("isFirstTimeLaunch", true);
+        editor = sharedPreferences.edit();
 
         gpsService = new GPSServiceImpl(this, this);
 
-        Button button = (Button) findViewById(R.id.button);
-        Button loginButton = findViewById(R.id.loginButton);
-        Button accountButton = findViewById(R.id.accountButton);
-        Button focusButton = findViewById(R.id.focusButton);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        accountButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        // Check permission is given or not, if not given, pop up permission needed box
+        // Need to change to check whether the app is first time launch
+        if (isFirstTimeLaunch) {
 
-                try {
-                    Intent intent = new Intent(MainActivity.this, AccountActivity.class);
-                    startActivity(intent);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            // Show dialogue
+            showPermissionDialogueAndStartMainActivity();
+
+        }
+
+        // If all permission already granted, go to main activities directly
+        else {
+
+            // Set GPS status
+            GPSServiceImpl.setGPSPermissionStatus(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+
+            if (GPSServiceImpl.getGPSPermission()){
+                gpsService.startGPSUpdates();
             }
-        });
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            gpsService.stopGPSUpdates();
-                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                            startActivity(intent);
-                        }
-                        catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                }.start();
+            else{
+                Log.d("AAAAAAAAAAAAAAAAAAA", "gps NOT fetched and go to log in");
+                startMainActivity();
             }
-        });
+        }
 
-        focusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            gpsService.stopGPSUpdates();
-                            Intent intent = new Intent(MainActivity.this, FocusModeSplashActivity.class);
-                            startActivity(intent);
-                        }
-                        catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                }.start();
-            }
-        });
-
-        // Test button
-        button.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                            // Find resources based on keyword search
-//                            List<Resource> a = new ResourceServiceImpl().getResourceFromKeyWord("atm");
-//                            for (Resource r : a){
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", r.getName());
-//                            }
-
-
-                            // How to access the closest libraries
-//                            ArrayList<Library> libraries = new LibraryServiceImpl().getClosestLibraries(new LatLng(-1, -1), 10);
-//                            for (Library library : libraries){
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Name   " + library.getName());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Building ID   " + library.getBuildingId());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Distance From Current Location   " + library.getDistanceFromCurrentPosition() + " meters");
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Library ID   " + library.getId());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Open Today   " + library.isOpenToday());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Opening Now   " + library.isOpeningNow());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Opening Time   " + library.getOpenTime());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Closing Time   " + library.getCloseTime());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library has quiet zone  " + library.isHasQuietZones());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "\n\n");
-//                            }
-
-                            // How to access the top rated libraries
-//                            ArrayList<Library> libraries = new LibraryServiceImpl().getTopRatedLibraries(new LatLng(-1, -1), 10);
-//                            for (Library library : libraries){
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Name   " + library.getName());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Building ID   " + library.getBuildingId());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Distance From Current Location   " + library.getDistanceFromCurrentPosition() + " meters");
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Library ID   " + library.getId());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Open Today   " + library.isOpenToday());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Opening Now   " + library.isOpeningNow());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Opening Time   " + library.getOpenTime());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Closing Time   " + library.getCloseTime());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library has quiet zone  " + library.isHasQuietZones());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library Rating   " + library.getAverage_rating());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "\n\n");
-//                            }
-
-//                             How to get closest study spaces
-//                            ArrayList<StudySpace> closestStudySpaces = new StudySpaceServiceImpl().getClosestStudySpaces(new LatLng(-1, -1), 50);
-//                            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Time   " + new TimeServiceImpl().getAEDTTime());
-//                            for (StudySpace studySpace : closestStudySpaces){
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Name   " + studySpace.getName());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space ID   " + studySpace.getId());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Building ID   " + studySpace.getBuildingId());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Distance From Current Location   " + studySpace.getDistanceFromCurrentPosition() + " meters");
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Library ID   " + studySpace.getLibraryId());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Open Today   " + studySpace.issOpenToday());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Opening Now   " + studySpace.isOpeningNow());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Talk Allowed   " + studySpace.isTalkAllowed());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Minimum AQF Level   " + studySpace.getMinimumAccessAQFLevel());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Opening Now   " + studySpace.isOpeningNow());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Opening Time   " + studySpace.getOpenTime());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Closing Time   " + studySpace.getCloseTime());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "\n\n");
-//                            }
-
-
-
-                            // How to get top rated study spaces
-//                           ArrayList<StudySpace> s = new StudySpaceServiceImpl().getTopRatedStudySpaces(new LatLng(1, 1), 50);
-//                           for (StudySpace studySpace: s){
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Name   " + studySpace.getName());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space ID   " + studySpace.getId());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Building ID   " + studySpace.getBuildingId());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Distance From Current Location   " + studySpace.getDistanceFromCurrentPosition() + " meters");
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Library ID   " + studySpace.getLibraryId());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Open Today   " + studySpace.issOpenToday());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Opening Now   " + studySpace.isOpeningNow());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space is Talk Allowed   " + studySpace.isTalkAllowed());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Minimum AQF Level   " + studySpace.getMinimumAccessAQFLevel());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library is Opening Now   " + studySpace.isOpeningNow());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Opening Time   " + studySpace.getOpenTime());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Closing Time   " + studySpace.getCloseTime());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Rating   " + studySpace.getAverage_rating());
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "\n\n");
-//                           }
-
-                            // How to get a entity average review score
-//                            double average_rating = new ReviewServiceImpl().getAverageRating(1, ReviewType.LIBRARY);
-//                            Log.d("AAAAAAAAAAAAAAAAAAAAA", String.valueOf(average_rating));
-
-//
-//
-                            // How to access review with a given entity and entity Type, to get id, you can obtain from the previous location service
-//                            List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(3, ReviewType.LIBRARY);
-//                            for (Review review : reviews) {
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Study Space Score: " + review.getScore() + "   Comments: " + review.getComment() + "    Review Time:  " + review.getTime());
-//                            }
-//
-//
-                            // How to get entity busy rating for right now. To get id, you can obtain from the previous location service
-                            // HIGHER --- LESS BUSY.   LOWER - MORE BUSY        4 - 5 very very busy,  3 - 4 busy,  2 - 3 fair,   1 - 2, not busy    0 - 1 no body
-//                            Double busyRatings = new BusyRatingServiceImpl().getAverageScoreFromEntity(3, LIBRARY);
-//                            Log.d("AAAAAAAAAAAAAAAAAAAAA", "Library busy: " + busyRatings);
-//
-//
-//
-                            // How to add a review
-//                            try {
-//                                Review newReview = new ReviewServiceImpl().addReview(263, 3, LIBRARY, 5, "I love this excellent study space");
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Review successes, Your new review id is " + newReview.getReviewId());
-//                            }
-//                            catch (Exception e){
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Review failed, please contact the IT administrator");
-//                            }
-//
-//
-//
-                            // How to add a busy rating
-//                            try {
-//                                Boolean busyRating = new BusyRatingServiceImpl().addBusyRating(3, STUDY_SPACE, 4);
-//
-//                                // Check success or not
-//                                if (busyRating){
-//                                    Log.d("AAAAAAAAAAAAAAAAAAAAA", "Busy rating Success");
-//                                }
-//                                else{
-//                                    throw new Exception();
-//                                }
-//                            }
-//
-//                            catch (Exception e){
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", "Busy rating failed, please contact the IT administrator.");
-//                            }
-
-
-
-
-                            // Detect the recent 20 seconds used apps
-//                            ArrayList<BackgroundApp> recentApps = new BackgroundAppServiceImpl(MainActivity.getAppContext()).getBackgroundApps(1000 * 20);
-//                            for (BackgroundApp recentApp : recentApps){
-//                                Log.d("AAAAAAAAAAAAAAAAAAAAA", recentApp.getPackageName() + "   Time:  " + recentApp.getLastTimeUsed());
-//                            }
-
-                            // How to remove a favorite
-//                            new FavoriteServiceImpl().removeFavorite(1014, 18, ReviewType.STUDY_SPACE);
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                            gpsService.stopGPSUpdates();
-                            Intent intent = new Intent(MainActivity.this, NavigationActivity.class);
-                            startActivity(intent);
-                        }
-
-                        // If exception when operating
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }.start();
-            }
-        });
+        /**
+         * Emulator Testing Mode Detection
+         */
+        if (EmulatorServiceImpl.isEmulator()) {
+            showTextMessage("Emulator Testing Mode\nLocation: Melbourne Connect.");
+        }
     }
 
     public void onStart(){
         super.onStart();
-        gpsService.startGPSUpdates();
     }
 
     public void onRestart(){
-        super.onRestart();
-        gpsService.startGPSUpdates();
+        super.onRestart();;
     }
 
     // When back button pressed
     public void onBackPressed() {
         super.onBackPressed();
-        gpsService.stopGPSUpdates();
     }
 
     public void onPause() {
         super.onPause();
-        gpsService.stopGPSUpdates();
     }
     public void onResume() {
         super.onResume();
-        gpsService.startGPSUpdates();
     }
 
     public void onStop(){
         super.onStop();
-
     }
 
     public void onDestroy(){
-        super.onDestroy();
-        gpsService.stopGPSUpdates();
+        super.onDestroy();;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-    public static Context getAppContext () {
-        return context;
+        // Update first launch is done and start Main Activity
+        Log.d("AAAAAAAAAAAAAAAAAAA", "First time launch");
+        editor.putBoolean("isFirstTimeLaunch", false);
+        editor.apply();
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                GPSServiceImpl.setGPSPermissionStatus(true);
+
+                gpsService.startGPSUpdates();
+            }
+
+            else {
+                GPSServiceImpl.setGPSPermissionStatus(false);
+
+                Log.d("AAAAAAAAAAAAAAAAAAA", "gps NOT fetched and go to log in");
+
+                startMainActivity();
+            }
+
+        }
+    }
+
+    /**
+     * Show the permission dialogue, only shows the first time app launch
+     */
+    private void showPermissionDialogueAndStartMainActivity(){
+
+        new AlertDialog.Builder(this)
+                .setTitle("Permissions Required")
+                .setMessage("To optimize your experience, Uninooks requires the following permissions: \n\n1. Access to location and accelerometer to enhance recommendations. \n\n2. Access to notification and usage data to facilitate study mode monitoring. \n\nPlease be assured that your data will be stored locally on your device and will not be shared with any third parties.")
+                .setPositiveButton("I understand", (dialog, which) -> {
+                    ActivityCompat.requestPermissions(
+                            MainActivity.this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            REQUEST_LOCATION_PERMISSION
+                    );
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    private void showDialogue(String message){
+        new AlertDialog.Builder(this)
+                .setTitle("Permissions Required")
+                .setMessage(message)
+                .setPositiveButton("I understand", (dialog, which) -> {
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    /**
+     * Start the Main Activity
+     */
+    private void startMainActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+        finish();
     }
 
     /**
@@ -337,5 +208,11 @@ public class MainActivity extends AppCompatActivity implements GPSService {
     @Override
     public void onGPSUpdate(Location location) {
         gpsService.stopGPSUpdates();
+        Log.d("AAAAAAAAAAAAAAAAAAA", "gps fetched and go to log in");
+        startMainActivity();
+    }
+
+    public static Context getAppContext () {
+        return context;
     }
 }

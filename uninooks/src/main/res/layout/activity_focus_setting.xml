@@ -118,8 +118,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="minutes"
-                    android:imeOptions="actionDone"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:imeOptions="actionDone"/>
 
                 <TextView
                     android:layout_width="wrap_content"
