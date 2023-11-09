@@ -56,7 +56,7 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
         saveButton = findViewById(R.id.saveSettingsButton);
 
         toggleSwitch = findViewById(R.id.toggleSwitch);
-        pomodoroTime = findViewById(R.id.EditTextFocusSettingMins); // these are all in minutes, have to convert to milliiseconds
+        pomodoroTime = findViewById(R.id.EditTextFocusSettingMins);
         shortBreakTime = findViewById(R.id.EditTextFocusShortBreakSetting);
         longBreakTime = findViewById(R.id.EditTextFocusLongBreakSetting);
 
@@ -183,9 +183,9 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
     private View.OnClickListener resetListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            pomodoroTime.setText("");
-            shortBreakTime.setText("");
-            longBreakTime.setText("");
+            pomodoroTime.setText(String.valueOf(pomodoroTimeDefault));
+            shortBreakTime.setText(String.valueOf(shortPauseTimeDefault));
+            longBreakTime.setText(String.valueOf(longPauseTimeDefault));
             toggleSwitch.setChecked(false);
         }
     };

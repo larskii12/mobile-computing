@@ -1,7 +1,9 @@
 package com.comp90018.uninooks.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,14 +20,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.location.Location;
 import com.comp90018.uninooks.models.user.User;
-import com.comp90018.uninooks.service.gps.GPSService;
-import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
 
 import java.util.List;
 
-public class LoginActivity extends AppCompatActivity implements GPSService {
+public class LoginActivity extends AppCompatActivity {
 
     private EditText editTextLoginEmail;
     private EditText editTextLoginPassword;
@@ -33,14 +33,16 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
     private TextView buttonLogInGoToSignup;
 
     private TextView buttonLogInForgetPassword;
-
-    private GPSServiceImpl gpsService;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     int userId;
 
     String userName;
 
     String userEmail;
+    boolean ifPasswordChanged;
+
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -63,11 +65,12 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
         Intent intent = getIntent();
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
         handler.sendEmptyMessage(1);
-
-        gpsService = new GPSServiceImpl(this, this);
 
         editTextLoginEmail = findViewById(R.id.EditTextLoginEmail);
         editTextLoginPassword = findViewById(R.id.EditTextLoginPassword);
@@ -78,6 +81,8 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
         userId = -1;
         userEmail = "";
         userName = "";
+
+        retrieveLoginDetails();
 
         buttonLoginLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,19 +97,15 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
                                 userEmail = user.getUserEmail();
                                 userName = user.getUserName();
 
-                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                saveLoginDetails(userId, userEmail, userName);
+                                editor.putBoolean(getString(R.string.PasswordChanged), false);
+                                editor.apply();
 
-                                // Pass the user to next page
-                                intent.putExtra("USER_ID_EXTRA", userId);
-                                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                                intent.putExtra("USER_NAME_EXTRA", userName);
-
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                                finish();
+                                launchHomeActivity();
                             }
 
                         } catch (Exception e) {
+                            e.printStackTrace();
                             showTextMessage("An error happened, please contract the IT administrator.");
                         }
                     }
@@ -180,37 +181,30 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
 
     public void onStart(){
         super.onStart();
-        gpsService.startGPSUpdates();
     }
 
     public void onRestart(){
         super.onRestart();
-        gpsService.startGPSUpdates();
     }
 
     // When back button pressed
     public void onBackPressed() {
         super.onBackPressed();
-        gpsService.stopGPSUpdates();
     }
 
     public void onPause() {
         super.onPause();
-        gpsService.stopGPSUpdates();
     }
     public void onResume() {
         super.onResume();
-        gpsService.startGPSUpdates();
     }
 
     public void onStop(){
         super.onStop();
-        gpsService.stopGPSUpdates();
     }
 
     public void onDestroy(){
         super.onDestroy();
-        gpsService.stopGPSUpdates();
     }
 
 
@@ -248,8 +242,52 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
         handler.sendMessage(msg);
     }
 
-    @Override
-    public void onGPSUpdate(android.location.Location location) {
-        gpsService.stopGPSUpdates();
+
+    /**
+     * Launch the home activity with needed intents
+     */
+    private void launchHomeActivity() {
+        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+
+        // Pass the user to next page
+        intent.putExtra("USER_ID_EXTRA", userId);
+        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+        intent.putExtra("USER_NAME_EXTRA", userName);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    /**
+     * Saves users log in details if it is correct to automatically log in the next time
+     * @param userId
+     * @param email
+     * @param username
+     */
+    private void saveLoginDetails(int userId, String email, String username) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(getString(R.string.UserId), userId);
+        editor.putString(getString(R.string.Email), email);
+        editor.putString(getString(R.string.Username), username);
+        editor.putString(getString(R.string.Password), editTextLoginPassword.getText().toString().trim());
+        editor.apply();
+    }
+
+    /**
+     * get from sharedPreferences, their userEmail and userName
+     * if any of them are empty, then it won't go to the next page, otherwise it will automatically launch
+     */
+    private void retrieveLoginDetails() {
+        userId = sharedPreferences.getInt(getString(R.string.UserId), -1);
+        userEmail = sharedPreferences.getString(getString(R.string.Email), "");
+        userName = sharedPreferences.getString(getString(R.string.Username), "");
+        String password = sharedPreferences.getString(getString(R.string.Password), "");
+
+        ifPasswordChanged = sharedPreferences.getBoolean(getString(R.string.PasswordChanged), false);
+
+        if (!(userId == -1 || userEmail.equals("") || userName.equals("") || password.equals("")) && !ifPasswordChanged) {
+            launchHomeActivity();
+        }
     }
 }

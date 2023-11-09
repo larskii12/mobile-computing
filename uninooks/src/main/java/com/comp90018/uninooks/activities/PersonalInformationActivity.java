@@ -89,6 +89,8 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     private String otp;
 
     private String newUserEmail;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     private ImageView editStudySuggestionIcon;
 
@@ -150,6 +152,9 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_perfonal_info);
+
+        sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
         Intent intent = getIntent();
         userId = intent.getIntExtra("userId", 6);
@@ -344,9 +349,9 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                 String newPassword = editNewPassword.getText().toString();
                 String newPassWordConfirm = editConfirmPassword.getText().toString();
 
-                System.out.println(oldPassWord);
-                System.out.println(newPassword);
-                System.out.println(newPassWordConfirm);
+//                System.out.println(oldPassWord);
+//                System.out.println(newPassword);
+//                System.out.println(newPassWordConfirm);
 
                 if (oldPassWord.trim().isEmpty()) {
                     showTextMessage("Your old password is incorrect.");
@@ -364,6 +369,8 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                                     showTextMessage("Your old password is incorrect.");
                                 } else {
                                     new UserServiceImpl().updateUserPassword(userId, oldPassWord, newPassword);
+                                    editor.putBoolean(getString(R.string.PasswordChanged), true);
+                                    editor.apply();
                                     showTextMessage("Password updated successfully.");
                                     reloadActivity();
                                 }

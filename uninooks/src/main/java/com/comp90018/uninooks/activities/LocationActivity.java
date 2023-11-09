@@ -461,7 +461,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
-        int maxCameraZoom = 30;
+        int maxCameraZoom = 50;
         mMap.setMaxZoomPreference(maxCameraZoom);
         int minCameraZoom = 15;
         mMap.setMinZoomPreference(minCameraZoom);

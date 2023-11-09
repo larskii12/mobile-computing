@@ -40,6 +40,7 @@
     <string name="Name">Name</string>
     <string name="Email">Email</string>
     <string name="Username">Username</string>
+    <string name="UserId">User ID</string>
     <string name="Password">Password</string>
     <string name="Confirm_Password">Confirm Password</string>
 
@@ -52,6 +53,7 @@
     <string name="Account_Pi_Edit_Name">Enter new user name</string>
     <string name="Account_Pi_Edit_Email">Enter new Email address</string>
     <string name="Account_Pi_Edit_Faculty">Edit Faculty</string>
+    <string name="PasswordChanged">Password Changed</string>
 
     <!-- Account Setting strings-->
     <string name="Account_Settings">Settings</string>

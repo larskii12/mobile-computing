@@ -131,8 +131,6 @@ public class SearchResults extends AppCompatActivity {
 
                     } else if (intent.hasExtra("filters")) {
                         results = new LocationServiceImpl().findAllLocations("STUDY", null, true);
-
-
                         HashMap<String, String> filters = (HashMap<String, String>) getIntent().getSerializableExtra("filters");
                         getAllBuildingsOfLocs(results);
                         getAllRatings(results);
@@ -206,7 +204,7 @@ public class SearchResults extends AppCompatActivity {
         for (Location location : results) {
 
             String type = location.getType();
-
+            System.out.println(type);
             if (type.equals("LIBRARY")) {
                 cardView = createLibraryLocationCard((Library) location);
             } else if (type.equals("STUDY_SPACE")) {
@@ -225,8 +223,8 @@ public class SearchResults extends AppCompatActivity {
                     intent.putExtra("USER_ID_EXTRA", userId);
                     intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                     intent.putExtra("USER_NAME_EXTRA", userName);
-                    intent.putExtra("LOCATION_ID", location.getId());
-                    intent.putExtra("LOCATION_TYPE", location.getType());
+                    intent.putExtra("LOCATION_TYPE", type);
+                    intent.putExtra("LOCATION", location);
 
                     startActivity(intent);
 

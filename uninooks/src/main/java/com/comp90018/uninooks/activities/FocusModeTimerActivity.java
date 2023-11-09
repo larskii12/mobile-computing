@@ -18,11 +18,13 @@ import android.content.Intent;
 import android.os.Message;
 import android.os.Vibrator;
 
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -35,6 +37,7 @@ import com.comp90018.uninooks.service.background_app.BackgroundAppService;
 import com.comp90018.uninooks.views.TimerView;
 import com.comp90018.uninooks.worker.FocusModeWorker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 
 import java.util.List;
@@ -42,22 +45,10 @@ import android.os.Vibrator;
 import java.util.concurrent.TimeUnit;
 
 public class FocusModeTimerActivity extends AppCompatActivity {
-
-    private int pomodoroTimer;
-
-    private int shortPauseTimer;
-
-    private int longPauseTimer;
-
     public static boolean isCurrentlyOnApp = false;
-
-
-
 
     private int seconds;
     private int timer_length = 60;
-
-//    private int seconds = 60;
 
     private Vibrator v;
 
@@ -113,6 +104,12 @@ public class FocusModeTimerActivity extends AppCompatActivity {
 
     SharedPreferences.Editor editor;
 
+    private int userId;
+
+    private String userEmail;
+
+    private String userName;
+
     @SuppressLint("HandlerLeak")
     private final Handler handler = new Handler() {
         @SuppressLint("SetTextI18n")
@@ -129,10 +126,13 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_focus_mode);
-        System.out.println("on create");
+
+        Intent intent = getIntent();
+        userId = intent.getIntExtra("USER_ID_EXTRA", 0);
+        userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
+        userName = intent.getStringExtra("USER_NAME_EXTRA");
 
         sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
-//        editor = sharedPreferences.edit();
         showDialog();
 
         v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -270,6 +270,52 @@ public class FocusModeTimerActivity extends AppCompatActivity {
 
         clickPomodoroButton();
         isCurrentlyOnApp = true;
+
+        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @SuppressLint("NonConstantResourceId")
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+
+                if (id == R.id.homeNav){
+                    Intent intent = new Intent(FocusModeTimerActivity.this, HomeActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+
+                else if (id == R.id.searchNav) {
+                    Intent intent = new Intent(FocusModeTimerActivity.this, MapsActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+
+                } else if (id == R.id.focusNav) {
+                    ;
+                } else {
+                    Intent intent = new Intent(FocusModeTimerActivity.this, AccountActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+                    startActivity(intent);
+                }
+                return false;
+            }
+        });
     }
 
 
@@ -301,11 +347,8 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("in on resume");
 
-        System.out.println("settings clicked = " + settingsClicked);
         if (settingsClicked) {
-            System.out.println("in settings clicked");
             retrieveSettings();
             settingsClicked = false;
 
@@ -424,7 +467,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private void clickShortPauseButton() {
         shortPauseButton.setPressed(true);
         isPaused = false;
-        System.out.println("inSequence when clicking short pause button: " + inSequence);
+
         unclickPomodoroButton();
         unclickLongPauseButton();
 
@@ -581,7 +624,6 @@ public class FocusModeTimerActivity extends AppCompatActivity {
          * Retrieve settings from the setting page
          */
         private void retrieveSettings() {
-            System.out.println("within retrieve settings");
             pomodoroTime = sharedPreferences.getInt(getString(R.string.pomodoro_setting), pomodoroTime);
             shortPauseTime = sharedPreferences.getInt(getString(R.string.short_break_setting), shortPauseTime);
             longPauseTime = sharedPreferences.getInt(getString(R.string.long_break_setting), longPauseTime);
