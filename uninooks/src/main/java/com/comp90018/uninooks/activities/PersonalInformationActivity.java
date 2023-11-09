@@ -11,11 +11,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -24,6 +26,8 @@ import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.user.User;
 import com.comp90018.uninooks.service.mail.MailServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
+
+
 
 public class PersonalInformationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -79,6 +83,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
 
     private Button buttonNewDegree;
 
+
     private final int OTP_TIMER = 20;
 
     private String otp;
@@ -87,6 +92,15 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
+    private ImageView editStudySuggestionIcon;
+
+    private TextView textViewStudySuggestionOff;
+
+    private TextView textViewStudySuggestionOn;
+
+    private Switch switchStudySuggestion;
+
+    private TextView textViewStudyModeStatus;
 
 
     @SuppressLint("HandlerLeak")
@@ -167,6 +181,13 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         buttonConfirmNewPassword = findViewById(R.id.Pi_ButtonConfirmNewPassword);
         buttonNewFaculty = findViewById(R.id.Pi_ButtonConfirmNewFaculty);
         buttonNewDegree = findViewById(R.id.Pi_ButtonConfirmNewDegree);
+        editStudySuggestionIcon = findViewById(R.id.Account_Pi_Ic_Edit_study_space);
+        textViewStudySuggestionOff = findViewById(R.id.study_space_textOff);
+        textViewStudySuggestionOn = findViewById(R.id.study_space_textOn);
+        switchStudySuggestion = findViewById(R.id.study_space_switch);
+        textViewStudyModeStatus = findViewById(R.id.textViewStudyModeStatus);
+
+
         otp = "";
 
         buttonNewUserName.setOnClickListener(new View.OnClickListener() {
@@ -491,6 +512,39 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                 }.start();
             }
         });
+        editStudySuggestionIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences pref = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
+                boolean isStudyModeOn = pref.getBoolean("HomeShakeMode", true);
+
+                if (textViewStudySuggestionOff.getVisibility() == View.VISIBLE) {
+                    textViewStudyModeStatus.setVisibility(View.VISIBLE);
+                    textViewStudySuggestionOff.setVisibility(View.GONE);
+                    textViewStudySuggestionOn.setVisibility(View.GONE);
+                    switchStudySuggestion.setVisibility(View.GONE);
+                } else {
+                    textViewStudyModeStatus.setVisibility(View.GONE);
+                    textViewStudySuggestionOff.setVisibility(View.VISIBLE);
+                    textViewStudySuggestionOn.setVisibility(View.VISIBLE);
+                    switchStudySuggestion.setVisibility(View.VISIBLE);
+            }}
+        });
+        switchStudySuggestion.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences pref = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putBoolean("HomeShakeMode", isChecked);
+                editor.apply();
+                if (isChecked) {
+                    textViewStudyModeStatus.setText("ON");
+                } else {
+                    textViewStudyModeStatus.setText("OFF");
+                }
+            }
+        });
+
 
 
 
@@ -555,6 +609,10 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                 throw new RuntimeException(e);
             }
     }
+
+
+
+
 
     /**
      * get OTP for registration

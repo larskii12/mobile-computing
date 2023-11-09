@@ -101,4 +101,5 @@
 
     <!--Home strings -->
     <string name="never_show_welcome">Dont show again</string>
+    <string name="study_space_surprise_suggestion_settings">Enable shake function</string>
 </resources>
