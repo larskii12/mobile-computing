@@ -45,22 +45,10 @@ import android.os.Vibrator;
 import java.util.concurrent.TimeUnit;
 
 public class FocusModeTimerActivity extends AppCompatActivity {
-
-    private int pomodoroTimer;
-
-    private int shortPauseTimer;
-
-    private int longPauseTimer;
-
     public static boolean isCurrentlyOnApp = false;
-
-
-
 
     private int seconds;
     private int timer_length = 60;
-
-//    private int seconds = 60;
 
     private Vibrator v;
 
