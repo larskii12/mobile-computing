@@ -93,7 +93,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         userId = intent.getIntExtra("USER_ID_EXTRA", 0);
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
         userName = intent.getStringExtra("USER_NAME_EXTRA");
-//        locationId = intent.getIntExtra("LOCATION_ID", 0);
         locationType = intent.getStringExtra("LOCATION_TYPE");
 
         if (locationType.equals("LIBRARY")){
@@ -105,65 +104,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         }
         locationId = location.getId();
 
-
-//        bottomNav = findViewById(R.id.bottom_navigation);
-//        bottomNav.setSelectedItemId(R.id.homeNav);
-
-//        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-//            @SuppressLint("NonConstantResourceId")
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                int id = item.getItemId();
-//
-//                if (id == R.id.homeNav){
-//                    Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
-//
-//                    // Pass the user to next page
-//                    intent.putExtra("USER_ID_EXTRA", userId);
-//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-//                    intent.putExtra("USER_NAME_EXTRA", userName);
-//
-//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    startActivity(intent);
-//                    finish();
-//                }
-//
-//                else if (id == R.id.searchNav) {
-//                    Intent intent = new Intent(LocationActivity.this, MapsActivity.class);
-//
-//                    // Pass the user to next page
-//                    intent.putExtra("USER_ID_EXTRA", userId);
-//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-//                    intent.putExtra("USER_NAME_EXTRA", userName);
-//
-//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    startActivity(intent);
-//                    finish();
-//
-//                } else if (id == R.id.focusNav) {
-//                    Intent intent = new Intent(LocationActivity.this, StudyZoneActivity.class);
-//
-//                    // Pass the user to next page
-//                    intent.putExtra("USER_ID_EXTRA", userId);
-//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-//                    intent.putExtra("USER_NAME_EXTRA", userName);
-//                    startActivity(intent);
-//                    finish();
-//
-//                } else {
-//                    Intent intent = new Intent(LocationActivity.this, AccountActivity.class);
-//
-//                    // Pass the user to next page
-//                    intent.putExtra("USER_ID_EXTRA", userId);
-//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-//                    intent.putExtra("USER_NAME_EXTRA", userName);
-//                    startActivity(intent);
-//                }
-//
-//                return false;
-//            }
-//        });
-
         new Thread() {
             @Override
             public void run() {
@@ -171,7 +111,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
                     List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(locationId, ReviewType.valueOf(location.getType()));
 
-                    //System.out.println("Building id:" + space.getBuildingId());
                     Building building = new BuildingServiceImpl().getBuilding(location.getBuildingId(), ReviewType.valueOf(location.getType()));
                     List<Favorite> favorites = new FavoriteServiceImpl().getFavoritesByUser(userId,ReviewType.valueOf(location.getType()));
                     isFavorite = false;
@@ -210,17 +149,9 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     Button addReview = findViewById(R.id.add_review);
                     Button showReviews = findViewById(R.id.show_reviews);
                     showingReviews = false;
-//                    Button hideReviews = findViewById(R.id.hide_reviews);
-//                    User user = null;
-//
-//                    //System.out.println(userID);
-//                    user = new UserServiceImpl().getUser(userId);
-//
-//                    userName = user.getUserName();
 
                     TextView listTitle = findViewById(R.id.listTitle);
                     LinearLayout amenitiesList = findViewById(R.id.amenities);
-                    //System.out.println("Building id: " + space.getBuildingId());
 
                     List<Resource> resources = new ResourceServiceImpl().getResourceFromBuilding(location.getBuildingId());
                     locationButton.setOnClickListener(new View.OnClickListener(){
@@ -246,16 +177,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                         public void onClick(View v) {
 
                             finish();
-//                            new Thread() {
-//                                public void run() {
-//                                    Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
-//                                    intent.putExtra("USERID_EXTRA", userId);
-//                                    intent.putExtra("USERNAME_EXTRA", userName);
-//                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                                    startActivity(intent);
-//                                    finish();
-//                                }
-//                            }.start();
                         }
                     });
                     favouriteButton.setOnClickListener(new View.OnClickListener() {
@@ -304,30 +225,16 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                     if (!showingReviews) {
                                         reviewsLayout.setVisibility(View.VISIBLE);
                                         showReviews.setText(getString(R.string.hide_reviews, "Hide Reviews"));
-//                                        showReviews.setText("Hide Reviews");
                                         showingReviews = true;
                                     } else {
                                         reviewsLayout.setVisibility(View.GONE);
                                         showReviews.setText(getString(R.string.show_reviews, "Show Reviews"));
-//                                        showReviews.setText("Show Reviews");
                                         showingReviews = false;
                                     }
                                 }
                             });
                         }
                     });
-//                    hideReviews.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            runOnUiThread(new Runnable() {
-//                                public void run() {
-//                                    reviewsLayout.setVisibility(View.INVISIBLE);
-//                                    showReviews.setVisibility(View.VISIBLE);
-//                                    hideReviews.setVisibility(View.INVISIBLE);
-//                                }
-//                            });
-//                        }
-//                    });
 
                     addReviewButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -385,18 +292,11 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 distance.setText(location.getDistanceFromCurrentPosition() + "m");
                             }
                             for(Review review : reviews) {
-                                //System.out.println(review.getComment());
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.review_layout, reviewsLayout, false);
                                 CardView newCard = createNewSmallCard(card,review);
                                 reviewsLayout.addView(newCard);
                             }
-//                            HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
-//                            List<String> expandable = new ArrayList<String>();
-//                            expandable.add("Amenities");
-//                            List<String> amenities = new ArrayList<String>();
                             for (Resource resource: resources) {
-//                                amenities.add(resource.getName());
-                                //System.out.println(resource.getName());
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
                                 TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
                                 ImageView resourceIcon = card.findViewById(R.id.icon);
@@ -485,14 +385,11 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         TextView userComment = (TextView) card.findViewById(R.id.textView);
         TextView datePosted = card.findViewById(R.id.date_posted);
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        System.out.println(review.getDate());
         String date = dateFormat.format(review.getDate());
-//        String justDate = date.substring(0,10);
         datePosted.setText(date);
         userComment.setText(review.getComment());
         RatingBar rating = (RatingBar) card.findViewById(R.id.ratingBar);
         rating.setRating(review.getScore());
-        System.out.println("Review comment:" + review.getComment());
         ImageView userImage = (ImageView) card.findViewById(R.id.imageView2);
 
         return card;
@@ -557,10 +454,8 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     public void run() {
                         try {
                             Review addedReview = new ReviewServiceImpl().addReview(userId,locationId,ReviewType.valueOf(location.getType()),rating,review);
-                            System.out.println("Success");
 //                            reloadActivity();
                         } catch (Exception e) {
-                            System.out.println("Failed");
                             throw new RuntimeException(e);
                         }
                     }
