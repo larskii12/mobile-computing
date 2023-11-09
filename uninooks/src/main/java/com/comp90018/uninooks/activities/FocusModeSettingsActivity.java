@@ -37,11 +37,9 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
     int longBreakTimeValue;
     Boolean onAutoSequence;
 
-    private int pomodoroTimeDefault = 25;
-    private int shortPauseTimeDefault = 5;
-    private int longPauseTimeDefault = 15;
-
-
+    private static final int POMODORO_TIME_DEFAULT = 25;
+    private static final int SHORT_PAUSE_TIME_DEFAULT = 5;
+    private static final int LONG_PAUSE_TIME_DEFAULT = 15;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,7 +168,7 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
     /**
      * Goes back to the previous page, no settings are applied/saved
      */
-    private View.OnClickListener returnListener = new View.OnClickListener() {
+    private final View.OnClickListener returnListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             finish();
@@ -180,12 +178,12 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
     /**
      * Resets all settings to default settings, stays on current page
      */
-    private View.OnClickListener resetListener = new View.OnClickListener() {
+    private final View.OnClickListener resetListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            pomodoroTime.setText(String.valueOf(pomodoroTimeDefault));
-            shortBreakTime.setText(String.valueOf(shortPauseTimeDefault));
-            longBreakTime.setText(String.valueOf(longPauseTimeDefault));
+            pomodoroTime.setText(String.valueOf(POMODORO_TIME_DEFAULT));
+            shortBreakTime.setText(String.valueOf(SHORT_PAUSE_TIME_DEFAULT));
+            longBreakTime.setText(String.valueOf(LONG_PAUSE_TIME_DEFAULT));
             toggleSwitch.setChecked(false);
         }
     };
@@ -193,7 +191,7 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
     /**
      * Goes back to previous page with settings applied
      */
-    private View.OnClickListener saveListener = new View.OnClickListener() {
+    private final View.OnClickListener saveListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             String pomodoro = pomodoroTime.getText().toString();
@@ -210,13 +208,13 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         if (pomodoro.equals("")) {
-            pomodoro = String.valueOf(pomodoroTimeDefault);
+            pomodoro = String.valueOf(POMODORO_TIME_DEFAULT);
         }
         if (shortBreak.equals("")) {
-            shortBreak = String.valueOf(shortPauseTimeDefault);
+            shortBreak = String.valueOf(SHORT_PAUSE_TIME_DEFAULT);
         }
         if (longBreak.equals("")) {
-            longBreak = String.valueOf(longPauseTimeDefault);
+            longBreak = String.valueOf(LONG_PAUSE_TIME_DEFAULT);
         }
 
         editor.putInt(getString(R.string.pomodoro_setting), Integer.parseInt(pomodoro)*60);
@@ -231,9 +229,9 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
      */
     private void retrieveSettings() {
         SharedPreferences sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
-        pomodoroTimeValue = sharedPreferences.getInt(getString(R.string.pomodoro_setting), pomodoroTimeDefault);
-        shortBreakTimeValue = sharedPreferences.getInt(getString(R.string.short_break_setting), shortPauseTimeDefault);
-        longBreakTimeValue = sharedPreferences.getInt(getString(R.string.long_break_setting), longPauseTimeDefault);
+        pomodoroTimeValue = sharedPreferences.getInt(getString(R.string.pomodoro_setting), POMODORO_TIME_DEFAULT);
+        shortBreakTimeValue = sharedPreferences.getInt(getString(R.string.short_break_setting), SHORT_PAUSE_TIME_DEFAULT);
+        longBreakTimeValue = sharedPreferences.getInt(getString(R.string.long_break_setting), LONG_PAUSE_TIME_DEFAULT);
         onAutoSequence = sharedPreferences.getBoolean(getString(R.string.auto_pomodoro), false);
 
         pomodoroTime.setText(String.valueOf(pomodoroTimeValue/60));

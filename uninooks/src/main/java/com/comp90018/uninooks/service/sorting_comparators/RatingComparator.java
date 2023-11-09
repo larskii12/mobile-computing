@@ -1,4 +1,4 @@
-package com.comp90018.uninooks.service.sortingComparators;
+package com.comp90018.uninooks.service.sorting_comparators;
 
 import com.comp90018.uninooks.models.location.Location;
 import java.util.Comparator;

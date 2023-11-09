@@ -43,8 +43,6 @@ public class FocusModeSplashActivity extends AppCompatActivity {
                 // This code will run after the specified delay (5 seconds)
                 // You can perform your loading or any other task here
                 loading.setVisibility(View.GONE);
-                //focusButton.setVisibility(View.VISIBLE);
-
 
                 try {
                     Intent intent = new Intent(FocusModeSplashActivity.this, FocusModeMainActivity.class);
