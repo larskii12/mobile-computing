@@ -123,8 +123,8 @@ public class HomeActivity extends AppCompatActivity {
 //            ImageButton favouritesButton = (ImageButton) findViewById(R.id.favouritesButton);
 
 
-            TextView greetingMessage = (TextView) findViewById(R.id.textView);
-            greetingMessage.setText("Welcome back, " + userName + "!");
+//            TextView greetingMessage = (TextView) findViewById(R.id.textView);
+//            greetingMessage.setText("Welcome back, " + userName + "!");
 
             bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
                 @SuppressLint("NonConstantResourceId")
@@ -246,11 +246,12 @@ public class HomeActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             // Nearby Section
-                            if (closingStudySpaces.size()== 0){
+                            if (closestStudySpaces.size()== 0){
                                 ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
                                 loadingGIF.setVisibility(View.VISIBLE);
                                 loadingGIF.setVisibility(View.GONE);
                             } else {
+                                System.out.println(closestStudySpaces.size());
                                 for (StudySpace space : closestStudySpaces.subList(0, 5)) {
                                     CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.small_card_layout, nearbyLayout, false);
                                     ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
@@ -293,7 +294,7 @@ public class HomeActivity extends AppCompatActivity {
                             } else {
                                 for (StudySpace space : topRatedStudySpaces.subList(0, 5)) {
 //                        Location space = studySpacesNearby.get(i);
-                                    CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_card_layout, topRatedLayout, false);
+                                    CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.top_layout_card, topRatedLayout, false);
                                     ProgressBar loadingGIF2 = findViewById(R.id.loadingGIF_2);
                                     loadingGIF2.setVisibility(View.VISIBLE);
                                     CardView newCard = createNewSmallCard(card, space, "rating");
@@ -445,14 +446,14 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
 
-        if (!type.equals("rating")) {
+//        if (!type.equals("rating")) {
             ImageView favouriteIcon = (ImageView) card.findViewById(R.id.favouriteIcon);
 
             favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_border_24);
             favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
 //        favouriteIcon.setColorFilter(getApplicationContext().getResources().getColor(R.color.red));
             //check if the favourites list includes this user and favourite
-        } else {
+        if(type.equals("rating")) {
             ImageView ratingIcon = card.findViewById(R.id.starRating);
             ratingIcon.setBackgroundResource(R.drawable.star_solid);
         }
