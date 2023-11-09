@@ -125,9 +125,7 @@ public class HomeActivity extends AppCompatActivity {
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 showInfoDialog();
-
             }
         });
 
@@ -225,7 +223,6 @@ public class HomeActivity extends AppCompatActivity {
                         topRatedStudySpaces.addAll(closedTopRatedSpaces);
                     }
 
-//                    List<Location> studySpacesNearby = locationAPI.findAllLocations("STUDY", "", true);
                     List<Favorite> favouriteSpaces = new FavoriteServiceImpl().getFavoritesByUser(userId, ReviewType.valueOf("STUDY_SPACE"));
 
                     ArrayList <StudySpace> favorites = new ArrayList<StudySpace>();
@@ -257,7 +254,6 @@ public class HomeActivity extends AppCompatActivity {
                                     ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
                                     loadingGIF.setVisibility(View.VISIBLE);
                                     CardView newCard = createNewSmallCard(card, space, "distance");
-                                    String spaceID = String.valueOf(space.getId());
                                     for (StudySpace favorite : favorites) {
                                         if (favorite.getName().equals(space.getName())) {
                                             ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
@@ -296,7 +292,6 @@ public class HomeActivity extends AppCompatActivity {
                                     ProgressBar loadingGIF2 = findViewById(R.id.loadingGIF_2);
                                     loadingGIF2.setVisibility(View.VISIBLE);
                                     CardView newCard = createNewSmallCard(card, space, "rating");
-//                                    String spaceID = String.valueOf(space.getId());
                                     for (StudySpace favorite : favorites) {
                                         if (favorite.getName().equals(space.getName())) {
                                             ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
@@ -338,7 +333,6 @@ public class HomeActivity extends AppCompatActivity {
                                     ProgressBar loadingGIF3 = findViewById(R.id.loadingGIF_3);
                                     loadingGIF3.setVisibility(View.VISIBLE);
                                     CardView newCard = createNewSmallCard(card, space, "favorite");
-                                    String spaceID = String.valueOf(space.getId());
                                     ImageView favouriteIcon = (ImageView) newCard.findViewById(R.id.favouriteIcon);
                                     favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_24);
                                     favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
@@ -387,7 +381,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
     }
-
+    //This creates a new card for the location
     @SuppressLint("SetTextI18n")
     private CardView createNewSmallCard(CardView card, StudySpace space, String type){
         ImageView banner = (ImageView) card.findViewById(R.id.banner);
@@ -445,7 +439,7 @@ public class HomeActivity extends AppCompatActivity {
 
         favouriteIcon.setBackgroundResource(R.drawable.baseline_favorite_border_24);
         favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(),R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
-            //check if the favourites list includes this user and favourite
+        //check if the favourites list includes this user and favourite
         if(type.equals("rating")) {
             ImageView ratingIcon = card.findViewById(R.id.starRating);
             ratingIcon.setBackgroundResource(R.drawable.star_solid);
@@ -454,6 +448,7 @@ public class HomeActivity extends AppCompatActivity {
         return card;
     }
 
+    //calculates the time to the closing of a location
     private double getTimeToClose(Time closeTime){
         Date today = new Date();
         Time currentTime = new Time(today.getTime());
@@ -468,6 +463,7 @@ public class HomeActivity extends AppCompatActivity {
         return hours;
     }
     private final SensorEventListener sensorListener = new SensorEventListener() {
+        //this opens a new suggested study space
         @Override
         public void onSensorChanged(SensorEvent event) {
             float x = event.values[0];
@@ -500,18 +496,21 @@ public class HomeActivity extends AppCompatActivity {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
     };
+    //This restarts the accelerometer sensor
     @Override
     protected void onResume() {
         sensorManager.registerListener(sensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL);
         super.onResume();
     }
+    //This disables the accelerometer sensor
     @Override
     protected void onPause() {
         sensorManager.unregisterListener(sensorListener);
         super.onPause();
     }
 
+    //This reloads the activity
     private void reloadActivity(){
         Intent intent = getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -519,6 +518,7 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //This opens the dialog informing the user of the shake suggestions feature
     private void showDialog() {
         neverShowAgain = sharedPreferences.getBoolean(getString(R.string.never_show_welcome), false);
         if (!neverShowAgain) {
@@ -526,15 +526,15 @@ public class HomeActivity extends AppCompatActivity {
             dialog.show();
         }
     }
+    //This opens a dialog informing the user of the shake suggestions feature
     private Dialog createDialog() {
-        String[] choices = {"I understand, don't show this again"};
         final boolean[] neverShowAgainDialog = {false};
 
         // Use the Builder class for convenient dialog construction.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         builder.setView(inflater.inflate(R.layout.shake_dialog, null))
-                // Add action buttons
+                // This button confirms that the user understands and closes the dialog
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -542,13 +542,6 @@ public class HomeActivity extends AppCompatActivity {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putBoolean(getString(R.string.never_show_welcome), neverShowAgainDialog[0]);
                         editor.apply();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancels the dialog.
-//                      // Stay on current page, don't do anything
-//                      // Settings are not changed
                     }
                 });
         return builder.create();
