@@ -725,15 +725,11 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
 
         shakeToggle.setChecked(shakingEnabled);
 
-        BackgroundAppService.NOTIFICATION_STATUS = hasNotificationPermission();
-
         notificationToggle.setChecked(hasNotificationPermission());
 
         BackgroundAppService.USAGE_STATUS = hasUsageAccessPermission();
 
         usageAccessToggle.setChecked(hasUsageAccessPermission());
-
-        GPSServiceImpl.setGPSPermissionStatus(hasPrecisionLocationPermission());
 
         preciseLocationToggle.setChecked(hasPrecisionLocationPermission());
     }

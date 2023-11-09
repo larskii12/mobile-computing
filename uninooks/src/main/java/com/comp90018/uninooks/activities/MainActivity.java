@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements GPSService {
          * Emulator Testing Mode Detection
          */
         if (EmulatorServiceImpl.isEmulator()) {
-            showTextMessage("Emulator Testing Mode\nLocation: Melbourne Connect.");
+            showTextMessage("Emulator Testing Mode\nLocation: Melbourne Connect");
         }
     }
 
