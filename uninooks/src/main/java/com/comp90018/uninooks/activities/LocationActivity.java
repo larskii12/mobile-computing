@@ -482,6 +482,8 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     }
     private CardView createNewSmallCard(CardView card, Review review){
         TextView userComment = (TextView) card.findViewById(R.id.textView);
+        TextView datePosted = card.findViewById(R.id.date_posted);
+        datePosted.setText("09/11/2023");
         userComment.setText(review.getComment());
         RatingBar rating = (RatingBar) card.findViewById(R.id.ratingBar);
         rating.setRating(review.getScore());
