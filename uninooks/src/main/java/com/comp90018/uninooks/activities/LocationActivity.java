@@ -454,7 +454,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     public void run() {
                         try {
                             Review addedReview = new ReviewServiceImpl().addReview(userId,locationId,ReviewType.valueOf(location.getType()),rating,review);
-//                            reloadActivity();
+                            reloadActivity();
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -471,6 +471,11 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     private void reloadActivity(){
         Intent intent = getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        intent.putExtra("USER_ID_EXTRA", userId);
+        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+        intent.putExtra("USER_NAME_EXTRA", userName);
+        intent.putExtra("LOCATION_TYPE", location.getType());
+        intent.putExtra("LOCATION", location);
         finish();
         startActivity(intent);
     }
