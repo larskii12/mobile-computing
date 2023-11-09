@@ -286,25 +286,6 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         }.start();
     }
 
-    public void showFullRoute(LatLng pointA, LatLng pointB){
-
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-
-        if (pointA != null && pointB != null){
-            builder.include(pointA);
-            builder.include(pointB);
-            LatLngBounds bounds = builder.build();
-
-            int padding = 50;
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-            mMap.animateCamera(cameraUpdate);
-        }
-    }
-
-    private void navigationRouteAnimation(){
-
-    }
-
     private void findWalkingPath(LatLng currentPosition, LatLng destination) throws IOException {
 
                 try {
