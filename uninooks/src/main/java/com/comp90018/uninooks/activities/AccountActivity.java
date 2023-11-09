@@ -269,6 +269,7 @@ public class AccountActivity extends AppCompatActivity {
                                     editor.putString(getString(R.string.Email), "");
                                     editor.putString(getString(R.string.Username), "");
                                     editor.putString(getString(R.string.Password), "");
+                                    editor.apply();
 
                                     Intent intent = new Intent(AccountActivity.this, LoginActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

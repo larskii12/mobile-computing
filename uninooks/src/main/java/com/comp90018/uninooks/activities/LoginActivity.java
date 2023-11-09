@@ -214,6 +214,9 @@ public class LoginActivity extends AppCompatActivity {
     private void launchHomeActivity() {
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
 
+        System.out.println("IN LOGIN ACTIVITY: " + userId);
+        System.out.println("IN LOGIN ACTIVITY: " + userEmail);
+        System.out.println("IN LOGIN ACTIVITY: " + userName);
         // Pass the user to next page
         intent.putExtra("USER_ID_EXTRA", userId);
         intent.putExtra("USER_EMAIL_EXTRA", userEmail);
@@ -251,9 +254,6 @@ public class LoginActivity extends AppCompatActivity {
 
         ifPasswordChanged = sharedPreferences.getBoolean(getString(R.string.PasswordChanged), false);
         ifLogout = sharedPreferences.getBoolean(getString(R.string.LogOut), false);
-
-        System.out.println("ENTIRE IF: " + (!(userId == -1 || userEmail.equals("") || userName.equals("") || password.equals(""))
-                && (!ifPasswordChanged) && (!ifLogout)));
 
         if (!(userId == -1 || userEmail.equals("") || userName.equals("") || password.equals(""))
                 && (!ifPasswordChanged) && (!ifLogout)) {
