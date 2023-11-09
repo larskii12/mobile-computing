@@ -86,6 +86,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     private boolean isShortPause = false;
     private boolean isLongPause = false;
     private boolean settingsClicked = false;
+    private boolean navBarClicked = false;
     private boolean onAutoSequence = false;
     private boolean inSequence = false;
 
@@ -269,6 +270,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         });
 
         clickPomodoroButton();
+        retrieveSettings();
         isCurrentlyOnApp = true;
 
         bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -278,10 +280,13 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 int id = item.getItemId();
 
                 if (id == R.id.homeNav){
+                    resetTimer();
                     handler.removeCallbacksAndMessages(null);
                     inSequence = false;
                     isCurrentlyOnApp = false;
                     stopService();
+
+                    navBarClicked = true;
 
                     Intent intent = new Intent(FocusModeTimerActivity.this, HomeActivity.class);
 
@@ -296,10 +301,13 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 }
 
                 else if (id == R.id.searchNav) {
+                    resetTimer();
                     handler.removeCallbacksAndMessages(null);
                     inSequence = false;
                     isCurrentlyOnApp = false;
                     stopService();
+
+                    navBarClicked = true;
 
                     Intent intent = new Intent(FocusModeTimerActivity.this, MapsActivity.class);
 
@@ -315,10 +323,13 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 } else if (id == R.id.focusNav) {
                     ;
                 } else {
+                    resetTimer();
                     handler.removeCallbacksAndMessages(null);
                     inSequence = false;
                     isCurrentlyOnApp = false;
                     stopService();
+
+                    navBarClicked = true;
 
                     Intent intent = new Intent(FocusModeTimerActivity.this, AccountActivity.class);
 
@@ -353,7 +364,6 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         if (isRunning) {
             isCurrentlyOnApp = false;
             // Detect the recent 20 seconds used apps
-
             startServiceViaWorker();
             startService();
         }
@@ -363,11 +373,10 @@ public class FocusModeTimerActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        retrieveSettings();
-
-        if (settingsClicked) {
+        if (settingsClicked || navBarClicked) {
             settingsClicked = false;
-
+            navBarClicked = false;
+            retrieveSettings();
             // if settings change, then do this -- have to compare before and after
             if (onAutoSequence) {
                 // if settings change (even if its only the duration, everything will reset to the start of the sequence)
@@ -618,6 +627,8 @@ public class FocusModeTimerActivity extends AppCompatActivity {
 
                 if (!isScreenOn()) {
                     isCurrentlyOnApp = true;
+                    stopService();
+                } else if (!isCurrentlyOnApp) {
                     stopService();
                 }
 

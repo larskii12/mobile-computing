@@ -130,58 +130,58 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         //navigate to the different pages
-            bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-                @SuppressLint("NonConstantResourceId")
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    int id = item.getItemId();
+        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @SuppressLint("NonConstantResourceId")
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
 
-                    if (id == R.id.homeNav){
-                        reloadActivity();
-                    }
-
-                    else if (id == R.id.searchNav) {
-                        Intent intent = new Intent(HomeActivity.this, MapsActivity.class);
-
-                        // Pass the user to next page
-                        intent.putExtra("USER_ID_EXTRA", userId);
-                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                        intent.putExtra("USER_NAME_EXTRA", userName);
-
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        finish();
-
-                    } else if (id == R.id.focusNav) {
-                        Intent intent = new Intent(HomeActivity.this, FocusModeSplashActivity.class);
-
-                        // Pass the user to next page
-                        intent.putExtra("USER_ID_EXTRA", userId);
-                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                        intent.putExtra("USER_NAME_EXTRA", userName);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Intent intent = new Intent(HomeActivity.this, AccountActivity.class);
-
-                        // Pass the user to next page
-                        intent.putExtra("USER_ID_EXTRA", userId);
-                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                        intent.putExtra("USER_NAME_EXTRA", userName);
-                        startActivity(intent);
-                    }
-
-                    return false;
+                if (id == R.id.homeNav){
+                    reloadActivity();
                 }
-            });
+
+                else if (id == R.id.searchNav) {
+                    Intent intent = new Intent(HomeActivity.this, MapsActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+
+                } else if (id == R.id.focusNav) {
+                    Intent intent = new Intent(HomeActivity.this, FocusModeSplashActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Intent intent = new Intent(HomeActivity.this, AccountActivity.class);
+
+                    // Pass the user to next page
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
+                    startActivity(intent);
+                }
+
+                return false;
+            }
+        });
 
 
-            new Thread() {
-                ArrayList<StudySpace> closestStudySpaces = new ArrayList<>();
+        new Thread() {
+            ArrayList<StudySpace> closestStudySpaces = new ArrayList<>();
 
-                @Override
-                public void run() {
-                    try {
+            @Override
+            public void run() {
+                try {
                     locationAPI = new LocationServiceImpl();
 
                     ArrayList<StudySpace> allStudySpaces = new StudySpaceServiceImpl().getAllStudySpaces();
@@ -484,15 +484,15 @@ public class HomeActivity extends AppCompatActivity {
                 int rand = (int)(Math.random() * randomRange);
                 randomSpace = topRatedStudySpaces.get(rand);
                 new Thread() {
-                        public void run() {
-                            Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
-                            intent.putExtra("USER_ID_EXTRA", userId);
-                            intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                            intent.putExtra("USER_NAME_EXTRA", userName);
-                            intent.putExtra("LOCATION_TYPE", randomSpace.getType());
-                            intent.putExtra("LOCATION", randomSpace);
-                            startActivity(intent);
-                        }
+                    public void run() {
+                        Intent intent = new Intent(HomeActivity.this, LocationActivity.class);
+                        intent.putExtra("USER_ID_EXTRA", userId);
+                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                        intent.putExtra("USER_NAME_EXTRA", userName);
+                        intent.putExtra("LOCATION_TYPE", randomSpace.getType());
+                        intent.putExtra("LOCATION", randomSpace);
+                        startActivity(intent);
+                    }
                 }.start();
             }
         }
@@ -588,4 +588,3 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 }
-
