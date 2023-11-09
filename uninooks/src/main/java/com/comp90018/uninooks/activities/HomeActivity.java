@@ -246,7 +246,7 @@ public class HomeActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             // Nearby Section
-                            if (closingStudySpaces.size()== 0){
+                            if (closestStudySpaces.size()== 0){
                                 ProgressBar loadingGIF = findViewById(R.id.loadingGIF);
                                 loadingGIF.setVisibility(View.VISIBLE);
                                 loadingGIF.setVisibility(View.GONE);
