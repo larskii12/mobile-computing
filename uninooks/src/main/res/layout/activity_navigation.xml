@@ -33,13 +33,27 @@
             android:id="@+id/locate_my_location"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="50dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
             android:layout_gravity="bottom|end"
             android:background="@android:color/transparent"
             android:src="@drawable/location"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:contentDescription="back button"
+            android:src="@drawable/arrow_back_fill"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
