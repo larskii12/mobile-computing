@@ -1,25 +1,30 @@
 package com.comp90018.uninooks.activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 
@@ -93,15 +98,17 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    private ImageView editStudySuggestionIcon;
+    private Switch shakeToggle;
+    private Switch notificationToggle;
+    private Switch usageAccessToggle;
+    private Switch preciseLocationToggle;
 
-    private TextView textViewStudySuggestionOff;
+    private final int APP_LOCATION_SETTINGS_REQUEST = 1234;
 
-    private TextView textViewStudySuggestionOn;
+    private final int REQUEST_USAGE_ACCESS = 1001;
 
-    private Switch switchStudySuggestion;
+    private final int APP_NOTIFICATION_PUSH = 1002;
 
-    private TextView textViewStudyModeStatus;
 
 
     @SuppressLint("HandlerLeak")
@@ -120,6 +127,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                     emailTextView.setText(userEmail);
                     degreeTextView.setText(userDegree);
                     facultyTextView.setText(userFaculty);
+                    setAllToggles();
                     break;
 
                 case 2:
@@ -174,23 +182,33 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
         userNameTextView = findViewById(R.id.Account_Pi_Edit_Name);
         buttonNewUserName = findViewById(R.id.Pi_ButtonConfirmNewUserName);
         editUsernameEditText = findViewById(R.id.EditTextNewUsername);
+
         editTextNewEmail = findViewById(R.id.EditTextConfirmNewEmail);
         buttonNewEmailGetOTP = findViewById(R.id.Pi_ButtonConfirmNewEmail);
         editTextEmailOTP = findViewById(R.id.Pi_EditTextEmailOTP);
         buttonNewEmailVerifyOTP = findViewById(R.id.Pi_ButtonOTPVerify);
+
         passwordTextView = findViewById(R.id.Account_Pi_Edit_Password);
         editCurrentPassword = findViewById(R.id.Pi_EditTextCurrentPassword);
         editNewPassword = findViewById(R.id.Pi_EditTextNewPassword);
         editConfirmPassword = findViewById(R.id.Pi_EditTextConfirmNewPassword);
         buttonConfirmNewPassword = findViewById(R.id.Pi_ButtonConfirmNewPassword);
+
         buttonNewFaculty = findViewById(R.id.Pi_ButtonConfirmNewFaculty);
         buttonNewDegree = findViewById(R.id.Pi_ButtonConfirmNewDegree);
-        editStudySuggestionIcon = findViewById(R.id.Account_Pi_Ic_Edit_study_space);
-        textViewStudySuggestionOff = findViewById(R.id.study_space_textOff);
-        textViewStudySuggestionOn = findViewById(R.id.study_space_textOn);
-        switchStudySuggestion = findViewById(R.id.study_space_switch);
-        textViewStudyModeStatus = findViewById(R.id.textViewStudyModeStatus);
 
+        shakeToggle = findViewById(R.id.shakeFunctionToggle);
+        notificationToggle = findViewById(R.id.notificationToggle);
+        usageAccessToggle = findViewById(R.id.usageAccessToggle);
+        preciseLocationToggle = findViewById(R.id.locationToggle);
+
+        shakeToggle.setOnClickListener(shakeToggleListener);
+        notificationToggle.setOnClickListener(notificationToggleListener);
+        usageAccessToggle.setOnClickListener(usageAccessToggleListener);
+        preciseLocationToggle.setOnClickListener(locationToggleListener);
+
+        // retrieve the current permissions from the user, and set whether it has been checked or not
+        // pass string, activity (this) --> to get the boolean
 
         otp = "";
 
@@ -516,47 +534,13 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                 }.start();
             }
         });
-        editStudySuggestionIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences pref = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
-                boolean isStudyModeOn = pref.getBoolean("HomeShakeMode", true);
-
-                if (textViewStudySuggestionOff.getVisibility() == View.VISIBLE) {
-                    textViewStudyModeStatus.setVisibility(View.VISIBLE);
-                    textViewStudySuggestionOff.setVisibility(View.GONE);
-                    textViewStudySuggestionOn.setVisibility(View.GONE);
-                    switchStudySuggestion.setVisibility(View.GONE);
-                } else {
-                    textViewStudyModeStatus.setVisibility(View.GONE);
-                    textViewStudySuggestionOff.setVisibility(View.VISIBLE);
-                    textViewStudySuggestionOn.setVisibility(View.VISIBLE);
-                    switchStudySuggestion.setVisibility(View.VISIBLE);
-            }}
-        });
-        switchStudySuggestion.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences pref = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putBoolean("HomeShakeMode", isChecked);
-                editor.apply();
-                if (isChecked) {
-                    textViewStudyModeStatus.setText("ON");
-                } else {
-                    textViewStudyModeStatus.setText("OFF");
-                }
-            }
-        });
-
-
-
-
+        setAllToggles();
         new Thread() {
             public void run(){
                 initUserInfo();
             }
         }.start();
+
     }
 
     /**
@@ -607,6 +591,8 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
                         userDegree = "Not Provided";
                 }
 
+
+
                 handler.sendEmptyMessage(1);
 
             } catch (Exception e) {
@@ -614,6 +600,55 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
             }
     }
 
+    public void onResume() {
+        super.onResume();
+        handler.sendEmptyMessage(1);
+    }
+    /**
+     * Detects whether the shake function toggle was checked or not
+     */
+    private View.OnClickListener shakeToggleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (shakeToggle.isChecked()) {
+                editor.putBoolean(getString(R.string.shaking_enabled), true);
+            } else {
+                editor.putBoolean(getString(R.string.shaking_enabled), false);
+            }
+            editor.apply();
+        }
+    };
+
+    /**
+     * Detects whether the notification toggle was checked or not
+     */
+    private View.OnClickListener notificationToggleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            updateNotificationPermission();
+        }
+    };
+
+    /**
+     * Detects whether the usage access toggle was checked or not
+     */
+    private View.OnClickListener usageAccessToggleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            updateUsagePermission();
+        }
+    };
+
+
+    /**
+     * Detects whether the precise location toggle was checked or not
+     */
+    private View.OnClickListener locationToggleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            updatePreciseLocationPermission();
+        }
+    };
 
 
 
@@ -669,4 +704,86 @@ public class PersonalInformationActivity extends AppCompatActivity implements Ad
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
+
+
+    /**
+     * Usage Access Permission settings
+     *
+     * @return
+     */
+    private boolean hasUsageAccessPermission() {
+        try {
+            PackageManager packageManager = getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
+            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(MainActivity.getAppContext().APP_OPS_SERVICE);
+            int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
+            return (mode == AppOpsManager.MODE_ALLOWED);
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Notification Permission Check
+     *
+     * @return
+     */
+    private boolean hasNotificationPermission() {
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(MainActivity.getAppContext());
+        return notificationManagerCompat.areNotificationsEnabled();
+    }
+
+    private boolean hasPrecisionLocationPermission(){
+        return ContextCompat.checkSelfPermission(PersonalInformationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void updatePreciseLocationPermission(){
+        Intent intentLocationSourceSettings = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivityForResult(intentLocationSourceSettings, APP_LOCATION_SETTINGS_REQUEST);
+    }
+
+
+    private void updateUsagePermission() {
+        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+        startActivityForResult(intent, REQUEST_USAGE_ACCESS);
+    }
+
+    private void updateNotificationPermission() {
+        Intent intentNotification = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+        startActivityForResult(intentNotification, APP_NOTIFICATION_PUSH);
+    }
+
+    /**
+     * Set each toggle appropriately depending on the current state
+     */
+    private void setAllToggles() {
+        // add saved preferences for shake mode
+        boolean shakingEnabled = sharedPreferences.getBoolean(getString(R.string.shaking_enabled), false);
+
+        if (shakingEnabled) {
+            shakeToggle.setChecked(true);
+        } else {
+            shakeToggle.setChecked(false);
+        }
+
+        if (hasNotificationPermission()) {
+            notificationToggle.setChecked(true);
+        } else {
+            notificationToggle.setChecked(false);
+        }
+
+        if (hasUsageAccessPermission()) {
+            usageAccessToggle.setChecked(true);
+        } else {
+            usageAccessToggle.setChecked(false);
+        }
+
+        if (hasPrecisionLocationPermission()) {
+            preciseLocationToggle.setChecked(true);
+        } else {
+            preciseLocationToggle.setChecked(false);
+        }
+    }
+
 }
