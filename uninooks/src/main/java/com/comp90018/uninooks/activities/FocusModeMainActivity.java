@@ -39,7 +39,6 @@ public class FocusModeMainActivity extends AppCompatActivity {
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
         userName = intent.getStringExtra("USER_NAME_EXTRA");
 
-
         studyGif = findViewById(R.id.focus_studygif);
         startFocusButton = findViewById(R.id.btn_focus_mode);
         bottomNav = findViewById(R.id.bottom_navigation);
@@ -51,6 +50,10 @@ public class FocusModeMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FocusModeMainActivity.this, FocusModeTimerActivity.class);
+                // Pass the user to next page
+                intent.putExtra("USER_ID_EXTRA", userId);
+                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                intent.putExtra("USER_NAME_EXTRA", userName);
                 startActivity(intent);
             }
         });
@@ -90,7 +93,6 @@ public class FocusModeMainActivity extends AppCompatActivity {
                     ;
                 } else {
                     Intent intent = new Intent(FocusModeMainActivity.this, AccountActivity.class);
-
                     // Pass the user to next page
                     intent.putExtra("USER_ID_EXTRA", userId);
                     intent.putExtra("USER_EMAIL_EXTRA", userEmail);

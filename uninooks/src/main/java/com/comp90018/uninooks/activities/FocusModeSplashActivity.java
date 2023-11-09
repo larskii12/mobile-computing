@@ -14,6 +14,8 @@ import com.comp90018.uninooks.R;
 public class FocusModeSplashActivity extends AppCompatActivity {
 
     private int userId;
+    private String userEmail;
+    private String userName;
 
     private ProgressBar loading;
 
@@ -28,7 +30,9 @@ public class FocusModeSplashActivity extends AppCompatActivity {
 
         // Initialize user
         Intent intent = getIntent();
-        userId = intent.getIntExtra("userId", 6);
+        userId = intent.getIntExtra("USER_ID_EXTRA", 0);
+        userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
+        userName = intent.getStringExtra("USER_NAME_EXTRA");
 
         Handler handler = new Handler();
 
@@ -41,8 +45,12 @@ public class FocusModeSplashActivity extends AppCompatActivity {
                 loading.setVisibility(View.GONE);
                 //focusButton.setVisibility(View.VISIBLE);
 
+
                 try {
                     Intent intent = new Intent(FocusModeSplashActivity.this, FocusModeMainActivity.class);
+                    intent.putExtra("USER_ID_EXTRA", userId);
+                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                    intent.putExtra("USER_NAME_EXTRA", userName);
                     startActivity(intent);
                     finish();
                 } catch (Exception e) {
