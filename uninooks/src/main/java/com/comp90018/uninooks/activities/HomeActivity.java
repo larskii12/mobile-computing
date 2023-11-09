@@ -169,6 +169,7 @@ public class HomeActivity extends AppCompatActivity {
                         intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                         intent.putExtra("USER_NAME_EXTRA", userName);
                         startActivity(intent);
+                        finish();
                     }
 
                     return false;

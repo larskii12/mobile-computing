@@ -169,6 +169,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
                     public void run() {
                         try {
                             signUp();
+
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -316,7 +317,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
             showTextMessage("Signed up successfully!");
 
             // Destroy the sign up page and jump to log in
-            Intent intent = new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(this, IntroActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
