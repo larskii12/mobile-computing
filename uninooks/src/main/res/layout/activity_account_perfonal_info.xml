@@ -228,19 +228,6 @@
             android:layout_marginTop="168dp"
             android:text="Change Email"
             android:visibility="gone" />
-
-
-        <!--        <EditText-->
-        <!--            android:id="@+id/EditTextNewEmail"-->
-        <!--            style="@style/TextInputStyle"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:autofillHints="password"-->
-        <!--            android:hint="@string/Account_Pi_Edit_Email"-->
-        <!--            android:inputType="textEmailAddress"-->
-        <!--            android:paddingHorizontal="96dp"-->
-        <!--            android:visibility="gone" />-->
-
     </RelativeLayout>
 
     <LinearLayout
@@ -277,8 +264,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="4dp">
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="42dp">
 
 
         <TextView
