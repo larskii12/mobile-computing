@@ -144,16 +144,18 @@ public class LoginActivity extends AppCompatActivity {
                                     userEmail = user.getUserEmail();
                                     userName = user.getUserName();
 
-                                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                    if (!sharedPreferences.getBoolean("isIntroOpen", false)) {
+                                        Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
+                                        intent.putExtra("USER_ID_EXTRA", userId);
+                                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                        intent.putExtra("USER_NAME_EXTRA", userName);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(intent);
+                                        finish();
+                                    } else {
+                                        launchHomeActivity();
+                                    }
 
-                                    // Pass the user to next page
-                                    intent.putExtra("USER_ID_EXTRA", userId);
-                                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                                    intent.putExtra("USER_NAME_EXTRA", userName);
-
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                    startActivity(intent);
-                                    finish();
                                 }
 
                             } catch (Exception e) {

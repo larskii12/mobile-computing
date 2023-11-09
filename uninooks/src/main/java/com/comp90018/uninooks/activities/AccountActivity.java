@@ -210,8 +210,11 @@ public class AccountActivity extends AppCompatActivity {
                     public void run(){
                         SharedPreferences sharedPreferences = getSharedPreferences("uninooks", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
+
                         editor.putBoolean(getString(R.string.LogOut), true);
                         editor.apply(); // Commit the changes
+                        System.out.println(sharedPreferences.getAll());
+
 
                         Intent intent = new Intent(AccountActivity.this, LoginActivity.class);
                         try {
@@ -271,6 +274,7 @@ public class AccountActivity extends AppCompatActivity {
                                     editor.putString(getString(R.string.Email), "");
                                     editor.putString(getString(R.string.Username), "");
                                     editor.putString(getString(R.string.Password), "");
+
                                     editor.clear();
                                     editor.apply();
 
