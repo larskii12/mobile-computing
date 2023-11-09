@@ -78,7 +78,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     private String locationType;
     private boolean showingReviews;
     private double averageRating;
-    private int ratingAsInt;
     private boolean favouriteChanged;
 
     @Override
@@ -141,7 +140,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     TextView ratingText = findViewById(R.id.rating_Text);
                     RatingBar aveRatingBar = findViewById(R.id.averageRatingBar);
                     averageRating = new ReviewServiceImpl().getAverageRating(locationId, ReviewType.valueOf(location.getType()));
-                    ratingAsInt = (int) averageRating;
+//                    ratingAsInt = (int) averageRating;
 
                     ImageButton backButton = findViewById(R.id.imageButton);
                     ImageButton favouriteButton = findViewById(R.id.favoriteButton);
