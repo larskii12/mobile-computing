@@ -116,7 +116,7 @@ public class HomeActivity extends AppCompatActivity {
         lastAcceleration = SensorManager.GRAVITY_EARTH;
 
         if (!GPSServiceImpl.getGPSPermission()){
-            showDialog("Location Permission Needed: Without access to your location, certain features may not operate as intended. Please enable location permissions for the best experience.");
+            showDialog("Precise Location Permission Needed: Without access to your precise location, certain features may not operate as intended. Please enable precise location permissions for the best experience.");
         }
 
         //Filter buttons at the top - These need on click functions
