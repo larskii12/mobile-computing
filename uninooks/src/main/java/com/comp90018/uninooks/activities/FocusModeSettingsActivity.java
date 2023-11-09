@@ -183,9 +183,9 @@ public class FocusModeSettingsActivity extends AppCompatActivity {
     private View.OnClickListener resetListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            pomodoroTime.setText("");
-            shortBreakTime.setText("");
-            longBreakTime.setText("");
+            pomodoroTime.setText(pomodoroTimeDefault);
+            shortBreakTime.setText(shortPauseTimeDefault);
+            longBreakTime.setText(longPauseTimeDefault);
             toggleSwitch.setChecked(false);
         }
     };
