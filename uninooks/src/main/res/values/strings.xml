@@ -57,6 +57,8 @@
     <string name="PasswordChanged">Password Changed</string>
 
     <!-- Account Setting strings-->
+    <string name="Title_Account"><u>Account Information</u></string>
+    <string name="Title_Permissions"><u>Permissions</u></string>
     <string name="Account_Settings">Settings</string>
     <string name="Account_Settings_Change_Password">Password</string>
     <string name="Account_Settings_Current_Password">***********</string>
@@ -66,6 +68,10 @@
     <string name="confirm_new_password">Confirm New Password</string>
     <string name="enter_new_password">Enter New Password</string>
     <string name="email_address">Email Address</string>
+    <string name="study_space_surprise_suggestion_settings">Enable shake function</string>
+    <string name="usage_access">Allow usage access</string>
+    <string name="precise_loc">Allow precise location</string>
+    <string name="notification">Allow notifications</string>
 
     <!-- Focus Mode Strings -->
     <string name="back_to_home">Back to Home</string>
@@ -104,5 +110,4 @@
     <string name="never_show_welcome">Dont show again</string>
     <string name="show_reviews"><u>Show Reviews</u></string>
     <string name="hide_reviews"><u>Hide Reviews</u></string>
-    <string name="study_space_surprise_suggestion_settings">Enable shake function</string>\
 </resources>

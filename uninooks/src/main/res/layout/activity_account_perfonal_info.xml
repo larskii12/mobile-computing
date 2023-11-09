@@ -61,15 +61,22 @@
                 android:textAlignment="textStart" />
 
         </LinearLayout>
-
-
     </RelativeLayout>
+
+    <TextView
+        style="@style/TextHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="18dp"
+        android:textSize="26sp"
+        android:text="@string/Title_Account"/>
 
     <!-- Name Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -265,7 +272,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:layout_marginStart="42dp">
+        android:layout_marginStart="50dp">
 
 
         <TextView
@@ -398,7 +405,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -462,18 +469,25 @@
 
     </RelativeLayout>
 
+    <TextView
+        style="@style/TextHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:textSize="26sp"
+        android:text="@string/Title_Permissions"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         tools:ignore="UseCompoundDrawables">
 
-        <!-- Label "Degree" -->
         <TextView
-            android:id="@+id/Account_Pi_Surprise_Suggestion_label"
+            android:id="@+id/shakeFunction"
             style="@style/TextSubHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -481,89 +495,150 @@
             android:layout_marginEnd="16dp"
             android:text="@string/study_space_surprise_suggestion_settings" />
 
-        <ImageView
-            android:id="@+id/Account_Pi_Ic_Edit_study_space"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
+        <Switch
+            android:id="@+id/shakeFunctionToggle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
             android:clickable="true"
-            android:scaleX="0.8"
-            android:scaleY="0.8"
-            android:src="@drawable/ic_edit" />
+            android:thumbTint="@drawable/toggle_switch"
+            android:trackTint="@color/deepBlue"
+            android:visibility="visible" />
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="4dp"
-        >
+        android:layout_marginBottom="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
 
         <TextView
-            android:id="@+id/textViewStudyModeStatus"
+            android:id="@+id/notification"
+            style="@style/TextSubHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="On"
+            android:layout_marginStart="48dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/notification" />
+
+        <Switch
+            android:id="@+id/notificationToggle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="34dp"
+            android:clickable="true"
+            android:thumbTint="@drawable/toggle_switch"
+            android:trackTint="@color/deepBlue"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+        <TextView
+            android:id="@+id/usageAccess"
             style="@style/TextSubHeading"
-            android:checked="true"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/usage_access" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+        <Switch
+            android:id="@+id/usageAccessToggle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="32dp"
+            android:clickable="true"
+            android:thumbTint="@drawable/toggle_switch"
+            android:trackTint="@color/deepBlue"
+            android:visibility="visible" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/study_space_textOff"
-                android:text="Off"
-                style="@style/TextSubHeading"
-                android:layout_marginTop="24dp"
-                android:layout_marginStart="2dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
 
+        <TextView
+            android:id="@+id/location"
+            style="@style/TextSubHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/precise_loc" />
 
-            <Switch
-                android:id="@+id/study_space_switch"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginStart="8dp"
-                android:clickable="true"
-                android:thumbTint="@drawable/toggle_switch"
-                android:trackTint="@color/deepBlue"
-                android:visibility="gone"
-                />
-
-            <TextView
-                android:id="@+id/study_space_textOn"
-                android:text="On"
-                style="@style/TextSubHeading"
-                android:layout_marginTop="24dp"
-                android:layout_marginStart="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                />
-
-
-            <Button
-                android:id="@+id/Pi_ButtonConfirmStudySpaceSetting"
-                style="@style/Button.Primary.Small"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginStart="48dp"
-                android:layout_alignEnd="@id/study_space_switch"
-                android:text="@string/confirm"
-                android:visibility="gone"
-                />
-
-        </LinearLayout>
+        <Switch
+            android:id="@+id/locationToggle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="12dp"
+            android:clickable="true"
+            android:thumbTint="@drawable/toggle_switch"
+            android:trackTint="@color/deepBlue"
+            android:visibility="visible" />
+    </LinearLayout>
 
 
-    </RelativeLayout>
+
+
+
+<!--    <RelativeLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="48dp"-->
+<!--        android:layout_marginTop="4dp">-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/textViewStudyModeStatus"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="On"-->
+<!--            style="@style/TextSubHeading"-->
+<!--            android:checked="true" />-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/study_space_textOff"-->
+<!--                android:text="Off"-->
+<!--                style="@style/TextSubHeading"-->
+<!--                android:layout_marginTop="24dp"-->
+<!--                android:layout_marginStart="2dp"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:visibility="gone"/>-->
+
+
+<!--            -->
+
+<!--            <TextView-->
+<!--                android:id="@+id/study_space_textOn"-->
+<!--                android:text="On"-->
+<!--                style="@style/TextSubHeading"-->
+<!--                android:layout_marginTop="24dp"-->
+<!--                android:layout_marginStart="8dp"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"                />-->
+<!--            -->
+
+<!--        </LinearLayout>-->
+
+
+<!--    </RelativeLayout>-->
 
 
 

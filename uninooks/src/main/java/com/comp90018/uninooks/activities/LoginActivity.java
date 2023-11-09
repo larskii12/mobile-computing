@@ -279,16 +279,10 @@ public class LoginActivity extends AppCompatActivity {
      * if any of them are empty, then it won't go to the next page, otherwise it will automatically launch
      */
     private void retrieveLoginDetails() {
-//        userId = sharedPreferences.getInt(getString(R.string.UserId), -1);
-//        userEmail = sharedPreferences.getString(getString(R.string.Email), "");
-//        userName = sharedPreferences.getString(getString(R.string.Username), "");
-//        String password = sharedPreferences.getString(getString(R.string.Password), "");
-
-
-        userId = -1;
-        userEmail = "";
-        userName = "";
-        String password = "";
+        userId = sharedPreferences.getInt(getString(R.string.UserId), -1);
+        userEmail = sharedPreferences.getString(getString(R.string.Email), "");
+        userName = sharedPreferences.getString(getString(R.string.Username), "");
+        String password = sharedPreferences.getString(getString(R.string.Password), "");
 
         ifPasswordChanged = sharedPreferences.getBoolean(getString(R.string.PasswordChanged), false);
 
