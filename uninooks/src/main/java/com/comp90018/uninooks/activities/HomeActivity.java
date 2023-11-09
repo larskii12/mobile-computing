@@ -129,6 +129,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        //navigate to the different pages
             bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
                 @SuppressLint("NonConstantResourceId")
                 @Override
@@ -263,6 +264,7 @@ public class HomeActivity extends AppCompatActivity {
                                     }
                                     loadingGIF.setVisibility(View.GONE);
                                     nearbyLayout.addView(newCard);
+                                    //opens the location page
                                     newCard.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
@@ -302,6 +304,7 @@ public class HomeActivity extends AppCompatActivity {
                                     loadingGIF2.setVisibility(View.GONE);
                                     topRatedLayout.addView(newCard);
 
+                                    //opens the location page
                                     card.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
@@ -338,6 +341,7 @@ public class HomeActivity extends AppCompatActivity {
                                     favouriteIcon.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
                                     loadingGIF3.setVisibility(View.GONE);
                                     favoritesLayout.addView(newCard);
+                                    //opens the location page
                                     card.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
