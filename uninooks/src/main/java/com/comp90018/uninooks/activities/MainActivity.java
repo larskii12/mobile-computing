@@ -18,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.service.emulator.EmulatorServiceImpl;
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements GPSService {
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
 
-        SharedPreferences sharedPreferences = getSharedPreferences("firstLaunchCheckFile", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("uninooks", MODE_PRIVATE);
         boolean isFirstTimeLaunch = sharedPreferences.getBoolean("isFirstTimeLaunch", true);
         editor = sharedPreferences.edit();
 
@@ -66,30 +65,63 @@ public class MainActivity extends AppCompatActivity implements GPSService {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
+        // Ask for permission
+        ActivityCompat.requestPermissions(
+                MainActivity.this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                REQUEST_LOCATION_PERMISSION
+        );
+
+//        GPSServiceImpl.setGPSPermissionStatus(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+//
+//        if (GPSServiceImpl.getGPSPermission()){
+//            gpsService.startGPSUpdates();
+//        }
+//
+//        else{
+//            Log.d("AAAAAAAAAAAAAAAAAAA", "gps NOT fetched and go to log in");
+//            startMainActivity();
+//        }
+
         // Check permission is given or not, if not given, pop up permission needed box
         // Need to change to check whether the app is first time launch
-        if (isFirstTimeLaunch) {
-
-            // Show dialogue
-            showPermissionDialogueAndStartMainActivity();
-
-        }
-
-        // If all permission already granted, go to main activities directly
-        else {
-
-            // Set GPS status
-            GPSServiceImpl.setGPSPermissionStatus(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
-
-            if (GPSServiceImpl.getGPSPermission()){
-                gpsService.startGPSUpdates();
-            }
-
-            else{
-                Log.d("AAAAAAAAAAAAAAAAAAA", "gps NOT fetched and go to log in");
-                startMainActivity();
-            }
-        }
+//        if (true) {
+//
+//            // Ask for permission
+//            ActivityCompat.requestPermissions(
+//                    MainActivity.this,
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                    REQUEST_LOCATION_PERMISSION
+//            );
+//
+//
+//            GPSServiceImpl.setGPSPermissionStatus(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+//
+//            if (GPSServiceImpl.getGPSPermission()){
+//                gpsService.startGPSUpdates();
+//            }
+//
+//            else{
+//                Log.d("AAAAAAAAAAAAAAAAAAA", "gps NOT fetched and go to log in");
+//                startMainActivity();
+//            }
+//
+//        }
+//        // If all permission already granted, go to main activities directly
+//        else {
+//
+//            // Set GPS status
+//            GPSServiceImpl.setGPSPermissionStatus(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+//
+//            if (GPSServiceImpl.getGPSPermission()){
+//                gpsService.startGPSUpdates();
+//            }
+//
+//            else{
+//                Log.d("AAAAAAAAAAAAAAAAAAA", "gps NOT fetched and go to log in");
+//                startMainActivity();
+//            }
+//        }
 
         /**
          * Emulator Testing Mode Detection
@@ -131,47 +163,45 @@ public class MainActivity extends AppCompatActivity implements GPSService {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         // Update first launch is done and start Main Activity
-        Log.d("AAAAAAAAAAAAAAAAAAA", "First time launch");
-        editor.putBoolean("isFirstTimeLaunch", false);
-        editor.apply();
+//        Log.d("AAAAAAAAAAAAAAAAAAA", "First time launch");
+//        editor.putBoolean("isFirstTimeLaunch", false);
+//        editor.apply();
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 GPSServiceImpl.setGPSPermissionStatus(true);
-
                 gpsService.startGPSUpdates();
+
             }
 
             else {
                 GPSServiceImpl.setGPSPermissionStatus(false);
-
                 Log.d("AAAAAAAAAAAAAAAAAAA", "gps NOT fetched and go to log in");
-
-                startMainActivity();
+                startLoginActivity();
             }
-
         }
     }
 
-    /**
-     * Show the permission dialogue, only shows the first time app launch
-     */
-    private void showPermissionDialogueAndStartMainActivity(){
-
-        new AlertDialog.Builder(this)
-                .setTitle("Permissions Required")
-                .setMessage("To optimize your experience, Uninooks requires the following permissions: \n\n1. Access to location and accelerometer to enhance recommendations. \n\n2. Access to notification and usage data to facilitate study mode monitoring. \n\nPlease be assured that your data will be stored locally on your device and will not be shared with any third parties.")
-                .setPositiveButton("I understand", (dialog, which) -> {
-                    ActivityCompat.requestPermissions(
-                            MainActivity.this,
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                            REQUEST_LOCATION_PERMISSION
-                    );
-                })
-                .setCancelable(false)
-                .show();
-    }
+//    /**
+//     * Show the permission dialogue, only shows the first time app launch
+//     */
+//    private void showPermissionDialogueAndStartMainActivity(){
+//
+//        new AlertDialog.Builder(this)
+//                .setTitle("Permissions Required")
+//                .setMessage("To optimize your experience, Uninooks requires the following permissions: \n\n1. Access to location and accelerometer to enhance recommendations. \n\n2. Access to notification and usage data to facilitate study mode monitoring. \n\nPlease be assured that your data will be stored locally on your device and will not be shared with any third parties.")
+//                .setPositiveButton("I understand", (dialog, which) -> {
+//                    ActivityCompat.requestPermissions(
+//                            MainActivity.this,
+//                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                            REQUEST_LOCATION_PERMISSION
+//                    );
+//                })
+//                .setCancelable(false)
+//                .show();
+//    }
 
     private void showDialogue(String message){
         new AlertDialog.Builder(this)
@@ -186,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements GPSService {
     /**
      * Start the Main Activity
      */
-    private void startMainActivity() {
+    private void startLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
@@ -209,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements GPSService {
     public void onGPSUpdate(Location location) {
         gpsService.stopGPSUpdates();
         Log.d("AAAAAAAAAAAAAAAAAAA", "gps fetched and go to log in");
-        startMainActivity();
+        startLoginActivity();
     }
 
     public static Context getAppContext () {

@@ -28,7 +28,7 @@ public class FocusModeReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("FocusModeReceiver", "onReceived called");
 
-        if (!isRunning && isCurrentlyOnApp) {
+        if (!isRunning) {
             Intent i = new Intent(context, FocusModeTimerActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             i.setAction(Intent.ACTION_MAIN);

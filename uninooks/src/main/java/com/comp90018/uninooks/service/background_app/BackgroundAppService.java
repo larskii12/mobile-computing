@@ -1,6 +1,7 @@
 package com.comp90018.uninooks.service.background_app;
 
 import static com.comp90018.uninooks.activities.FocusModeTimerActivity.isCurrentlyOnApp;
+import static com.comp90018.uninooks.activities.FocusModeTimerActivity.isRunning;
 
 import static java.util.Objects.nonNull;
 
@@ -45,6 +46,8 @@ public class BackgroundAppService extends Service {
 
     public static boolean NOTIFICATION_STATUS = false;
 
+    public static boolean USAGE_STATUS = false;
+
     public static boolean getNotificationPermission(){
         return NOTIFICATION_STATUS;
     }
@@ -82,7 +85,7 @@ public class BackgroundAppService extends Service {
 
 
     private void startCheckingInBackgroundTime() {
-        // 1 second
+        // 30 seconds
         handler.postDelayed(appRunnable, CHECK_INTERVAL);
     }
 
@@ -102,16 +105,10 @@ public class BackgroundAppService extends Service {
                 }
             }
 
-            boolean isBreakFromLoop = false;
             isUsingEntertainmentApp = false;
             if (nonNull(currentPackageName) && isEntertainmentApp(currentPackageName) ) {
                 // The foreground app is an entertainment app.
                 isUsingEntertainmentApp = true;
-                sendNotification();
-                handler.postDelayed(appRunnable, CHECK_INTERVAL);
-                isBreakFromLoop = true;
-            }
-            if (!isBreakFromLoop && isScreenOn()) {
                 sendNotification();
                 handler.postDelayed(appRunnable, CHECK_INTERVAL);
             }
@@ -190,7 +187,7 @@ public class BackgroundAppService extends Service {
         isServiceRunning = false;
         stopForeground(true);
 
-        if (isCurrentlyOnApp) {
+        if (!isRunning) {
             // call MyReceiver which will restart this service via a worker
             Intent broadcastIntent = new Intent(this, FocusModeReceiver.class);
             sendBroadcast(broadcastIntent);

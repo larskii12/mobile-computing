@@ -312,7 +312,7 @@ public class ReviewServiceImpl implements ReviewService {
                 }
                 review.setScore(resultSet.getInt("review_score"));
                 review.setTime(resultSet.getTimestamp("review_time"));
-
+                review.setDate(review.getTime());
                 reviewList.add(review); // add review to the list
             }
 

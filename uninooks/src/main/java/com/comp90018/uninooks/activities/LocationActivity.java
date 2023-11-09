@@ -52,6 +52,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.sql.Time;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -68,7 +69,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
     private final int standardCameraZoom = 18;
 
-//    private BottomNavigationView bottomNav;
 
     private int userId;
     private String userEmail;
@@ -78,7 +78,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     private String locationType;
     private boolean showingReviews;
     private double averageRating;
-    private int ratingAsInt;
+    private boolean favouriteChanged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +92,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         userId = intent.getIntExtra("USER_ID_EXTRA", 0);
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
         userName = intent.getStringExtra("USER_NAME_EXTRA");
-//        locationId = intent.getIntExtra("LOCATION_ID", 0);
         locationType = intent.getStringExtra("LOCATION_TYPE");
 
         if (locationType.equals("LIBRARY")){
@@ -104,65 +103,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         }
         locationId = location.getId();
 
-
-//        bottomNav = findViewById(R.id.bottom_navigation);
-//        bottomNav.setSelectedItemId(R.id.homeNav);
-
-//        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-//            @SuppressLint("NonConstantResourceId")
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                int id = item.getItemId();
-//
-//                if (id == R.id.homeNav){
-//                    Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
-//
-//                    // Pass the user to next page
-//                    intent.putExtra("USER_ID_EXTRA", userId);
-//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-//                    intent.putExtra("USER_NAME_EXTRA", userName);
-//
-//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    startActivity(intent);
-//                    finish();
-//                }
-//
-//                else if (id == R.id.searchNav) {
-//                    Intent intent = new Intent(LocationActivity.this, MapsActivity.class);
-//
-//                    // Pass the user to next page
-//                    intent.putExtra("USER_ID_EXTRA", userId);
-//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-//                    intent.putExtra("USER_NAME_EXTRA", userName);
-//
-//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    startActivity(intent);
-//                    finish();
-//
-//                } else if (id == R.id.focusNav) {
-//                    Intent intent = new Intent(LocationActivity.this, StudyZoneActivity.class);
-//
-//                    // Pass the user to next page
-//                    intent.putExtra("USER_ID_EXTRA", userId);
-//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-//                    intent.putExtra("USER_NAME_EXTRA", userName);
-//                    startActivity(intent);
-//                    finish();
-//
-//                } else {
-//                    Intent intent = new Intent(LocationActivity.this, AccountActivity.class);
-//
-//                    // Pass the user to next page
-//                    intent.putExtra("USER_ID_EXTRA", userId);
-//                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-//                    intent.putExtra("USER_NAME_EXTRA", userName);
-//                    startActivity(intent);
-//                }
-//
-//                return false;
-//            }
-//        });
-
         new Thread() {
             @Override
             public void run() {
@@ -170,10 +110,10 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
                     List<Review> reviews = new ReviewServiceImpl().getReviewsByEntity(locationId, ReviewType.valueOf(location.getType()));
 
-                    //System.out.println("Building id:" + space.getBuildingId());
                     Building building = new BuildingServiceImpl().getBuilding(location.getBuildingId(), ReviewType.valueOf(location.getType()));
                     List<Favorite> favorites = new FavoriteServiceImpl().getFavoritesByUser(userId,ReviewType.valueOf(location.getType()));
                     isFavorite = false;
+                    favouriteChanged = false;
                     for (Favorite favorite: favorites) {
                         if (location.getType().equals("LIBRARY") && favorite.getLibraryId() == location.getId()) {
                             isFavorite = true;
@@ -200,7 +140,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     TextView ratingText = findViewById(R.id.rating_Text);
                     RatingBar aveRatingBar = findViewById(R.id.averageRatingBar);
                     averageRating = new ReviewServiceImpl().getAverageRating(locationId, ReviewType.valueOf(location.getType()));
-                    ratingAsInt = (int) averageRating;
+//                    ratingAsInt = (int) averageRating;
 
                     ImageButton backButton = findViewById(R.id.imageButton);
                     ImageButton favouriteButton = findViewById(R.id.favoriteButton);
@@ -209,17 +149,9 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     Button addReview = findViewById(R.id.add_review);
                     Button showReviews = findViewById(R.id.show_reviews);
                     showingReviews = false;
-//                    Button hideReviews = findViewById(R.id.hide_reviews);
-//                    User user = null;
-//
-//                    //System.out.println(userID);
-//                    user = new UserServiceImpl().getUser(userId);
-//
-//                    userName = user.getUserName();
 
                     TextView listTitle = findViewById(R.id.listTitle);
                     LinearLayout amenitiesList = findViewById(R.id.amenities);
-                    //System.out.println("Building id: " + space.getBuildingId());
 
                     List<Resource> resources = new ResourceServiceImpl().getResourceFromBuilding(location.getBuildingId());
                     locationButton.setOnClickListener(new View.OnClickListener(){
@@ -240,23 +172,23 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
                         }
                     });
+                    //goes back to the home page
                     backButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                            System.out.println(favouriteChanged);
+                            if (favouriteChanged) {
+                                Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
+                                intent.putExtra("USER_ID_EXTRA", userId);
+                                intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                intent.putExtra("USER_NAME_EXTRA", userName);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            }
                             finish();
-//                            new Thread() {
-//                                public void run() {
-//                                    Intent intent = new Intent(LocationActivity.this, HomeActivity.class);
-//                                    intent.putExtra("USERID_EXTRA", userId);
-//                                    intent.putExtra("USERNAME_EXTRA", userName);
-//                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                                    startActivity(intent);
-//                                    finish();
-//                                }
-//                            }.start();
                         }
                     });
+                    //add or removes a location from the users favourites
                     favouriteButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -266,7 +198,11 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                         if (!isFavorite) {
                                             new FavoriteServiceImpl().addFavorite(userId, locationId, ReviewType.valueOf(location.getType()));
                                             isFavorite = true;
-
+                                            if (favouriteChanged) {
+                                                favouriteChanged = false;
+                                            } else {
+                                                favouriteChanged = true;
+                                            }
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -278,7 +214,11 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                         else{
                                             new FavoriteServiceImpl().removeFavorite(userId, locationId, ReviewType.valueOf(location.getType()));
                                             isFavorite = false;
-
+                                            if (favouriteChanged) {
+                                                favouriteChanged = false;
+                                            } else {
+                                                favouriteChanged = true;
+                                            }
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -294,6 +234,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                             }.start();
                         }
                     });
+                    //shows and hides all the reviews
                    showReviews.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -303,31 +244,18 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                     if (!showingReviews) {
                                         reviewsLayout.setVisibility(View.VISIBLE);
                                         showReviews.setText(getString(R.string.hide_reviews, "Hide Reviews"));
-//                                        showReviews.setText("Hide Reviews");
                                         showingReviews = true;
                                     } else {
-                                        reviewsLayout.setVisibility(View.INVISIBLE);
+                                        reviewsLayout.setVisibility(View.GONE);
                                         showReviews.setText(getString(R.string.show_reviews, "Show Reviews"));
-//                                        showReviews.setText("Show Reviews");
                                         showingReviews = false;
                                     }
                                 }
                             });
                         }
                     });
-//                    hideReviews.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            runOnUiThread(new Runnable() {
-//                                public void run() {
-//                                    reviewsLayout.setVisibility(View.INVISIBLE);
-//                                    showReviews.setVisibility(View.VISIBLE);
-//                                    hideReviews.setVisibility(View.INVISIBLE);
-//                                }
-//                            });
-//                        }
-//                    });
 
+                   //open the add review dialog
                     addReviewButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -384,18 +312,11 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                                 distance.setText(location.getDistanceFromCurrentPosition() + "m");
                             }
                             for(Review review : reviews) {
-                                //System.out.println(review.getComment());
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.review_layout, reviewsLayout, false);
                                 CardView newCard = createNewSmallCard(card,review);
                                 reviewsLayout.addView(newCard);
                             }
-//                            HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
-//                            List<String> expandable = new ArrayList<String>();
-//                            expandable.add("Amenities");
-//                            List<String> amenities = new ArrayList<String>();
                             for (Resource resource: resources) {
-//                                amenities.add(resource.getName());
-                                //System.out.println(resource.getName());
                                 CardView card = (CardView) LayoutInflater.from(getApplicationContext()).inflate(R.layout.amenity_layout, amenitiesList, false);
                                 TextView resourceDef = (TextView) card.findViewById(R.id.expandedListItem);
                                 ImageView resourceIcon = card.findViewById(R.id.icon);
@@ -469,6 +390,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         bananaFragment.getMapAsync( this);
     }
 
+    //calculates the time to closing
     private boolean getTimeToClose(Time closeTime){
         Time currentTime = Time.valueOf("18:00:00");
         int closeHour = closeTime.getHours();
@@ -480,14 +402,16 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         }
         return false;
     }
+    //creates a new comment card
     private CardView createNewSmallCard(CardView card, Review review){
         TextView userComment = (TextView) card.findViewById(R.id.textView);
         TextView datePosted = card.findViewById(R.id.date_posted);
-        datePosted.setText("09/11/2023");
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String date = dateFormat.format(review.getDate());
+        datePosted.setText(date);
         userComment.setText(review.getComment());
         RatingBar rating = (RatingBar) card.findViewById(R.id.ratingBar);
         rating.setRating(review.getScore());
-        System.out.println("Review comment:" + review.getComment());
         ImageView userImage = (ImageView) card.findViewById(R.id.imageView2);
 
         return card;
@@ -498,6 +422,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
     }
 
+    //opens map with the location
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
@@ -518,6 +443,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         }
     }
 
+    //Open the dialog to add a new review
     private void showAddReviewDialog() {
 
         final Dialog dialog = new Dialog(this);
@@ -552,10 +478,8 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     public void run() {
                         try {
                             Review addedReview = new ReviewServiceImpl().addReview(userId,locationId,ReviewType.valueOf(location.getType()),rating,review);
-                            System.out.println("Success");
-//                            reloadActivity();
+                            reloadActivity();
                         } catch (Exception e) {
-                            System.out.println("Failed");
                             throw new RuntimeException(e);
                         }
                     }
@@ -568,9 +492,15 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
         dialog.show();
     }
+    //Reloads the page activity
     private void reloadActivity(){
         Intent intent = getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        intent.putExtra("USER_ID_EXTRA", userId);
+        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+        intent.putExtra("USER_NAME_EXTRA", userName);
+        intent.putExtra("LOCATION_TYPE", location.getType());
+        intent.putExtra("LOCATION", location);
         finish();
         startActivity(intent);
     }
