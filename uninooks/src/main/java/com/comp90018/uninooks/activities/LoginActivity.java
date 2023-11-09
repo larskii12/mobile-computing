@@ -16,14 +16,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.models.location.Location;
 import com.comp90018.uninooks.models.user.User;
-import com.comp90018.uninooks.service.gps.GPSService;
-import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.comp90018.uninooks.service.location.LocationServiceImpl;
 import com.comp90018.uninooks.service.user.UserServiceImpl;
 
 import java.util.List;
 
-public class LoginActivity extends AppCompatActivity implements GPSService {
+public class LoginActivity extends AppCompatActivity {
 
     private EditText editTextLoginEmail;
     private EditText editTextLoginPassword;
@@ -31,8 +29,6 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
     private TextView buttonLogInGoToSignup;
 
     private TextView buttonLogInForgetPassword;
-
-    private GPSServiceImpl gpsService;
 
     int userId;
 
@@ -64,8 +60,6 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
         Intent intent = getIntent();
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
         handler.sendEmptyMessage(1);
-
-        gpsService = new GPSServiceImpl(this, this);
 
         editTextLoginEmail = findViewById(R.id.EditTextLoginEmail);
         editTextLoginPassword = findViewById(R.id.EditTextLoginPassword);
@@ -105,6 +99,7 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
                             }
 
                         } catch (Exception e) {
+                            e.printStackTrace();
                             showTextMessage("An error happened, please contract the IT administrator.");
                         }
                     }
@@ -142,37 +137,30 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
 
     public void onStart(){
         super.onStart();
-        gpsService.startGPSUpdates();
     }
 
     public void onRestart(){
         super.onRestart();
-        gpsService.startGPSUpdates();
     }
 
     // When back button pressed
     public void onBackPressed() {
         super.onBackPressed();
-        gpsService.stopGPSUpdates();
     }
 
     public void onPause() {
         super.onPause();
-        gpsService.stopGPSUpdates();
     }
     public void onResume() {
         super.onResume();
-        gpsService.startGPSUpdates();
     }
 
     public void onStop(){
         super.onStop();
-        gpsService.stopGPSUpdates();
     }
 
     public void onDestroy(){
         super.onDestroy();
-        gpsService.stopGPSUpdates();
     }
 
 
@@ -208,10 +196,5 @@ public class LoginActivity extends AppCompatActivity implements GPSService {
         msg.what = 0;
         msg.obj = text;
         handler.sendMessage(msg);
-    }
-
-    @Override
-    public void onGPSUpdate(android.location.Location location) {
-        gpsService.stopGPSUpdates();
     }
 }
