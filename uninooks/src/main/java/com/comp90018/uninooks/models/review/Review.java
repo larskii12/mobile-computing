@@ -3,6 +3,7 @@ package com.comp90018.uninooks.models.review;
 import androidx.annotation.NonNull;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class Review {
 
@@ -25,6 +26,8 @@ public class Review {
     Timestamp time;
 
     String comment;
+
+    Date date;
 
     public int getReviewId() {
         return reviewId;
@@ -96,5 +99,13 @@ public class Review {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

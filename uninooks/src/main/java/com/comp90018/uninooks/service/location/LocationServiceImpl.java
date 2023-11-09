@@ -87,20 +87,6 @@ public class LocationServiceImpl implements LocationService {
                     library.setIsOpenToday(true);
                 }
 
-//                library.setAverage_rating(Double.parseDouble(resultSet.getString("average_rating")));
-
-//                Array daysDb = resultSet.getArray("library_opening_days");
-//                Integer[] days = (Integer[]) daysDb.getArray();
-//                library.setOpeningDays(days);
-//
-//                Array busyDb = resultSet.getArray("library_busy_hours");
-//                Time[] busyHours = (Time[]) busyDb.getArray();
-//                library.setBusyHours(busyHours);
-
-//                BusyRating busyRating = busyRatingService.getBusyRating(locationId, ReviewType.LIBRARY);
-
-//                library.setCapacity(busyRating.getAverageScore());
-
                 library.setHasQuietZones(resultSet.getBoolean("library_has_quiet_zones"));
 
                 return library;
@@ -150,22 +136,11 @@ public class LocationServiceImpl implements LocationService {
                 restaurant.setOpenTime(resultSet.getTime("opening_time"));
                 restaurant.setCloseTime(resultSet.getTime("closing_time"));
 
-//                restaurant.setDistanceFromCurrentPosition(calculateDistance(GPSServiceImpl.getCurrentLocation(), restaurant.getLocation()));
-//                restaurant.setAverage_rating(Double.parseDouble(resultSet.getString("average_rating")));
-
                 Time currentTime = new TimeServiceImpl().getAEDTTime();
                 if (restaurant.getOpenTime() != null && currentTime.after(restaurant.getOpenTime()) && currentTime.before(restaurant.getCloseTime())){
                     restaurant.setIsOpeningNow(true);
                     restaurant.setIsOpenToday(true);
                 }
-
-//                Array daysDb = resultSet.getArray("restaurant_opening_days");
-//                Integer[] days = (Integer[]) daysDb.getArray();
-//                restaurant.setOpeningDays(days);
-//
-//                Array busyDb = resultSet.getArray("restaurant_busy_hours");
-//                Time[] busyHours = (Time[]) busyDb.getArray();
-//                restaurant.setBusyHours(busyHours);
 
                 restaurant.setFloorLevel(resultSet.getInt("restaurant_floor_level"));
                 restaurant.setHasVegetarianOptions(resultSet.getBoolean("restaurant_vegetarian_options"));
@@ -208,7 +183,6 @@ public class LocationServiceImpl implements LocationService {
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             preparedStatement.setInt(1, locationId);
-//            preparedStatement.setInt(2, currentDayOfWeek);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 

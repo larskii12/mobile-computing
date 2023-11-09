@@ -376,7 +376,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         } else {
             if (isRunning) {
                 isCurrentlyOnApp = true;
-                Log.d("TimerActivity", "Service has stopped");
+                Log.d("FocusModeTimerActivity", "Service has stopped.");
                 stopService();
         }
         }
@@ -601,7 +601,6 @@ public class FocusModeTimerActivity extends AppCompatActivity {
                 }
 
                 if (!isScreenOn()) {
-                    Log.d("FocusModeTimerActivity", "trying to stop service and notify");
                     isCurrentlyOnApp = true;
                     stopService();
                 }

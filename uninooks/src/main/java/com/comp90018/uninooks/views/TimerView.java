@@ -102,7 +102,6 @@ public class TimerView extends View {
         if (isPaused) {
             resume();
         } else {
-//            stop();
             drawProgress(0f);
             mTimerAnimator = ValueAnimator.ofFloat(0f, 1f);
             mTimerAnimator.setDuration(TimeUnit.SECONDS.toMillis(secs));
@@ -130,7 +129,6 @@ public class TimerView extends View {
     }
 
     public void stop() {
-//        if (mTimerAnimator != null && !mTimerAnimator.isRunning()) {
         if (mTimerAnimator != null) {
             mTimerAnimator.cancel();
             mTimerAnimator = null;
