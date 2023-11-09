@@ -54,6 +54,7 @@
     <string name="Account_Pi_Edit_Email">Enter new Email address</string>
     <string name="Account_Pi_Edit_Faculty">Edit Faculty</string>
     <string name="PasswordChanged">Password Changed</string>
+    <string name="LogOut">Logged Out</string>
 
     <!-- Account Setting strings-->
     <string name="Account_Settings">Settings</string>
@@ -101,6 +102,13 @@
 
     <!--Home strings -->
     <string name="never_show_welcome">Dont show again</string>
+    <string name="onboarding_page_1_title">Check your destination</string>
+    <string name="onboarding_page_1">Check how busy each study area is. \nPick the best place to study quietly</string>
+    <string name="onboarding_page_2_title">Search study space suits you!</string>
+    <string name="onboarding_page_2">Search study space suits you! \nYou can search by location, capacity, and more</string>
+    <string name="onboarding_page_3_title">Focus on your study</string>
+    <string name="onboarding_page_3">Focus on your study \nUse Focus Mode to block distractions and stay focused</string>
+
     <string name="show_reviews"><u>Show Reviews</u></string>
     <string name="hide_reviews"><u>Hide Reviews</u></string>
     <string name="study_space_surprise_suggestion_settings">Enable shake function</string>\

@@ -43,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
 
     String userEmail;
     boolean ifPasswordChanged;
+    boolean ifLogout;
 
 
     @SuppressLint("HandlerLeak")
@@ -71,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("uninooks", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
 
         Intent intent = getIntent();
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
@@ -103,9 +105,21 @@ public class LoginActivity extends AppCompatActivity {
 
                                 saveLoginDetails(userId, userEmail, userName);
                                 editor.putBoolean(getString(R.string.PasswordChanged), false);
+                                editor.putBoolean(getString(R.string.LogOut), false);
                                 editor.apply();
 
-                                launchHomeActivity();
+                                if (!sharedPreferences.getBoolean("isIntroOpened", false)) {
+                                    Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
+                                    intent.putExtra("USER_ID_EXTRA", userId);
+                                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                    intent.putExtra("USER_NAME_EXTRA", userName);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                    finish();
+                                } else {
+                                    launchHomeActivity();
+                                }
+
                             }
 
                         } catch (Exception e) {
@@ -130,16 +144,18 @@ public class LoginActivity extends AppCompatActivity {
                                     userEmail = user.getUserEmail();
                                     userName = user.getUserName();
 
-                                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                    if (!sharedPreferences.getBoolean("isIntroOpen", false)) {
+                                        Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
+                                        intent.putExtra("USER_ID_EXTRA", userId);
+                                        intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+                                        intent.putExtra("USER_NAME_EXTRA", userName);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(intent);
+                                        finish();
+                                    } else {
+                                        launchHomeActivity();
+                                    }
 
-                                    // Pass the user to next page
-                                    intent.putExtra("USER_ID_EXTRA", userId);
-                                    intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-                                    intent.putExtra("USER_NAME_EXTRA", userName);
-
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                    startActivity(intent);
-                                    finish();
                                 }
 
                             } catch (Exception e) {
@@ -201,6 +217,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     public void onResume() {
         super.onResume();
+        retrieveLoginDetails();
     }
 
     public void onStop(){
@@ -288,9 +305,12 @@ public class LoginActivity extends AppCompatActivity {
         userName = sharedPreferences.getString(getString(R.string.Username), "");
         String password = sharedPreferences.getString(getString(R.string.Password), "");
 
-        ifPasswordChanged = sharedPreferences.getBoolean(getString(R.string.PasswordChanged), false);
 
-        if (!(userId == -1 || userEmail.equals("") || userName.equals("") || password.equals("")) && !ifPasswordChanged) {
+        ifPasswordChanged = sharedPreferences.getBoolean(getString(R.string.PasswordChanged), false);
+        ifLogout = sharedPreferences.getBoolean(getString(R.string.LogOut), false);
+
+        if (!(userId == -1 || userEmail.equals("") || userName.equals("") || password.equals(""))
+                && (!ifPasswordChanged) && (!ifLogout)) {
             launchHomeActivity();
         }
     }

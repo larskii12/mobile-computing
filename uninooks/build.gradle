@@ -57,4 +57,5 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:2.2.0'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.google.maps:google-maps-services:0.18.0'
+    implementation 'com.ramotion.paperonboarding:paper-onboarding:1.1.3'
 }

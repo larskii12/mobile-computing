@@ -85,7 +85,6 @@ public class HomeActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     public boolean neverShowAgain;
     public ArrayList<StudySpace> topRatedStudySpaces = new ArrayList<>();
-
     private HashMap<String, Integer> imagesByLocation;
 
     @SuppressLint("SetTextI18n")
@@ -107,6 +106,9 @@ public class HomeActivity extends AppCompatActivity {
         userId = intent.getIntExtra("USER_ID_EXTRA", 0);
         userEmail = intent.getStringExtra("USER_EMAIL_EXTRA");
         userName = intent.getStringExtra("USER_NAME_EXTRA");
+        System.out.println(userId);
+        System.out.println("userName" + userName);
+        System.out.println("This is Home activity class");
 
         bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setSelectedItemId(R.id.homeNav);
@@ -142,9 +144,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 if (id == R.id.homeNav){
                     reloadActivity();
-                }
-
-                else if (id == R.id.searchNav) {
+                } else if (id == R.id.searchNav) {
                     Intent intent = new Intent(HomeActivity.this, MapsActivity.class);
 
                     // Pass the user to next page
