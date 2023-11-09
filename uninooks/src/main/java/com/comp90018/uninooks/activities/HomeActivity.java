@@ -495,8 +495,8 @@ public class HomeActivity extends AppCompatActivity {
                             intent.putExtra("USER_ID_EXTRA", userId);
                             intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                             intent.putExtra("USER_NAME_EXTRA", userName);
-                            intent.putExtra("LOCATION_ID", randomSpace.getId());
                             intent.putExtra("LOCATION_TYPE", randomSpace.getType());
+                            intent.putExtra("LOCATION", randomSpace);
                             startActivity(intent);
                         }
                 }.start();
