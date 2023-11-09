@@ -52,6 +52,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.sql.Time;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -306,7 +307,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 //                                        showReviews.setText("Hide Reviews");
                                         showingReviews = true;
                                     } else {
-                                        reviewsLayout.setVisibility(View.INVISIBLE);
+                                        reviewsLayout.setVisibility(View.GONE);
                                         showReviews.setText(getString(R.string.show_reviews, "Show Reviews"));
 //                                        showReviews.setText("Show Reviews");
                                         showingReviews = false;
@@ -483,7 +484,11 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     private CardView createNewSmallCard(CardView card, Review review){
         TextView userComment = (TextView) card.findViewById(R.id.textView);
         TextView datePosted = card.findViewById(R.id.date_posted);
-        datePosted.setText("09/11/2023");
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        System.out.println(review.getDate());
+        String date = dateFormat.format(review.getDate());
+//        String justDate = date.substring(0,10);
+        datePosted.setText(date);
         userComment.setText(review.getComment());
         RatingBar rating = (RatingBar) card.findViewById(R.id.ratingBar);
         rating.setRating(review.getScore());
