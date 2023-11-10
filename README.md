@@ -47,16 +47,13 @@ AccountActivity
 - This class is used to display the user's account information. It is also used to update the user's account information, login and delete account.
 
 FilterAdjustmentActivity
-- For the serach page, this class is used to display the filter adjustment activity. It is also used to update the filter settings.
-
-FocusModeMainActivity
-- This class is used to display the focus mode main activity. It is also used to start the focus mode timer activity.
+- This class is used to display the filter adjustment activity. It is also used to update the filters for the results to be shown.
 
 FocusModeSettingsActivity
-- This class is used to display the focus mode settings activity. It is also used to update the focus mode settings.
+- This class is used to display the focus mode settings activity. It is also used to update the focus mode settings (durations and if pomodoro sequence is enabled).
 
 FocusModeTimerActivity
-- This class is used to display the focus mode timer activity.
+- This class is used to display the focus mode timer activity. 
 
 HomeActivity
 - This class is used to display the home page. It shows the nearby study spaces and the user's favourite study spaces.
@@ -71,19 +68,19 @@ LocationActivity
 - This class is used to display a location activity. It contains information such as how far it is from the current location and reviews.
 
 LoginActivity
-- This class is used to login the user.
+- This class is used for the user to login.
 
 MainActivity
-- This class is for splash screen where the permissions are prompted.
+- This class is for splash screen where the permissions are prompted and/or retrieved.
 
 MapsActivity
-- This class is
+- This class shows a map and user's current location and they can choose to search for a specific study space or filter and find study spaces based on their preference.
 
 NavigationActivity
-- This class handles the navigation drawer using googleMap API.
+- This class handles the navigation drawer using googleMap API, to show the user the path towards their destination.
 
 PersonalInformationActivity
-- This class is for users to change their personal information.
+- This class is for users to change their personal information and permissions granted.
 
 ReportIssue
 - This class is for users to report issues.
@@ -95,14 +92,12 @@ ScreenItem
 - This is a helper class for IntroActivity.
 
 SearchResults
-- This class shows a map and a list of study spaces based on the user's search criteria.
+- This class shows a list of study spaces based on the user's search keyword.
 
 SignUpActivity
 - This class is for users to sign up for an account for the first time.
 
 ### Layout XML Files
-
-
 activity_account.xml
 - This file is for the UI of the account activity.
 
@@ -111,9 +106,6 @@ activity_account_personal_information.xml
 
 activity_filter_adjustment.xml
 - This file is for the UI of the filter adjustment activity.
-
-activity_focus_mode_main.xml
-- This file is for the UI of the focus mode main activity, telling users what this mode is about.
 
 activity_focus_mode_notification.xml
 - This file is for the UI of the focus mode notification activity, telling users to stay focused.
@@ -170,16 +162,13 @@ information_dialog.xml
 - This is a custom pop up dialog for users to learn what each icon means.
 
 large_location_card.xml
-- This is a layout for the location card on the home page.
+- This is a layout for the location card on the search page.
 
 layout_screen.xml
 - This is a layout for the onboarding page.
 
-list_card_layout.xml
-- This is a layout for the list of study spaces.
-
 list_group.xml
-- This is a layout for the list of amenities.
+- This is a layout for the list of amenities on the navigation page.
 
 logout_confirmation_dialog.xml
 - This is a custom pop up dialog for users to confirm if they want to log out.
