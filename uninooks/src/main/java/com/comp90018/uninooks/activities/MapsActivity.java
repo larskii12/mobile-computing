@@ -27,6 +27,7 @@ import com.comp90018.uninooks.service.gps.GPSService;
 import com.comp90018.uninooks.service.gps.GPSServiceImpl;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -204,6 +205,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    LatLng location = new LatLng(-37.79880992332459, 144.96178737485917);
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(location, 10);
+                    mMap.animateCamera(cameraUpdate);
                 }
             });
             builder.show();
