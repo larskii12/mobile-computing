@@ -32,6 +32,10 @@ public class IntroActivity extends AppCompatActivity {
     boolean isIntroActivityOpened;
     private ViewPager screenPager;
 
+    String onboarding_1;
+    String onboarding_2;
+    String onboarding_3;
+
     /**
      * on create method
      *
@@ -55,11 +59,15 @@ public class IntroActivity extends AppCompatActivity {
         linearLayoutNext = findViewById(R.id.linear_layout_next);
         linearLayoutGetStarted = findViewById(R.id.linear_layout_get_started);
         tabIndicator = findViewById(R.id.tab_indicator);
+
+        onboarding_1 = getString(R.string.onboarding_page_1);
+        onboarding_2 = getString(R.string.onboarding_page_2);
+        onboarding_3 = getString(R.string.onboarding_page_3);
         //Data
         final List<ScreenItem> mList = new ArrayList<>();
-        mList.add(new ScreenItem("Check your destination", "Check how busy each study area is. \nPick the best place to study quietly", R.drawable.homepage_screenshot));
-        mList.add(new ScreenItem("Search study space suits you!", "Search study space suits you! \\nYou can search by location, capacity, and more", R.drawable.search_page_screenshot));
-        mList.add(new ScreenItem("Focus on your study", "Focus on your study \\nUse Focus Mode to block distractions and stay focused", R.drawable.focus_mode_screenshot));
+        mList.add(new ScreenItem(getString(R.string.onboarding_page_1_title), onboarding_1, R.drawable.homepage_screenshot));
+        mList.add(new ScreenItem(getString(R.string.onboarding_page_2_title), onboarding_2, R.drawable.search_page_screenshot));
+        mList.add(new ScreenItem(getString(R.string.onboarding_page_3_title), onboarding_3, R.drawable.focus_mode_screenshot));
 
         //Setup viewPager
         screenPager = findViewById(R.id.screen_viewpager);

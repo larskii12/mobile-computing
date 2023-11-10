@@ -113,8 +113,8 @@
     <string name="never_show_welcome">Dont show again</string>
     <string name="onboarding_page_1_title">Check your destination</string>
     <string name="onboarding_page_1">Check how busy each study area is. \nPick the best place to study quietly</string>
-    <string name="onboarding_page_2_title">Search study space suits you!</string>
-    <string name="onboarding_page_2">Search study space suits you! \nYou can search by location, capacity, and more</string>
+    <string name="onboarding_page_2_title">Explore study spaces!</string>
+    <string name="onboarding_page_2">Search study space that suits you! \nYou can search by location, capacity, and more</string>
     <string name="onboarding_page_3_title">Focus on your study</string>
     <string name="onboarding_page_3">Focus on your study \nUse Focus Mode to block distractions and stay focused</string>
 
