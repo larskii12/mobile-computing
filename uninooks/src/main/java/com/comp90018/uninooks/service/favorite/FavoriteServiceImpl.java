@@ -18,9 +18,9 @@ public class FavoriteServiceImpl implements FavoriteService {
     /**
      * method to add a new favourite of an entity of a user into the database (To add favourite)
      *
-     * @param userId     as the user id
-     * @param entityId   as the entity id
-     * @param type       as the favourite type
+     * @param userId   as the user id
+     * @param entityId as the entity id
+     * @param type     as the favourite type
      * @throws Exception if any exceptions happens
      */
     public Favorite addFavorite(Integer userId, Integer entityId, ReviewType type) throws Exception {
@@ -65,9 +65,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 
             // Unknown exceptions happens.
             throw new Exception("Favorite add failed, please contact the IT administrator to report the issue.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -81,9 +79,10 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     /**
      * Remove favorite
-     * @param userId as user id
+     *
+     * @param userId   as user id
      * @param entityId as entity id
-     * @param type as type
+     * @param type     as type
      * @return true if success, otherwise false
      * @throws Exception if any exception
      */
@@ -125,9 +124,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 
             // Unknown exceptions happens.
             throw new Exception("Favorite remove failed, please contact the IT administrator to report the issue.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -186,9 +183,7 @@ public class FavoriteServiceImpl implements FavoriteService {
         // If exception happens when querying user
         catch (Exception e) {
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -206,7 +201,7 @@ public class FavoriteServiceImpl implements FavoriteService {
      * Get the list of favourites based by the person
      *
      * @param userId, as the user id
-     * @param type, as the type
+     * @param type,   as the type
      * @return list of favorites
      */
     public List<Favorite> getFavoritesByUser(int userId, ReviewType type) throws Exception {
@@ -273,9 +268,7 @@ public class FavoriteServiceImpl implements FavoriteService {
         // If exception happens when querying user
         catch (Exception e) {
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();

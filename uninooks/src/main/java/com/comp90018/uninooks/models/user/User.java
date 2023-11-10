@@ -38,6 +38,14 @@ public class User {
      * Setters and Getters
      */
 
+    /**
+     * Getter, get user ID
+     *
+     * @return userID, as user id
+     */
+    public int getUserId() {
+        return userId;
+    }
 
     /**
      * Setter, set user ID
@@ -46,51 +54,6 @@ public class User {
      */
     public void setUserId(int userId) {
         this.userId = userId;
-    }
-
-    /**
-     * Setter, set user name
-     *
-     * @param userName, as user user name
-     */
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    /**
-     * Setter, set user email
-     *
-     * @param userEmail as user email
-     */
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
-    /**
-     * Setter, set user faculty
-     *
-     * @param userFaculty, as user faculty
-     */
-    public void setUserFaculty(String userFaculty) {
-        this.userFaculty = userFaculty;
-    }
-
-    /**
-     * Setter, set user AQF level
-     *
-     * @param userAQFLevel, as user AQF level
-     */
-    public void setUserAQFLevel(int userAQFLevel) {
-        this.userAQFLevel = userAQFLevel;
-    }
-
-    /**
-     * Getter, get user ID
-     *
-     * @return userID, as user id
-     */
-    public int getUserId() {
-        return userId;
     }
 
     /**
@@ -103,12 +66,30 @@ public class User {
     }
 
     /**
+     * Setter, set user name
+     *
+     * @param userName, as user user name
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    /**
      * Getter, get user email
      *
      * @return userEmail, as user email
      */
     public String getUserEmail() {
         return userEmail;
+    }
+
+    /**
+     * Setter, set user email
+     *
+     * @param userEmail as user email
+     */
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     /**
@@ -121,11 +102,29 @@ public class User {
     }
 
     /**
+     * Setter, set user faculty
+     *
+     * @param userFaculty, as user faculty
+     */
+    public void setUserFaculty(String userFaculty) {
+        this.userFaculty = userFaculty;
+    }
+
+    /**
      * Getter, get user AQF level
      *
      * @return userAQFLevel, as user AQF level
      */
     public int getUserAQFLevel() {
         return userAQFLevel;
+    }
+
+    /**
+     * Setter, set user AQF level
+     *
+     * @param userAQFLevel, as user AQF level
+     */
+    public void setUserAQFLevel(int userAQFLevel) {
+        this.userAQFLevel = userAQFLevel;
     }
 }

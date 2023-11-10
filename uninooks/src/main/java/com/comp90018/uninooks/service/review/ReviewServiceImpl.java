@@ -77,9 +77,7 @@ public class ReviewServiceImpl implements ReviewService {
 
             // Unknown exceptions happens.
             throw new Exception("User added failed, please contact the IT administrator to report the issue.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -145,9 +143,7 @@ public class ReviewServiceImpl implements ReviewService {
         catch (Exception e) {
 
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -234,9 +230,7 @@ public class ReviewServiceImpl implements ReviewService {
         catch (Exception e) {
 
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -324,9 +318,7 @@ public class ReviewServiceImpl implements ReviewService {
         catch (Exception e) {
 
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -347,33 +339,17 @@ public class ReviewServiceImpl implements ReviewService {
             switch (type) {
 
                 case GYM: // Add new gym review to the database
-                    query = "SELECT gym_id,ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
-                            "FROM mobilecomputing.\"review\" " +
-                            "WHERE gym_id IS NOT NULL and gym_id = ? " +
-                            "GROUP BY gym_id " +
-                            "ORDER BY average_rating DESC;";
+                    query = "SELECT gym_id,ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " + "FROM mobilecomputing.\"review\" " + "WHERE gym_id IS NOT NULL and gym_id = ? " + "GROUP BY gym_id " + "ORDER BY average_rating DESC;";
                     break;
                 case LIBRARY: // Add new library review to the database
-                    query = "SELECT review_library_id,ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
-                            "FROM mobilecomputing.\"review\" " +
-                            "WHERE review_library_id IS NOT NULL and review_library_id = ? " +
-                            "GROUP BY review_library_id " +
-                            "ORDER BY average_rating DESC;";
+                    query = "SELECT review_library_id,ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " + "FROM mobilecomputing.\"review\" " + "WHERE review_library_id IS NOT NULL and review_library_id = ? " + "GROUP BY review_library_id " + "ORDER BY average_rating DESC;";
                     break;
                 case RESTAURANT: // Add new restaurant review to the database
-                    query = "SELECT restaurant_id,ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
-                            "FROM mobilecomputing.\"review\" " +
-                            "WHERE restaurant_id IS NOT NULL and restaurant_id = ? " +
-                            "GROUP BY restaurant_id " +
-                            "ORDER BY average_rating DESC;";
+                    query = "SELECT restaurant_id,ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " + "FROM mobilecomputing.\"review\" " + "WHERE restaurant_id IS NOT NULL and restaurant_id = ? " + "GROUP BY restaurant_id " + "ORDER BY average_rating DESC;";
                     break;
 
                 case STUDY_SPACE: // Add new study space review to the database
-                    query = "SELECT review_study_space_id, ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
-                            "FROM mobilecomputing.\"review\" " +
-                            "WHERE review_study_space_id IS NOT NULL AND review_study_space_id = ? " +
-                            "GROUP BY review_study_space_id " +
-                            "ORDER BY average_rating DESC;";
+                    query = "SELECT review_study_space_id, ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " + "FROM mobilecomputing.\"review\" " + "WHERE review_study_space_id IS NOT NULL AND review_study_space_id = ? " + "GROUP BY review_study_space_id " + "ORDER BY average_rating DESC;";
                     break;
                 default:
                     throw new Exception("Invalid review type. Cannot retrieve review list.");
@@ -389,14 +365,10 @@ public class ReviewServiceImpl implements ReviewService {
                 return rating;
 
             }
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
 
             throw new RuntimeException(e);
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();

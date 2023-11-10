@@ -10,18 +10,23 @@ import com.comp90018.uninooks.models.location.Location;
 
 public class StudySpace extends Location {
 
+    public static final Creator<StudySpace> CREATOR = new Creator<StudySpace>() {
+        @Override
+        public StudySpace createFromParcel(Parcel in) {
+            return new StudySpace(in);
+        }
+
+        @Override
+        public StudySpace[] newArray(int size) {
+            return new StudySpace[size];
+        }
+    };
     private int libraryId;
-
     private Integer minimumAccessAQFLevel;
-
     private boolean isTalkAllowed;
-
     private Integer floorLevel;
-
     private Integer capacity;
-
     private double average_rating;
-
     private String type;
 
     public StudySpace() {
@@ -39,18 +44,6 @@ public class StudySpace extends Location {
         capacity = in.readInt();
         average_rating = in.readDouble();
     }
-
-    public static final Creator<StudySpace> CREATOR = new Creator<StudySpace>() {
-        @Override
-        public StudySpace createFromParcel(Parcel in) {
-            return new StudySpace(in);
-        }
-
-        @Override
-        public StudySpace[] newArray(int size) {
-            return new StudySpace[size];
-        }
-    };
 
     public int getLibraryId() {
         return libraryId;
@@ -76,9 +69,13 @@ public class StudySpace extends Location {
         isTalkAllowed = talkAllowed;
     }
 
-    public String getType() { return type;}
+    public String getType() {
+        return type;
+    }
 
-    public void setType(String type) { this.type = type;}
+    public void setType(String type) {
+        this.type = type;
+    }
 
 //    public Integer getFloorLevel() {
 //        return floorLevel;
@@ -92,7 +89,7 @@ public class StudySpace extends Location {
 //        return capacity;
 //    }
 
-//    public void setCapacity(Integer capacity) {
+    //    public void setCapacity(Integer capacity) {
 //        this.capacity = capacity;
 //    }
     @Override
@@ -106,20 +103,20 @@ public class StudySpace extends Location {
 
         dest.writeInt(libraryId);
 
-        if(nonNull(minimumAccessAQFLevel)) {
+        if (nonNull(minimumAccessAQFLevel)) {
             dest.writeInt(minimumAccessAQFLevel);
         }
 
         dest.writeString(type);
 
-        byte isTalkAllowedByte = (byte)(isTalkAllowed?1:0);
+        byte isTalkAllowedByte = (byte) (isTalkAllowed ? 1 : 0);
         dest.writeByte(isTalkAllowedByte);
 
-        if(nonNull(floorLevel)) {
+        if (nonNull(floorLevel)) {
             dest.writeInt(floorLevel);
         }
 
-        if(nonNull(capacity)) {
+        if (nonNull(capacity)) {
             dest.writeInt(capacity);
         }
     }

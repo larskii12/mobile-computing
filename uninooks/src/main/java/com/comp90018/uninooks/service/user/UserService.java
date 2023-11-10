@@ -6,11 +6,7 @@ public interface UserService {
 
     User logIn(String userNameOrEmail, String userPassword) throws Exception;
 
-    boolean addUser(String userName,
-                    String userEmail,
-                    String userPassword,
-                    String userFaculty,
-                    int userAQFLevel) throws Exception;
+    boolean addUser(String userName, String userEmail, String userPassword, String userFaculty, int userAQFLevel) throws Exception;
 
     boolean deleteUser(int userId) throws Exception;
 
@@ -25,7 +21,6 @@ public interface UserService {
     boolean updateUserFaculty(int userId, String newUserFaculty) throws Exception;
 
     boolean updateUserAQFLevel(int userId, int newAQFLevel) throws Exception;
-
 
 
     boolean resetUserPassword(String userNameOrEmail, String newUserPassword) throws Exception;

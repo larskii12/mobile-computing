@@ -32,63 +32,11 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     private String userEmail;
 
-    @SuppressLint("HandlerLeak")
-
-    private final Handler handler = new Handler() {
-
-        @SuppressLint("SetTextI18n")
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    String info = (String) msg.obj;
-                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
-                    break;
-
-                case 1:
-
-                    int time = (int) msg.obj;
-
-                    if (time > 0) {
-                        buttonGetResetPasswordOTP.setEnabled(false);
-                        buttonGetResetPasswordOTP.setText(time + "s");
-                        buttonGetResetPasswordOTP.setTextColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.black));
-                        buttonGetResetPasswordOTP.setBackgroundColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.grey));
-
-                        Message message = new Message();
-                        message.what = 1;
-                        message.obj = time - 1;
-                        handler.sendMessageDelayed(message, 1000);
-                    }
-
-                    else {
-                        editTextResetPasswordOTP.setEnabled(true);
-                        buttonGetResetPasswordOTP.setEnabled(true);
-                        buttonGetResetPasswordOTP.setText("Get OTP");
-                        buttonGetResetPasswordOTP.setTextColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.white));
-                        buttonGetResetPasswordOTP.setBackgroundColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.primary));
-
-                    }
-                    break;
-
-                case 2:
-                    editTextResetPasswordEmail.setVisibility(View.GONE);
-                    editTextResetPasswordOTP.setVisibility(View.GONE);
-                    buttonGetResetPasswordOTP.setVisibility(View.GONE);
-                    buttonResetPasswordOTPVerify.setVisibility(View.GONE);
-
-                    editTextResetPasswordNewPassword.setVisibility(View.VISIBLE);
-                    editTextResetPasswordNewPasswordConfirm.setVisibility(View.VISIBLE);
-                    buttonResetPasswordConfirm.setVisibility(View.VISIBLE);
-
-                    break;
-
-                case 3:
-                    editTextResetPasswordEmail.setText(userEmail);
-                    break;
-            }
-        }
-    };
-
+    /**
+     * on create method
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -193,36 +141,17 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     }
 
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         this.otp = "";
     }
 
-    public void onRestart(){
-        super.onRestart();
-    }
-
-    // When back button pressed
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-    public void onPause() {
-        super.onPause();
-    }
-    public void onResume() {
-        super.onResume();
-    }
-
-    public void onStop(){
-        super.onStop();
-    }
-
-    public void onDestroy(){
-        super.onDestroy();
-    }
-
-    private boolean resetPassWord() throws Exception {
+    /**
+     * Drive to Reset password page
+     *
+     * @throws Exception
+     */
+    private void resetPassWord() throws Exception {
 
         new UserServiceImpl().resetUserPassword(editTextResetPasswordEmail.getText().toString(), editTextResetPasswordNewPassword.getText().toString());
         showTextMessage("Your password has been reset successfully.");
@@ -235,8 +164,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 finish();
             }
         }.start();
-
-        return true;
     }
 
     /**
@@ -270,4 +197,59 @@ public class ResetPasswordActivity extends AppCompatActivity {
         msg.obj = text;
         handler.sendMessage(msg);
     }
+
+    @SuppressLint("HandlerLeak")
+
+    private final Handler handler = new Handler() {
+
+        @SuppressLint("SetTextI18n")
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    String info = (String) msg.obj;
+                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
+                    break;
+
+                case 1:
+
+                    int time = (int) msg.obj;
+
+                    if (time > 0) {
+                        buttonGetResetPasswordOTP.setEnabled(false);
+                        buttonGetResetPasswordOTP.setText(time + "s");
+                        buttonGetResetPasswordOTP.setTextColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.black));
+                        buttonGetResetPasswordOTP.setBackgroundColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.grey));
+
+                        Message message = new Message();
+                        message.what = 1;
+                        message.obj = time - 1;
+                        handler.sendMessageDelayed(message, 1000);
+                    } else {
+                        editTextResetPasswordOTP.setEnabled(true);
+                        buttonGetResetPasswordOTP.setEnabled(true);
+                        buttonGetResetPasswordOTP.setText("Get OTP");
+                        buttonGetResetPasswordOTP.setTextColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.white));
+                        buttonGetResetPasswordOTP.setBackgroundColor(ContextCompat.getColor(ResetPasswordActivity.this, R.color.primary));
+
+                    }
+                    break;
+
+                case 2:
+                    editTextResetPasswordEmail.setVisibility(View.GONE);
+                    editTextResetPasswordOTP.setVisibility(View.GONE);
+                    buttonGetResetPasswordOTP.setVisibility(View.GONE);
+                    buttonResetPasswordOTPVerify.setVisibility(View.GONE);
+
+                    editTextResetPasswordNewPassword.setVisibility(View.VISIBLE);
+                    editTextResetPasswordNewPasswordConfirm.setVisibility(View.VISIBLE);
+                    buttonResetPasswordConfirm.setVisibility(View.VISIBLE);
+
+                    break;
+
+                case 3:
+                    editTextResetPasswordEmail.setText(userEmail);
+                    break;
+            }
+        }
+    };
 }

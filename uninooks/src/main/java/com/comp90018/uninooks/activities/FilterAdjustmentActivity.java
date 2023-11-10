@@ -22,9 +22,20 @@ import com.comp90018.uninooks.R;
 import java.util.HashMap;
 
 
-
+/**
+ * Class FilterAdjustment Activity, the search filter
+ */
 public class FilterAdjustmentActivity extends AppCompatActivity {
 
+    /**
+     * This activity finishes, returns back to the previous page (search page)
+     */
+    private final View.OnClickListener returnListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            finish();
+        }
+    };
     ScrollView scrollView;
     ImageButton returnButton;
     Button resetButton;
@@ -37,10 +48,90 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
     SeekBar seekBar;
     HashMap<String, String> filtersChosen;
 
+    /**
+     * Tracks changes happening on the seek bar
+     */
+    private final SeekBar.OnSeekBarChangeListener barListener = new SeekBar.OnSeekBarChangeListener() {
+        int distanceVal;
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int i, boolean fromUser) {
+            distanceVal = i;
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        /** onStopTrackingTouch method
+         * Over ride
+         * @param seekBar as seekBar
+         */
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            if (distanceVal == 1000) {
+                // text is 0m - 1km
+                distDisplay.setText("10m - 1km");
+            } else if (distanceVal == 10) {
+                distDisplay.setText("10m");
+            } else {
+                // text is 0m - __m
+                distDisplay.setText("10m - " + distanceVal + "m");
+                distDisplay.setTextSize(18);
+            }
+            filtersChosen.put("DISTANCE", String.valueOf(distanceVal));
+        }
+    };
+
+    /**
+     * Resets all filters chosen by the user
+     */
+    private final View.OnClickListener resetListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            seekBar.setProgress(0);
+            barListener.onStopTrackingTouch(seekBar);
+            unselectAllCheckBox();
+            ascGroup.clearCheck();
+            descGroup.clearCheck();
+            filtersChosen.clear();
+        }
+    };
+
     private int userId;
     private String userEmail;
     private String userName;
+    /**
+     * Filters are applied,
+     * <p>
+     * If no filters are applied, all places will be shown from nearest to furthest from user
+     * current location (default setting)
+     */
+    private final View.OnClickListener applyListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(FilterAdjustmentActivity.this, SearchResults.class);
 
+            retrieveAllCheckedBox();
+
+            // Pass the filter to next page
+            intent.putExtra("filters", filtersChosen);
+
+            // Pass the user to next page
+            intent.putExtra("USER_ID_EXTRA", userId);
+            intent.putExtra("USER_EMAIL_EXTRA", userEmail);
+            intent.putExtra("USER_NAME_EXTRA", userName);
+
+            startActivity(intent);
+        }
+    };
+
+    /**
+     * create method
+     *
+     * @param savedInstanceState as savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -77,68 +168,11 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
     }
 
     /**
-     * This activity finishes, returns back to the previous page (search page)
-     */
-    private View.OnClickListener returnListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-//            if (getIntent().hasExtra("filters")) {
-//                getIntent().removeExtra("filters");
-//            }
-            finish();
-        }
-    };
-
-    /**
-     * Filters are applied,
-     *
-     * If no filters are applied, all places will be shown from nearest to furthest from user
-     * current location (default setting)
-     */
-    private View.OnClickListener applyListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Intent intent = new Intent(FilterAdjustmentActivity.this, SearchResults.class);
-
-            retrieveAllCheckedBox();
-            for (String key : filtersChosen.keySet()) {
-                String value = filtersChosen.get(key);
-                System.out.println("Key: " + key + " Value: " + value);
-            }
-
-            // Pass the filter to next page
-            intent.putExtra("filters", filtersChosen);
-
-            // Pass the user to next page
-            intent.putExtra("USER_ID_EXTRA", userId);
-            intent.putExtra("USER_EMAIL_EXTRA", userEmail);
-            intent.putExtra("USER_NAME_EXTRA", userName);
-
-            startActivity(intent);
-        }
-    };
-
-    /**
-     * Resets all filters chosen by the user
-     */
-    private View.OnClickListener resetListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            seekBar.setProgress(0);
-            barListener.onStopTrackingTouch(seekBar);
-            unselectAllCheckBox();
-            ascGroup.clearCheck();
-            descGroup.clearCheck();
-            filtersChosen.clear();
-        }
-    };
-
-    /**
      * Unselects all checkboxes that is contained in the layout (facilities)
      */
     private void unselectAllCheckBox() {
-        for(int i = 0 ; i < facilitiesLayout.getChildCount() ; i++) {
-            View item =  (View) facilitiesLayout.getChildAt(i);
+        for (int i = 0; i < facilitiesLayout.getChildCount(); i++) {
+            View item = (View) facilitiesLayout.getChildAt(i);
             if (item instanceof CheckBox) {
                 CheckBox box = (CheckBox) item;
                 box.setChecked(false);
@@ -151,7 +185,7 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
      */
     private void retrieveAllCheckedBox() {
         int count = 0;
-        for (int i = 0 ; i < facilitiesLayout.getChildCount() ; i++) {
+        for (int i = 0; i < facilitiesLayout.getChildCount(); i++) {
             View item = (View) facilitiesLayout.getChildAt(i);
             if (item instanceof CheckBox) {
                 CheckBox box = (CheckBox) item;
@@ -166,43 +200,12 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
     }
 
     /**
-     * Tracks changes happening on the seek bar
-     */
-    private SeekBar.OnSeekBarChangeListener barListener = new SeekBar.OnSeekBarChangeListener() {
-        int distanceVal;
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int i, boolean fromUser) {
-            distanceVal = i;
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-            if (distanceVal == 1000) {
-                // text is 0m - 1km
-                distDisplay.setText("10m - 1km");
-            } else if (distanceVal == 10) {
-                distDisplay.setText("10m");
-            } else {
-                // text is 0m - __m
-                distDisplay.setText("10m - " + distanceVal + "m");
-                distDisplay.setTextSize(18);
-            }
-            filtersChosen.put("DISTANCE", String.valueOf(distanceVal));
-        }
-    };
-
-    /**
      * Listens for any clicks in the radio group
-     *
+     * <p>
      * Due to the layout of having 2 radio groups, it checks with the other group and unselects any
      * button that has been selected (only keeps latest selected radio button)
      */
-    private OnCheckedChangeListener ascListener = new RadioGroup.OnCheckedChangeListener() {
+    private final OnCheckedChangeListener ascListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup group, int id) {
             if (id != -1) {
@@ -217,7 +220,13 @@ public class FilterAdjustmentActivity extends AppCompatActivity {
         }
     };
 
-    private OnCheckedChangeListener descListener = new RadioGroup.OnCheckedChangeListener() {
+    /**
+     * Listens for any clicks in the radio group
+     * <p>
+     * Due to the layout of having 2 radio groups, it checks with the other group and unselects any
+     * button that has been selected (only keeps latest selected radio button)
+     */
+    private final OnCheckedChangeListener descListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup group, int id) {
             if (id != -1) {

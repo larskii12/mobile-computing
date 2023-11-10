@@ -30,8 +30,8 @@ public class TimerView extends View {
     private RectF mCircleOuterBounds;
     private RectF mCircleInnerBounds;
 
-    private Paint mCirclePaint;
-    private Paint mEraserPaint;
+    private final Paint mCirclePaint;
+    private final Paint mEraserPaint;
 
     private float mCircleSweepAngle;
 
@@ -147,11 +147,7 @@ public class TimerView extends View {
         final float thickness = getWidth() * THICKNESS_SCALE;
 
         mCircleOuterBounds = new RectF(0, 0, getWidth(), getHeight());
-        mCircleInnerBounds = new RectF(
-                mCircleOuterBounds.left + thickness,
-                mCircleOuterBounds.top + thickness,
-                mCircleOuterBounds.right - thickness,
-                mCircleOuterBounds.bottom - thickness);
+        mCircleInnerBounds = new RectF(mCircleOuterBounds.left + thickness, mCircleOuterBounds.top + thickness, mCircleOuterBounds.right - thickness, mCircleOuterBounds.bottom - thickness);
 
         invalidate();
     }

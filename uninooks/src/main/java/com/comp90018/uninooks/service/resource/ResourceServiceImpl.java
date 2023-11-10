@@ -53,9 +53,7 @@ public class ResourceServiceImpl implements ResourceService {
         } // If exception happens when querying user
         catch (Exception e) {
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -65,7 +63,6 @@ public class ResourceServiceImpl implements ResourceService {
             }
         }
     }
-
 
 
     public List<Resource> getResourceFromKeyWord(String keyWord) throws Exception {
@@ -102,9 +99,7 @@ public class ResourceServiceImpl implements ResourceService {
         catch (Exception e) {
 
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();

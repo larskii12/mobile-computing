@@ -1,8 +1,5 @@
 package com.comp90018.uninooks.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,30 +9,38 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
 import com.comp90018.uninooks.R;
-import com.comp90018.uninooks.activities.HomeActivity;
-import com.comp90018.uninooks.activities.IntroViewPagerAdapter;
-import com.comp90018.uninooks.activities.ScreenItem;
-import com.comp90018.uninooks.activities.SignUpActivity;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Intro Activity
+ */
 public class IntroActivity extends AppCompatActivity {
-    private ViewPager screenPager;
     IntroViewPagerAdapter introViewPagerAdapter;
     TabLayout tabIndicator;
     Button btnNext, btnGetStarted;
     LinearLayout linearLayoutNext, linearLayoutGetStarted;
-
     int userId;
     String userEmail;
     String userName;
-
     boolean isIntroActivityOpened;
+    private ViewPager screenPager;
 
+    String onboarding_1;
+    String onboarding_2;
+    String onboarding_3;
 
+    /**
+     * on create method
+     *
+     * @param savedInstanceState as savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,11 +59,15 @@ public class IntroActivity extends AppCompatActivity {
         linearLayoutNext = findViewById(R.id.linear_layout_next);
         linearLayoutGetStarted = findViewById(R.id.linear_layout_get_started);
         tabIndicator = findViewById(R.id.tab_indicator);
+
+        onboarding_1 = getString(R.string.onboarding_page_1);
+        onboarding_2 = getString(R.string.onboarding_page_2);
+        onboarding_3 = getString(R.string.onboarding_page_3);
         //Data
         final List<ScreenItem> mList = new ArrayList<>();
-        mList.add(new ScreenItem("Check your destination", "Check how busy each study area is. \nPick the best place to study quietly", R.drawable.homepage_screenshot));
-        mList.add(new ScreenItem("Search study space suits you!", "Search study space suits you! \\nYou can search by location, capacity, and more", R.drawable.search_page_screenshot));
-        mList.add(new ScreenItem("Focus on your study", "Focus on your study \\nUse Focus Mode to block distractions and stay focused", R.drawable.focus_mode_screenshot));
+        mList.add(new ScreenItem(getString(R.string.onboarding_page_1_title), onboarding_1, R.drawable.homepage_screenshot));
+        mList.add(new ScreenItem(getString(R.string.onboarding_page_2_title), onboarding_2, R.drawable.search_page_screenshot));
+        mList.add(new ScreenItem(getString(R.string.onboarding_page_3_title), onboarding_3, R.drawable.focus_mode_screenshot));
 
         //Setup viewPager
         screenPager = findViewById(R.id.screen_viewpager);
@@ -72,15 +81,14 @@ public class IntroActivity extends AppCompatActivity {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                screenPager.setCurrentItem(screenPager.getCurrentItem()+1, true);
+                screenPager.setCurrentItem(screenPager.getCurrentItem() + 1, true);
             }
         });
-        System.out.println("still alive 1");
 
         tabIndicator.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition()==mList.size()-1){
+                if (tab.getPosition() == mList.size() - 1) {
                     loadLastScreen();
                 }
             }
@@ -95,7 +103,6 @@ public class IntroActivity extends AppCompatActivity {
 
             }
         });
-        System.out.println("still alive 2");
 
         //Button Get Started
         btnGetStarted.setOnClickListener(new View.OnClickListener() {
@@ -106,34 +113,28 @@ public class IntroActivity extends AppCompatActivity {
                 intent.putExtra("USER_EMAIL_EXTRA", userEmail);
                 intent.putExtra("USER_NAME_EXTRA", userName);
 
-                System.out.println(userId);
-                System.out.println("userName" + userName);
-                System.out.println(isIntroActivityOpened);
-                System.out.println("This is introactivity class");
                 savePrefsData();
                 startActivity(intent);
                 finish();
             }
         });
-        System.out.println("still alive 3");
     }
 
-    private boolean restorePreData(){
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("uninooks", MODE_PRIVATE);
-        Boolean isIntroActivityOpenedBefore = preferences.getBoolean("isIntroOpened", false);
-        return isIntroActivityOpenedBefore;
-    }
-
-    private void savePrefsData(){
+    /**
+     * Save user shared preference data
+     */
+    private void savePrefsData() {
         SharedPreferences preferences = getApplicationContext().getSharedPreferences("uninooks", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         isIntroActivityOpened = preferences.getBoolean("isIntroOpened", true);
-        System.out.println("this is in savePref" + isIntroActivityOpened);
         editor.putBoolean("isIntroOpened", true);
         editor.apply();
     }
 
-    private void loadLastScreen(){
+    /**
+     * Load last screen
+     */
+    private void loadLastScreen() {
         linearLayoutNext.setVisibility(View.INVISIBLE);
         linearLayoutGetStarted.setVisibility(View.VISIBLE);
     }

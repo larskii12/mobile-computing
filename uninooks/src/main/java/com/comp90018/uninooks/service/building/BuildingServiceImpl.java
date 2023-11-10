@@ -48,9 +48,7 @@ public class BuildingServiceImpl implements BuildingService {
         // If exception happens when querying user
         catch (Exception e) {
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();

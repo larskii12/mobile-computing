@@ -51,10 +51,7 @@ public class LocationServiceImpl implements LocationService {
             // Get the current time
             Time currentTime = new TimeServiceImpl().getAEDTTime();
 
-            String query = "SELECT * FROM mobilecomputing.library l " +
-                    "join mobilecomputing.opening_hours o on l.library_id = o.library_id " +
-                    "join mobilecomputing.\"building\" b ON l.library_building_id = b.building_id " +
-                    "WHERE l.library_id = ? and o.date = " + currentDayOfWeek;
+            String query = "SELECT * FROM mobilecomputing.library l " + "join mobilecomputing.opening_hours o on l.library_id = o.library_id " + "join mobilecomputing.\"building\" b ON l.library_building_id = b.building_id " + "WHERE l.library_id = ? and o.date = " + currentDayOfWeek;
 
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
@@ -82,7 +79,7 @@ public class LocationServiceImpl implements LocationService {
                 library.setIsOpenToday(library.getOpenTime() != null);
 
                 // Set is open now or not
-                if (library.getOpenTime() != null && currentTime.after(library.getOpenTime()) && currentTime.before(library.getCloseTime())){
+                if (library.getOpenTime() != null && currentTime.after(library.getOpenTime()) && currentTime.before(library.getCloseTime())) {
                     library.setIsOpeningNow(true);
                     library.setIsOpenToday(true);
                 }
@@ -92,12 +89,10 @@ public class LocationServiceImpl implements LocationService {
                 return library;
             }
 
-        } catch(Exception e){ // If exception happens when querying library
+        } catch (Exception e) { // If exception happens when querying library
 
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -118,9 +113,7 @@ public class LocationServiceImpl implements LocationService {
 
             Restaurant restaurant = new Restaurant();
 
-            String query = "SELECT * FROM mobilecomputing.restaurant r join mobilecomputing.opening_hours o " +
-                    "on r.restaurant_id = o.restaurant_id " +
-                    "WHERE r.restaurant_id = ? and o.date = " + currentDayOfWeek;
+            String query = "SELECT * FROM mobilecomputing.restaurant r join mobilecomputing.opening_hours o " + "on r.restaurant_id = o.restaurant_id " + "WHERE r.restaurant_id = ? and o.date = " + currentDayOfWeek;
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             preparedStatement.setInt(1, locationId);
@@ -137,7 +130,7 @@ public class LocationServiceImpl implements LocationService {
                 restaurant.setCloseTime(resultSet.getTime("closing_time"));
 
                 Time currentTime = new TimeServiceImpl().getAEDTTime();
-                if (restaurant.getOpenTime() != null && currentTime.after(restaurant.getOpenTime()) && currentTime.before(restaurant.getCloseTime())){
+                if (restaurant.getOpenTime() != null && currentTime.after(restaurant.getOpenTime()) && currentTime.before(restaurant.getCloseTime())) {
                     restaurant.setIsOpeningNow(true);
                     restaurant.setIsOpenToday(true);
                 }
@@ -148,11 +141,9 @@ public class LocationServiceImpl implements LocationService {
                 return restaurant;
             }
 
-        } catch(Exception e){ // If exception happens when querying restaurant
+        } catch (Exception e) { // If exception happens when querying restaurant
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -175,11 +166,7 @@ public class LocationServiceImpl implements LocationService {
             int currentDayOfWeek = new TimeServiceImpl().getWeekDate();
             Time currentTime = new TimeServiceImpl().getAEDTTime();
 
-            String query = "SELECT * FROM mobilecomputing.study_space s " +
-                    "join mobilecomputing.opening_hours o  " + "" +
-                    "on s.study_space_id = o.study_space_id " +
-                    "join mobilecomputing.\"building\" b ON s.study_space_building_id = b.building_id " +
-                    "WHERE s.study_space_id = ? and o.date = " + currentDayOfWeek;
+            String query = "SELECT * FROM mobilecomputing.study_space s " + "join mobilecomputing.opening_hours o  " + "" + "on s.study_space_id = o.study_space_id " + "join mobilecomputing.\"building\" b ON s.study_space_building_id = b.building_id " + "WHERE s.study_space_id = ? and o.date = " + currentDayOfWeek;
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             preparedStatement.setInt(1, locationId);
@@ -205,7 +192,7 @@ public class LocationServiceImpl implements LocationService {
 
                 studySpace.setIsOpenToday(studySpace.getOpenTime() != null);
 
-                if (studySpace.getOpenTime() != null && currentTime.after(studySpace.getOpenTime()) && currentTime.before(studySpace.getCloseTime())){
+                if (studySpace.getOpenTime() != null && currentTime.after(studySpace.getOpenTime()) && currentTime.before(studySpace.getCloseTime())) {
                     studySpace.setIsOpeningNow(true);
                     studySpace.setIsOpenToday(true);
                 }
@@ -227,13 +214,11 @@ public class LocationServiceImpl implements LocationService {
                 return studySpace;
             }
 
-        } catch(Exception e){ // If exception happens when querying study space
+        } catch (Exception e) { // If exception happens when querying study space
             e.printStackTrace();
 
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -247,16 +232,14 @@ public class LocationServiceImpl implements LocationService {
     }
 
 
-    public List<Location> findAllLocations(String locationType,
-                                           String name,
-                                           boolean isAscending) throws Exception {
+    public List<Location> findAllLocations(String locationType, String name, boolean isAscending) throws Exception {
 
         try {
 
             List<Location> allLocations = new ArrayList<>();
 
             String searchName = "";
-            if (name != null){
+            if (name != null) {
                 searchName = name.toLowerCase();
             }
 
@@ -268,15 +251,9 @@ public class LocationServiceImpl implements LocationService {
             if (locationType.equals("STUDY")) {
                 // Query for extracting all filtered libraries
                 if (!searchName.equals("")) {
-                    query = "SELECT * FROM mobilecomputing.library l  " + "" +
-                            "join mobilecomputing.opening_hours o on l.library_id = o.library_id " +
-                            "join mobilecomputing.\"building\" b ON l.library_building_id = b.building_id " +
-                            "WHERE lower(library_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
+                    query = "SELECT * FROM mobilecomputing.library l  " + "" + "join mobilecomputing.opening_hours o on l.library_id = o.library_id " + "join mobilecomputing.\"building\" b ON l.library_building_id = b.building_id " + "WHERE lower(library_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
                 } else {
-                    query = "SELECT * FROM mobilecomputing.library l " + "" +
-                            "join mobilecomputing.opening_hours o on l.library_id = o.library_id " +
-                            "join mobilecomputing.\"building\" b ON l.library_building_id = b.building_id " +
-                            "WHERE o.date = " + currentDayOfWeek;
+                    query = "SELECT * FROM mobilecomputing.library l " + "" + "join mobilecomputing.opening_hours o on l.library_id = o.library_id " + "join mobilecomputing.\"building\" b ON l.library_building_id = b.building_id " + "WHERE o.date = " + currentDayOfWeek;
                 }
 
                 preparedStatement = connector.prepareStatement(query);
@@ -303,7 +280,7 @@ public class LocationServiceImpl implements LocationService {
                     location.setAverage_rating(new ReviewServiceImpl().getAverageRating(location.getId(), ReviewType.LIBRARY));
 
                     Time currentTime = new TimeServiceImpl().getAEDTTime();
-                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
+                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())) {
                         location.setIsOpeningNow(true);
                         location.setIsOpenToday(true);
                     }
@@ -314,16 +291,9 @@ public class LocationServiceImpl implements LocationService {
 
                 // Query for extracting all filtered study spaces
                 if (!searchName.equals("")) {
-                    query = "SELECT * FROM mobilecomputing.study_space s  " + "" +
-                            "join mobilecomputing.opening_hours o "+
-                            "on s.study_space_id = o.study_space_id " +
-                            "join mobilecomputing.\"building\" b ON s.study_space_building_id = b.building_id " +
-                            "WHERE lower(study_space_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
+                    query = "SELECT * FROM mobilecomputing.study_space s  " + "" + "join mobilecomputing.opening_hours o " + "on s.study_space_id = o.study_space_id " + "join mobilecomputing.\"building\" b ON s.study_space_building_id = b.building_id " + "WHERE lower(study_space_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
                 } else {
-                    query = "SELECT * FROM mobilecomputing.study_space s join mobilecomputing.opening_hours o "+
-                            "on s.study_space_id = o.study_space_id " +
-                            "join mobilecomputing.\"building\" b ON s.study_space_building_id = b.building_id " +
-                            "WHERE o.date = " + currentDayOfWeek;
+                    query = "SELECT * FROM mobilecomputing.study_space s join mobilecomputing.opening_hours o " + "on s.study_space_id = o.study_space_id " + "join mobilecomputing.\"building\" b ON s.study_space_building_id = b.building_id " + "WHERE o.date = " + currentDayOfWeek;
                 }
 
                 preparedStatement = connector.prepareStatement(query);
@@ -345,7 +315,7 @@ public class LocationServiceImpl implements LocationService {
                     location.setAverage_rating(new ReviewServiceImpl().getAverageRating(location.getId(), ReviewType.STUDY_SPACE));
 
                     Time currentTime = new TimeServiceImpl().getAEDTTime();
-                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
+                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())) {
                         location.setIsOpeningNow(true);
                         location.setIsOpenToday(true);
                     }
@@ -364,13 +334,9 @@ public class LocationServiceImpl implements LocationService {
 
             } else if (locationType.equals("FOOD")) {
                 if (!searchName.equals("")) {
-                    query = "SELECT * FROM mobilecomputing.restaurant r join mobilecomputing.opening_hours o " +
-                            "on r.restaurant_id = o.restaurant_id " +
-                            "WHERE lower(restaurant_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
+                    query = "SELECT * FROM mobilecomputing.restaurant r join mobilecomputing.opening_hours o " + "on r.restaurant_id = o.restaurant_id " + "WHERE lower(restaurant_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
                 } else {
-                    query = "SELECT * FROM mobilecomputing.restaurant r join mobilecomputing.opening_hours o " +
-                            "on r.restaurant_id = o.restaurant_id " +
-                            "WHERE o.date = " + currentDayOfWeek;
+                    query = "SELECT * FROM mobilecomputing.restaurant r join mobilecomputing.opening_hours o " + "on r.restaurant_id = o.restaurant_id " + "WHERE o.date = " + currentDayOfWeek;
                 }
 
                 preparedStatement = connector.prepareStatement(query);
@@ -389,7 +355,7 @@ public class LocationServiceImpl implements LocationService {
                     location.setType("RESTAURANT");
 
                     Time currentTime = new TimeServiceImpl().getAEDTTime();
-                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
+                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())) {
                         location.setIsOpeningNow(true);
                         location.setIsOpenToday(true);
                     }
@@ -403,11 +369,9 @@ public class LocationServiceImpl implements LocationService {
 
             } else if (locationType.equals("ALL")) {
                 if (!searchName.equals("")) {
-                    query = "SELECT * FROM mobilecomputing.library l join mobilecomputing.opening_hours o on l.library_id = o.library_id " +
-                            "WHERE lower(library_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
+                    query = "SELECT * FROM mobilecomputing.library l join mobilecomputing.opening_hours o on l.library_id = o.library_id " + "WHERE lower(library_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
                 } else {
-                    query = "SELECT * FROM mobilecomputing.library l join mobilecomputing.opening_hours o on l.library_id = o.library_id " +
-                            "WHERE o.date = " + currentDayOfWeek;
+                    query = "SELECT * FROM mobilecomputing.library l join mobilecomputing.opening_hours o on l.library_id = o.library_id " + "WHERE o.date = " + currentDayOfWeek;
                 }
 
                 preparedStatement = connector.prepareStatement(query);
@@ -431,7 +395,7 @@ public class LocationServiceImpl implements LocationService {
                     location.setAverage_rating(new ReviewServiceImpl().getAverageRating(location.getId(), ReviewType.LIBRARY));
 
                     Time currentTime = new TimeServiceImpl().getAEDTTime();
-                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
+                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())) {
                         location.setIsOpeningNow(true);
                         location.setIsOpenToday(true);
                     }
@@ -441,13 +405,9 @@ public class LocationServiceImpl implements LocationService {
 
                 // Query for extracting all filtered study spaces
                 if (!searchName.equals("")) {
-                    query = "SELECT * FROM mobilecomputing.study_space s join mobilecomputing.opening_hours o "+
-                            "on s.study_space_id = o.study_space_id " +
-                            "WHERE lower(study_space_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
+                    query = "SELECT * FROM mobilecomputing.study_space s join mobilecomputing.opening_hours o " + "on s.study_space_id = o.study_space_id " + "WHERE lower(study_space_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
                 } else {
-                    query = "SELECT * FROM mobilecomputing.study_space s join mobilecomputing.opening_hours o "+
-                            "on s.study_space_id = o.study_space_id " +
-                            "WHERE o.date = " + currentDayOfWeek;
+                    query = "SELECT * FROM mobilecomputing.study_space s join mobilecomputing.opening_hours o " + "on s.study_space_id = o.study_space_id " + "WHERE o.date = " + currentDayOfWeek;
                 }
 
                 preparedStatement = connector.prepareStatement(query);
@@ -466,7 +426,7 @@ public class LocationServiceImpl implements LocationService {
                     location.setType("STUDY_SPACE");
 
                     Time currentTime = new TimeServiceImpl().getAEDTTime();
-                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
+                    if (location.getOpenTime() != null && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())) {
                         location.setIsOpeningNow(true);
                         location.setIsOpenToday(true);
                     }
@@ -480,12 +440,9 @@ public class LocationServiceImpl implements LocationService {
                 }
 
                 if (!searchName.equals("")) {
-                    query = "SELECT * FROM mobilecomputing.restaurant r join mobilecomputing.opening_hours o " +
-                            "on r.restaurant_id = o.restaurant_id " +
-                            "WHERE lower(restaurant_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
+                    query = "SELECT * FROM mobilecomputing.restaurant r join mobilecomputing.opening_hours o " + "on r.restaurant_id = o.restaurant_id " + "WHERE lower(restaurant_name) like '%" + searchName + "%' and o.date = " + currentDayOfWeek;
                 } else {
-                    query = "SELECT * FROM mobilecomputing.restaurant r join mobilecomputing.opening_hours o " +
-                            "on r.restaurant_id = o.restaurant_id and o.date = " + currentDayOfWeek;
+                    query = "SELECT * FROM mobilecomputing.restaurant r join mobilecomputing.opening_hours o " + "on r.restaurant_id = o.restaurant_id and o.date = " + currentDayOfWeek;
                 }
 
                 preparedStatement = connector.prepareStatement(query);
@@ -510,7 +467,7 @@ public class LocationServiceImpl implements LocationService {
                     location.setAverage_rating(new ReviewServiceImpl().getAverageRating(location.getId(), ReviewType.RESTAURANT));
 
                     Time currentTime = new TimeServiceImpl().getAEDTTime();
-                    if (location.isOpenToday() && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())){
+                    if (location.isOpenToday() && currentTime.after(location.getOpenTime()) && currentTime.before(location.getCloseTime())) {
                         location.setIsOpeningNow(true);
                         location.setIsOpenToday(true);
                     }
@@ -523,11 +480,9 @@ public class LocationServiceImpl implements LocationService {
                 throw new Exception("Does not exist!!");
             }
 
-        } catch(Exception e){ // If exception happens when querying library
+        } catch (Exception e) { // If exception happens when querying library
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -554,9 +509,7 @@ public class LocationServiceImpl implements LocationService {
         double latDistance = Math.toRadians(destination.latitude - source.latitude);
         double lonDistance = Math.toRadians(destination.longitude - source.longitude);
 
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(source.latitude)) * Math.cos(Math.toRadians(destination.latitude))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) + Math.cos(Math.toRadians(source.latitude)) * Math.cos(Math.toRadians(destination.latitude)) * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         double distance = R * c;

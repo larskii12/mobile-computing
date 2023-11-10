@@ -20,8 +20,9 @@ public class BusyRatingServiceImpl implements BusyRatingService {
 
     /**
      * Update busy rating at specific time slot
-     * @param entityId as entity id
-     * @param type as entity type
+     *
+     * @param entityId        as entity id
+     * @param type            as entity type
      * @param busyRatingScore as the score user gave
      * @return true if rate success, otherwise false
      * @throws Exception if any exception happens
@@ -50,39 +51,19 @@ public class BusyRatingServiceImpl implements BusyRatingService {
             switch (type) {
 
                 case GYM: // Add new gym busy review to the database
-                    query = "UPDATE mobilecomputing.busy_rating "
-                            + "SET total_score = total_score + ?, "
-                            + "busy_rating_count = busy_rating_count + 1, "
-                            + "average_score = (total_score + ?) / (busy_rating_count + 1) "
-                            + "WHERE "
-                            + "busy_rating_gym_id = ? AND busy_rating_date = ? AND busy_rating_time = ?";
+                    query = "UPDATE mobilecomputing.busy_rating " + "SET total_score = total_score + ?, " + "busy_rating_count = busy_rating_count + 1, " + "average_score = (total_score + ?) / (busy_rating_count + 1) " + "WHERE " + "busy_rating_gym_id = ? AND busy_rating_date = ? AND busy_rating_time = ?";
                     break;
 
                 case LIBRARY: // Add new library busy review to the database
-                    query = "UPDATE mobilecomputing.busy_rating "
-                            + "SET total_score = total_score + ?, "
-                            + "busy_rating_count = busy_rating_count + 1, "
-                            + "average_score = (total_score + ?) / (busy_rating_count + 1) "
-                            + "WHERE "
-                            + "busy_rating_library_id = ? AND busy_rating_date = ? AND busy_rating_time = ?";
+                    query = "UPDATE mobilecomputing.busy_rating " + "SET total_score = total_score + ?, " + "busy_rating_count = busy_rating_count + 1, " + "average_score = (total_score + ?) / (busy_rating_count + 1) " + "WHERE " + "busy_rating_library_id = ? AND busy_rating_date = ? AND busy_rating_time = ?";
                     break;
 
                 case RESTAURANT: // Add new restaurant busy review to the database
-                    query = "UPDATE mobilecomputing.busy_rating "
-                            + "SET total_score = total_score + ?, "
-                            + "busy_rating_count = busy_rating_count + 1, "
-                            + "average_score = (total_score + ?) / (busy_rating_count + 1) "
-                            + "WHERE "
-                            + "busy_rating_restaurant_id = ? AND busy_rating_date = ? AND busy_rating_time = ?";
+                    query = "UPDATE mobilecomputing.busy_rating " + "SET total_score = total_score + ?, " + "busy_rating_count = busy_rating_count + 1, " + "average_score = (total_score + ?) / (busy_rating_count + 1) " + "WHERE " + "busy_rating_restaurant_id = ? AND busy_rating_date = ? AND busy_rating_time = ?";
                     break;
 
                 case STUDY_SPACE: // Add new study space busy review to the database
-                    query = "UPDATE mobilecomputing.busy_rating "
-                            + "SET total_score = total_score + ?, "
-                            + "busy_rating_count = busy_rating_count + 1, "
-                            + "average_score = (total_score + ?) / (busy_rating_count + 1) "
-                            + "WHERE "
-                            + "busy_rating_study_space_id = ? AND busy_rating_date = ? AND busy_rating_time = ?";
+                    query = "UPDATE mobilecomputing.busy_rating " + "SET total_score = total_score + ?, " + "busy_rating_count = busy_rating_count + 1, " + "average_score = (total_score + ?) / (busy_rating_count + 1) " + "WHERE " + "busy_rating_study_space_id = ? AND busy_rating_date = ? AND busy_rating_time = ?";
 
                     break;
 
@@ -93,7 +74,7 @@ public class BusyRatingServiceImpl implements BusyRatingService {
             PreparedStatement preparedStatement = connector.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setDouble(1, busyRatingScore);
             preparedStatement.setDouble(2, busyRatingScore);
-            preparedStatement.setInt(3,  entityId);
+            preparedStatement.setInt(3, entityId);
             preparedStatement.setInt(4, currentDayOfWeek);
             preparedStatement.setTime(5, timeWithoutHour);
 
@@ -107,9 +88,7 @@ public class BusyRatingServiceImpl implements BusyRatingService {
 
             // Unknown exceptions happens.
             throw new Exception("User added failed, please contact the IT administrator to report the issue.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -139,20 +118,16 @@ public class BusyRatingServiceImpl implements BusyRatingService {
             switch (type) {
 
                 case GYM: // Add new gym review to the database
-                    query = "SELECT * FROM mobilecomputing.\"busy_rating\" WHERE " +
-                            "\"busy_rating_gym_id\" = ?";
+                    query = "SELECT * FROM mobilecomputing.\"busy_rating\" WHERE " + "\"busy_rating_gym_id\" = ?";
                     break;
                 case LIBRARY: // Add new library review to the database
-                    query = "SELECT * FROM mobilecomputing.\"busy_rating\" WHERE " +
-                            "\"busy_rating_library_id\" = ?";
+                    query = "SELECT * FROM mobilecomputing.\"busy_rating\" WHERE " + "\"busy_rating_library_id\" = ?";
                     break;
                 case RESTAURANT: // Add new restaurant review to the database
-                    query = "SELECT * FROM mobilecomputing.\"busy_rating\" WHERE " +
-                            "\"busy_rating_restaurant_id\" = ?";
+                    query = "SELECT * FROM mobilecomputing.\"busy_rating\" WHERE " + "\"busy_rating_restaurant_id\" = ?";
                     break;
                 case STUDY_SPACE: // Add new study space review to the database
-                    query = "SELECT * FROM mobilecomputing.\"busy_rating\" WHERE " +
-                            "\"busy_rating_study_space_id\" = ?";
+                    query = "SELECT * FROM mobilecomputing.\"busy_rating\" WHERE " + "\"busy_rating_study_space_id\" = ?";
                     break;
                 default:
                     throw new Exception("Invalid review type. Cannot retrieve busy rating list.");
@@ -198,9 +173,7 @@ public class BusyRatingServiceImpl implements BusyRatingService {
         catch (Exception e) {
 
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -235,24 +208,16 @@ public class BusyRatingServiceImpl implements BusyRatingService {
             switch (type) {
 
                 case GYM: // Add new gym review to the database
-                    query = "SELECT average_score FROM mobilecomputing.busy_rating WHERE " +
-                            "busy_rating_gym_id = ? and busy_rating_date = ? and "+
-                            "EXTRACT(HOUR FROM busy_rating_time) = ?";
+                    query = "SELECT average_score FROM mobilecomputing.busy_rating WHERE " + "busy_rating_gym_id = ? and busy_rating_date = ? and " + "EXTRACT(HOUR FROM busy_rating_time) = ?";
                     break;
                 case LIBRARY: // Add new library review to the database
-                    query = "SELECT average_score FROM mobilecomputing.busy_rating WHERE " +
-                            "busy_rating_library_id = ? and busy_rating_date = ? and "+
-                            "EXTRACT(HOUR FROM busy_rating_time) = ?";
+                    query = "SELECT average_score FROM mobilecomputing.busy_rating WHERE " + "busy_rating_library_id = ? and busy_rating_date = ? and " + "EXTRACT(HOUR FROM busy_rating_time) = ?";
                     break;
                 case RESTAURANT: // Add new restaurant review to the database
-                    query = "SELECT average_score FROM mobilecomputing.busy_rating WHERE " +
-                            "busy_rating_restaurant_id = ? and busy_rating_date = ? and "+
-                            "EXTRACT(HOUR FROM busy_rating_time) = ?";
+                    query = "SELECT average_score FROM mobilecomputing.busy_rating WHERE " + "busy_rating_restaurant_id = ? and busy_rating_date = ? and " + "EXTRACT(HOUR FROM busy_rating_time) = ?";
                     break;
                 case STUDY_SPACE: // Add new study space review to the database
-                    query = "SELECT average_score FROM mobilecomputing.busy_rating WHERE " +
-                            "busy_rating_study_space_id = ? and busy_rating_date = ? and "+
-                            "EXTRACT(HOUR FROM busy_rating_time) = ?";
+                    query = "SELECT average_score FROM mobilecomputing.busy_rating WHERE " + "busy_rating_study_space_id = ? and busy_rating_date = ? and " + "EXTRACT(HOUR FROM busy_rating_time) = ?";
                     break;
                 default:
                     throw new Exception("Invalid review type. Cannot retrieve busy rating list.");
@@ -276,9 +241,7 @@ public class BusyRatingServiceImpl implements BusyRatingService {
         catch (Exception e) {
 
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();

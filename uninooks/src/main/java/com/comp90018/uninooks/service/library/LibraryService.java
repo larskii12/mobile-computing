@@ -1,7 +1,6 @@
 package com.comp90018.uninooks.service.library;
 
 import com.comp90018.uninooks.models.location.library.Library;
-import com.comp90018.uninooks.models.location.study_space.StudySpace;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;

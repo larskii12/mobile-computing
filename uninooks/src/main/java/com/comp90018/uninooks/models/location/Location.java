@@ -11,68 +11,68 @@ import java.sql.Time;
 
 public class Location implements Parcelable {
 
+    public static final Creator<Location> CREATOR = new Creator<Location>() {
+        @Override
+        public Location createFromParcel(Parcel in) {
+            return new Location(in);
+        }
+
+        @Override
+        public Location[] newArray(int size) {
+            return new Location[size];
+        }
+    };
     /**
      * Location ID if acceptable
      */
     private int id;
-
     /**
      * Associated Building ID
      */
     private int buildingId;
-
     /**
      * Location's name
      */
     private String name;
-
     /**
      * Opening Time
      */
     private Time openTime;
-
     /**
      * Closing Time
      */
     private Time closeTime;
-
     /**
      * Is Open Today
      */
     private boolean isOpenToday;
-
     /**
      * is opening now
      */
     private boolean isOpeningNow;
-
     /**
      * IS open 24/7
      */
     private boolean isOpen24By7;
-
     /**
      * List of opening days in the location
      */
     private Integer[] openingDays;
-
     /**
      * List of Busy Times
      */
     private Time[] busyHours;
-
     private LatLng location;
-
     private int distanceFromCurrentPosition;
-
     /**
      * Type of location
      */
     private String type;
-
     private double average_rating;
 
-    public Location() {}
+    public Location() {
+    }
+
     protected Location(Parcel in) {
         id = in.readInt();
         buildingId = in.readInt();
@@ -87,18 +87,6 @@ public class Location implements Parcelable {
         openTime = new Time(in.readLong());
         closeTime = new Time(in.readLong());
     }
-
-    public static final Creator<Location> CREATOR = new Creator<Location>() {
-        @Override
-        public Location createFromParcel(Parcel in) {
-            return new Location(in);
-        }
-
-        @Override
-        public Location[] newArray(int size) {
-            return new Location[size];
-        }
-    };
 
     public LatLng getLocation() {
         return location;
@@ -196,9 +184,13 @@ public class Location implements Parcelable {
         isOpeningNow = openingNow;
     }
 
-    public String getType() {return type;}
+    public String getType() {
+        return type;
+    }
 
-    public void setType(String type) {this.type = type;}
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public double getAverage_rating() {
         return average_rating;
@@ -219,13 +211,13 @@ public class Location implements Parcelable {
         dest.writeInt(buildingId);
         dest.writeString(name);
 
-        byte isOpenTodayByte = (byte)(isOpenToday?1:0);
+        byte isOpenTodayByte = (byte) (isOpenToday ? 1 : 0);
         dest.writeByte(isOpenTodayByte);
 
-        byte isOpeningNowByte = (byte)(isOpeningNow?1:0);
+        byte isOpeningNowByte = (byte) (isOpeningNow ? 1 : 0);
         dest.writeByte(isOpeningNowByte);
 
-        byte isOpen24By7Byte = (byte)(isOpen24By7?1:0);
+        byte isOpen24By7Byte = (byte) (isOpen24By7 ? 1 : 0);
         dest.writeByte(isOpen24By7Byte);
 
         dest.writeParcelable(location, flags);

@@ -10,21 +10,6 @@ import com.comp90018.uninooks.models.location.Location;
 
 public class Library extends Location {
 
-    private boolean hasQuietZones;
-
-    private double average_rating;
-
-    private Integer capacity;
-
-    public Library() {}
-
-    public Library(Parcel in) {
-        super(in);
-        capacity = in.readInt();
-        average_rating = in.readDouble();
-        hasQuietZones = in.readByte() != 0;
-    }
-
     public static final Creator<Library> CREATOR = new Creator<Library>() {
         @Override
         public Library createFromParcel(Parcel in) {
@@ -36,6 +21,19 @@ public class Library extends Location {
             return new Library[size];
         }
     };
+    private boolean hasQuietZones;
+    private double average_rating;
+    private Integer capacity;
+
+    public Library() {
+    }
+
+    public Library(Parcel in) {
+        super(in);
+        capacity = in.readInt();
+        average_rating = in.readDouble();
+        hasQuietZones = in.readByte() != 0;
+    }
 
     public boolean isHasQuietZones() {
         return hasQuietZones;
@@ -70,7 +68,7 @@ public class Library extends Location {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
 
-        if(nonNull(capacity)) {
+        if (nonNull(capacity)) {
             dest.writeInt(capacity);
         }
         dest.writeDouble(average_rating);
