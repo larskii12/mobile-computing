@@ -45,7 +45,7 @@ public class FocusModeReceiver extends BroadcastReceiver {
             notificationManager.createNotificationChannel(channel);
             builder = new Notification.Builder(context, "launcher");
 
-            builder.setSmallIcon(R.drawable.logo_uninook)
+            builder.setSmallIcon(getNotificationSmallIcon())
                     .setContentTitle("Times up! ")
                     .setContentText("You have finished your study time. You can start your break time!")
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
@@ -62,5 +62,9 @@ public class FocusModeReceiver extends BroadcastReceiver {
         OneTimeWorkRequest startServiceRequest = new OneTimeWorkRequest.Builder(FocusModeWorker.class)
                 .build();
         workManager.enqueue(startServiceRequest);
+    }
+    private int getNotificationSmallIcon() {
+        boolean useWhiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
+        return useWhiteIcon ? R.drawable.ic_logo_uninooks : R.drawable.ic_launcher_foreground;
     }
 }
