@@ -133,7 +133,7 @@ public class HomeActivity extends AppCompatActivity {
                     long currentTime = System.currentTimeMillis();
                     long elapsedTimeSinceLastClick = currentTime - lastHomeClickTime;
 
-                    if (elapsedTimeSinceLastClick > 5000) {
+                    if (elapsedTimeSinceLastClick > 1000 * 5) {
                         reloadActivity();
                         lastHomeClickTime = currentTime; // Update the last click time
                     }
