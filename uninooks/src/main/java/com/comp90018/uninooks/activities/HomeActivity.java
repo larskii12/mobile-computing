@@ -74,6 +74,8 @@ public class HomeActivity extends AppCompatActivity {
     private StudySpace randomSpace;
     private SharedPreferences sharedPreferences;
     private HashMap<String, Integer> imagesByLocation;
+    private static long lastHomeClickTime;
+
 
     /**
      * on create method
@@ -128,7 +130,13 @@ public class HomeActivity extends AppCompatActivity {
                 int id = item.getItemId();
 
                 if (id == R.id.homeNav) {
-                    reloadActivity();
+                    long currentTime = System.currentTimeMillis();
+                    long elapsedTimeSinceLastClick = currentTime - lastHomeClickTime;
+
+                    if (elapsedTimeSinceLastClick > 5000) {
+                        reloadActivity();
+                        lastHomeClickTime = currentTime; // Update the last click time
+                    }
                 } else if (id == R.id.searchNav) {
                     Intent intent = new Intent(HomeActivity.this, MapsActivity.class);
 
