@@ -1,0 +1,123 @@
+<resources>
+    <string name="app_name">Uninooks</string>
+    <string name="title_main_activity">MainActivity</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="forget_password"><u>Forgot Password?</u></string>
+    <string-array name="faculty_list">
+        <item>Please select your faculty (optional)</item>
+        <item>Architecture, Building and Planning</item>
+        <item>Arts</item>
+        <item>Business and Economics</item>
+        <item>Education</item>
+        <item>Engineering and Information Technology</item>
+        <item>Fine Arts and Music</item>
+        <item>Law</item>
+        <item>Medicine, Dentistry and Health Sciences</item>
+        <item>Science</item>
+    </string-array>
+
+    <string-array name="degree_list">
+        <item>Please select your degree (optional)</item>
+        <item>Certificate I</item>
+        <item>Certificate II</item>
+        <item>Certificate III</item>
+        <item>Certificate IV</item>
+        <item>Diploma</item>
+        <item>Advanced Diploma, Associate Degree</item>
+        <item>Bachelor Degree</item>
+        <item>Bachelor Honours Degree</item>
+        <item>Masters Degree</item>
+        <item>Doctoral Degree</item>
+    </string-array>
+
+    <!-- Login strings-->
+    <string name="login">Login</string>
+    <string name="login_email_or_username">Email or username</string>
+    <string name="new_user">First time here? <u>Join us!</u></string>
+
+    <!-- Sign up strings-->
+    <string name="Sign_Up">Sign Up</string>
+    <string name="UniNook">UniNooks</string>
+    <string name="Name">Name</string>
+    <string name="Email">Email</string>
+    <string name="Username">Username</string>
+    <string name="UserId">User ID</string>
+    <string name="Password">Password</string>
+    <string name="Confirm_Password">Confirm Password</string>
+
+    <!-- Account Personal Info strings-->
+    <string name="Account_Pi">Account Personal Info</string>
+    <string name="Account_Pi_Personal_Info">Personal Information</string>
+    <string name="Account_Pi_Edit_Degree">Degree</string>
+    <string name="Account_Pi_Faculty">Faculty</string>
+    <string name="Account_Pi_Edit_Mobile_Number">Enter new degree</string>
+    <string name="Account_Pi_Edit_Name">Enter new user name</string>
+    <string name="Account_Pi_Edit_Email">Enter new Email address</string>
+    <string name="Account_Pi_Edit_Faculty">Edit Faculty</string>
+    <string name="PasswordChanged">Password Changed</string>
+    <string name="LogOut">Logged Out</string>
+
+    <!-- Account Setting strings-->
+    <string name="Title_Account"><u>Account Information</u></string>
+    <string name="Title_Permissions"><u>Permissions</u></string>
+    <string name="Account_Settings">Settings</string>
+    <string name="Account_Settings_Change_Password">Password</string>
+    <string name="Account_Settings_Current_Password">***********</string>
+    <string name="Account_Delete_Account_Message">Are you sure you want to delete your account? You will lose everything such as usernames, favourites and more. If you are sure, press confirm button.</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="enter_new_password">Enter New Password</string>
+    <string name="email_address">Email Address</string>
+    <string name="study_space_surprise_suggestion_settings">Enable shake function</string>
+    <string name="usage_access">Allow usage access</string>
+    <string name="precise_loc">Allow precise location</string>
+    <string name="notification">Allow notifications</string>
+    <string name="shaking_enabled">Shaking Enabled </string>
+    <string name="warning_msg">(APP Restart Required)</string>
+
+    <!-- Focus Mode Strings -->
+    <string name="back_to_home">Back to Home</string>
+    <string name="focus_mode">Focus Mode</string>
+    <string name="timer_pomodoro">Pomodoro</string>
+    <string name="timer_short_pause">Short Pause</string>
+    <string name="timer_long_pause">Long Pause</string>
+    <string name="start_time">25:00</string>
+    <string name="focus_start">Let\'s begin!</string>
+    <string name="focus_heading">Your Study Buddy: Silencing Distractions with Pomodoro Power! </string>
+    <string name="focus_subheading">Let\'s get to know Focus Mode!</string>
+    <string name="focus_subheading1">What is Focus Mode? </string>
+<!--    <string name="focus_paragraph1">Derived from its name, focus mode will help you concentrate on your studies for the set amount of time. This mode includes a Do Not Disturb feature, Pomodoro Timer, and a Background App Sensor.</string>-->
+    <string name="focus_paragraph1">This mode utilises the Pomodoro technique to aid in your concentration while studying for the set amount of time.</string>
+    <string name="focus_subheading2">What does Do Not Disturb do? </string>
+    <string name="focus_paragraph2">This will disable notifications all social media and messaging applications</string>
+    <string name="focus_last">Good luck students!</string>
+
+
+    <!-- Focus Mode Strings -->
+    <string name="pomodoro_setting">Pomodoro Time</string>
+    <string name="short_break_setting">Short Break Time</string>
+    <string name="long_break_setting">Long Break Time</string>
+    <string name="never_show_again_setting">Never Show Again</string>
+    <string name="auto_pomodoro">Pomodoro Sequence</string>
+    <string name="dialogMessage">Note: navigating away from this page will restart all timers. </string>
+    <string name="neverShowMessage">Never show this message again</string>
+
+    <!-- Review Strings -->
+    <string name="add_review">Add Review</string>
+    <string name="how_was_your_experience">How was your experience?</string>
+    <string name="submit">Submit</string>
+    <string name="write_your_review_here">Write your review here</string>
+
+    <!--Home strings -->
+    <string name="never_show_welcome">Dont show again</string>
+    <string name="onboarding_page_1_title">Check your destination</string>
+    <string name="onboarding_page_1">Check how busy each study area is. \nPick the best place to study quietly</string>
+    <string name="onboarding_page_2_title">Explore study spaces!</string>
+    <string name="onboarding_page_2">Search study space that suits you! \nYou can search by location, capacity, and more</string>
+    <string name="onboarding_page_3_title">Focus on your study</string>
+    <string name="onboarding_page_3">Focus on your study \nUse Focus Mode to block distractions and stay focused</string>
+
+    <string name="show_reviews"><u>Show Reviews</u></string>
+    <string name="hide_reviews"><u>Hide Reviews</u></string>
+</resources>
