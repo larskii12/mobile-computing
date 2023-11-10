@@ -119,7 +119,6 @@ public class LoginActivity extends AppCompatActivity {
                                 } else {
                                     launchHomeActivity();
                                 }
-
                             }
 
                         } catch (Exception e) {
@@ -145,6 +144,11 @@ public class LoginActivity extends AppCompatActivity {
                                     userId = user.getUserId();
                                     userEmail = user.getUserEmail();
                                     userName = user.getUserName();
+
+                                    saveLoginDetails(userId, userEmail, userName);
+                                    editor.putBoolean(getString(R.string.PasswordChanged), false);
+                                    editor.putBoolean(getString(R.string.LogOut), false);
+                                    editor.apply();
 
                                     if (!sharedPreferences.getBoolean("isIntroOpen", false)) {
                                         Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
@@ -287,7 +291,6 @@ public class LoginActivity extends AppCompatActivity {
         userName = sharedPreferences.getString(getString(R.string.Username), "");
         String password = sharedPreferences.getString(getString(R.string.Password), "");
 
-
         ifPasswordChanged = sharedPreferences.getBoolean(getString(R.string.PasswordChanged), false);
         ifLogout = sharedPreferences.getBoolean(getString(R.string.LogOut), false);
 
@@ -295,4 +298,7 @@ public class LoginActivity extends AppCompatActivity {
             launchHomeActivity();
         }
     }
+
+
+
 }
