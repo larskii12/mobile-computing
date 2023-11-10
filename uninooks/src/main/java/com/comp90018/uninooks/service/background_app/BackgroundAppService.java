@@ -1,6 +1,5 @@
 package com.comp90018.uninooks.service.background_app;
 
-import static com.comp90018.uninooks.activities.FocusModeTimerActivity.isCurrentlyOnApp;
 import static com.comp90018.uninooks.activities.FocusModeTimerActivity.isRunning;
 
 import static java.util.Objects.nonNull;
@@ -25,12 +24,9 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.activities.FocusModeTimerActivity;
-import com.comp90018.uninooks.models.background_app.BackgroundApp;
 import com.comp90018.uninooks.models.background_app.UnwantedApp;
 import com.comp90018.uninooks.receiver.FocusModeReceiver;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class BackgroundAppService extends Service {
 
@@ -133,7 +129,7 @@ public class BackgroundAppService extends Service {
 
             Notification.Builder builder = new Notification.Builder(this, channelId);
 
-            builder.setSmallIcon(R.drawable.logo_uninook)
+            builder.setSmallIcon(getNotificationSmallIcon())
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo_uninook))
                     .setContentTitle("We detected a distraction!")
                     .setContentText("You are using another app while in Focus Mode. Please go back to studying.")
@@ -163,7 +159,7 @@ public class BackgroundAppService extends Service {
 
         builder = new Notification.Builder(this, channelId);
 
-        builder.setSmallIcon(R.drawable.logo_uninook)
+        builder.setSmallIcon(getNotificationSmallIcon())
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo_uninook))
                 .setContentTitle("Focus Mode is enabled.")
                 .setContentText("Timer is currently running.")
@@ -178,6 +174,11 @@ public class BackgroundAppService extends Service {
     private boolean isScreenOn() {
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         return powerManager.isInteractive();
+    }
+
+    private int getNotificationSmallIcon() {
+        boolean useWhiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
+        return useWhiteIcon ? R.drawable.ic_logo_uninooks : R.drawable.ic_launcher_foreground;
     }
 
     @Override
