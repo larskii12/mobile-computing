@@ -5,15 +5,16 @@ import java.time.LocalTime;
 
 public interface TimeService {
 
-    public Time getAEDTTime();
+    Time getAEDTTime();
 
-    public LocalTime getAEDTLocalTime();
+    LocalTime getAEDTLocalTime();
 
-    public int getAEDTTimeHour();
-    public int getAEDTTimeMinute();
+    int getAEDTTimeHour();
 
-    public int getAEDTTimeSecond();
+    int getAEDTTimeMinute();
 
-    public int getWeekDate();
+    int getAEDTTimeSecond();
+
+    int getWeekDate();
 
 }

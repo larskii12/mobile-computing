@@ -2,23 +2,16 @@ package com.comp90018.uninooks.models.location.resource;
 
 public enum ResourceType {
 
-    TOILET,
-    ATM,
-    CAR_PARK,
-    KITCHEN,
-    MICROWAVE_OVEN,
-    VENDING_MACHINE,
-    STOP1,
+    TOILET, ATM, CAR_PARK, KITCHEN, MICROWAVE_OVEN, VENDING_MACHINE, STOP1,
 
-    EMERGENCY_PHONES,
-    AED;
+    EMERGENCY_PHONES, AED;
 
 
     public static ResourceType toType(String resourceTypeFromSQL) {
         String returnString = "";
         String[] words = resourceTypeFromSQL.split(" ");
 
-        for (int i=0 ; i < words.length ; i++) {
+        for (int i = 0; i < words.length; i++) {
             returnString += words[i].toUpperCase();
             if (i != words.length - 1) {
                 returnString = returnString + "_";

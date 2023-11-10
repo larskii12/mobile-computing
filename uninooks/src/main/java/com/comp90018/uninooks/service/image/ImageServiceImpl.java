@@ -42,6 +42,7 @@ public class ImageServiceImpl implements ImageService {
 
     /**
      * Fetches the image linked to the location name
+     *
      * @param locationName name of the location to be fetched
      * @return resource ID
      * @throws Exception
@@ -53,6 +54,7 @@ public class ImageServiceImpl implements ImageService {
 
     /**
      * Fetch all location images
+     *
      * @return hashmap linking image to each location
      * @throws Exception
      */

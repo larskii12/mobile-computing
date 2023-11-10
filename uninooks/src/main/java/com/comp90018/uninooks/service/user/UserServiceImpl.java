@@ -57,9 +57,7 @@ public class UserServiceImpl implements UserService {
         // If log in fails
         catch (Exception e) {
             return null;
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -81,11 +79,7 @@ public class UserServiceImpl implements UserService {
      * @param userAQFLevel as the user AQF level
      * @throws Exception if any exceptions happens
      */
-    public boolean addUser(String userName,
-                           String userEmail,
-                           String userPassword,
-                           String userFaculty,
-                           int userAQFLevel) throws Exception {
+    public boolean addUser(String userName, String userEmail, String userPassword, String userFaculty, int userAQFLevel) throws Exception {
 
         try {
 
@@ -132,9 +126,7 @@ public class UserServiceImpl implements UserService {
 
             // Unknown exceptions happens.
             throw new Exception("User added failed, please contact the IT administrator to report the issue.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -167,9 +159,7 @@ public class UserServiceImpl implements UserService {
         // If exception happens when deleting an user.
         catch (Exception e) {
             throw new Exception("User delete failed, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -218,9 +208,7 @@ public class UserServiceImpl implements UserService {
         catch (Exception e) {
 
             throw new Exception("Some error happened, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -252,8 +240,7 @@ public class UserServiceImpl implements UserService {
             ps.setInt(2, userId);
             ps.executeUpdate();
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
             // If user name has been used.
             if (e.getMessage().contains("unique_user_username")) {
@@ -263,9 +250,7 @@ public class UserServiceImpl implements UserService {
             else {
                 throw new Exception("Errors happened when update user information, please contact the IT administrator.");
             }
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -309,9 +294,7 @@ public class UserServiceImpl implements UserService {
             else {
                 throw new Exception("Errors happened when update user information, please contact the IT administrator.");
             }
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -364,9 +347,7 @@ public class UserServiceImpl implements UserService {
         // If exception happens
         catch (Exception e) {
             throw new Exception(e.getMessage());
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -426,9 +407,7 @@ public class UserServiceImpl implements UserService {
         catch (Exception e) {
 
             throw new Exception("Errors happened when update user information, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -463,9 +442,7 @@ public class UserServiceImpl implements UserService {
         catch (Exception e) {
 
             throw new Exception("Errors happened when update user information, please contact the IT administrator.");
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();
@@ -485,7 +462,7 @@ public class UserServiceImpl implements UserService {
      */
     public boolean hasUser(String userNameOrEmail) throws Exception {
 
-        try{
+        try {
             String query = "SELECT * FROM mobilecomputing.\"user\" WHERE \"user_name\" = ? OR \"user_email\" = ?";
 
             Connection connector = new DatabaseHelper().getConnector();
@@ -495,16 +472,12 @@ public class UserServiceImpl implements UserService {
             preparedStatement.setString(2, userNameOrEmail);
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()){
+            if (resultSet.next()) {
                 return true;
             }
-        }
-
-        catch (Exception e){
+        } catch (Exception e) {
             throw new Exception();
-        }
-
-        finally {
+        } finally {
             if (connector != null) {
                 try {
                     connector.close();

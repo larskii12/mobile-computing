@@ -17,9 +17,7 @@ public class FocusModeWorker extends Worker {
     private final Context context;
     private final String TAG = "MyWorker";
 
-    public FocusModeWorker(
-            @NonNull Context context,
-            @NonNull WorkerParameters params) {
+    public FocusModeWorker(@NonNull Context context, @NonNull WorkerParameters params) {
         super(context, params);
         this.context = context;
     }

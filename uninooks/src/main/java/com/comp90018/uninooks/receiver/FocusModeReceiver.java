@@ -1,8 +1,6 @@
 package com.comp90018.uninooks.receiver;
 
-import static com.comp90018.uninooks.activities.FocusModeTimerActivity.isCurrentlyOnApp;
 import static com.comp90018.uninooks.activities.FocusModeTimerActivity.isRunning;
-import static com.comp90018.uninooks.service.background_app.BackgroundAppService.isServiceRunning;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -11,7 +9,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.core.app.NotificationManagerCompat;
@@ -20,7 +17,6 @@ import androidx.work.WorkManager;
 
 import com.comp90018.uninooks.R;
 import com.comp90018.uninooks.activities.FocusModeTimerActivity;
-import com.comp90018.uninooks.service.background_app.BackgroundAppService;
 import com.comp90018.uninooks.worker.FocusModeWorker;
 
 public class FocusModeReceiver extends BroadcastReceiver {

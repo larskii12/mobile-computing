@@ -26,6 +26,7 @@ public class MailServiceImpl extends javax.mail.Authenticator implements MailSer
 
     /**
      * Method to send email
+     *
      * @param userEmail as the user need to receive the email
      * @return OTP for success or 1 for fails
      */
@@ -87,10 +88,11 @@ public class MailServiceImpl extends javax.mail.Authenticator implements MailSer
 
     /**
      * Send mail to raise issue
+     *
      * @param issueDescription
      * @return
      */
-    public boolean raiseIssue(String issueDescription){
+    public boolean raiseIssue(String issueDescription) {
         // Set Gmail information
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");

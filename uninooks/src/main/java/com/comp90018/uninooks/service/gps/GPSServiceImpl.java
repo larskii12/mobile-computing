@@ -18,18 +18,14 @@ import java.util.ArrayList;
 
 public class GPSServiceImpl {
 
+    public static ArrayList<Location> locationsHistory;
+    private static boolean GPSPermissionStatus;
     private final FusedLocationProviderClient fusedLocationProviderClient;
-
+    private final LocationRequest locationRequestConfig;
+    private final GPSService gpsService;
     private LocationCallback locationCallback;
 
-    private final LocationRequest locationRequestConfig;
-
-    public static ArrayList<Location> locationsHistory;
-    private final GPSService gpsService;
-
-    private static boolean GPSPermissionStatus;
-
-    public GPSServiceImpl(Context context, GPSService gpsService){
+    public GPSServiceImpl(Context context, GPSService gpsService) {
 
         locationsHistory = new ArrayList<>();
 
@@ -47,7 +43,7 @@ public class GPSServiceImpl {
 
     }
 
-    public GPSServiceImpl(Context context, GPSService gpsService, ArrayList<Location> locationsHistory){
+    public GPSServiceImpl(Context context, GPSService gpsService, ArrayList<Location> locationsHistory) {
 
         GPSServiceImpl.locationsHistory = locationsHistory;
 
@@ -66,6 +62,55 @@ public class GPSServiceImpl {
     }
 
     /**
+     * Get the GPS last location, static call without creating object crossing the app
+     *
+     * @return latest GPS location
+     */
+    public static LatLng getCurrentLocation() {
+        if (EmulatorServiceImpl.isEmulator() || locationsHistory.size() == 0) {
+            Log.d("AAAAAAAAAAAAAAAAA", "Default loc,");
+            // Return a default location - Melbourne Connect
+//            LatLng melbourneConnect = new LatLng(38.17277920371164, -81.33774147106061);
+            LatLng melbourneConnect = new LatLng(-37.8000, 144.9643);
+            return melbourneConnect;
+        }
+        Log.d("AAAAAAAAAAAAAAAAA", "GPS used,");
+
+        return new LatLng(locationsHistory.get(locationsHistory.size() - 1).getLatitude(), locationsHistory.get(locationsHistory.size() - 1).getLongitude());
+    }
+
+    /**
+     * Get the GPS location history, static call without creating object crossing the app
+     *
+     * @return GPS location history
+     */
+    public static ArrayList<Location> getGPSHistory() {
+
+        if (locationsHistory.size() == 0) {
+
+            // Return a default location - Melbourne Connect
+            Location melbourneConnect = new Location("");
+            melbourneConnect.setLatitude(-37.8000);
+            melbourneConnect.setLongitude(144.9643);
+
+            ArrayList<Location> defaultHistory = new ArrayList<Location>();
+
+            defaultHistory.add(melbourneConnect);
+            return defaultHistory;
+        }
+
+        return locationsHistory;
+    }
+
+    public static void setGPSPermissionStatus(boolean status) {
+        GPSPermissionStatus = status;
+    }
+
+    public static boolean getGPSPermission() {
+        return GPSPermissionStatus;
+    }
+
+    /**
      * Start updating GPS data with given configuration
      */
     @SuppressLint("MissingPermission")
@@ -80,45 +125,6 @@ public class GPSServiceImpl {
         if (fusedLocationProviderClient != null && locationCallback != null) {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback);
         }
-    }
-
-    /**
-     * Get the GPS last location, static call without creating object crossing the app
-     * @return latest GPS location
-     */
-    public static LatLng getCurrentLocation(){
-        if (EmulatorServiceImpl.isEmulator() || locationsHistory.size() == 0){
-            Log.d("AAAAAAAAAAAAAAAAA", "Default loc,");
-            // Return a default location - Melbourne Connect
-//            LatLng melbourneConnect = new LatLng(38.17277920371164, -81.33774147106061);
-            LatLng melbourneConnect = new LatLng(-37.8000, 144.9643);
-            return melbourneConnect;
-        }
-        Log.d("AAAAAAAAAAAAAAAAA", "GPS used,");
-
-        return new LatLng(locationsHistory.get(locationsHistory.size() - 1).getLatitude(), locationsHistory.get(locationsHistory.size() - 1).getLongitude());
-    }
-
-    /**
-     * Get the GPS location history, static call without creating object crossing the app
-     * @return GPS location history
-     */
-    public static ArrayList<Location> getGPSHistory(){
-
-        if (locationsHistory.size() == 0){
-
-            // Return a default location - Melbourne Connect
-            Location melbourneConnect = new Location("");
-            melbourneConnect.setLatitude(-37.8000);
-            melbourneConnect.setLongitude(144.9643);
-
-            ArrayList<Location> defaultHistory = new ArrayList<Location>();
-
-            defaultHistory.add(melbourneConnect);
-            return defaultHistory;
-        }
-
-        return locationsHistory;
     }
 
     /**
@@ -141,13 +147,5 @@ public class GPSServiceImpl {
                 }
             }
         };
-    }
-
-    public static void setGPSPermissionStatus(boolean status){
-        GPSPermissionStatus = status;
-    }
-
-    public static boolean getGPSPermission(){
-        return GPSPermissionStatus;
     }
 }

@@ -312,6 +312,7 @@ public class FocusModeTimerActivity extends AppCompatActivity {
         super.onPause();
         if (isRunning) {
             isCurrentlyOnApp = false;
+
             // Detect the recent 20 seconds used apps
             startServiceViaWorker();
             startService();

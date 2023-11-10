@@ -1,5 +1,5 @@
 # mobile-computing
-Repository for Mobile Computing Group Tutorial 12
+Repository for Mobile Computing Group 2 Tutorial 12
 Java activity class-------------------
 AccountActivity
 - This class is used to display the user's account information. It is also used to update the user's account information, login and delete account.

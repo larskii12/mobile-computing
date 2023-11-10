@@ -18,8 +18,6 @@ public interface LocationService {
 
     StudySpace findStudySpaceById(int locationId) throws Exception;
 
-    List<Location> findAllLocations(String locationType,
-                                    String name,
-                                    boolean isAscending) throws Exception;
+    List<Location> findAllLocations(String locationType, String name, boolean isAscending) throws Exception;
 
 }

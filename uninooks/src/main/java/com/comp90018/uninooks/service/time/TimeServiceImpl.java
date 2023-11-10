@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-public class TimeServiceImpl implements TimeService{
+public class TimeServiceImpl implements TimeService {
     @Override
     public Time getAEDTTime() {
         LocalTime localTimeAEDT = LocalTime.now(ZoneId.of("Australia/Melbourne"));

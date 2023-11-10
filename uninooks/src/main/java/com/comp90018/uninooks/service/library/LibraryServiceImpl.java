@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class LibraryServiceImpl implements LibraryService {
 
     Connection connector = new DatabaseHelper().getConnector();
+
     /**
      * Get ten closest libraries and return to the Main UI to show
      *
@@ -43,11 +44,11 @@ public class LibraryServiceImpl implements LibraryService {
 
             ArrayList<Integer> libraryIds = new ArrayList<>();
 
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 libraryIds.add(Integer.parseInt(resultSet.getString("library_id")));
             }
 
-            for (Integer libraryId: libraryIds) {
+            for (Integer libraryId : libraryIds) {
                 executorService.submit(new Runnable() {
 
                     @Override
@@ -76,7 +77,7 @@ public class LibraryServiceImpl implements LibraryService {
                 Thread.currentThread().interrupt();
             }
 
-            synchronized (allLibraries){
+            synchronized (allLibraries) {
                 allLibraries.sort(Comparator.comparingDouble(Library::getDistanceFromCurrentPosition));
             }
 
@@ -111,8 +112,9 @@ public class LibraryServiceImpl implements LibraryService {
 
     /**
      * Get top rated libraries
+     *
      * @param location as current location
-     * @param size as size
+     * @param size     as size
      * @return top rated sorted libraries
      * @throws Exception if any exceptions
      */
@@ -120,11 +122,7 @@ public class LibraryServiceImpl implements LibraryService {
     public ArrayList<Library> getTopRatedLibraries(LatLng location, int size) throws Exception {
 
         try {
-            String query = "SELECT review_library_id, ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " +
-                    "FROM mobilecomputing.\"review\" " +
-                    "WHERE review_library_id IS NOT NULL " +
-                    "GROUP BY review_library_id " +
-                    "ORDER BY average_rating DESC;";
+            String query = "SELECT review_library_id, ROUND(SUM(review_score)::decimal/COUNT(*), 1) as average_rating " + "FROM mobilecomputing.\"review\" " + "WHERE review_library_id IS NOT NULL " + "GROUP BY review_library_id " + "ORDER BY average_rating DESC;";
 
             PreparedStatement preparedStatement = connector.prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -138,11 +136,11 @@ public class LibraryServiceImpl implements LibraryService {
 
             ArrayList<Integer> libraryIds = new ArrayList<>();
 
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 libraryIds.add(Integer.parseInt(resultSet.getString("review_library_id")));
             }
 
-            for (Integer libraryId: libraryIds) {
+            for (Integer libraryId : libraryIds) {
                 executorService.submit(new Runnable() {
 
                     @Override

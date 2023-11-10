@@ -2,8 +2,7 @@ package com.comp90018.uninooks.models.location;
 
 public enum LocationType {
 
-    LIBRARY,
-    RESTAURANT,
+    LIBRARY, RESTAURANT,
 
-    STUDY_SPACE;
+    STUDY_SPACE
 }
