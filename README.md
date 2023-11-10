@@ -1,6 +1,48 @@
 # mobile-computing
 Repository for Mobile Computing Group 2 Tutorial 12
-Java activity class-------------------
+
+Project description
+-------------------
+
+UniNooks is a mobile application designed to enhance the academic experience of students at the University of Melbourne. The applicatiom integrates exploration of study spaces within the University of Melbourne and a dedicated focus mode to optimize study sessions.
+
+Real-time information is utilized to inform users of opening hours, capacity (how busy a place is), and distance to the study spaces from their current location. Users also have the choice to run an automatic Pomodoro sequence to efficiently manage their study time and boost productivity.
+
+Built with
+-------------------
+Java (Gradle)
+
+Installation
+-------------------
+### Running on emulator
+
+For optimal performance, the emulator should use Android Version 13, API Version 33 (Tiramisu).
+
+To install, enter this into the terminal of Android Studio:
+
+            git clone https://github.com/larskii12/mobile-computing.git
+
+Before running the project, set the emulators’ default location in Running Devices.
+Steps:
+1. Navigate to Running Devices tab
+2. Go to Extended Controls - Location
+3. Search for Melbourne Connect
+4. Save Point
+5. Set Location
+
+After these steps, build and run the application, by pressing the build then run icons.
+
+### Running on physical phone
+1. From the zip file, retrieve *uninooks.apk*
+2. Click on the apk file to install the application locally on your android device
+
+
+Regardless of where the applications are ran, all permissions would have to be granted, to experience the full functionality of the application.
+
+## Code description
+
+### Java activity class
+
 AccountActivity
 - This class is used to display the user's account information. It is also used to update the user's account information, login and delete account.
 
@@ -35,7 +77,7 @@ MainActivity
 - This class is for splash screen where the permissions are prompted.
 
 MapsActivity
-- This class is  
+- This class is
 
 NavigationActivity
 - This class handles the navigation drawer using googleMap API.
@@ -58,7 +100,8 @@ SearchResults
 SignUpActivity
 - This class is for users to sign up for an account for the first time.
 
-Layout XML Files-------------------
+### Layout XML Files
+
 
 activity_account.xml
 - This file is for the UI of the account activity.
@@ -148,7 +191,33 @@ shake_dialog.xml
 - This is a custom pop up dialog to encourage users to use a shake feature to get a randomised recommendation for a study space.
 
 small_card_layout.xml
+
 top_layout_card.xml
 - These two are small cards layout for the top card on the home page.
 
 
+Database
+-------------------
+The database utilizes a self-managed relational database with PostgreSQL, deployed on a Linux server.
+
+To access the database:
+1. Download PGAdmin (https://www.pgadmin.org/download/)
+2. Enter the following details:
+
+           Host name/address: 103.119.109.139
+           Port: 5432
+           Maintenance database: mobile
+           Kerberos authentication: off
+           Password: iHgm5npedxNHkpWwFb99SWW28Z5dGgKvYhncehaWGvmbzWVXr3
+           Save password: off
+
+All passwords are hashed with salt within the application then transmitted to the database.
+
+Usage and Assumptions
+-------------------
+1. The running system and device is always running in light mode.
+2. The data on how busy a place is, is retrieved from and provided by the University of Melbourne.
+3. All permissions are granted. If precise location permissions are not turned
+4. Animation scale settings on the device is set to 1 as this will affect the timer animation in Focus Mode.
+5. Location of the emulator is always at Melbourne Connect.
+6. Turning off notifications and precise locations permissions in the application will restart it.
