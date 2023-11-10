@@ -884,14 +884,6 @@ public class FocusModeTimerActivity extends AppCompatActivity {
             }
         }
     };
-
-
-
-
-
-
-
-
 }
 
 
