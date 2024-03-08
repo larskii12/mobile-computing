@@ -1,5 +1,4 @@
-# mobile-computing
-Repository for Mobile Computing Group 2 Tutorial 12
+# uninooks
 
 Project description
 -------------------
